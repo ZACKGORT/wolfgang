@@ -1966,7 +1966,7 @@ body.compose-mode { padding-bottom: 0; }
         transition: background 0.35s ease, border-color 0.35s ease;
         user-select: none;
         pointer-events: auto;
-        touch-action: none;
+        touch-action: manipulation;
         will-change: transform;
         isolation: isolate;
         overflow: hidden;
@@ -2323,12 +2323,11 @@ body.compose-mode { padding-bottom: 0; }
         </div>
     </div>
 
-<!-- 
-        Compose toggle
+    <!-- Compose toggle -->
     <button class="compose-toggle" id="composeToggle" title="Toggle compose mode" aria-label="Toggle compose mode">
         <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
     </button>
- -->
+
     <!-- Compose bar — floating widget -->
     <div class="compose-bar" id="composeBar" aria-label="Compose">
         <div class="compose-drag-handle" id="composeDragHandle">⋮⋮</div>
@@ -3913,7 +3912,7 @@ function handleScroll(event) {
 function handleTouchStart(e) { state.touchStartY = e.touches[0].clientY; state.touchStartX = e.touches[0].clientX; state.touchMoved = false; }
 function handleTouchMove(e) {
     state.touchMoved = true;
-    if (e.target.closest('.chapter-dropdown-list, .image-grid-overlay')) return;
+    if (e.target.closest('.chapter-dropdown-list, .image-grid-overlay, .music-player')) return;
     if (isDropdownOpen()) { e.preventDefault(); return; }
     if (isGridOpen()) return;
     e.preventDefault();
@@ -5477,6 +5476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (function enableDrag() {
             let dragging = false, startX, startY, startLeft, startTop;
 
+            let hasDragMoved = false;
             function beginDrag(clientX, clientY) {
                 // Snap from CSS centering to absolute coords
                 if (!player.classList.contains('dragged')) {
@@ -5489,14 +5489,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     player.style.transform = 'none';
                 }
                 dragging = true;
+                hasDragMoved = false;
                 startX = clientX; startY = clientY;
                 startLeft = parseFloat(player.style.left) || 0;
                 startTop  = parseFloat(player.style.top)  || 0;
             }
             function moveDrag(clientX, clientY) {
                 if (!dragging) return;
-                player.style.left = Math.max(0, Math.min(startLeft + clientX - startX, window.innerWidth  - player.offsetWidth))  + 'px';
-                player.style.top  = Math.max(0, Math.min(startTop  + clientY - startY, window.innerHeight - player.offsetHeight)) + 'px';
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+                if (!hasDragMoved && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+                hasDragMoved = true;
+                player.style.left = Math.max(0, Math.min(startLeft + dx, window.innerWidth  - player.offsetWidth))  + 'px';
+                player.style.top  = Math.max(0, Math.min(startTop  + dy, window.innerHeight - player.offsetHeight)) + 'px';
             }
 
             dragHandle.addEventListener('mousedown', (e) => {
@@ -5512,7 +5517,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.target.closest('.music-btn, .music-player-collapse, .music-header-playpause')) return;
                 const t = e.touches[0];
                 beginDrag(t.clientX, t.clientY);
-            }, { passive: true });
+            }, { passive: false });
             document.addEventListener('touchmove', (e) => {
                 if (!dragging) return;
                 const t = e.touches[0];
