@@ -2638,7 +2638,7 @@ const imageMap = {
     'This is my Wolfgang': 'https://i.ibb.co/LXR70BTD/wolfieboop.webp',
     'Sweet Wolfgang': 'https://i.ibb.co/Jj1Pc7bs/theabsolutecutestthingihaveeverseen.webp',
     'not chosen': 'https://i.ibb.co/d0MxCR6m/delicious.webp',
-    'As "Sweet" as his name': 'https://i.ibb.co/HpxfkCrY/okfine.webp',
+    'As "Sweet" as can be': 'https://i.ibb.co/zWbFdGF8/sowolfgangdiscoveredpupcupsatprettymucheverysheetz.webp',
     'A "Wolf" by calling': 'https://i.ibb.co/MxGzxSVk/wolfgang00.webp',
     'Wolfie for short': 'https://i.ibb.co/83SsR99/thislittledudeexudedsomuchconfidence.webp',
     'Woofie-boo': 'https://i.ibb.co/mrsF2PP2/whereiswolfgang.webp',
@@ -2651,6 +2651,7 @@ const imageMap = {
     'wagging tail': 'https://i.ibb.co/CknqHpK/happierinnewyork.webp',
     'of hope': 'https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp',
     'adventure': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Worldviewwalkieswithwolfgang.mp4',
+    'bad haircuts': 'https://i.ibb.co/cc6TDDwc/warminguptothewonderofwolfgang.webp',
     'untold lows': 'https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp',
     'unique': 'https://i.ibb.co/LXBkfzbw/wolfgangsfinestwork.webp',
     'situations': 'https://i.ibb.co/0Rt0KW93/wolfgangsfinestworkmoment.webp',
@@ -2706,6 +2707,7 @@ const imageMap = {
     'sleepies': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
 };
 
+
 const phraseRegexMap = new Map();
 function buildPhraseRegex(phrase) {
     const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -2726,7 +2728,7 @@ My sweet, "Sweet Wolfgang".[epithet & appellation, Sweet Wolfgang]
 A name not chosen, nor given — but a name becoming.
 [I just watched him for a few days, walking him without knowing what to call him. We went with the usual human names, goofy names, and commonplace names. None stuck. But, my favorite new artist was Mammoth, a band made by a single multi-hyphenate musician named Wolfgang.]
 
-As "Sweet" as his name.["sweetie", "sweetheart","sweet baby","my sweet boy"] 
+As "Sweet" as can be.["sweetie", "sweetheart","sweet baby","my sweet boy"] 
 A "Wolf" by calling.[born to be]
 Wolfie for short.[standing stoutly at yay-high] 
 Woofie-boo (Where is Wolfgang?).[I found my joy] 
@@ -2739,7 +2741,8 @@ One that tells of bravery.
 Of fortitude. 
 Of rebellion. 
 A story of hope [] 
-& adventure.
+A story with adventure.
+A story with dad's haircuts.
 Through, untold lows.
 Making the best of 'unique' situations. [an artist, and realist]
 
@@ -2804,6 +2807,7 @@ You need no sympathy.
 ###:Good Day, Now Good Night.
 "We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
 [Good boy]
+
 
 
 `;
@@ -3497,8 +3501,15 @@ function htmlAttrEncode(s) {
     return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+function applyInlineMarkdown(text) {
+    return text
+        .replace(/~~(.+?)~~/g,   '<s>$1</s>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g,   '<em>$1</em>');
+}
+
 function wrapImageTriggers(text) {
-    let wrapped = text;
+    let wrapped = applyInlineMarkdown(text);
     for (const [phrase, url] of Object.entries(imageMap)) {
         const regex = phraseRegexMap.get(phrase);
         if (regex) {
