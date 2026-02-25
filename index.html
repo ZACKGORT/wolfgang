@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 /* ===================================
    CSS VARIABLES & THEMES
@@ -879,6 +880,22 @@ body.theme-transitioning::after {
 .chapter-break.dropdown-active { opacity: 1; background: var(--hover-tint-strong); border-color: color-mix(in srgb, var(--accent) 60%, transparent); color: var(--accent); }
 .chapter-break .chapter-number { display: block; font-size: 0.7em; margin-bottom: 0.5em; color: var(--ink-3); }
 .chapter-break .chapter-title { display: block; font-size: 1.2em; font-weight: var(--chapter-break-weight); letter-spacing: var(--chapter-break-letter-spacing); }
+.chapter-capture-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 0.9em;
+    padding: 4px 10px;
+    font-family: var(--ui-font); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); border: 1px solid var(--border);
+    background: transparent; border-radius: 2px;
+    cursor: pointer; opacity: 0; transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    pointer-events: none;
+}
+.chapter-capture-btn svg { width: 10px; height: 10px; fill: currentColor; flex-shrink: 0; }
+.chapter-break:hover .chapter-capture-btn {
+    opacity: 1; pointer-events: auto;
+}
+.chapter-capture-btn:hover { color: var(--accent); border-color: var(--accent); }
+.chapter-capture-btn.capturing { opacity: 0.5; pointer-events: none; }
 
 /* ===================================
    SUBCHAPTER BREAKS
@@ -3833,8 +3850,135 @@ function openDropdownFromChapterBreak(chapterBreakEl, chapterId) {
 }
 
 // ===================================
-// IMAGE GRID
+// CHAPTER CAPTURE
 // ===================================
+function captureChapter(chapterId, chapterBreakEl) {
+    const btn = chapterBreakEl.querySelector('.chapter-capture-btn');
+    if (btn) { btn.classList.add('capturing'); btn.textContent = 'Clipping…'; }
+
+    const chapter = chapters[chapterId];
+    const chapterNum = String(chapterId + 1).padStart(2, '0');
+    const title = chapter ? chapter.title : '';
+
+    // ── Gather sentences for this chapter ──
+    const startIdx = state.chapterStartIndices[chapterId];
+    const endIdx = chapterId < chapters.length - 1
+        ? state.chapterStartIndices[chapterId + 1]
+        : state.allSentenceElements.length;
+
+    const elements = state.allSentenceElements.slice(startIdx, endIdx);
+    const sentences = elements
+        .filter(el => !el.dataset.structural)
+        .map(el => el.textContent.trim())
+        .filter(Boolean);
+
+    // ── Find first image in chapter ──
+    let imageUrl = null;
+    for (const el of elements) {
+        const trigger = el.querySelector && el.querySelector('.image-trigger');
+        if (trigger) { imageUrl = trigger.getAttribute('data-image'); break; }
+    }
+
+    // ── Detect theme ──
+    const isNewspaper = document.body.classList.contains('theme-newspaper');
+    const bgColor  = isNewspaper ? '#faf8f3' : '#0a0a0a';
+    const inkColor = isNewspaper ? '#111111' : '#f0ece0';
+    const ink2     = isNewspaper ? '#3a3020' : '#b8a88a';
+    const accentColor = isNewspaper ? '#8b4513' : '#daa520';
+    const borderColor = isNewspaper ? 'rgba(139,69,19,0.3)' : 'rgba(218,165,32,0.3)';
+
+    // ── Build off-screen clipping card ──
+    const card = document.createElement('div');
+    card.style.cssText = `
+        position: fixed; left: -9999px; top: 0;
+        width: 680px; min-height: 400px;
+        background: ${bgColor};
+        padding: 52px 56px 48px;
+        font-family: 'Crimson Text', Georgia, serif;
+        box-sizing: border-box;
+        color: ${inkColor};
+    `;
+
+    // Decorative top rule
+    const topRule = document.createElement('div');
+    topRule.style.cssText = `border-top: 2px solid ${accentColor}; margin-bottom: 4px;`;
+    card.appendChild(topRule);
+    const topRule2 = document.createElement('div');
+    topRule2.style.cssText = `border-top: 1px solid ${accentColor}; margin-bottom: 28px; opacity: 0.4;`;
+    card.appendChild(topRule2);
+
+    // Chapter label
+    const label = document.createElement('div');
+    label.style.cssText = `font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: ${accentColor}; margin-bottom: 10px; opacity: 0.8;`;
+    label.textContent = `Chapter ${chapterNum}`;
+    card.appendChild(label);
+
+    // Title
+    const titleEl = document.createElement('div');
+    titleEl.style.cssText = `font-family: 'Crimson Text', Georgia, serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 28px; color: ${inkColor};`;
+    titleEl.textContent = title;
+    card.appendChild(titleEl);
+
+    // Image (if any, non-video)
+    if (imageUrl && !imageUrl.match(/\.mp4(\?|$)/i)) {
+        const imgWrap = document.createElement('div');
+        imgWrap.style.cssText = `width: 100%; margin-bottom: 28px; overflow: hidden; background: ${isNewspaper ? '#ddd8cc' : '#1a1a1a'};`;
+        const img = document.createElement('img');
+        img.crossOrigin = 'anonymous';
+        img.src = imageUrl;
+        img.style.cssText = `width: 100%; height: auto; display: block; opacity: ${isNewspaper ? '0.88' : '0.75'};`;
+        imgWrap.appendChild(img);
+        card.appendChild(imgWrap);
+    }
+
+    // Sentences
+    const body = document.createElement('div');
+    body.style.cssText = `font-size: 18px; line-height: 1.75; color: ${inkColor}; opacity: 0.9;`;
+    body.textContent = sentences.join(' ');
+    card.appendChild(body);
+
+    // Bottom rule + datestamp
+    const botRule = document.createElement('div');
+    botRule.style.cssText = `border-top: 1px solid ${borderColor}; margin-top: 36px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center;`;
+    const sig = document.createElement('span');
+    sig.style.cssText = `font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: ${ink2}; opacity: 0.6;`;
+    sig.textContent = 'Wolfgang';
+    const dateStr = document.createElement('span');
+    dateStr.style.cssText = `font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: ${ink2}; opacity: 0.45;`;
+    dateStr.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    botRule.appendChild(sig);
+    botRule.appendChild(dateStr);
+    card.appendChild(botRule);
+
+    document.body.appendChild(card);
+
+    // ── Render ──
+    setTimeout(() => {
+        html2canvas(card, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: bgColor,
+            logging: false,
+        }).then(canvas => {
+            card.remove();
+            const link = document.createElement('a');
+            const safeName = title.replace(/[^a-z0-9]/gi, '-').toLowerCase().slice(0, 40);
+            link.download = `wolfie-ch${chapterNum}-${safeName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            if (btn) {
+                btn.classList.remove('capturing');
+                btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip`;
+            }
+            Toast.show({ id: `capture-${chapterId}-${Date.now()}`, icon: '✂️', message: `Chapter clipped — check your downloads.`, duration: 4000, force: true });
+        }).catch(() => {
+            card.remove();
+            if (btn) { btn.classList.remove('capturing'); btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip`; }
+            Toast.show({ id: `capture-err-${Date.now()}`, icon: '⚠️', message: `Couldn't render clipping. Images may be cross-origin blocked.`, duration: 5000, force: true });
+        });
+    }, 120);
+}
 function isGridOpen() { return Utils.$('#imageGridOverlay').classList.contains('open'); }
 
 function toggleImageGrid() {
@@ -3998,9 +4142,10 @@ function render() {
                     chapterBreak.dataset.structural = 'true';
                     chapterBreak.dataset.sentenceIndex = sentenceCount;
                     chapterBreak.dataset.title = nextChapter.title;
-                    chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(nextChapter.id + 1).padStart(2, '0')}</span><span class="chapter-title">${nextChapter.title}</span>`;
+                    chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(nextChapter.id + 1).padStart(2, '0')}</span><span class="chapter-title">${nextChapter.title}</span><button class="chapter-capture-btn" title="Capture this chapter as an image"><svg viewBox="0 0 24 24"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip</button>`;
                     chapterBreak.addEventListener('click', () => { showUI(); openDropdownFromChapterBreak(chapterBreak, nextChapter.id); });
                     chapterBreak.addEventListener('dblclick', () => { if (!composeActive) return; beginEdit(parseInt(chapterBreak.dataset.sentenceIndex)); });
+                    chapterBreak.querySelector('.chapter-capture-btn').addEventListener('click', (e) => { e.stopPropagation(); captureChapter(nextChapter.id, chapterBreak); });
                     fragment.appendChild(chapterBreak);
                     state.allSentenceElements.push(chapterBreak);
                     sentenceCount++;
@@ -4022,12 +4167,13 @@ function render() {
             chapterBreak.dataset.structural = 'true';
             chapterBreak.dataset.sentenceIndex = sentenceCount;
             chapterBreak.dataset.title = part.title;
-            chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(newChapterId + 1).padStart(2, '0')}</span><span class="chapter-title">${part.title}</span>`;
+            chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(newChapterId + 1).padStart(2, '0')}</span><span class="chapter-title">${part.title}</span><button class="chapter-capture-btn" title="Capture this chapter as an image"><svg viewBox="0 0 24 24"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip</button>`;
             chapterBreak.addEventListener('click', () => { showUI(); openDropdownFromChapterBreak(chapterBreak, newChapterId); });
             chapterBreak.addEventListener('dblclick', () => {
                 if (!composeActive) return;
                 beginEdit(parseInt(chapterBreak.dataset.sentenceIndex));
             });
+            chapterBreak.querySelector('.chapter-capture-btn').addEventListener('click', (e) => { e.stopPropagation(); captureChapter(newChapterId, chapterBreak); });
             fragment.appendChild(chapterBreak);
             state.allSentenceElements.push(chapterBreak);
             sentenceCount++;
