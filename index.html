@@ -24,7 +24,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 /* ===================================
    CSS VARIABLES & THEMES
@@ -880,22 +879,6 @@ body.theme-transitioning::after {
 .chapter-break.dropdown-active { opacity: 1; background: var(--hover-tint-strong); border-color: color-mix(in srgb, var(--accent) 60%, transparent); color: var(--accent); }
 .chapter-break .chapter-number { display: block; font-size: 0.7em; margin-bottom: 0.5em; color: var(--ink-3); }
 .chapter-break .chapter-title { display: block; font-size: 1.2em; font-weight: var(--chapter-break-weight); letter-spacing: var(--chapter-break-letter-spacing); }
-.chapter-capture-btn {
-    display: inline-flex; align-items: center; gap: 5px;
-    margin-top: 0.9em;
-    padding: 4px 10px;
-    font-family: var(--ui-font); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-3); border: 1px solid var(--border);
-    background: transparent; border-radius: 2px;
-    cursor: pointer; opacity: 0; transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    pointer-events: none;
-}
-.chapter-capture-btn svg { width: 10px; height: 10px; fill: currentColor; flex-shrink: 0; }
-.chapter-break:hover .chapter-capture-btn {
-    opacity: 1; pointer-events: auto;
-}
-.chapter-capture-btn:hover { color: var(--accent); border-color: var(--accent); }
-.chapter-capture-btn.capturing { opacity: 0.5; pointer-events: none; }
 
 /* ===================================
    SUBCHAPTER BREAKS
@@ -1983,13 +1966,11 @@ body.compose-mode { padding-bottom: 0; }
         transition: background 0.35s ease, border-color 0.35s ease;
         user-select: none;
         pointer-events: auto;
-        touch-action: manipulation;
+        touch-action: none;
         will-change: transform;
         isolation: isolate;
         overflow: hidden;
-        /* Expand upward: body renders above drag handle */
-        display: flex;
-        flex-direction: column-reverse;
+        /* height matches stats widget via padding — don't set explicit height */
     }
     /* Once dragged, JS removes centering and switches to absolute left/top */
     .music-player.dragged {
@@ -2006,12 +1987,12 @@ body.compose-mode { padding-bottom: 0; }
         cursor: grab;
         user-select: none;
         min-height: 38px; /* matches stats widget ~height */
-        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
         transition: border-color 0.2s ease;
         -webkit-tap-highlight-color: transparent;
     }
     .music-player-drag:active { cursor: grabbing; }
-    .music-player.expanded .music-player-drag { border-top-color: var(--border); }
+    .music-player.expanded .music-player-drag { border-bottom-color: var(--border); }
 
     .music-drag-dots {
         font-family: sans-serif;
@@ -2271,7 +2252,10 @@ body.compose-mode { padding-bottom: 0; }
 
     <div id="statsWidget" class="stats-widget" title="Drag to move" aria-label="Reading stats and navigation">
         <div class="stats-drag-handle">⋮⋮</div>
-
+        <!-- Compose button — mobile HUD only (reader mode) -->
+        <button class="hud-nav-btn hud-compose-btn" id="hudComposeBtn" aria-label="Toggle compose mode" title="Compose">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </button>
         <!-- Submit button — compose mode on mobile only -->
         <button class="hud-nav-btn hud-submit-btn" id="hudSubmitBtn" aria-label="Commit sentence" title="Commit sentence">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -2339,7 +2323,10 @@ body.compose-mode { padding-bottom: 0; }
         </div>
     </div>
 
-
+    <!-- Compose toggle -->
+    <button class="compose-toggle" id="composeToggle" title="Toggle compose mode" aria-label="Toggle compose mode">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
 
     <!-- Compose bar — floating widget -->
     <div class="compose-bar" id="composeBar" aria-label="Compose">
@@ -2528,15 +2515,15 @@ body.compose-mode { padding-bottom: 0; }
             </div>
             <!-- Now playing info -->
             <div class="music-now-playing">
-                <div class="music-now-name" id="musicNowName">♪ Wolfgang's Playlist'</div>
-                <div class="music-now-status" id="musicNowStatus">For Walkies</div>
+                <div class="music-now-name" id="musicNowName">♪ Zack plays guitar</div>
+                <div class="music-now-status" id="musicNowStatus">select a track</div>
             </div>
             <!-- Compose mode: play/pause pill (transport hidden in compose) -->
             <button class="music-header-playpause" id="musicHeaderPlay" title="Play / Pause" aria-label="Play or pause">
                 <svg id="musicHeaderIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
             <!-- Expand/collapse toggle -->
-            <button class="music-player-collapse" id="musicPlayerCollapse" title="Show tracks" aria-label="Show or hide track list">▴</button>
+            <button class="music-player-collapse" id="musicPlayerCollapse" title="Show tracks" aria-label="Show or hide track list">▾</button>
         </div>
         <div class="music-player-body">
             <div class="music-track-list">
@@ -2558,14 +2545,14 @@ body.compose-mode { padding-bottom: 0; }
                     <span class="music-track-num">3</span>
                     <div class="music-track-info">
                         <div class="music-track-name">Beautiful Day</div>
-                        <div class="music-track-sub">cover concept — guitar &amp; midi drums</div>
+                        <div class="music-track-sub">U2 — guitar &amp; midi drums</div>
                     </div>
                 </div>
                 <div class="music-track" data-track="3">
                     <span class="music-track-num">4</span>
                     <div class="music-track-info">
                         <div class="music-track-name">Bad Touch</div>
-                        <div class="music-track-sub">cover concept — guitar</div>
+                        <div class="music-track-sub">original — guitar</div>
                     </div>
                 </div>
             </div>
@@ -2636,10 +2623,10 @@ let composeActive = false; // module-level flag so highlightSentence can read it
 const chapters = [];
 
 const imageMap = {
-    'Forever ferocious': 'https://i.ibb.co/LXR70BTD/wolfieboop.webp',
+    'Forever ferocious': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/wolfinsheepsclothing.mp4',
 
-    'This is my Wolfgang': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/wolfinsheepsclothing.mp4',
-    'Sweet Wolfgang': 'https://i.ibb.co/Jj1Pc7bs/theabsolutecutestthingihaveeverseen.webp',
+    'This is my Wolfgang': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/soferocious.mp4',
+    'Sweet Wolfgang': 'https://i.ibb.co/LXR70BTD/wolfieboop.webp',
     'not chosen': 'https://i.ibb.co/d0MxCR6m/delicious.webp',
     'As "Sweet" as can be': 'https://i.ibb.co/zWbFdGF8/sowolfgangdiscoveredpupcupsatprettymucheverysheetz.webp',
     'A "Wolf" by calling': 'https://i.ibb.co/MxGzxSVk/wolfgang00.webp',
@@ -2823,6 +2810,7 @@ Not a place to plant your feet, but a place to grow.
 Forever ferocious. Forever a place for you on my lap. Walk through flowers.
 
 `;
+
 
 // ===================================
 // UTILITY FUNCTIONS
@@ -3513,15 +3501,8 @@ function htmlAttrEncode(s) {
     return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function applyInlineMarkdown(text) {
-    return text
-        .replace(/~~(.+?)~~/g,   '<s>$1</s>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.+?)\*/g,   '<em>$1</em>');
-}
-
 function wrapImageTriggers(text) {
-    let wrapped = applyInlineMarkdown(text);
+    let wrapped = text;
     for (const [phrase, url] of Object.entries(imageMap)) {
         const regex = phraseRegexMap.get(phrase);
         if (regex) {
@@ -3873,135 +3854,8 @@ function openDropdownFromChapterBreak(chapterBreakEl, chapterId) {
 }
 
 // ===================================
-// CHAPTER CAPTURE
+// IMAGE GRID
 // ===================================
-function captureChapter(chapterId, chapterBreakEl) {
-    const btn = chapterBreakEl.querySelector('.chapter-capture-btn');
-    if (btn) { btn.classList.add('capturing'); btn.textContent = 'Clipping…'; }
-
-    const chapter = chapters[chapterId];
-    const chapterNum = String(chapterId + 1).padStart(2, '0');
-    const title = chapter ? chapter.title : '';
-
-    // ── Gather sentences for this chapter ──
-    const startIdx = state.chapterStartIndices[chapterId];
-    const endIdx = chapterId < chapters.length - 1
-        ? state.chapterStartIndices[chapterId + 1]
-        : state.allSentenceElements.length;
-
-    const elements = state.allSentenceElements.slice(startIdx, endIdx);
-    const sentences = elements
-        .filter(el => !el.dataset.structural)
-        .map(el => el.textContent.trim())
-        .filter(Boolean);
-
-    // ── Find first image in chapter ──
-    let imageUrl = null;
-    for (const el of elements) {
-        const trigger = el.querySelector && el.querySelector('.image-trigger');
-        if (trigger) { imageUrl = trigger.getAttribute('data-image'); break; }
-    }
-
-    // ── Detect theme ──
-    const isNewspaper = document.body.classList.contains('theme-newspaper');
-    const bgColor  = isNewspaper ? '#faf8f3' : '#0a0a0a';
-    const inkColor = isNewspaper ? '#111111' : '#f0ece0';
-    const ink2     = isNewspaper ? '#3a3020' : '#b8a88a';
-    const accentColor = isNewspaper ? '#8b4513' : '#daa520';
-    const borderColor = isNewspaper ? 'rgba(139,69,19,0.3)' : 'rgba(218,165,32,0.3)';
-
-    // ── Build off-screen clipping card ──
-    const card = document.createElement('div');
-    card.style.cssText = `
-        position: fixed; left: -9999px; top: 0;
-        width: 680px; min-height: 400px;
-        background: ${bgColor};
-        padding: 52px 56px 48px;
-        font-family: 'Crimson Text', Georgia, serif;
-        box-sizing: border-box;
-        color: ${inkColor};
-    `;
-
-    // Decorative top rule
-    const topRule = document.createElement('div');
-    topRule.style.cssText = `border-top: 2px solid ${accentColor}; margin-bottom: 4px;`;
-    card.appendChild(topRule);
-    const topRule2 = document.createElement('div');
-    topRule2.style.cssText = `border-top: 1px solid ${accentColor}; margin-bottom: 28px; opacity: 0.4;`;
-    card.appendChild(topRule2);
-
-    // Chapter label
-    const label = document.createElement('div');
-    label.style.cssText = `font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: ${accentColor}; margin-bottom: 10px; opacity: 0.8;`;
-    label.textContent = `Chapter ${chapterNum}`;
-    card.appendChild(label);
-
-    // Title
-    const titleEl = document.createElement('div');
-    titleEl.style.cssText = `font-family: 'Crimson Text', Georgia, serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 28px; color: ${inkColor};`;
-    titleEl.textContent = title;
-    card.appendChild(titleEl);
-
-    // Image (if any, non-video)
-    if (imageUrl && !imageUrl.match(/\.mp4(\?|$)/i)) {
-        const imgWrap = document.createElement('div');
-        imgWrap.style.cssText = `width: 100%; margin-bottom: 28px; overflow: hidden; background: ${isNewspaper ? '#ddd8cc' : '#1a1a1a'};`;
-        const img = document.createElement('img');
-        img.crossOrigin = 'anonymous';
-        img.src = imageUrl;
-        img.style.cssText = `width: 100%; height: auto; display: block; opacity: ${isNewspaper ? '0.88' : '0.75'};`;
-        imgWrap.appendChild(img);
-        card.appendChild(imgWrap);
-    }
-
-    // Sentences
-    const body = document.createElement('div');
-    body.style.cssText = `font-size: 18px; line-height: 1.75; color: ${inkColor}; opacity: 0.9;`;
-    body.textContent = sentences.join(' ');
-    card.appendChild(body);
-
-    // Bottom rule + datestamp
-    const botRule = document.createElement('div');
-    botRule.style.cssText = `border-top: 1px solid ${borderColor}; margin-top: 36px; padding-top: 14px; display: flex; justify-content: space-between; align-items: center;`;
-    const sig = document.createElement('span');
-    sig.style.cssText = `font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: ${ink2}; opacity: 0.6;`;
-    sig.textContent = 'Wolfgang';
-    const dateStr = document.createElement('span');
-    dateStr.style.cssText = `font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: ${ink2}; opacity: 0.45;`;
-    dateStr.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    botRule.appendChild(sig);
-    botRule.appendChild(dateStr);
-    card.appendChild(botRule);
-
-    document.body.appendChild(card);
-
-    // ── Render ──
-    setTimeout(() => {
-        html2canvas(card, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: false,
-            backgroundColor: bgColor,
-            logging: false,
-        }).then(canvas => {
-            card.remove();
-            const link = document.createElement('a');
-            const safeName = title.replace(/[^a-z0-9]/gi, '-').toLowerCase().slice(0, 40);
-            link.download = `wolfie-ch${chapterNum}-${safeName}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            if (btn) {
-                btn.classList.remove('capturing');
-                btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip`;
-            }
-            Toast.show({ id: `capture-${chapterId}-${Date.now()}`, icon: '✂️', message: `Chapter clipped — check your downloads.`, duration: 4000, force: true });
-        }).catch(() => {
-            card.remove();
-            if (btn) { btn.classList.remove('capturing'); btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip`; }
-            Toast.show({ id: `capture-err-${Date.now()}`, icon: '⚠️', message: `Couldn't render clipping. Images may be cross-origin blocked.`, duration: 5000, force: true });
-        });
-    }, 120);
-}
 function isGridOpen() { return Utils.$('#imageGridOverlay').classList.contains('open'); }
 
 function toggleImageGrid() {
@@ -4073,7 +3927,7 @@ function handleScroll(event) {
 function handleTouchStart(e) { state.touchStartY = e.touches[0].clientY; state.touchStartX = e.touches[0].clientX; state.touchMoved = false; }
 function handleTouchMove(e) {
     state.touchMoved = true;
-    if (e.target.closest('.chapter-dropdown-list, .image-grid-overlay, .music-player')) return;
+    if (e.target.closest('.chapter-dropdown-list, .image-grid-overlay')) return;
     if (isDropdownOpen()) { e.preventDefault(); return; }
     if (isGridOpen()) return;
     e.preventDefault();
@@ -4165,10 +4019,9 @@ function render() {
                     chapterBreak.dataset.structural = 'true';
                     chapterBreak.dataset.sentenceIndex = sentenceCount;
                     chapterBreak.dataset.title = nextChapter.title;
-                    chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(nextChapter.id + 1).padStart(2, '0')}</span><span class="chapter-title">${nextChapter.title}</span><button class="chapter-capture-btn" title="Capture this chapter as an image"><svg viewBox="0 0 24 24"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip</button>`;
+                    chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(nextChapter.id + 1).padStart(2, '0')}</span><span class="chapter-title">${nextChapter.title}</span>`;
                     chapterBreak.addEventListener('click', () => { showUI(); openDropdownFromChapterBreak(chapterBreak, nextChapter.id); });
                     chapterBreak.addEventListener('dblclick', () => { if (!composeActive) return; beginEdit(parseInt(chapterBreak.dataset.sentenceIndex)); });
-                    chapterBreak.querySelector('.chapter-capture-btn').addEventListener('click', (e) => { e.stopPropagation(); captureChapter(nextChapter.id, chapterBreak); });
                     fragment.appendChild(chapterBreak);
                     state.allSentenceElements.push(chapterBreak);
                     sentenceCount++;
@@ -4190,13 +4043,12 @@ function render() {
             chapterBreak.dataset.structural = 'true';
             chapterBreak.dataset.sentenceIndex = sentenceCount;
             chapterBreak.dataset.title = part.title;
-            chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(newChapterId + 1).padStart(2, '0')}</span><span class="chapter-title">${part.title}</span><button class="chapter-capture-btn" title="Capture this chapter as an image"><svg viewBox="0 0 24 24"><path d="M12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm7-12h-2.17l-1.24-1.35A2 2 0 0 0 14.12 1H9.88A2 2 0 0 0 8.41 1.65L7.17 3H5A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>Clip</button>`;
+            chapterBreak.innerHTML = `<span class="chapter-number">Chapter ${String(newChapterId + 1).padStart(2, '0')}</span><span class="chapter-title">${part.title}</span>`;
             chapterBreak.addEventListener('click', () => { showUI(); openDropdownFromChapterBreak(chapterBreak, newChapterId); });
             chapterBreak.addEventListener('dblclick', () => {
                 if (!composeActive) return;
                 beginEdit(parseInt(chapterBreak.dataset.sentenceIndex));
             });
-            chapterBreak.querySelector('.chapter-capture-btn').addEventListener('click', (e) => { e.stopPropagation(); captureChapter(newChapterId, chapterBreak); });
             fragment.appendChild(chapterBreak);
             state.allSentenceElements.push(chapterBreak);
             sentenceCount++;
@@ -4954,7 +4806,7 @@ document.addEventListener('DOMContentLoaded', () => {
             compose.active = true;
             composeActive = true;
             document.body.classList.add('compose-mode');
-            if (toggle) toggle.classList.add('active');
+            toggle.classList.add('active');
             const hudCompose = document.getElementById('hudComposeBtn');
             if (hudCompose) hudCompose.classList.add('active');
             populateChapterSelect();
@@ -4972,7 +4824,7 @@ document.addEventListener('DOMContentLoaded', () => {
             composeActive = false;
             compose.editingIndex = -1;
             document.body.classList.remove('compose-mode');
-            if (toggle) toggle.classList.remove('active');
+            toggle.classList.remove('active');
             const hudCompose = document.getElementById('hudComposeBtn');
             if (hudCompose) hudCompose.classList.remove('active');
             Utils.$$('.sentence.editing').forEach(s => s.classList.remove('editing'));
@@ -4985,7 +4837,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         window.toggleCompose = toggleCompose;
 
-        if (toggle) toggle.addEventListener('click', toggleCompose);
+        toggle.addEventListener('click', toggleCompose);
 
         // HUD compose button (mobile — reader mode)
         const hudCompose = document.getElementById('hudComposeBtn');
@@ -5586,8 +5438,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================
     (function initMusicPlayer() {
         const TRACKS = [
-            { name: 'Day Dreams',         sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/dreamdog' },
             { name: 'Walk with Wolfie', sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/walk-with-wolfie' },
+            { name: 'Dreamdog',         sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/dreamdog' },
             { name: 'Beautiful Day',    sub: 'U2 — guitar & midi drums', url: 'https://soundcloud.com/zackgort/beautifulday' },
             { name: 'Bad Touch',        sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/badtouch' },
         ];
@@ -5617,7 +5469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function setExpanded(val) {
             expanded = val;
             player.classList.toggle('expanded', expanded);
-            collapseBtn.textContent = expanded ? '▾' : '▴';
+            collapseBtn.textContent = expanded ? '▴' : '▾';
             collapseBtn.title = expanded ? 'Hide tracks' : 'Show tracks';
         }
 
@@ -5639,7 +5491,6 @@ document.addEventListener('DOMContentLoaded', () => {
         (function enableDrag() {
             let dragging = false, startX, startY, startLeft, startTop;
 
-            let hasDragMoved = false;
             function beginDrag(clientX, clientY) {
                 // Snap from CSS centering to absolute coords
                 if (!player.classList.contains('dragged')) {
@@ -5652,19 +5503,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     player.style.transform = 'none';
                 }
                 dragging = true;
-                hasDragMoved = false;
                 startX = clientX; startY = clientY;
                 startLeft = parseFloat(player.style.left) || 0;
                 startTop  = parseFloat(player.style.top)  || 0;
             }
             function moveDrag(clientX, clientY) {
                 if (!dragging) return;
-                const dx = clientX - startX;
-                const dy = clientY - startY;
-                if (!hasDragMoved && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-                hasDragMoved = true;
-                player.style.left = Math.max(0, Math.min(startLeft + dx, window.innerWidth  - player.offsetWidth))  + 'px';
-                player.style.top  = Math.max(0, Math.min(startTop  + dy, window.innerHeight - player.offsetHeight)) + 'px';
+                player.style.left = Math.max(0, Math.min(startLeft + clientX - startX, window.innerWidth  - player.offsetWidth))  + 'px';
+                player.style.top  = Math.max(0, Math.min(startTop  + clientY - startY, window.innerHeight - player.offsetHeight)) + 'px';
             }
 
             dragHandle.addEventListener('mousedown', (e) => {
@@ -5680,7 +5526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (e.target.closest('.music-btn, .music-player-collapse, .music-header-playpause')) return;
                 const t = e.touches[0];
                 beginDrag(t.clientX, t.clientY);
-            }, { passive: false });
+            }, { passive: true });
             document.addEventListener('touchmove', (e) => {
                 if (!dragging) return;
                 const t = e.touches[0];
