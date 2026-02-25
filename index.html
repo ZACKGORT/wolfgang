@@ -19,6 +19,8 @@
     <meta property="twitter:image" content="https://ifimaybefrank.com/og-image.jpg">
     
     <title>Wolfgang</title>
+    <link rel="icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAIAA8AQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAQNJREFUeJxjYKAQMMIYlzJ5/qNL6k3/wkhIjgWmQCFQh4GBgYGBjZmRgZ2dmeHnz78Mlxgu/2dgYGCAySGDSwxX/utN/8LIyMDAwPBynQncBlEuFgZGDQGG/zc+MLz+9gev88WDzjCyMDAwMHz/ilD44sdfBv6zbxg+/vzL8OsvhssxAMSALwgDvjMwMHxk+E1QI6oBX/E7lSQXkArg0binVJGwh5GAS/d9RhQDGBgYGDZnyhJliO/0x3B9jOiSq+Ik8RoStug5ih4MAxgYGBgWBoliNSR+3WsM9VgNYGBgYJjhLohiSMbO9zjV4gT91rz/+6158XqJBZ/k969/SbaUZAAABDJTRS3nencAAAAASUVORK5CYII=" sizes="any">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPGRlZnM+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9ImhnIiBjeD0iNDIlIiBjeT0iMzUlIiByPSI2NSUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZjBiODQwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTUlIiBzdG9wLWNvbG9yPSIjZDQ4ODBhIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzhiNGEwMCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9InNvZnQiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgaW49IlNvdXJjZUFscGhhIiBzdGREZXZpYXRpb249IjAuNSIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZUNvbXBvc2l0ZSBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJibHVyIiBvcGVyYXRvcj0ib3ZlciIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDwhLS0gSGVhcnQgcGF0aCBjZW50ZXJlZCBpbiAzMngzMiwgc2xpZ2h0bHkgb3JnYW5pYyBwcm9wb3J0aW9ucyAtLT4KICA8cGF0aCBmaWx0ZXI9InVybCgjc29mdCkiCiAgICBkPSJNMTYgMjcuMiBDMTYgMjcuMiA0IDE5LjIgNCAxMS42IEM0IDcuNCA3LjIgNCAxMS4yIDQgQzEzLjQgNCAxNS4yIDUuMiAxNiA2LjIgQzE2LjggNS4yIDE4LjYgNCAyMC44IDQgQzI0LjggNCAyOCA3LjQgMjggMTEuNiBDMjggMTkuMiAxNiAyNy4yIDE2IDI3LjJaIgogICAgZmlsbD0idXJsKCNoZykiCiAgLz4KPC9zdmc+" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1338,6 +1340,28 @@ body.focus-mode .hover-image { opacity: 0 !important; }
     * { animation: none !important; transition: none !important; }
 }
 
+    /* ── UI fade-in on pageload ── */
+    .header,
+    .scroll-progress,
+    .left-rail,
+    #statsWidget,
+    .mode-cluster,
+    #keyboardLegend {
+        transition: opacity 2.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.35s ease,
+                    background 0.35s ease,
+                    border-color 0.35s ease;
+    }
+    body.ui-concealed .header,
+    body.ui-concealed .scroll-progress,
+    body.ui-concealed .left-rail,
+    body.ui-concealed #statsWidget,
+    body.ui-concealed .mode-cluster,
+    body.ui-concealed #keyboardLegend {
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
     /* H key: hide all UI chrome, leaving only the reading surface */
     body.ui-hidden .header,
     body.ui-hidden .scroll-progress,
@@ -2610,75 +2634,38 @@ const toastBehaviors = (() => {
         if (dot) dot.classList.toggle('active', active);
     }
 
-    // ─── Ambient pool ───
+    // ─── Wolfgang factoids — surfaces slowly, no feature promotion ───
     const AMBIENT_POOL = [
-        {
-            id: 'amb-hide-ui',
-            icon: '◻',
-            message: () => 'Press <span class="toast-accent">H</span> to hide the interface.',
-            actionLabel: 'Hide UI',
-            actionFn: () => toggleUIVisibility()
-        },
-        {
-            id: 'amb-theme',
-            icon: '☀️',
-            message: () => 'Change themes with <span class="toast-accent">T</span> in the top right.',
-            actionLabel: 'Switch',
-            actionFn: () => toggleTheme()
-        },
-        {
-            id: 'amb-split',
-            icon: '◫',
-            message: () => 'Try <span class="toast-accent">Split View</span> — text on the left, imagery on the right.',
-            actionLabel: 'Split it',
-            actionFn: () => { if (state.layoutMode === 'layered') toggleLayout(); },
-            condition: () => state.layoutMode === 'layered'
-        },
-        {
-            id: 'amb-grid',
-            icon: '▦',
-            message: () => '<span class="toast-accent">Display</span> shows all chapter imagery in one view.',
-            actionLabel: 'Open',
-            actionFn: () => toggleImageGrid()
-        },
-        {
-            id: 'amb-zoom',
-            icon: '🔍',
-            message: () => isMobile()
-                ? 'Adjust text size with the <span class="toast-accent">zoom</span> control on the left edge.'
-                : 'The <span class="toast-accent">zoom</span> rail on the left adjusts reading size.'
-        },
-        {
-            id: 'amb-chapters',
-            icon: '📖',
-            message: () => isMobile()
-                ? 'Tap <span class="toast-accent">Wolfgang</span> to jump between chapters.'
-                : 'Click the logo to open the <span class="toast-accent">chapter menu</span> — or use ← →.',
-            actionLabel: 'Chapters',
-            actionFn: () => toggleChapterDropdown()
-        }
+        { id: 'amb-0',  message: () => 'Wawa water was Wolfgang\'s favorite.' },
+        { id: 'amb-1',  message: () => 'He never needed a leash. Not once.' },
+        { id: 'amb-2',  message: () => 'He did not eat the deer steak. A matter of principle.' },
+        { id: 'amb-3',  message: () => 'Pup cups at Sheetz changed the calculus of road trips.' },
+        { id: 'amb-4',  message: () => 'He sat through every recording session without being asked.' },
+        { id: 'amb-5',  message: () => 'Five hundred miles from West Virginia. He slept through most of it.' },
+        { id: 'amb-6',  message: () => 'He was happier in New York than anyone expected.' },
+        { id: 'amb-7',  message: () => 'He really, genuinely, deeply hated the rain.' },
+        { id: 'amb-8',  message: () => 'The mohawk was his era.' },
+        { id: 'amb-9',  message: () => 'Named after a musician. Became one himself, in his way.' },
+        { id: 'amb-10', message: () => 'Walkies by the river were his favorite.' },
+        { id: 'amb-11', message: () => 'He stayed. Without deciding to. That\'s the only way it counts.' },
     ];
 
     let ambientTimer = null;
 
+    let ambientIndex = 0;
     function scheduleNextAmbient() {
-        const remaining = AMBIENT_POOL.filter(t =>
-            !Toast.hasShown(t.id) && (!t.condition || t.condition())
-        );
-        if (remaining.length === 0) return;
-        const delay = 45000 + Math.random() * 45000;
+        // Unhurried — one factoid every 2–4 minutes, cycles continuously
+        const delay = 120000 + Math.random() * 120000;
         ambientTimer = setTimeout(() => {
-            const eligible = remaining.filter(t => !t.condition || t.condition());
-            if (eligible.length === 0) { scheduleNextAmbient(); return; }
-            const pick = eligible[Math.floor(Math.random() * eligible.length)];
+            if (ambientIndex >= AMBIENT_POOL.length) ambientIndex = 0;
+            const pick = AMBIENT_POOL[ambientIndex++];
             setRailDot(true);
             Toast.show({
-                id: pick.id,
-                icon: pick.icon,
+                id: pick.id + '-' + Date.now(),
+                icon: '🐾',
                 message: typeof pick.message === 'function' ? pick.message() : pick.message,
-                actionLabel: pick.actionLabel || null,
-                actionFn: pick.actionFn || null,
-                duration: 12000,
+                duration: 9000,
+                force: true,
                 onDismiss: () => setRailDot(false)
             });
             scheduleNextAmbient();
@@ -2875,59 +2862,38 @@ const toastBehaviors = (() => {
                 id: 'welcome-banner-0',
                 message: '<span class="toast-accent">Take time</span>. Move yourself & all will follow.'
             },
-            /* 
-            {
-                id: 'welcome-banner-0',
-                message: '<span class="toast-accent">Take time</span>. You are the constant. Move things about.'
-            },            
-            {
-                id: 'welcome-banner-0',
-                message: '<span class="toast-accent">Take time</span>. Move yourself & all will follow.'
-            },            
             {
                 id: 'welcome-banner-1',
-                message: 'Click any <span class="toast-accent">[+]</span> annotation to expand it. Each one is a footnote hiding in plain sight.'
-            },
-            {
-                id: 'welcome-banner-2',
-                message: 'Hover over <span class="toast-accent">underlined phrases</span> to surface an image. The text and the picture are the same thought.'
-            },
-            {
-                id: 'welcome-banner-3',
-                message: 'Press <span class="toast-accent">←  →</span> to jump between chapters. Or tap the logo to open the full chapter menu.'
-            },
-            {
-                id: 'welcome-banner-4',
-                message: 'Try <span class="toast-accent">Split View</span> — text on the left, imagery pinned right. Or go full focus with <span class="toast-accent">F</span>.'
-            },
-            {
-                id: 'welcome-banner-5',
-                message: 'The <span class="toast-accent">▦ Display</span> button shows every image in the piece at once. A different way to read the same story.'
-            } */
+                message: 'Press <span class="toast-accent">H</span> to hide the interface — just you and the words.'
+            }
         ];
 
+        // Chrome hidden on load — fades in after opening toast
+        document.body.classList.add('ui-concealed');
+
         setTimeout(() => {
-            // Pick the first unshown welcome hint; if all shown, cycle back to 0 with force
             const unshown = WELCOME_POOL.filter(w => !Toast.hasShown(w.id));
-            const pick = unshown.length > 0
-                ? unshown[0]
-                : WELCOME_POOL[0];
+            const pick = unshown.length > 0 ? unshown[0] : WELCOME_POOL[0];
             Toast.show({
                 id: pick.id,
                 icon: '✦',
                 message: pick.message,
                 duration: 12000,
                 banner: true,
-                force: unshown.length === 0, // force only when fully cycled
+                force: unshown.length === 0,
                 onDismiss: () => {}
             });
+            // UI fades in while toast still present (~9s in, arrives ~11.5s, toast clears at 12s)
+            setTimeout(() => {
+                document.body.classList.remove('ui-concealed');
+            }, 9000);
         }, 1800);
 
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
 
         // Ambient pool after 30s
-        setTimeout(scheduleNextAmbient, 30000);
+        setTimeout(scheduleNextAmbient, 180000); // first factoid ~3min in
     }
 
     return { onWheel, onSingleWheel, onKeyOrButton, onSentenceAdvance, onChapterAdvance, onBracketOpened, onConclusionChapter, onLastSentence, init, getAmbientPool: () => AMBIENT_POOL, clearAmbientTimer: () => clearTimeout(ambientTimer), setRailDot };
@@ -3993,6 +3959,7 @@ function showUI() {
 }
 
 function toggleUIVisibility() {
+    document.body.classList.remove('ui-concealed');
     document.body.classList.toggle('ui-hidden');
 }
 
@@ -4370,6 +4337,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Utils.$('#brandLogo').contains(e.target) && !Utils.$('#chapterDropdown').contains(e.target) && !e.target.closest('.chapter-break')) closeChapterDropdown();
     });
     
+    // Clear pageload concealment on any early user interaction
+    function clearConcealed() { document.body.classList.remove('ui-concealed'); }
+    ['keydown','wheel','touchstart','click'].forEach(ev =>
+        document.addEventListener(ev, clearConcealed, { once: true, passive: true })
+    );
+
     window.addEventListener('wheel', handleScroll, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: false });
