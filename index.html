@@ -1987,7 +1987,9 @@ body.compose-mode { padding-bottom: 0; }
         will-change: transform;
         isolation: isolate;
         overflow: hidden;
-        /* height matches stats widget via padding — don't set explicit height */
+        /* Expand upward: body renders above drag handle */
+        display: flex;
+        flex-direction: column-reverse;
     }
     /* Once dragged, JS removes centering and switches to absolute left/top */
     .music-player.dragged {
@@ -2004,12 +2006,12 @@ body.compose-mode { padding-bottom: 0; }
         cursor: grab;
         user-select: none;
         min-height: 38px; /* matches stats widget ~height */
-        border-bottom: 1px solid transparent;
+        border-top: 1px solid transparent;
         transition: border-color 0.2s ease;
         -webkit-tap-highlight-color: transparent;
     }
     .music-player-drag:active { cursor: grabbing; }
-    .music-player.expanded .music-player-drag { border-bottom-color: var(--border); }
+    .music-player.expanded .music-player-drag { border-top-color: var(--border); }
 
     .music-drag-dots {
         font-family: sans-serif;
@@ -2534,7 +2536,7 @@ body.compose-mode { padding-bottom: 0; }
                 <svg id="musicHeaderIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </button>
             <!-- Expand/collapse toggle -->
-            <button class="music-player-collapse" id="musicPlayerCollapse" title="Show tracks" aria-label="Show or hide track list">▾</button>
+            <button class="music-player-collapse" id="musicPlayerCollapse" title="Show tracks" aria-label="Show or hide track list">▴</button>
         </div>
         <div class="music-player-body">
             <div class="music-track-list">
@@ -2651,7 +2653,6 @@ const imageMap = {
     'wagging tail': 'https://i.ibb.co/CknqHpK/happierinnewyork.webp',
     'of hope': 'https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp',
     'adventure': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Worldviewwalkieswithwolfgang.mp4',
-    'bad haircuts': 'https://i.ibb.co/cc6TDDwc/warminguptothewonderofwolfgang.webp',
     'untold lows': 'https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp',
     'unique': 'https://i.ibb.co/LXBkfzbw/wolfgangsfinestwork.webp',
     'situations': 'https://i.ibb.co/0Rt0KW93/wolfgangsfinestworkmoment.webp',
@@ -2702,11 +2703,8 @@ const imageMap = {
     'escape from reality': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/sleepspiral.mp4',
     'Look to the sky': 'https://i.ibb.co/BKymJdYK/itshisworld.webp',
 
-
-
     'sleepies': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
 };
-
 
 const phraseRegexMap = new Map();
 function buildPhraseRegex(phrase) {
@@ -2722,13 +2720,12 @@ Object.keys(imageMap).forEach(phrase => {
 const narrative = `
 ###:The Sweetest.
 
-This is my Wolfgang.[a very good boy] 
-My sweet, "Sweet Wolfgang".[epithet & appellation, Sweet Wolfgang] 
-
+This is my Wolfgang.[He's a very good boy] 
+My sweet, "Sweet Wolfgang". [Full name: Sweet Wolfgang. Sex? Nope, his balls were cut off. Eyes? Beautiful.] 
 A name not chosen, nor given — but a name becoming.
 [I just watched him for a few days, walking him without knowing what to call him. We went with the usual human names, goofy names, and commonplace names. None stuck. But, my favorite new artist was Mammoth, a band made by a single multi-hyphenate musician named Wolfgang.]
 
-As "Sweet" as can be.["sweetie", "sweetheart","sweet baby","my sweet boy"] 
+As "Sweet" as his name.["sweetie", "sweetheart","sweet baby","my sweet boy"] 
 A "Wolf" by calling.[born to be]
 Wolfie for short.[standing stoutly at yay-high] 
 Woofie-boo (Where is Wolfgang?).[I found my joy] 
@@ -2736,18 +2733,17 @@ This is his story. [written with love]
 
 ###: The Chronicles of Wolfgang.
 Every hero has a good origin story. 
-A tale told with a wagging tail. 
+A tale told with a wagging tail. [super scaries]
 One that tells of bravery. 
-Of fortitude. 
+Of fortitude. [500 miles from anywhere you know, but a nose-nudge next to your number one.]
 Of rebellion. 
 A story of hope [] 
-A story with adventure.
-A story with dad's haircuts.
+& adventure.
 Through, untold lows.
 Making the best of 'unique' situations. [an artist, and realist]
 
 
-###: A King In Queens
+###: Lost & Found
 When you are lost in Queens with nowhere to go. 
 But you happen across paths of a similar soul.
 Neglected, abandoned, left without care. 
@@ -2791,6 +2787,8 @@ And of course, for someone's hand. [classic Wolfgang jimmy-leg]
 You sly bastard — you did good. [two strays, not one]
 Real good. [parks, places, purpose]
 REALLY GOOD. [peace]
+
+###: The King From Queens.
 Is this the real life?
 Is this just fantasy?
 Caught in a landslide.
@@ -2800,14 +2798,13 @@ Let's escape from reality. [It's your world, Wolfgang — we're all just living 
 Look to the sky 
 & See.
 
-##: You're Just a Poor Boy. 
-You need no sympathy.
+###: You're Just a Good Boy. 
+[More than that, but you know that] You need no sympathy. You only know love. I wanted so badly to bring you back to NYC. It was the perfect place for us. Two old strays, both young at heart. Cosmically damned, but cozy in our own microcosm.
 
 
 ###:Good Day, Now Good Night.
 "We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
 [Good boy]
-
 
 
 `;
@@ -5574,8 +5571,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================
     (function initMusicPlayer() {
         const TRACKS = [
+            { name: 'Day Dreams',         sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/dreamdog' },
             { name: 'Walk with Wolfie', sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/walk-with-wolfie' },
-            { name: 'Dog Day Dreamed',         sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/dreamdog' },
             { name: 'Beautiful Day',    sub: 'U2 — guitar & midi drums', url: 'https://soundcloud.com/zackgort/beautifulday' },
             { name: 'Bad Touch',        sub: 'original — guitar',        url: 'https://soundcloud.com/zackgort/badtouch' },
         ];
@@ -5605,7 +5602,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function setExpanded(val) {
             expanded = val;
             player.classList.toggle('expanded', expanded);
-            collapseBtn.textContent = expanded ? '▴' : '▾';
+            collapseBtn.textContent = expanded ? '▾' : '▴';
             collapseBtn.title = expanded ? 'Hide tracks' : 'Show tracks';
         }
 
