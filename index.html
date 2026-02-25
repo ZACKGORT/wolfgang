@@ -2331,29 +2331,26 @@ const imageMap = {
 
     'belong': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/stinkyboy.mp4',
     'know without notice': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/welcomehomebuddy.mp4',
-    'but your home': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Latenightstroll.mp4',
+    'found home': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Latenightstroll.mp4',
     'walk with agency': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Cityboi.mp4',
+    'amongst': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/longislandwalks.mp4',    
     'New lease — no leash': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Leashlesslove.mp4',
+    'walk forever': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/anesthesia.mp4',
     'a new direction': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/wolfgangfearlessbridgecrosser.mp4',
     'true New Yorker': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Earlydayswalkpostsurgeryneverneededaleash.mp4',
-    'lazy walks': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/lazywalkieswithwolfgang.mp4',
+    'happy walks': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/happywalks.mp4',
+    'loathe a lazy walk': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/lazywalkieswithwolfgang.mp4',
     'windy walks': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/windyboy.mp4',
     'carried you home': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/anesthesia.mp4',
-    'worldly walks': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/anesthesia.mp4',
-    'some of the greatest (walks) of all time': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/anesthesia.mp4',
 
     'But, calories are real': 'https://i.ibb.co/qfBwLrD/comfort1.webp',
     'Dad just made dinner': 'https://i.ibb.co/kV6CzpWS/comfort2.webp',
     'May as well be heaven': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/sleepspiral.mp4',
 
-    'ferry': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Newlife.mp4',
-    'amongst': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/longislandwalks.mp4',
+    'never baggage': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Newlife.mp4',
+    'perfect package': 'https://i.ibb.co/XfJYXCw4/dailydrip.webp'
 
-
-    
-
-
-    'test': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/sleepspiral.mp4',
+    'test': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/happywalks.mp4',
 
 
     'sleepies': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Sleepingbeauty.mp4',        
@@ -2371,7 +2368,7 @@ Object.keys(imageMap).forEach(phrase => {
 });
 
 const narrative = `
-
+test
 ###:The Sweetest.
 
 This is my Wolfgang.[a very good boy] 
@@ -2399,28 +2396,28 @@ And, poo-poo times too.
 When you are lost in Queens with nowhere to go. 
 But you happen across paths of a similar soul.
 Neglected, abandoned, left without care.
-New Dad, new day; now gone is despair.
+New day — New Dad — now gone is despair.
 
 
 ###:Welcome Home, Wolfgang
 That feeling of belong. 
 When you know without notice.[Wolfie, then unnamed, making claim to his new domain — also, freshly bathed because he needed that badly. Old Spice.]
-When you find not your place, but your home.
-You walk with agency.
-You walk amongst.
+When you're out of place, but you found home.
+You now walk with agency.
+You now walk amongst.
 New lease — no leash. [New life.]
 A fresh day and a new direction. [he led, I followed]
 You walk like a true New Yorker. [mildy miffed; furiously focused]
-There were lazy walks.
-Wonderfully windy walks.
+You loathe a lazy walk.
+With wonderfully windy walks.
 & walks where Dad carried you home.
-
+#:#:
 But, calories are real. [Dad carried me home]
 & Dad just made dinner.
 May as well be heaven.
 
 ###:Food Isn't Free, But Scratches Are!
-You take the ferry too.
+You were never baggage. Just the perfect package.
 
 
 ###: Where in the world, is Wolfgang.
@@ -2843,8 +2840,8 @@ const toastBehaviors = (() => {
             // Toast lasts 12s, so they overlap briefly then toast clears into clean UI
             setTimeout(() => {
                 document.body.classList.remove('ui-concealed');
-            }, 1000);
-        }, 1000);
+            }, 9000);
+        }, 1800);
 
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
