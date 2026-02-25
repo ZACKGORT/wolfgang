@@ -2843,8 +2843,8 @@ const toastBehaviors = (() => {
             // Toast lasts 12s, so they overlap briefly then toast clears into clean UI
             setTimeout(() => {
                 document.body.classList.remove('ui-concealed');
-            }, 9000);
-        }, 1800);
+            }, 1000);
+        }, 1000);
 
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
