@@ -4560,7 +4560,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modeCluster) {
         makeDraggable(modeCluster, { useRight: true, useBottom: false });
 
-        Utils.$('#modeKeyCompose').addEventListener('click', (e) => { e.stopPropagation(); toggleCompose(); });
+        Utils.$('#modeKeyCompose').addEventListener('click', (e) => { e.stopPropagation(); if (window.toggleCompose) window.toggleCompose(); });
         Utils.$('#modeKeyG').addEventListener('click', (e) => { e.stopPropagation(); toggleImageGrid(); });
         Utils.$('#modeKeyF').addEventListener('click', (e) => { e.stopPropagation(); toggleFocusMode(); });
         Utils.$('#modeKeyH').addEventListener('click', (e) => { e.stopPropagation(); toggleUIVisibility(); });
@@ -4775,6 +4775,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function toggleCompose() {
             if (compose.active) exitCompose(); else enterCompose();
         }
+        window.toggleCompose = toggleCompose; // expose for mode cluster button
 
         toggle.addEventListener('click', toggleCompose);
 
