@@ -1957,6 +1957,226 @@ body.compose-mode { padding-bottom: 0; }
     opacity: 1;
     color: var(--accent);
 }
+
+/* ===================================
+   MUSIC PLAYER WIDGET
+   =================================== */
+.music-player {
+    position: fixed;
+    bottom: 20px;
+    right: 80px;
+    z-index: var(--z-ui);
+    width: 280px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    transition: opacity 0.3s ease, transform 0.3s ease,
+                background 0.35s ease, border-color 0.35s ease;
+    overflow: hidden;
+    user-select: none;
+    pointer-events: auto;
+    touch-action: none;
+    transform: translateZ(0);
+    will-change: transform;
+    isolation: isolate;
+}
+.music-player.collapsed {
+    width: auto;
+}
+.music-player-drag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px 8px;
+    cursor: grab;
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+}
+.music-player-drag:active { cursor: grabbing; }
+.music-drag-dots {
+    font-family: sans-serif;
+    color: var(--ink-3);
+    font-size: 12px;
+    letter-spacing: -3px;
+    opacity: 0.4;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.music-player-title {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    flex: 1;
+    opacity: 0.6;
+}
+.music-player-collapse {
+    background: none;
+    border: none;
+    color: var(--ink-3);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    transition: color 0.15s ease;
+    flex-shrink: 0;
+}
+.music-player-collapse:hover { color: var(--accent); }
+
+.music-player-body {
+    padding: 10px 12px 12px;
+}
+.music-player.collapsed .music-player-body { display: none; }
+
+/* Track list */
+.music-track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 10px;
+}
+.music-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border: 1px solid transparent;
+}
+.music-track:hover { background: var(--hover-tint); }
+.music-track.active {
+    background: var(--hover-tint-strong);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.music-track-num {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    color: var(--ink-3);
+    width: 12px;
+    text-align: center;
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+.music-track.active .music-track-num { color: var(--accent); opacity: 1; }
+.music-track-info { flex: 1; min-width: 0; }
+.music-track-name {
+    font-family: var(--ui-font);
+    font-size: 9px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.music-track.active .music-track-name { color: var(--accent); }
+.music-track-sub {
+    font-family: var(--ui-font);
+    font-size: 7px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+    line-height: 1.3;
+}
+
+/* Soundcloud embed area — hidden iframe approach */
+.music-sc-frame {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    border: none;
+    display: none;
+}
+.music-sc-frame.active { display: block; height: 1px; }
+
+/* Transport controls */
+.music-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.music-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--ink-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.music-btn:hover { background: var(--hover-tint); border-color: var(--accent); color: var(--accent); }
+.music-btn:active { transform: scale(0.88); }
+.music-btn svg { width: 12px; height: 12px; fill: currentColor; }
+.music-btn.play-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-color);
+}
+.music-btn.play-btn:hover { filter: brightness(1.15); }
+.music-now-playing {
+    flex: 1;
+    min-width: 0;
+}
+.music-now-name {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.music-now-status {
+    font-family: var(--ui-font);
+    font-size: 7px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+}
+
+/* Pulse animation when playing */
+@keyframes musicPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+.music-now-status.playing { color: var(--accent); opacity: 1; animation: musicPulse 2s ease-in-out infinite; }
+
+/* SC iframe container — off-screen */
+#musicIframeContainer {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ui-hidden hides music player too */
+body.ui-hidden .music-player { opacity: 0; pointer-events: none; }
+body.ui-concealed .music-player { opacity: 0 !important; pointer-events: none !important; }
+
+@media (max-width: 768px) {
+    .music-player {
+        bottom: calc(80px + env(safe-area-inset-bottom));
+        right: 12px;
+        width: 240px;
+    }
+}
     </style>
 </head>
 <body class="theme-newspaper">
@@ -2241,6 +2461,59 @@ body.compose-mode { padding-bottom: 0; }
             </div>
         </div>
     </main>
+
+    <!-- Off-screen SC iframe container -->
+    <div id="musicIframeContainer"></div>
+
+    <!-- Music Player Widget -->
+    <div class="music-player" id="musicPlayer" title="Drag to move">
+        <div class="music-player-drag" id="musicPlayerDrag">
+            <span class="music-drag-dots">⋮⋮</span>
+            <span class="music-player-title">♪ Zack plays guitar</span>
+            <button class="music-player-collapse" id="musicPlayerCollapse" title="Collapse">−</button>
+        </div>
+        <div class="music-player-body" id="musicPlayerBody">
+            <div class="music-track-list">
+                <div class="music-track" data-track="0">
+                    <span class="music-track-num">1</span>
+                    <div class="music-track-info">
+                        <div class="music-track-name">Beautiful Day</div>
+                        <div class="music-track-sub">U2 — guitar &amp; midi drums</div>
+                    </div>
+                </div>
+                <div class="music-track" data-track="1">
+                    <span class="music-track-num">2</span>
+                    <div class="music-track-info">
+                        <div class="music-track-name">Bad Touch</div>
+                        <div class="music-track-sub">original — guitar</div>
+                    </div>
+                </div>
+                <div class="music-track" data-track="2">
+                    <span class="music-track-num">3</span>
+                    <div class="music-track-info">
+                        <div class="music-track-name">Walk Don't Run</div>
+                        <div class="music-track-sub">Ventures — refinery</div>
+                    </div>
+                </div>
+            </div>
+            <div class="music-controls">
+                <button class="music-btn" id="musicPrevBtn" title="Previous" aria-label="Previous track">
+                    <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+                </button>
+                <button class="music-btn play-btn" id="musicPlayBtn" title="Play / Pause" aria-label="Play or pause">
+                    <svg id="musicPlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <button class="music-btn" id="musicNextBtn" title="Next" aria-label="Next track">
+                    <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 4V8z"/></svg>
+                </button>
+                <div class="music-now-playing">
+                    <div class="music-now-name" id="musicNowName">Select a track</div>
+                    <div class="music-now-status" id="musicNowStatus">stopped</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
 // ===================================
 // BATHOS - Complete JavaScript
@@ -2634,7 +2907,7 @@ const toastBehaviors = (() => {
         if (dot) dot.classList.toggle('active', active);
     }
 
-    // ─── Wolfgang factoids — surfaces slowly, no feature promotion ───
+    // ─── Wolfgang factoids ───
     const AMBIENT_POOL = [
         { id: 'amb-0',  message: () => 'Wawa water was Wolfgang\'s favorite.' },
         { id: 'amb-1',  message: () => 'He never needed a leash. Not once.' },
@@ -2654,7 +2927,6 @@ const toastBehaviors = (() => {
 
     let ambientIndex = 0;
     function scheduleNextAmbient() {
-        // Unhurried — one factoid every 2–4 minutes, cycles continuously
         const delay = 120000 + Math.random() * 120000;
         ambientTimer = setTimeout(() => {
             if (ambientIndex >= AMBIENT_POOL.length) ambientIndex = 0;
@@ -2868,7 +3140,6 @@ const toastBehaviors = (() => {
             }
         ];
 
-        // Chrome hidden on load — fades in after opening toast
         document.body.classList.add('ui-concealed');
 
         setTimeout(() => {
@@ -2883,17 +3154,14 @@ const toastBehaviors = (() => {
                 force: unshown.length === 0,
                 onDismiss: () => {}
             });
-            // UI fades in while toast still present (~9s in, arrives ~11.5s, toast clears at 12s)
-            setTimeout(() => {
-                document.body.classList.remove('ui-concealed');
-            }, 9000);
+            setTimeout(() => { document.body.classList.remove('ui-concealed'); }, 9000);
         }, 1800);
 
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
 
         // Ambient pool after 30s
-        setTimeout(scheduleNextAmbient, 180000); // first factoid ~3min in
+        setTimeout(scheduleNextAmbient, 180000);
     }
 
     return { onWheel, onSingleWheel, onKeyOrButton, onSentenceAdvance, onChapterAdvance, onBracketOpened, onConclusionChapter, onLastSentence, init, getAmbientPool: () => AMBIENT_POOL, clearAmbientTimer: () => clearTimeout(ambientTimer), setRailDot };
@@ -4337,7 +4605,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!Utils.$('#brandLogo').contains(e.target) && !Utils.$('#chapterDropdown').contains(e.target) && !e.target.closest('.chapter-break')) closeChapterDropdown();
     });
     
-    // Clear pageload concealment on any early user interaction
     function clearConcealed() { document.body.classList.remove('ui-concealed'); }
     ['keydown','wheel','touchstart','click'].forEach(ev =>
         document.addEventListener(ev, clearConcealed, { once: true, passive: true })
@@ -5120,6 +5387,194 @@ document.addEventListener('DOMContentLoaded', () => {
             composeBar.style.transition = 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease';
         });
     })();
+
+    // ===================================
+    // MUSIC PLAYER
+    // ===================================
+    (function initMusicPlayer() {
+        const TRACKS = [
+            {
+                name: 'Beautiful Day',
+                sub: 'U2 — guitar & midi drums',
+                scUrl: 'https://soundcloud.com/zackgort/beautifulday',
+                scId: '2030067533'
+            },
+            {
+                name: 'Bad Touch',
+                sub: 'original — guitar',
+                scUrl: 'https://soundcloud.com/zackgort/badtouch',
+                scId: '1234567890'  // placeholder — SC widget uses URL
+            },
+            {
+                name: "Walk Don't Run",
+                sub: 'Ventures — refinery',
+                scUrl: 'https://soundcloud.com/zackgort/walk-dont-run-refinery',
+                scId: '0987654321'  // placeholder — SC widget uses URL
+            }
+        ];
+
+        let currentTrack = -1;
+        let isPlaying = false;
+        let widget = null;
+        let iframe = null;
+        let widgetReady = false;
+
+        const player     = document.getElementById('musicPlayer');
+        const collapseBtn= document.getElementById('musicPlayerCollapse');
+        const playBtn    = document.getElementById('musicPlayBtn');
+        const playIcon   = document.getElementById('musicPlayIcon');
+        const prevBtn    = document.getElementById('musicPrevBtn');
+        const nextBtn    = document.getElementById('musicNextBtn');
+        const nowName    = document.getElementById('musicNowName');
+        const nowStatus  = document.getElementById('musicNowStatus');
+        const container  = document.getElementById('musicIframeContainer');
+        const trackEls   = document.querySelectorAll('.music-track');
+
+        // Draggable
+        makeDraggable(player, { useRight: true, useBottom: true });
+
+        // Collapse toggle
+        let collapsed = false;
+        collapseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            collapsed = !collapsed;
+            player.classList.toggle('collapsed', collapsed);
+            collapseBtn.textContent = collapsed ? '+' : '−';
+        });
+
+        function setPlayIcon(playing) {
+            playIcon.innerHTML = playing
+                ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'  // pause
+                : '<path d="M8 5v14l11-7z"/>';                       // play
+        }
+
+        function setStatus(text, playing) {
+            nowStatus.textContent = text;
+            nowStatus.classList.toggle('playing', !!playing);
+        }
+
+        function loadTrack(index, autoplay) {
+            currentTrack = index;
+
+            // Update track list UI
+            trackEls.forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+                el.querySelector('.music-track-num').textContent = i === index && autoplay ? '▶' : i + 1;
+            });
+
+            nowName.textContent = TRACKS[index].name;
+            setStatus('loading…', false);
+
+            // Destroy old iframe
+            if (iframe) { iframe.remove(); iframe = null; widget = null; widgetReady = false; }
+
+            // Build SC widget iframe
+            const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(TRACKS[index].scUrl)}&color=%23daa520&auto_play=${autoplay ? 'true' : 'false'}&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false`;
+            iframe = document.createElement('iframe');
+            iframe.src = src;
+            iframe.width = '100%';
+            iframe.height = '166';
+            iframe.scrolling = 'no';
+            iframe.frameBorder = 'no';
+            iframe.allow = 'autoplay';
+            container.appendChild(iframe);
+
+            // Wire SC Widget API
+            if (window.SC && window.SC.Widget) {
+                wireWidget(autoplay);
+            } else {
+                // Load SC Widget API script once
+                if (!document.getElementById('sc-widget-api')) {
+                    const script = document.createElement('script');
+                    script.id = 'sc-widget-api';
+                    script.src = 'https://w.soundcloud.com/player/api.js';
+                    script.onload = () => wireWidget(autoplay);
+                    document.head.appendChild(script);
+                } else {
+                    // Script already loading — wait
+                    const poll = setInterval(() => {
+                        if (window.SC && window.SC.Widget) { clearInterval(poll); wireWidget(autoplay); }
+                    }, 100);
+                }
+            }
+        }
+
+        function wireWidget(autoplay) {
+            if (!iframe || !window.SC) return;
+            widget = window.SC.Widget(iframe);
+            widget.bind(window.SC.Widget.Events.READY, () => {
+                widgetReady = true;
+                if (autoplay) {
+                    widget.play();
+                    isPlaying = true;
+                    setPlayIcon(true);
+                    setStatus('playing', true);
+                } else {
+                    setStatus('ready', false);
+                }
+                // Update track num icon
+                trackEls[currentTrack].querySelector('.music-track-num').textContent = autoplay ? '▶' : currentTrack + 1;
+            });
+            widget.bind(window.SC.Widget.Events.PLAY, () => {
+                isPlaying = true;
+                setPlayIcon(true);
+                setStatus('playing', true);
+                if (currentTrack >= 0)
+                    trackEls[currentTrack].querySelector('.music-track-num').textContent = '▶';
+            });
+            widget.bind(window.SC.Widget.Events.PAUSE, () => {
+                isPlaying = false;
+                setPlayIcon(false);
+                setStatus('paused', false);
+                if (currentTrack >= 0)
+                    trackEls[currentTrack].querySelector('.music-track-num').textContent = currentTrack + 1;
+            });
+            widget.bind(window.SC.Widget.Events.FINISH, () => {
+                isPlaying = false;
+                setPlayIcon(false);
+                // Auto-advance to next track
+                const next = (currentTrack + 1) % TRACKS.length;
+                trackEls[currentTrack].querySelector('.music-track-num').textContent = currentTrack + 1;
+                loadTrack(next, true);
+            });
+            widget.bind(window.SC.Widget.Events.ERROR, () => {
+                setStatus('error', false);
+            });
+        }
+
+        function playPause() {
+            if (currentTrack === -1) {
+                loadTrack(0, true);
+                return;
+            }
+            if (!widget || !widgetReady) return;
+            if (isPlaying) { widget.pause(); } else { widget.play(); }
+        }
+
+        playBtn.addEventListener('click', (e) => { e.stopPropagation(); playPause(); });
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const prev = currentTrack <= 0 ? TRACKS.length - 1 : currentTrack - 1;
+            loadTrack(prev, isPlaying);
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const next = currentTrack === -1 ? 0 : (currentTrack + 1) % TRACKS.length;
+            loadTrack(next, isPlaying);
+        });
+
+        trackEls.forEach((el, i) => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentTrack === i) { playPause(); }
+                else { loadTrack(i, true); }
+            });
+        });
+
+    })();
+
 
 });
     </script>
