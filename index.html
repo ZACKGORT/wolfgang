@@ -1951,8 +1951,9 @@ body.compose-mode { padding-bottom: 0; }
        =================================== */
     .music-player {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        top: 72px;
+        right: clamp(16px, 3.5vw, 44px);
+        bottom: auto;
         z-index: var(--z-ui);
         width: 264px;
         background: var(--surface-raised);
@@ -2174,7 +2175,7 @@ body.compose-mode { padding-bottom: 0; }
     body.ui-concealed .music-player { opacity: 0 !important; pointer-events: none !important; }
 
     @media (max-width: 768px) {
-        .music-player { bottom: calc(90px + env(safe-area-inset-bottom)); right: 10px; width: 230px; }
+        .music-player { top: 64px; bottom: auto; right: 10px; width: 230px; }
     }
 
     </style>
@@ -5419,6 +5420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 player.style.bottom = 'auto';
                 player.style.left   = box.left + 'px';
                 player.style.top    = box.top  + 'px';
+                player.style.bottom = 'auto';
             }
 
             function onMove(ex, ey) {
