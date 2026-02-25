@@ -1142,51 +1142,55 @@ body.focus-mode .hover-image { opacity: 0 !important; }
 /* ===================================
    TOAST NOTIFICATIONS
    =================================== */
+/* Toast Lanes */
 .toast-container {
     position: fixed;
-    top: 64px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: calc(var(--z-ui) + 50);
+    width: 90%;
+    max-width: 400px;
+    z-index: var(--z-ui);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    gap: 10px;
     pointer-events: none;
 }
-.toast {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface-raised);
+
+#toastContainerTop {
+    top: 20px;
+    flex-direction: column; /* Newest at bottom of top stack */
+}
+
+#toastContainerBottom {
+    bottom: 100px; /* Above the mobile HUD/Music player */
+    flex-direction: column-reverse; /* Newest at top of bottom stack */
+}
+
+/* Toast Variants */
+.toast.toast-top {
+    font-size: 13px;
+    opacity: 0.9;
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 8px 13px;
-    font-family: var(--ui-font);
-    font-size: 10px;
-    color: var(--ink-2);
-    letter-spacing: 0.04em;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    pointer-events: auto;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(-8px) scale(0.97);
-    transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
-    max-width: min(85vw, 340px);
-    white-space: normal;
-    text-align: center;
-    line-height: 1.5;
+    animation: slideInFromTop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.toast.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+.toast.toast-bottom {
+    font-size: 16px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    animation: slideInFromBottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.toast.dismissing {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.97);
+
+@keyframes slideInFromTop {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInFromBottom {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Banner variant */
@@ -2718,10 +2722,7 @@ const narrative = `
 
 
 
-**The Elephant** At The Watering Hole — *by* **Sweet Wolfgang** • *NYC, circa 2023 • Philospher & Artist [pee-pee painter] & Friend   
-
-[A commentary on the state of perception for those willing to spend time with it, while their dog, who has clearly just finished claiming this sturdy concrete tower and is now walking into — hold up, wait, brb.]  
-
+**The Elephant** At The Watering Hole — *by* **Sweet****r Wolfgang** • *NYC, circa 2023 • Philospher & Artist [pee-pee painter] 
 
 ###:The Sweetest.
 
@@ -2828,7 +2829,9 @@ You couldn't help yourself.
 "We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
 [Good boy]
 #:#:
-Forever ferocious. Forever a place for you on my lap.
+Forever ferocious. Forever a place for you on my lap. Forever a place for me to let you. This site was always intended to tell your story. I hoped to write it with you. But, I've set it up, so no matter where I am, online, or offline, I can write to you. What happens then won't stay for ever — but we know how that goes. It never fades. It existed at a time. Time took from us. 
+#:#:
+Your sight was faded when we first met. Looking at you, we never knew. But this year it left you. But you kept your senses. You didn't walk in front any more. You didn't follow faithfully behind. You kept up. You stayed by my side. [granted, it now takes twenty minutes to traverse two blocks. More time to talk to you, no complaints.]  ]
 
 `;
 
@@ -4182,17 +4185,47 @@ function render() {
             content.id = contentId;
             content.textContent = ' ' + part.content + ' ';
             trigger.addEventListener('click', () => {
-                const isExpanded = content.classList.toggle('visible');
-                trigger.textContent = isExpanded ? '[−]' : '[+]';
-                trigger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-                trigger.setAttribute('aria-label', isExpanded ? 'Collapse annotation' : 'Expand annotation');
-                trigger.classList.toggle('expanded');
-                if (isExpanded) { state.expandedBrackets.add(part.id); trackBracketOpen(); }
-                else state.expandedBrackets.delete(part.id);
-                // Keep [ ] button in sync
-                const allExpanded = [...document.querySelectorAll('.bracket-trigger')].every(t => t.classList.contains('expanded'));
-                document.getElementById('modeKeyBrackets')?.classList.toggle('mode-active', allExpanded);
-            });
+    const contentId = `bracket-content-${part.id}`;
+    const content = document.getElementById(contentId);
+    const isCurrentlyExpanded = content.classList.contains('visible');
+
+    // If we are about to open this one, close all others first
+    if (!isCurrentlyExpanded) {
+        document.querySelectorAll('.bracket-trigger.expanded').forEach(otherTrigger => {
+            const otherContentId = otherTrigger.getAttribute('aria-controls');
+            const otherContent = document.getElementById(otherContentId);
+            
+            // Close the other one
+            otherContent.classList.remove('visible');
+            otherTrigger.textContent = '[+]';
+            otherTrigger.setAttribute('aria-expanded', 'false');
+            otherTrigger.setAttribute('aria-label', 'Expand annotation');
+            otherTrigger.classList.remove('expanded');
+            
+            // Clean up state
+            const otherId = parseInt(otherContentId.replace('bracket-content-', ''));
+            state.expandedBrackets.delete(otherId);
+        });
+    }
+
+    // Now toggle the current one
+    const isNowExpanded = content.classList.toggle('visible');
+    trigger.textContent = isNowExpanded ? '[−]' : '[+]';
+    trigger.setAttribute('aria-expanded', isNowExpanded ? 'true' : 'false');
+    trigger.setAttribute('aria-label', isNowExpanded ? 'Collapse annotation' : 'Expand annotation');
+    trigger.classList.toggle('expanded');
+
+    if (isNowExpanded) {
+        state.expandedBrackets.add(part.id);
+        trackBracketOpen();
+    } else {
+        state.expandedBrackets.delete(part.id);
+    }
+
+    // Sync the global [ ] status button
+    const anyExpanded = document.querySelectorAll('.bracket-trigger.expanded').length > 0;
+    document.getElementById('modeKeyBrackets')?.classList.toggle('mode-active', anyExpanded);
+});
             fragment.appendChild(trigger);
             fragment.appendChild(content);
         }
