@@ -4815,7 +4815,7 @@ document.addEventListener('DOMContentLoaded', () => {
             compose.active = true;
             composeActive = true;
             document.body.classList.add('compose-mode');
-            toggle.classList.add('active');
+            if (toggle) toggle.classList.add('active');
             const hudCompose = document.getElementById('hudComposeBtn');
             if (hudCompose) hudCompose.classList.add('active');
             populateChapterSelect();
@@ -4833,7 +4833,7 @@ document.addEventListener('DOMContentLoaded', () => {
             composeActive = false;
             compose.editingIndex = -1;
             document.body.classList.remove('compose-mode');
-            toggle.classList.remove('active');
+            if (toggle) toggle.classList.remove('active');
             const hudCompose = document.getElementById('hudComposeBtn');
             if (hudCompose) hudCompose.classList.remove('active');
             Utils.$$('.sentence.editing').forEach(s => s.classList.remove('editing'));
@@ -4846,7 +4846,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         window.toggleCompose = toggleCompose;
 
-        toggle.addEventListener('click', toggleCompose);
+        if (toggle) toggle.addEventListener('click', toggleCompose);
 
         // HUD compose button (mobile — reader mode)
         const hudCompose = document.getElementById('hudComposeBtn');
