@@ -41,6 +41,7 @@
     --surface-raised: rgba(10, 10, 10, 0.95); /* dropdowns, overlays */
     --border: rgba(255, 255, 255, 0.10);
     --border-strong: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.10);
     --hover-tint: rgba(218, 165, 32, 0.08);   /* accent-tinted hover */
     --hover-tint-strong: rgba(218, 165, 32, 0.15);
 
@@ -1078,17 +1079,133 @@ body.grid-open .grid-close-hotspot { display: block; }
 @media (orientation: portrait) { body.layout-split .rotate-close-hotspot { display: block; } }
 #cursor.close-mode { width: 60px; height: 60px; border-color: var(--accent); background: var(--hover-tint-strong); }
 #cursor.close-mode::before { content: '✕'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; font-weight: bold; color: var(--accent); line-height: 1; }
-.grid-content { padding: 100px 5vw; max-width: 1600px; margin: 0 auto; width: 100%; will-change: transform; transition: transform 0.1s linear; }
-.grid-chapter-section { margin-bottom: 60px; }
-.grid-chapter-title { font-family: var(--ui-font); font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--grid-title-border); opacity: 0.7; }
-.grid-images-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-.grid-image-item { position: relative; aspect-ratio: 4/3; border-radius: 6px; overflow: hidden; cursor: pointer; border: 1px solid var(--grid-item-border); transition: all 0.3s ease; background: var(--grid-item-bg); }
-.grid-image-item:hover { transform: scale(1.02); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 2; }
-.grid-image-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity 0.3s ease; }
-.grid-image-item:hover img { opacity: 0.4; filter: blur(2px); }
-.grid-image-caption { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
+/* ── Grid Chrome: Wireframe Background ── */
+.grid-wireframe-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    will-change: transform;
+}
+.grid-wireframe-bg.visible { opacity: 1; }
+
+/* ── Grid Chrome: Layout ── */
+.grid-content { 
+    padding: 80px 0 0 0; 
+    width: 100%; 
+    will-change: transform; 
+    transition: transform 0.1s linear;
+    position: relative;
+    z-index: 1;
+}
+.grid-chapter-section { margin-bottom: 0; }
+.grid-chapter-title { 
+    font-family: var(--ui-font); 
+    font-size: 10px; 
+    color: var(--accent); 
+    text-transform: uppercase; 
+    letter-spacing: 0.15em; 
+    padding: 10px 20px; 
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    opacity: 0.6;
+    background: rgba(255,255,255,0.01);
+}
+/* ── Continuous Chrome Grid ── */
+.grid-images-container { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 0;
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+}
+
+/* ── Grid Item: Flat Chrome Cell ── */
+.grid-image-item { 
+    position: relative; 
+    aspect-ratio: 4/3; 
+    overflow: hidden; 
+    cursor: pointer; 
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s ease; 
+    background: transparent;
+}
+.grid-image-item:hover { background: rgba(255,255,255,0.02); }
+.grid-image-item img, .grid-image-item video { 
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.85; 
+    transition: opacity 0.25s ease; display: block;
+}
+.grid-image-item:hover img,
+.grid-image-item:hover video { opacity: 0.45; filter: blur(1px); }
+
+/* ── Inline Edit: Caption/Title fields ── */
+.grid-image-caption { 
+    position: absolute; inset: 0; 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    padding: 16px; opacity: 0; transition: opacity 0.2s ease; 
+}
 .grid-image-item:hover .grid-image-caption { opacity: 1; }
-.caption-text { color: #fff; text-shadow: 0 0 20px rgba(0,0,0,0.5); background: rgba(0, 0, 0, 0.85); padding: 8px 12px; border-radius: 4px; font-family: var(--body-font); font-size: 16px; line-height: 1.4; }
+.grid-inline-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-family: var(--body-font);
+    font-size: 15px;
+    line-height: 1.4;
+    text-align: center;
+    width: 100%;
+    resize: none;
+    cursor: text;
+    padding: 4px 6px;
+    border-radius: 2px;
+    transition: background 0.15s ease, border 0.15s ease;
+    border: 1px solid transparent;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+}
+.grid-inline-input:hover,
+.grid-inline-input:focus {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent);
+    text-shadow: none;
+}
+.grid-inline-input::placeholder { color: rgba(255,255,255,0.3); font-size: 12px; }
+
+/* ── Hover-Triggered Delete Button ── */
+.grid-item-delete {
+    position: absolute;
+    top: 6px; right: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid var(--border);
+    color: var(--ink-3);
+    font-family: var(--ui-font);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    cursor: pointer;
+    border-radius: 2px;
+    z-index: 10;
+}
+.grid-item-delete:hover {
+    background: rgba(200,50,50,0.25);
+    border-color: rgba(220,80,80,0.5);
+    color: #ff8080;
+}
+.grid-image-item:hover .grid-item-delete {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 /* ===================================
    CUSTOM CURSOR
@@ -1142,55 +1259,51 @@ body.focus-mode .hover-image { opacity: 0 !important; }
 /* ===================================
    TOAST NOTIFICATIONS
    =================================== */
-/* Toast Lanes */
 .toast-container {
     position: fixed;
+    top: 64px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 400px;
-    z-index: var(--z-ui);
+    z-index: calc(var(--z-ui) + 50);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 6px;
     pointer-events: none;
 }
-
-#toastContainerTop {
-    top: 20px;
-    flex-direction: column; /* Newest at bottom of top stack */
-}
-
-#toastContainerBottom {
-    bottom: 100px; /* Above the mobile HUD/Music player */
-    flex-direction: column-reverse; /* Newest at top of bottom stack */
-}
-
-/* Toast Variants */
-.toast.toast-top {
-    font-size: 13px;
-    opacity: 0.9;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    animation: slideInFromTop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.toast.toast-bottom {
-    font-size: 16px;
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: var(--surface-raised);
-    border: 1px solid var(--border-strong);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    animation: slideInFromBottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 13px;
+    font-family: var(--ui-font);
+    font-size: 10px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+    transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+    max-width: min(85vw, 340px);
+    white-space: normal;
+    text-align: center;
+    line-height: 1.5;
 }
-
-@keyframes slideInFromTop {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+.toast.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
-
-@keyframes slideInFromBottom {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.toast.dismissing {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
 }
 
 /* Banner variant */
@@ -1330,7 +1443,7 @@ body.focus-mode .hover-image { opacity: 0 !important; }
     .stream { font-size: clamp(16px, 4vw, 28px); }
     .hover-image { width: 800px; height: 600px; }
     .chapter-dropdown { min-width: 240px; }
-    .grid-images-container { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .grid-images-container { grid-template-columns: repeat(4, 1fr); gap: 0; }
     .grid-content { padding: 100px 10vw; }
     body.layout-split .text-layer { width: 100%; padding-left: 50px; padding-right: 20px; }
     body.layout-split .hover-image { position: absolute; left: 50%; top: 50%; width: 800px; height: 600px; transform: translate(-50%, -50%) scale(0.95); }
@@ -2295,6 +2408,7 @@ body.compose-mode { padding-bottom: 0; }
     </div>
 
     <div class="image-grid-overlay" id="imageGridOverlay" aria-hidden="true">
+        <div class="grid-wireframe-bg" id="gridWireframeBg"></div>
         <div class="grid-content" id="gridContent"></div>
     </div>
 
@@ -2722,7 +2836,10 @@ const narrative = `
 
 
 
-**The Elephant** At The Watering Hole — *by* **Sweet****r Wolfgang** • *NYC, circa 2023 • Philospher & Artist [pee-pee painter] 
+**The Elephant** At The Watering Hole — *by* **Sweet Wolfgang** • *NYC, circa 2023 • Philospher & Artist [pee-pee painter] & Friend   
+
+[A commentary on the state of perception for those willing to spend time with it, while their dog, who has clearly just finished claiming this sturdy concrete tower and is now walking into — hold up, wait, brb.]  
+
 
 ###:The Sweetest.
 
@@ -2829,9 +2946,7 @@ You couldn't help yourself.
 "We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
 [Good boy]
 #:#:
-Forever ferocious. Forever a place for you on my lap. Forever a place for me to let you. This site was always intended to tell your story. I hoped to write it with you. But, I've set it up, so no matter where I am, online, or offline, I can write to you. What happens then won't stay for ever — but we know how that goes. It never fades. It existed at a time. Time took from us. 
-#:#:
-Your sight was faded when we first met. Looking at you, we never knew. But this year it left you. But you kept your senses. You didn't walk in front any more. You didn't follow faithfully behind. You kept up. You stayed by my side. [granted, it now takes twenty minutes to traverse two blocks. More time to talk to you, no complaints.]  ]
+Forever ferocious. Forever a place for you on my lap.
 
 `;
 
@@ -3927,9 +4042,50 @@ function buildImageGrid() {
                 item.className = 'grid-image-item';
                 const isVid = imgData.url.match(/\.mp4(\?|$)/i);
                 const mediaEl = isVid
-                    ? `<video src="${imgData.url}" muted autoplay loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:0.9;transition:opacity 0.3s ease;"></video>`
+                    ? `<video src="${imgData.url}" muted autoplay loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:0.85;transition:opacity 0.25s ease;display:block;"></video>`
                     : `<img src="${imgData.url}" loading="lazy" alt="${imgData.text.replace(/"/g, '&quot;')}">`;
-                item.innerHTML = `${mediaEl}<div class="grid-image-caption"><span class="caption-text">${imgData.text}</span></div>`;
+
+                // Delete button (hidden until hover)
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'grid-item-delete';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.title = 'Remove this image';
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!confirm(`Remove image from grid?`)) return;
+                    // Remove from state
+                    const idx = state.gridImages.indexOf(imgData);
+                    if (idx > -1) state.gridImages.splice(idx, 1);
+                    // Clear image from the associated sentence element
+                    const sentenceEl = state.allSentenceElements[imgData.index];
+                    if (sentenceEl) {
+                        delete sentenceEl.dataset.imageUrl;
+                        const img = sentenceEl.querySelector('.hover-image');
+                        if (img) img.remove();
+                    }
+                    buildImageGrid();
+                });
+
+                // Caption inline edit
+                const caption = document.createElement('div');
+                caption.className = 'grid-image-caption';
+                const captionInput = document.createElement('textarea');
+                captionInput.className = 'grid-inline-input';
+                captionInput.value = imgData.text || '';
+                captionInput.placeholder = 'Caption…';
+                captionInput.rows = 2;
+                captionInput.addEventListener('click', (e) => e.stopPropagation());
+                captionInput.addEventListener('change', (e) => {
+                    imgData.text = e.target.value;
+                    // update caption text in associated sentence too
+                    const sentenceEl = state.allSentenceElements[imgData.index];
+                    if (sentenceEl) sentenceEl.dataset.imageCaption = e.target.value;
+                });
+                caption.appendChild(captionInput);
+
+                item.innerHTML = mediaEl;
+                item.appendChild(deleteBtn);
+                item.appendChild(caption);
                 item.addEventListener('click', () => { toggleImageGrid(); state.currentSentenceIndex = imgData.index; highlightSentence(imgData.index); });
                 grid.appendChild(item);
             });
@@ -4003,9 +4159,17 @@ function updateParallax() {
     const textLayer = Utils.$('#textLayer');
     const imageLayer = Utils.$('#imageLayer');
     const gridOverlay = Utils.$('#gridContent');
+    const wireframeBg = Utils.$('#gridWireframeBg');
     if (textLayer) textLayer.style.transform = `translate3d(${parallax.text.x}px, ${parallax.text.y}px, 0)`;
     if (imageLayer) imageLayer.style.transform = `translate3d(${parallax.image.x}px, ${parallax.image.y}px, 0)`;
     if (gridOverlay) gridOverlay.style.transform = `translate3d(${parallax.image.x * 0.5}px, ${parallax.image.y * 0.5}px, 0)`;
+    // Wireframe parallax: moves opposite/slower for depth cue
+    if (wireframeBg) {
+        wireframeBg.style.transform = `translate3d(${parallax.image.x * -0.18}px, ${parallax.image.y * -0.18}px, 0)`;
+        // Zoom visibility check
+        const scale = window.visualViewport ? window.visualViewport.scale : 1;
+        wireframeBg.classList.toggle('visible', scale >= 0.75 && document.body.classList.contains('grid-open'));
+    }
     requestAnimationFrame(updateParallax);
 }
 
@@ -4185,47 +4349,17 @@ function render() {
             content.id = contentId;
             content.textContent = ' ' + part.content + ' ';
             trigger.addEventListener('click', () => {
-    const contentId = `bracket-content-${part.id}`;
-    const content = document.getElementById(contentId);
-    const isCurrentlyExpanded = content.classList.contains('visible');
-
-    // If we are about to open this one, close all others first
-    if (!isCurrentlyExpanded) {
-        document.querySelectorAll('.bracket-trigger.expanded').forEach(otherTrigger => {
-            const otherContentId = otherTrigger.getAttribute('aria-controls');
-            const otherContent = document.getElementById(otherContentId);
-            
-            // Close the other one
-            otherContent.classList.remove('visible');
-            otherTrigger.textContent = '[+]';
-            otherTrigger.setAttribute('aria-expanded', 'false');
-            otherTrigger.setAttribute('aria-label', 'Expand annotation');
-            otherTrigger.classList.remove('expanded');
-            
-            // Clean up state
-            const otherId = parseInt(otherContentId.replace('bracket-content-', ''));
-            state.expandedBrackets.delete(otherId);
-        });
-    }
-
-    // Now toggle the current one
-    const isNowExpanded = content.classList.toggle('visible');
-    trigger.textContent = isNowExpanded ? '[−]' : '[+]';
-    trigger.setAttribute('aria-expanded', isNowExpanded ? 'true' : 'false');
-    trigger.setAttribute('aria-label', isNowExpanded ? 'Collapse annotation' : 'Expand annotation');
-    trigger.classList.toggle('expanded');
-
-    if (isNowExpanded) {
-        state.expandedBrackets.add(part.id);
-        trackBracketOpen();
-    } else {
-        state.expandedBrackets.delete(part.id);
-    }
-
-    // Sync the global [ ] status button
-    const anyExpanded = document.querySelectorAll('.bracket-trigger.expanded').length > 0;
-    document.getElementById('modeKeyBrackets')?.classList.toggle('mode-active', anyExpanded);
-});
+                const isExpanded = content.classList.toggle('visible');
+                trigger.textContent = isExpanded ? '[−]' : '[+]';
+                trigger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                trigger.setAttribute('aria-label', isExpanded ? 'Collapse annotation' : 'Expand annotation');
+                trigger.classList.toggle('expanded');
+                if (isExpanded) { state.expandedBrackets.add(part.id); trackBracketOpen(); }
+                else state.expandedBrackets.delete(part.id);
+                // Keep [ ] button in sync
+                const allExpanded = [...document.querySelectorAll('.bracket-trigger')].every(t => t.classList.contains('expanded'));
+                document.getElementById('modeKeyBrackets')?.classList.toggle('mode-active', allExpanded);
+            });
             fragment.appendChild(trigger);
             fragment.appendChild(content);
         }
