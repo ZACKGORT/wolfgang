@@ -2815,7 +2815,7 @@ const imageMap = {
     'Wolfie for short': 'https://i.ibb.co/83SsR99/thislittledudeexudedsomuchconfidence.webp',
     '"Wolf" by calling': 'https://i.ibb.co/MxGzxSVk/wolfgang00.webp',
     'Woofie-boo': 'https://i.ibb.co/mrsF2PP2/whereiswolfgang.webp',
-    'a name becoming': 'https://i.ibb.co/d0MxCR6m/delicious.webp',
+    'but a name worth becoming': 'https://i.ibb.co/d0MxCR6m/delicious.webp',
     'Chronicles of Wolfgang': 'https://i.ibb.co/Swk4v5Tv/wolfgang000.webp',
 
     'hero': 'https://i.ibb.co/LXR70BTD/wolfieboop.webp',
@@ -2863,7 +2863,7 @@ const imageMap = {
     'while windy walks were wild': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/windyboy.mp4',
     'best walks': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/anesthesia.mp4',
 
-    'calories are real': 'https://i.ibb.co/qfBwLrD/comfort1.webp',
+    'But, calories are real': 'https://i.ibb.co/qfBwLrD/comfort1.webp',
     'Dad just made dinner': 'https://i.ibb.co/kV6CzpWS/comfort2.webp',
     'Dinner was good': 'https://i.ibb.co/M5Pcy9f9/homemademeals.webp',
     'Goodnight.': 'https://i.ibb.co/gMfpCbRW/owl.jpg',
@@ -2914,16 +2914,18 @@ These are the Chronicles of Wolfgang. [written with love]
 Every hero has a good origin story. 
 A tale told with a wagging tail. 
 One that talks of bravery. [super scaries surgery survivor]
-A telling of fortitude and resilience. [500 miles from anywhere you know, but a nose-nudge next to your number one.]
+A telling of fortitude & resilience. [500 miles from anywhere you know, but a nose-nudge next to your number one.]
 A story inviting hope.  
-One welcoming wanderlust.
-With ~~hopelessness~~ —never again— happiness. [USE RAIN PIC]
-A story with adventure. [all the walkies!]
-With many moments of none. [absolutely nothing happening, but pins-and-needles because I can't feel my legs, Wolfgang.']
-And, untold lows.
-With weeks wearing ~~Dad's~~~~/~~~~bad~~~~/~~ *erm, "absolutely* **rad**" haircuts. [I had to bribe him with whipped cream]
+One welcoming wanderlust. [walks away from home, mostly from dad finding working]
+Peppered with vignettes evoking ~~hopelessness~~ — (never again, pal) [USE RAIN PIC] and of course, happiness. 
+Then finding your resolve.
+
+With many an adventure. [all the walkies!]
+Many more of none. [absolutely nothing happening, but pins-and-needles because I can't feel my legs, Wolfgang.']
+The untold lows.
 Making the best of 'unique' situations. [an artist, and realist]
-The stuff of legends. [GOAT]
+No, this was no ordinary pet poodle.
+The stuff of legends, really. [instructions not clear]
 
 ###: Lost & Found
 When you're lost and alone in Queens, with nowhere to go. [cornered, but in a good corner to find]
@@ -2947,15 +2949,14 @@ Nighty-nite.
 That feeling of belong. 
 When you know without notice.[Wolfie, then unnamed, making claim to his new domain — also, freshly bathed because he needed that badly. Old Spice.]
 When you're out of place, but you found home.
-New day for a new direction.[Wolfgang leads; I happily followed]
 Now, you got your mojo back.
 Now, you walk fast.
 You walk like a true New Yorker. [mildy miffed; furiously focused]
 You now walk amongst.
 New lease — no leash. [New life.]
 You loathe a lazy walk.
-
-While windy walks were wild.
+New day for a new direction.[Wolfgang leads; I happily followed]
+& while windy walks were wild.
 The best walks were with dad — homeward bound, together.
 #:#:
 Because, calories are real. [delapidated doggie]
@@ -4412,8 +4413,26 @@ function render() {
                 trigger.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
                 trigger.setAttribute('aria-label', isExpanded ? 'Collapse annotation' : 'Expand annotation');
                 trigger.classList.toggle('expanded');
-                if (isExpanded) { state.expandedBrackets.add(part.id); trackBracketOpen(); }
-                else state.expandedBrackets.delete(part.id);
+                if (isExpanded) {
+                    // Close every other open bracket before opening this one
+                    document.querySelectorAll('.bracket-content.visible').forEach(otherContent => {
+                        if (otherContent === content) return;
+                        otherContent.classList.remove('visible');
+                        const otherId = parseInt(otherContent.id.replace('bracket-content-', ''));
+                        state.expandedBrackets.delete(otherId);
+                        const otherTrigger = document.querySelector(`[aria-controls="${otherContent.id}"]`);
+                        if (otherTrigger) {
+                            otherTrigger.textContent = '[+]';
+                            otherTrigger.setAttribute('aria-expanded', 'false');
+                            otherTrigger.setAttribute('aria-label', 'Expand annotation');
+                            otherTrigger.classList.remove('expanded');
+                        }
+                    });
+                    state.expandedBrackets.add(part.id);
+                    trackBracketOpen();
+                } else {
+                    state.expandedBrackets.delete(part.id);
+                }
                 // Keep [ ] button in sync
                 const allExpanded = [...document.querySelectorAll('.bracket-trigger')].every(t => t.classList.contains('expanded'));
                 document.getElementById('modeKeyBrackets')?.classList.toggle('mode-active', allExpanded);
