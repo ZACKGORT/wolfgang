@@ -899,6 +899,150 @@ body.theme-transitioning::after {
 }
 
 /* ===================================
+   PULL-QUOTE BREAKS (>>: syntax)
+   Voice interjections — e.g. Wolfie speaking
+   =================================== */
+.pullquote-break {
+    display: block;
+    margin: 2.5em 0 2em;
+    padding: 1.4em 1.8em 1.4em 1.6em;
+    position: relative;
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(135deg,
+        color-mix(in srgb, var(--accent) 6%, transparent),
+        color-mix(in srgb, var(--accent) 2%, transparent));
+    border-radius: 0 6px 6px 0;
+    pointer-events: none;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    overflow: hidden;
+}
+.pullquote-break::before {
+    content: '\201C';
+    position: absolute;
+    top: -0.1em;
+    left: 0.3em;
+    font-family: var(--body-font);
+    font-size: 4em;
+    color: var(--accent);
+    opacity: 0.18;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+.pullquote-voice {
+    display: block;
+    font-family: var(--ui-font);
+    font-size: var(--chapter-break-font-size);
+    letter-spacing: var(--chapter-break-letter-spacing);
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 0.6em;
+    font-weight: var(--chapter-break-weight);
+}
+.pullquote-text {
+    display: block;
+    font-family: var(--body-font);
+    font-size: clamp(15px, 1.8vw, 22px);
+    font-style: italic;
+    color: var(--ink-2);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* Compose mode: treat like other structural blocks */
+body.compose-mode .pullquote-break {
+    display: flex;
+    align-items: baseline;
+    padding: 4px 0;
+    border-left: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    background: none;
+    border-radius: 0;
+    position: relative;
+}
+body.compose-mode .pullquote-break::before { display: none; }
+body.compose-mode .pullquote-break:last-child { border-bottom: none; }
+body.compose-mode .pullquote-break.drag-over-above { box-shadow: inset 0 2px 0 0 var(--accent); }
+body.compose-mode .pullquote-break.drag-over-below { box-shadow: inset 0 -2px 0 0 var(--accent); }
+body.compose-mode .pullquote-break.dragging { opacity: 0.35; }
+body.compose-mode .pullquote-break:hover .sentence-drag-handle { opacity: 0.4; }
+body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-items: center; justify-content: center; }
+
+/* ===================================
+   PAGE LOADER
+   =================================== */
+#pageLoader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    pointer-events: all;
+    transition: opacity 0.6s ease;
+}
+#pageLoader.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+#pageLoader video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+}
+.loader-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    pointer-events: none;
+    user-select: none;
+}
+.loader-paw {
+    font-size: 40px;
+    animation: loaderPawPulse 1.4s ease-in-out infinite;
+}
+@keyframes loaderPawPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.18); opacity: 1; }
+}
+.loader-wordmark {
+    font-family: var(--ui-font);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.9;
+}
+.loader-bar-track {
+    width: 120px;
+    height: 2px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.loader-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    animation: loaderBarSweep 1.8s ease-in-out forwards;
+}
+@keyframes loaderBarSweep {
+    0%   { width: 0%; }
+    60%  { width: 75%; }
+    85%  { width: 90%; }
+    100% { width: 100%; }
+}
+
+/* ===================================
    BRACKETS
    =================================== */
 .bracket-trigger { 
@@ -1862,6 +2006,7 @@ body.compose-mode .subchapter-break:last-child {
 body.compose-mode .sentence-drag-handle,
 body.compose-mode .chapter-break .sentence-drag-handle,
 body.compose-mode .subchapter-break .sentence-drag-handle { display: flex; align-items: center; justify-content: center; }
+body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-items: center; justify-content: center; }
 body.compose-mode .sentence:hover .sentence-drag-handle,
 body.compose-mode .chapter-break:hover .sentence-drag-handle,
 body.compose-mode .subchapter-break:hover .sentence-drag-handle { opacity: 0.4; }
@@ -2395,6 +2540,17 @@ body.compose-mode { padding-bottom: 0; }
     </style>
 </head>
 <body class="theme-newspaper">
+    <!-- ════ PAGE LOADER ════ -->
+    <div id="pageLoader">
+        <video src="https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/soferocious.mp4"
+               muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
+        <div class="loader-overlay">
+            <span class="loader-paw">🐾</span>
+            <span class="loader-wordmark">Wolfgang</span>
+            <div class="loader-bar-track"><div class="loader-bar-fill"></div></div>
+        </div>
+    </div>
+
     <!-- Skip navigation for keyboard/AT users -->
     <a href="#stream" class="skip-link">Skip to content</a>
     <!-- Screen reader live announcer for sentence navigation -->
@@ -2624,6 +2780,10 @@ body.compose-mode { padding-bottom: 0; }
             <button class="mode-key compose-key" id="composeKeySubchapter" aria-label="Insert subchapter break" title="Insert subchapter ##:">
                 <span class="mode-key-label">##:</span>
                 <span class="mode-key-desc">Section</span>
+            </button>
+            <button class="mode-key compose-key" id="composeKeyPullquote" aria-label="Insert pull-quote >>:" title="Insert pull-quote >>:Voice|Quote">
+                <span class="mode-key-label">>></span>
+                <span class="mode-key-desc">Voice</span>
             </button>
             <button class="mode-key compose-key" id="composeKeyBreak" aria-label="Insert line break #:" title="Insert line break #:">
                 <span class="mode-key-label">#:</span>
@@ -2958,6 +3118,9 @@ You loathe a lazy walk.
 New day for a new direction.[Wolfgang leads; I happily followed]
 & while windy walks were wild.
 The best walks were with dad — homeward bound, together.
+
+>>:Wolfie|I am so fast. I am *the* fastest. Do not tell me otherwise.
+
 #:#:
 Because, calories are real. [delapidated doggie]
 & dad just made dinner.
@@ -2998,6 +3161,8 @@ You wanted to be close.
 You couldn't say it.
 You couldn't convey it.
 You couldn't help yourself.
+
+>>:Wolfie|*wuf.*
 
 
 
@@ -3646,8 +3811,8 @@ function parseNarrative(text) {
                 if (bracket) bracket.content = segment.trim();
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
-                // Order matters: ###: before ##: before #:
-                const lineSegments = segment.split(/(###:[^\n]*|##:[^\n]*|#:)/);
+                // Order matters: ###: before ##: before >>: before #:
+                const lineSegments = segment.split(/(###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
@@ -3661,6 +3826,22 @@ function parseNarrative(text) {
                     if (lineSegment.startsWith('##:')) {
                         const title = lineSegment.substring(3).trim();
                         parts.push({ type: 'subchapter-break', id: idCounter++, title: title || '' });
+                        continue;
+                    }
+                    if (lineSegment.startsWith('>>:')) {
+                        // Pull-quote interjection — format: >>:Voice|Quote text
+                        // or >>:Quote text (voice defaults to "Wolfie")
+                        const raw = lineSegment.substring(3).trim();
+                        const pipeIdx = raw.indexOf('|');
+                        let voice, quote;
+                        if (pipeIdx !== -1) {
+                            voice = raw.substring(0, pipeIdx).trim();
+                            quote = raw.substring(pipeIdx + 1).trim();
+                        } else {
+                            voice = 'Wolfie';
+                            quote = raw;
+                        }
+                        if (quote) parts.push({ type: 'pullquote', id: idCounter++, voice, quote });
                         continue;
                     }
                     if (lineSegment === '#:') {
@@ -4353,6 +4534,21 @@ function render() {
             state.allSentenceElements.push(el);
             sentenceCount++;
             fragment.appendChild(el);
+        } else if (part.type === 'pullquote') {
+            const el = document.createElement('div');
+            el.className = 'pullquote-break';
+            el.dataset.type = 'pullquote';
+            el.dataset.structural = 'true';
+            el.dataset.sentenceIndex = sentenceCount;
+            el.dataset.voice = part.voice;
+            el.innerHTML = `<span class="pullquote-voice">${part.voice}</span><span class="pullquote-text">${applyInlineMarkdown(part.quote)}</span>`;
+            el.addEventListener('dblclick', () => {
+                if (!composeActive) return;
+                beginEdit(parseInt(el.dataset.sentenceIndex));
+            });
+            state.allSentenceElements.push(el);
+            sentenceCount++;
+            fragment.appendChild(el);
         } else if (part.type === 'bullet') {
             const li = document.createElement('div');
             li.className = 'sentence bullet-item';
@@ -4786,6 +4982,33 @@ function initializeInteractionHint() {
 // MAIN INITIALIZATION
 // ===================================
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Page Loader ──
+    (function initPageLoader() {
+        const loader = document.getElementById('pageLoader');
+        if (!loader) return;
+        // Dismiss after content is ready + brief cinematic hold
+        function dismissLoader() {
+            loader.classList.add('fade-out');
+            setTimeout(() => { loader.remove(); }, 700);
+        }
+        // Dismiss after 2.6s minimum — long enough to feel cinematic, short enough to not annoy
+        const MIN_DISPLAY = 2600;
+        const startTime = Date.now();
+        function tryDismiss() {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, MIN_DISPLAY - elapsed);
+            setTimeout(dismissLoader, remaining);
+        }
+        if (document.readyState === 'complete') {
+            tryDismiss();
+        } else {
+            window.addEventListener('load', tryDismiss, { once: true });
+            // Safety: dismiss at 5s no matter what
+            setTimeout(dismissLoader, 5000);
+        }
+    })();
+
     cursor.element = Utils.$('#cursor');
     
     document.addEventListener('mousemove', e => {
@@ -5658,6 +5881,16 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             input.value = '##:';
             input.focus();
+            if (hudSubmit) hudSubmit.disabled = false;
+        });
+
+        // ── Pull-quote quick-insert ──
+        const clusterPullquote = document.getElementById('composeKeyPullquote');
+        if (clusterPullquote) clusterPullquote.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.value = '>>:Wolfie|';
+            input.focus();
+            input.setSelectionRange(10, 10);
             if (hudSubmit) hudSubmit.disabled = false;
         });
 
