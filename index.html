@@ -1824,6 +1824,16 @@ body.compose-mode .parallax-container {
     padding-bottom: 0;
 }
 
+/* Compose mode — stack sentences as individual lines */
+body.compose-mode .sentence {
+    display: block;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+body.compose-mode .sentence:last-child {
+    border-bottom: none;
+}
+
 /* Editing sentence highlight */
 .sentence.editing {
     outline: 1px solid rgba(218,165,32,0.5);
