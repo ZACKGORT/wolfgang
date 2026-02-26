@@ -1825,13 +1825,65 @@ body.compose-mode .parallax-container {
 }
 
 /* Compose mode — stack sentences as individual lines */
-body.compose-mode .sentence {
-    display: block;
+body.compose-mode .sentence,
+body.compose-mode .chapter-break,
+body.compose-mode .subchapter-break {
+    display: flex;
+    align-items: baseline;
     padding: 4px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
 }
-body.compose-mode .sentence:last-child {
+body.compose-mode .sentence:last-child,
+body.compose-mode .chapter-break:last-child,
+body.compose-mode .subchapter-break:last-child {
     border-bottom: none;
+}
+
+/* Drag handle injected per-sentence in compose mode */
+.sentence-drag-handle {
+    display: none;
+    flex-shrink: 0;
+    width: 20px;
+    margin-right: 10px;
+    align-self: center;
+    cursor: grab;
+    color: var(--ink-3);
+    opacity: 0;
+    transition: opacity 0.15s ease, color 0.15s ease;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: -1px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+.sentence-drag-handle:active { cursor: grabbing; }
+body.compose-mode .sentence-drag-handle,
+body.compose-mode .chapter-break .sentence-drag-handle,
+body.compose-mode .subchapter-break .sentence-drag-handle { display: flex; align-items: center; justify-content: center; }
+body.compose-mode .sentence:hover .sentence-drag-handle,
+body.compose-mode .chapter-break:hover .sentence-drag-handle,
+body.compose-mode .subchapter-break:hover .sentence-drag-handle { opacity: 0.4; }
+body.compose-mode .sentence:hover .sentence-drag-handle:hover,
+body.compose-mode .chapter-break:hover .sentence-drag-handle:hover,
+body.compose-mode .subchapter-break:hover .sentence-drag-handle:hover { opacity: 1; color: var(--accent); }
+
+/* Drag-over drop target indicator */
+body.compose-mode .sentence.drag-over-above,
+body.compose-mode .chapter-break.drag-over-above,
+body.compose-mode .subchapter-break.drag-over-above {
+    box-shadow: inset 0 2px 0 0 var(--accent);
+}
+body.compose-mode .sentence.drag-over-below,
+body.compose-mode .chapter-break.drag-over-below,
+body.compose-mode .subchapter-break.drag-over-below {
+    box-shadow: inset 0 -2px 0 0 var(--accent);
+}
+body.compose-mode .sentence.dragging,
+body.compose-mode .chapter-break.dragging,
+body.compose-mode .subchapter-break.dragging {
+    opacity: 0.35;
 }
 
 /* Editing sentence highlight */
@@ -5276,6 +5328,9 @@ document.addEventListener('DOMContentLoaded', () => {
             stream.appendChild(span);
             state.allSentenceElements.push(span);
 
+            // Attach drag-reorder handle if in compose mode
+            if (compose.active && window._attachSentenceDrag) window._attachSentenceDrag(span);
+
             // Remove animation class after it fires
             setTimeout(() => span.classList.remove('just-added'), 500);
 
@@ -5395,6 +5450,151 @@ document.addEventListener('DOMContentLoaded', () => {
             syncWriterStats();
             updateWordCount();
         }
+
+        // ── Drag-to-reorder sentences in compose mode ──
+        (function initSentenceDragReorder() {
+            let dragSrcEl = null;
+
+            // All draggable unit selectors (sentences + structural + bracket wrappers)
+            const DRAG_SEL = '.sentence, .chapter-break, .subchapter-break, .bracket-drag-unit';
+
+            function getHandle(el) {
+                let h = el.querySelector(':scope > .sentence-drag-handle');
+                if (!h) {
+                    h = document.createElement('span');
+                    h.className = 'sentence-drag-handle';
+                    h.setAttribute('aria-hidden', 'true');
+                    h.textContent = '⠿';
+                    el.insertBefore(h, el.firstChild);
+                }
+                return h;
+            }
+
+            function clearDropClasses() {
+                Utils.$$(DRAG_SEL).forEach(s => s.classList.remove('drag-over-above', 'drag-over-below'));
+            }
+
+            function reindex() {
+                const streamEl = Utils.$('#stream');
+                if (!streamEl) return;
+                const domOrder = Array.from(streamEl.querySelectorAll(DRAG_SEL));
+                state.allSentenceElements = domOrder.filter(el => !el.classList.contains('bracket-drag-unit'));
+                // Re-index allSentenceElements sequentially
+                state.allSentenceElements.forEach((s, i) => {
+                    s.dataset.sentenceIndex = i;
+                    if (!s.dataset.structural) {
+                        s.setAttribute('aria-label', `Sentence ${i + 1}: ${s.textContent.replace(/⠿/g,'').trim()}`);
+                    }
+                });
+            }
+
+            function attachDrag(el) {
+                if (el._dragAttached) return;
+                el._dragAttached = true;
+
+                const handle = getHandle(el);
+
+                handle.addEventListener('mousedown', () => { el.draggable = true; }, { passive: true });
+                handle.addEventListener('touchstart', () => { el.draggable = true; }, { passive: true });
+                document.addEventListener('mouseup', () => { el.draggable = false; }, { passive: true });
+
+                el.addEventListener('dragstart', (e) => {
+                    if (!compose.active) { e.preventDefault(); return; }
+                    dragSrcEl = el;
+                    el.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', '1');
+                });
+
+                el.addEventListener('dragend', () => {
+                    el.classList.remove('dragging');
+                    el.draggable = false;
+                    clearDropClasses();
+                    dragSrcEl = null;
+                });
+
+                el.addEventListener('dragover', (e) => {
+                    if (!dragSrcEl || dragSrcEl === el) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    clearDropClasses();
+                    const rect = el.getBoundingClientRect();
+                    el.classList.add(e.clientY < rect.top + rect.height / 2 ? 'drag-over-above' : 'drag-over-below');
+                });
+
+                el.addEventListener('dragleave', () => {
+                    el.classList.remove('drag-over-above', 'drag-over-below');
+                });
+
+                el.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (!dragSrcEl || dragSrcEl === el) return;
+                    const before = el.classList.contains('drag-over-above');
+                    clearDropClasses();
+                    el.parentNode.insertBefore(dragSrcEl, before ? el : el.nextSibling);
+                    reindex();
+                    dragSrcEl.classList.add('just-added');
+                    setTimeout(() => dragSrcEl && dragSrcEl.classList.remove('just-added'), 450);
+                    updateWordCount();
+                    buildChapterDropdown();
+                    updateChapterProgress();
+                    syncWriterStats();
+                });
+            }
+
+            // Wrap loose bracket-trigger+bracket-content pairs into a single draggable unit
+            function wrapBrackets() {
+                const streamEl = Utils.$('#stream');
+                if (!streamEl) return;
+                const triggers = Array.from(streamEl.querySelectorAll('.bracket-trigger:not([data-wrapped])'));
+                triggers.forEach(trigger => {
+                    const content = trigger.nextElementSibling;
+                    if (!content || !content.classList.contains('bracket-content')) return;
+                    const wrapper = document.createElement('span');
+                    wrapper.className = 'bracket-drag-unit sentence'; // give it .sentence for compose CSS
+                    wrapper.dataset.bracketUnit = 'true';
+                    trigger.setAttribute('data-wrapped', '1');
+                    trigger.parentNode.insertBefore(wrapper, trigger);
+                    wrapper.appendChild(trigger);
+                    wrapper.appendChild(content);
+                    attachDrag(wrapper);
+                });
+            }
+
+            // Unwrap bracket units back to loose pairs on exit
+            function unwrapBrackets() {
+                const streamEl = Utils.$('#stream');
+                if (!streamEl) return;
+                Array.from(streamEl.querySelectorAll('.bracket-drag-unit')).forEach(wrapper => {
+                    const parent = wrapper.parentNode;
+                    while (wrapper.firstChild) parent.insertBefore(wrapper.firstChild, wrapper);
+                    wrapper.remove();
+                });
+                Utils.$$('.bracket-trigger[data-wrapped]').forEach(t => t.removeAttribute('data-wrapped'));
+            }
+
+            // Expose for new sentences
+            window._attachSentenceDrag = attachDrag;
+
+            // Patch enterCompose / exitCompose
+            const _origEnter = enterCompose;
+            const _origExit  = exitCompose;
+
+            enterCompose = function() {
+                _origEnter();
+                wrapBrackets();
+                state.allSentenceElements.forEach(el => attachDrag(el));
+                // Also attach to any bracket wrappers just created
+                Utils.$$('.bracket-drag-unit').forEach(el => attachDrag(el));
+            };
+
+            exitCompose = function() {
+                _origExit();
+                unwrapBrackets();
+            };
+
+            window.toggleCompose = function() { if (compose.active) exitCompose(); else enterCompose(); };
+        })();
 
         // ── Commit on Enter (not Shift+Enter) ──
         input.addEventListener('keydown', (e) => {
