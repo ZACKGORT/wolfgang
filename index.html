@@ -905,12 +905,12 @@ body.theme-transitioning::after {
 .pullquote-break {
     display: block;
     margin: 2.5em 0 2em;
-    padding: 1.4em 1.8em 1.4em 1.6em;
+    padding: 1.4em 1.8em 0.6em 1.6em;
     position: relative;
-    border-left: 3px solid var(--accent);
+    border-left: 1px solid var(--accent);
     background: linear-gradient(135deg,
-        color-mix(in srgb, var(--accent) 6%, transparent),
-        color-mix(in srgb, var(--accent) 2%, transparent));
+        color-mix(in srgb, var(--accent) 3%, transparent),
+        color-mix(in srgb, var(--accent) 1%, transparent));
     border-radius: 0 6px 6px 0;
     pointer-events: none;
     transition: border-color 0.3s ease, background 0.3s ease;
@@ -2955,7 +2955,9 @@ let composeActive = false; // module-level flag so highlightSentence can read it
 // ===================================
 
 // ===================================
-// template    '': '',
+//A plot unveiling vignettes evoking ~~hopelessness~~ [USE RAIN PIC]
+//— *never again, pal*.
+// template    '': '',   
 
 const chapters = [];
 
@@ -2963,11 +2965,16 @@ const imageMap = {
     'road warrior': 'https://i.ibb.co/Swk4v5Tv/wolfgang000.webp',
     'haircuts': 'https://i.ibb.co/xqv72y7c/mohawk.webp',
     'icecream1': 'https://i.ibb.co/Jj1Pc7bs/theabsolutecutestthingihaveeverseen.webp',
-    'elephant': 'https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp',
+
     'ferocious': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/soferocious.mp4',
     'roadworth': 'https://i.ibb.co/wF05mLW2/joyful.webp',
     'brave leg': 'https://i.ibb.co/rfKXyv3q/theveryfirstofclassicwolfgang.jpg',
+    'unveiling vignettes': 'https://i.ibb.co/TMxmFknH/fallinginlove1.jpg', 
+    'This feels nice': 'https://i.ibb.co/5gPCWkDf/nownamedgivenanappropriatemohawk.webp',
+    'Nighty-nite.': 'https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp',
 
+
+    'elephant': 'https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp',
 
     'Meet Wolfgang': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Ohmmmm.mp4',
     '"Sweet Wolfgang"': 'https://i.ibb.co/d4SkHwfB/icecream45678.webp',
@@ -2983,11 +2990,19 @@ const imageMap = {
     'Of fortitude': 'https://i.ibb.co/twP8m5wP/buildingburgerking.webp',
     'Of rebellion': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
     'wagging tail': 'https://i.ibb.co/CknqHpK/happierinnewyork.webp',
-    'of hope': 'https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp',
+    'of hope': 'https://i.ibb.co/G4qDyqZH/surviorandthriverfullcolor.webp',
     'Wanderlust': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Worldviewwalkieswithwolfgang.mp4',
+    'pure joy': 'https://i.ibb.co/rKbH2FFx/sweetestwolfgang.webp',
+    'resolve': 'https://i.ibb.co/gQPNJXc/xlnexttimeplease.webp',
+    'reticence': 'https://i.ibb.co/SXWPr4vf/likereallyreallyhatedtherain.webp',
+    'reflection': 'https://i.ibb.co/rRfMt4Fj/happyboy.webp',
+    'adventure': 'https://i.ibb.co/BKymJdYK/itshisworld.webp',
+
     'untold lows': 'https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp',
     'unique': 'https://i.ibb.co/LXBkfzbw/wolfgangsfinestwork.webp',
     'situations': 'https://i.ibb.co/0Rt0KW93/wolfgangsfinestworkmoment.webp',
+
+    'more of none': 'https://i.ibb.co/KxhDw7nS/loveinastoria.webp',
 
     'lost and alone': 'https://i.ibb.co/DsT5Ppk/lostinqueens.webp',
     'similar soul': 'https://i.ibb.co/BX5RVPg/wolfgangownsallofmyhoodies.webp',
@@ -3005,8 +3020,7 @@ const imageMap = {
     'hand': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/leglift001.mp4',
 
     'new dad': 'https://i.ibb.co/JjGbm5rh/heydaddy.webp',
-    'This feels nice': 'https://i.ibb.co/5gPCWkDf/nownamedgivenanappropriatemohawk.webp',
-    'Nighty-nite.': 'https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp',
+
 
     'belong': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/stinkyboy.mp4',
     'know without notice': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/welcomehomebuddy.mp4',
@@ -3023,7 +3037,7 @@ const imageMap = {
     'while windy walks were wild': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/windyboy.mp4',
     'best walks': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/anesthesia.mp4',
 
-    'But, calories are real': 'https://i.ibb.co/qfBwLrD/comfort1.webp',
+    'calories are real': 'https://i.ibb.co/qfBwLrD/comfort1.webp',
     'Dad just made dinner': 'https://i.ibb.co/kV6CzpWS/comfort2.webp',
     'Dinner was good': 'https://i.ibb.co/M5Pcy9f9/homemademeals.webp',
     'Goodnight.': 'https://i.ibb.co/gMfpCbRW/owl.jpg',
@@ -3074,20 +3088,20 @@ These are the Chronicles of Wolfgang. [written with love]
 Every hero has a good origin story. 
 A tale told with a wagging tail. 
 One that talks of bravery. [super scaries surgery survivor]
-A telling of fortitude & resilience. [500 miles from anywhere you know, but a nose-nudge next to your number one.]
+A telling of fortitude and resilience. [500 miles from anywhere you know, but a nose-nudge next to your number one.]
 A story inviting hope.  
 One welcoming wanderlust. [walks away from home, mostly from dad finding working]
-A plot unveiling vignettes evoking ~~hopelessness~~ [USE RAIN PIC]
-— never again, pal.
-And of course — a plot seassoned with happiness. 
-With moments of resolve.
+Unveiling vignettes evoking ~~hopelessness~~ [USE RAIN PIC]
+— *never again, pal*.
+A plot seasoned with pure joy. [absolutely peppered with it. zero salt.]
+Capturing moments of resolve.
 Reticence.
 Reflection.
 Unfolding many an adventure. [all the walkies!]
 While many more of none. [absolutely nothing happening, Just us in the moment.']
-There are untold lows.
-Lesons learned.
-& making the best of 'unique' situations. [an artist, and realist]
+There are untold lows []
+Lessons learned, 
+& making the best of *unique situations*. [an artist, and realist]
 #:#:
 No, this was no ordinary pet poodle []
 — the likes of legends, really. []
@@ -3097,18 +3111,16 @@ When you're lost and alone in Queens, with nowhere to go. [cornered, but in a go
 And you happen across the path of a similar soul. 
 Neglected, abandoned, left without care.
 You were hungry. [never again]
-Now, well fed. [That leg lift means everything.]
-You weren't needy at all, but much was needed for you.
+You wanted to trust. [That leg lift means everything.]
 For someone to understand you. [and wonder]
 Or try to. [chicken allergy]
 For someone to ask. [Fafo, right?]
-For someone to act. [Benign, but malignantly itchy. Absolutely unnacceptable to simply not.]
-For someone to give a stitch [like, three-thousand stitches].
+For someone to act. [Absolutely unnacceptable to simply ignore.]
+For someone to give a stitch. [like, three-thousand stitches]
 And of course, for someone's hand. [Classic Wolfgang] 
 
-I have a new dad.
-This feels nice.
-Nighty-nite.
+>>:Wolfie| this feels nice — nighty-nite.
+
 
 ###:Welcome Home, Wolfgang
 That feeling of belong. 
@@ -3123,8 +3135,6 @@ You loathe a lazy walk.
 New day for a new direction.[Wolfgang leads; I happily followed]
 & while windy walks were wild.
 The best walks were with dad — homeward bound, together.
-
->>:Wolfie|I am so fast. I am *the* fastest. Do not tell me otherwise.
 
 #:#:
 Because, calories are real. [delapidated doggie]
