@@ -2563,6 +2563,48 @@ body.compose-mode .mode-key.reader-key { display: none; }
 }
 .hud-submit-btn:disabled { opacity: 0.35 !important; filter: none; }
 
+/* HUD markup buttons — compose mode mobile only */
+.hud-markup-group {
+    display: none;
+    align-items: center;
+    gap: 2px;
+}
+.hud-markup-btn {
+    height: 32px;
+    padding: 0 7px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--ink-3);
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    white-space: nowrap;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.hud-markup-btn:active {
+    background: var(--hover-tint-strong);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(0.9);
+}
+.hud-markup-divider { display: none; }
+
+@media (max-width: 768px) {
+    body.compose-mode .hud-markup-group { display: flex; }
+    body.compose-mode .hud-markup-divider { display: block; }
+    /* Music player fades when compose is active on mobile */
+    body.compose-mode .music-player {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity 0.3s ease !important;
+    }
+}
+
 /* HUD nav group — prev/next side by side */
 .hud-nav-group {
     display: flex;
@@ -3095,6 +3137,15 @@ body.compose-mode { padding-bottom: 0; }
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
         <div class="hud-divider"></div>
+        <!-- Mobile markup buttons — compose mode only -->
+        <div class="hud-markup-group" id="hudMarkupGroup">
+            <button class="hud-markup-btn" id="hudMarkupBracket" title="Insert annotation">[+]</button>
+            <button class="hud-markup-btn" id="hudMarkupChapter" title="Chapter break">###:</button>
+            <button class="hud-markup-btn" id="hudMarkupSection" title="Section break">##:</button>
+            <button class="hud-markup-btn" id="hudMarkupBreak" title="Line break">#:</button>
+            <button class="hud-markup-btn" id="hudMarkupToast" title="Toast trigger">✦</button>
+        </div>
+        <div class="hud-divider hud-markup-divider"></div>
         <div class="stats-group">
             <div class="stat-item">
                 <span class="stat-value" id="statSentencesSeen">1</span>
@@ -3314,7 +3365,9 @@ body.compose-mode { padding-bottom: 0; }
             </button>
             <button class="mode-key compose-key" id="composeKeyToast" aria-label="Insert toast trigger ####:" title="Insert toast trigger ####:message">
                 <span class="mode-key-label">####:</span>
+                <span class="mode-key-desc">Toast</span>
             </button>
+            <button class="mode-key compose-key" id="composeKeyBreak" aria-label="Insert line break #:" title="Insert line break #:">
                 <span class="mode-key-label">#:</span>
                 <span class="mode-key-desc">Break</span>
             </button>
@@ -3494,23 +3547,16 @@ const parallax = { text: { x: 0, y: 0, targetX: 0, targetY: 0 }, image: { x: 0, 
 let composeActive = false; // module-level flag so highlightSentence can read it
 
 
+
 // ===================================
 // DATA
 // ===================================
 
 // ===================================
-//Well, wouldn't you know?
-//Not broken — just needs some TLC. 
-//New bag-buddy — never ever baggage.
-//Works over WOOfi.
-//Tiny. [cafe photo]
-//Carries well. [obvi] 
-//Travels well. [obvi]
-//Travels comfortably.
-//Headphone jack (no mute function)
-//Works optimally when nearest.
-//Nearer.
-//*ahem* — nearest, thank you.
+//###:Good Day, Now Good Night.
+//"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee, then sleepy"
+//[Good boy] https://i.ibb.co/204XKS7B/lastsleepies.jpg
+// 'Firsts, we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp'
 
 
 
@@ -3623,7 +3669,10 @@ const imageMap = {
     'escape from reality': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/sleepspiral.mp4',
     'Look to the sky': 'https://i.ibb.co/BKymJdYK/itshisworld.webp',
 
-    'sleepies': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
+    
+    'sleepies': 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
+    'we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
+    'then sleepy': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
 
     
 };
@@ -3780,13 +3829,12 @@ I knew.
 >>:Wolfie| We're going Wawa again. Dad is me driving through a blizzard. I have my blanket. He's calm. It's quiet. It's okay. We're there!  Carry me? He's hugging me closer than usual. Yeah, yeah, I know you tell me a million times every day — Love you too.
 
 ###:Good Day, Now Good Night.
-"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee, then sleepy"
-[Good boy]
+"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee. Now, we go sleepy".
+[*thousands of kisses*, "good boy"]
 
-#:#:Forever ferocious.
-I'm right here, pal.
+#:#:Forever Ferocious. [*ferociously sweet]
+
 `;
-
 
 
 // ===================================
@@ -6331,6 +6379,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const chapterSel = document.getElementById('composeChapterSelect');
         const wordCount  = document.getElementById('composeWordCount');
         const hudSubmit  = document.getElementById('hudSubmitBtn');   // mobile HUD submit
+        const hudMarkupBracket = document.getElementById('hudMarkupBracket');
+        const hudMarkupChapter = document.getElementById('hudMarkupChapter');
+        const hudMarkupSection = document.getElementById('hudMarkupSection');
+        const hudMarkupBreak   = document.getElementById('hudMarkupBreak');
+        const hudMarkupToast   = document.getElementById('hudMarkupToast');
         const mobileClose = document.getElementById('composeMobileClose');
         const hintsBtn   = document.getElementById('composeHintsBtn');
         const picker     = document.getElementById('imagemapPicker');
@@ -7022,6 +7075,18 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             deleteActiveSentence();
         });
+
+        // ── HUD markup buttons (mobile compose) — mirror cluster actions ──
+        function hudMarkupTap(el, fn) {
+            if (!el) return;
+            el.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+            el.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
+        }
+        hudMarkupTap(hudMarkupBracket, () => { insertBracket(); input.focus(); });
+        hudMarkupTap(hudMarkupChapter, () => { input.value = '###:'; input.focus(); input.setSelectionRange(4, 4); if (hudSubmit) hudSubmit.disabled = false; });
+        hudMarkupTap(hudMarkupSection, () => { input.value = '##:'; input.focus(); if (hudSubmit) hudSubmit.disabled = false; });
+        hudMarkupTap(hudMarkupBreak,   () => { input.value = '#:'; if (hudSubmit) hudSubmit.disabled = false; commitSentence(); });
+        hudMarkupTap(hudMarkupToast,   () => { input.value = '####:'; input.focus(); input.setSelectionRange(5, 5); if (hudSubmit) hudSubmit.disabled = false; });
 
         // ── Theme in compose ──
         if (clusterTheme) clusterTheme.addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
