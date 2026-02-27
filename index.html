@@ -237,8 +237,8 @@ body.theme-sport {
     --selection-color: #ffffff;
 }
 
-/* ── TERMINAL THEME ── */
-body.theme-terminal {
+/* ── MEMORY THEME ── */
+body.theme-memory {
     --bg-color: #000000;
     --ink: #e8e8e8;
     --ink-2: #aaaaaa;
@@ -301,39 +301,39 @@ body.theme-terminal {
     --selection-bg: #ff3d9a;
     --selection-color: #000000;
 
-    /* Flatten parallax — terminal doesn't move */
+    /* Flatten parallax — memory doesn't move */
     --text-parallax-strength: 0;
     --image-parallax-strength: 0;
     --center-magnet-strength: 0;
 }
 
-/* Terminal: hard edges everywhere — kill border-radius and backdrop-filter globally */
-body.theme-terminal .keyboard-legend,
-body.theme-terminal .mode-cluster,
-body.theme-terminal .stats-widget,
-body.theme-terminal .k-key,
-body.theme-terminal .mode-key,
-body.theme-terminal .stat-item,
-body.theme-terminal .nav-button,
-body.theme-terminal .mobile-nav-button,
-body.theme-terminal .chapter-bar,
-body.theme-terminal .lens-control-container,
-body.theme-terminal .toast,
-body.theme-terminal .toast-banner,
-body.theme-terminal .image-grid-overlay,
-body.theme-terminal .bracket-panel,
-body.theme-terminal .compose-dock,
-body.theme-terminal .chapter-dropdown,
-body.theme-terminal .hover-image,
-body.theme-terminal .mobile-right-rail {
+/* Memory: hard edges everywhere — kill border-radius and backdrop-filter globally */
+body.theme-memory .keyboard-legend,
+body.theme-memory .mode-cluster,
+body.theme-memory .stats-widget,
+body.theme-memory .k-key,
+body.theme-memory .mode-key,
+body.theme-memory .stat-item,
+body.theme-memory .nav-button,
+body.theme-memory .mobile-nav-button,
+body.theme-memory .chapter-bar,
+body.theme-memory .lens-control-container,
+body.theme-memory .toast,
+body.theme-memory .toast-banner,
+body.theme-memory .image-grid-overlay,
+body.theme-memory .bracket-panel,
+body.theme-memory .compose-dock,
+body.theme-memory .chapter-dropdown,
+body.theme-memory .hover-image,
+body.theme-memory .mobile-right-rail {
     border-radius: 0 !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     box-shadow: none !important;
 }
 
-/* Terminal: scanline overlay — thin horizontal rules to suggest CRT */
-body.theme-terminal::after {
+/* Memory: scanline overlay — thin horizontal rules to suggest CRT */
+body.theme-memory::after {
     content: '';
     position: fixed;
     inset: 0;
@@ -348,45 +348,45 @@ body.theme-terminal::after {
     );
 }
 
-/* Terminal: monospace body text — reduce font size slightly for density */
-body.theme-terminal .stream {
+/* Memory: monospace body text — reduce font size slightly for density */
+body.theme-memory .stream {
     font-size: clamp(13px, 1.5vw, 17px);
 }
 
-/* Terminal: image hover gets deeper b&w */
-body.theme-terminal .grid-image-item:hover img,
-body.theme-terminal .grid-image-item:hover video {
+/* Memory: image hover gets deeper b&w */
+body.theme-memory .grid-image-item:hover img,
+body.theme-memory .grid-image-item:hover video {
     filter: grayscale(1) brightness(0.45) contrast(1.2);
     opacity: 0.8;
 }
 
-body.theme-terminal .grid-image-item img,
-body.theme-terminal .grid-image-item video {
+body.theme-memory .grid-image-item img,
+body.theme-memory .grid-image-item video {
     filter: grayscale(1) brightness(0.65) contrast(1.1);
     opacity: 0.7;
 }
 
-/* Terminal: hover image gets the same b&w treatment */
-body.theme-terminal .hover-image {
+/* Memory: hover image gets the same b&w treatment */
+body.theme-memory .hover-image {
     filter: grayscale(1) brightness(0.75) contrast(1.1) !important;
     opacity: 0.8 !important;
 }
 
-/* Terminal: cursor stays original circle shape, pink color via CSS vars */
+/* Memory: cursor stays original circle shape, pink color via CSS vars */
 
-/* Terminal: chapter-bar becomes a pixel block */
-body.theme-terminal .chapter-bar {
+/* Memory: chapter-bar becomes a pixel block */
+body.theme-memory .chapter-bar {
     width: 10px;
     height: 10px;
     border-radius: 0 !important;
 }
-body.theme-terminal .chapter-bar:hover {
+body.theme-memory .chapter-bar:hover {
     width: 18px;
     height: 18px;
 }
 
-/* Terminal: brand/logo gets the green monospace treatment */
-body.theme-terminal .brand {
+/* Memory: brand/logo gets the green monospace treatment */
+body.theme-memory .brand {
     font-family: 'Space Mono', monospace !important;
     letter-spacing: 0.1em;
 }
@@ -2788,10 +2788,15 @@ body.compose-mode { padding-bottom: 0; }
     
     <div class="left-rail">
         <div class="lens-control-container">
-            <button class="toast-rail-btn" id="toastRailBtn" title="Hints &amp; tips" aria-label="Show hints">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            <button class="toast-rail-btn" id="toastRailBtn" title="Wolfgang says..." aria-label="Hear from Wolfgang">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <!-- main pad -->
+                    <ellipse cx="12" cy="16" rx="4.2" ry="3.2"/>
+                    <!-- four toe beans -->
+                    <ellipse cx="6.5"  cy="11.5" rx="1.6" ry="1.9"/>
+                    <ellipse cx="10"   cy="9.5"  rx="1.6" ry="1.9"/>
+                    <ellipse cx="14"   cy="9.5"  rx="1.6" ry="1.9"/>
+                    <ellipse cx="17.5" cy="11.5" rx="1.6" ry="1.9"/>
                 </svg>
                 <span class="toast-rail-dot" id="toastRailDot"></span>
             </button>
@@ -3460,9 +3465,9 @@ const Toast = (() => {
 
     let activeToasts = 0;
 
-    function show({ id, icon = '💡', message, actionLabel = null, actionFn = null, duration = 6000, force = false, banner = false, onDismiss = null }) {
+    function show({ id, icon = '💡', message, actionLabel = null, actionFn = null, duration = 6000, force = false, banner = false, onDismiss = null, noStackLimit = false }) {
         if (!force && hasShown(id)) return;
-        if (!banner && activeToasts >= 2) return; // banners bypass stack limit
+        if (!banner && !noStackLimit && activeToasts >= 2) return; // banners and paw-triggered toasts bypass stack limit
 
         const container = document.getElementById('toastContainer');
         if (!container) return;
@@ -5057,22 +5062,22 @@ function toggleTheme() {
     body.classList.add('theme-transitioning');
     requestAnimationFrame(() => {
         // Cycle: default → newspaper → sport → terminal → default
-        if (body.classList.contains('theme-terminal')) {
-            body.classList.remove('theme-terminal');
+        if (body.classList.contains('theme-memory')) {
+            body.classList.remove('theme-memory');
         } else if (body.classList.contains('theme-sport')) {
             body.classList.remove('theme-sport');
-            body.classList.add('theme-terminal');
+            body.classList.add('theme-memory');
         } else if (body.classList.contains('theme-newspaper')) {
             body.classList.remove('theme-newspaper');
             body.classList.add('theme-sport');
         } else {
             body.classList.add('theme-newspaper');
         }
-        const themeLabel = body.classList.contains('theme-terminal') ? '▓'
+        const themeLabel = body.classList.contains('theme-memory') ? '▓'
             : body.classList.contains('theme-sport') ? '⚡'
             : body.classList.contains('theme-newspaper') ? '📖'
             : 'T';
-        const themeDesc = body.classList.contains('theme-terminal') ? 'Raw'
+        const themeDesc = body.classList.contains('theme-memory') ? 'Mem'
             : body.classList.contains('theme-sport') ? 'Sport'
             : body.classList.contains('theme-newspaper') ? 'Paper'
             : 'Theme';
@@ -5489,12 +5494,13 @@ document.addEventListener('DOMContentLoaded', () => {
             toastBehaviors.setRailDot(true);
             Toast.show({
                 id: pick.id,
-                icon: pick.icon,
+                icon: '🐾',
                 message: typeof pick.message === 'function' ? pick.message() : pick.message,
                 actionLabel: pick.actionLabel || null,
                 actionFn: pick.actionFn || null,
                 duration: 12000,
                 force: true,
+                noStackLimit: true,
                 onDismiss: () => toastBehaviors.setRailDot(false)
             });
         });
