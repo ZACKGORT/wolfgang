@@ -3976,13 +3976,15 @@ const toastBehaviors = (() => {
         // Welcome banner — always shows on page load, cycles through unique hints per session visit
         const WELCOME_POOL = [
             { id: 'welcome-banner-0', message: '<span class="toast-accent">Take time</span>. Move yourself & all will follow.' },
-            { id: 'welcome-banner-1', message: 'Press <span class="toast-accent">H</span> to hide the interface — just you and the words.' }
+            { id: 'welcome-banner-1', message: 'Press <span class="toast-accent">H</span> to hide the interface — just you and the words.' },
+            { id: 'welcome-banner-2', message: 'Let it carry you. <span class="toast-accent">Go with the flow.</span>', actionLabel: 'Flow', actionFn: () => flowMode.start() }
         ];
         document.body.classList.add('ui-concealed');
         setTimeout(() => {
             const unshown = WELCOME_POOL.filter(w => !Toast.hasShown(w.id));
             const pick = unshown.length > 0 ? unshown[0] : WELCOME_POOL[0];
             Toast.show({ id: pick.id, icon: '✦', message: pick.message, duration: 12000, banner: true,
+                actionLabel: pick.actionLabel, actionFn: pick.actionFn,
                 force: unshown.length === 0, onDismiss: () => {} });
             setTimeout(() => { document.body.classList.remove('ui-concealed'); }, 9000);
         }, 1800);
