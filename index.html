@@ -1400,14 +1400,17 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         box-shadow: 0 4px 20px rgba(0,0,0,0.45);
-        pointer-events: auto;
+        pointer-events: none;
         cursor: pointer;
         white-space: nowrap;
         opacity: 0;
-        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        visibility: hidden;
+        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.35s;
     }
     .flow-toast.visible {
         opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
         transform: translateX(-50%) translateY(0);
     }
     .flow-toast-icon { font-size: 12px; opacity: 0.7; }
@@ -2603,6 +2606,10 @@ body.compose-mode .mode-key.reader-key { display: none; }
         pointer-events: none !important;
         transition: opacity 0.3s ease !important;
     }
+    /* Compose cluster on mobile: only show IMG and DEL — markup lives in HUD */
+    body.compose-mode .mode-cluster .compose-key:not(#composeKeyImage):not(#composeKeyDelete) {
+        display: none !important;
+    }
 }
 
 /* HUD nav group — prev/next side by side */
@@ -2695,6 +2702,8 @@ body.compose-mode { padding-bottom: 0; }
         will-change: transform;
         isolation: isolate;
         overflow: hidden;
+        display: flex;
+        flex-direction: column-reverse;
         /* height matches stats widget via padding — don't set explicit height */
     }
     /* Once dragged, JS removes centering and switches to absolute left/top */
@@ -2712,12 +2721,12 @@ body.compose-mode { padding-bottom: 0; }
         cursor: grab;
         user-select: none;
         min-height: 38px; /* matches stats widget ~height */
-        border-bottom: 1px solid transparent;
+        border-top: 1px solid transparent;
         transition: border-color 0.2s ease;
         -webkit-tap-highlight-color: transparent;
     }
     .music-player-drag:active { cursor: grabbing; }
-    .music-player.expanded .music-player-drag { border-bottom-color: var(--border); }
+    .music-player.expanded .music-player-drag { border-top-color: var(--border); border-bottom-color: transparent; }
 
     .music-drag-dots {
         font-family: sans-serif;
@@ -3547,7 +3556,6 @@ const parallax = { text: { x: 0, y: 0, targetX: 0, targetY: 0 }, image: { x: 0, 
 let composeActive = false; // module-level flag so highlightSentence can read it
 
 
-
 // ===================================
 // DATA
 // ===================================
@@ -3672,7 +3680,7 @@ const imageMap = {
     
     'sleepies': 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
     'we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
-    'then sleepy': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
+    'we go sleepy': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
 
     
 };
@@ -3832,9 +3840,10 @@ I knew.
 "We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee. Now, we go sleepy".
 [*thousands of kisses*, "good boy"]
 
-#:#:Forever Ferocious. [*ferociously sweet]
+#:#:Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
 `;
+
 
 
 // ===================================
