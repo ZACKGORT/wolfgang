@@ -3224,6 +3224,8 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="compose-hint-divider"></div>
                 <span class="compose-hint"><kbd>#:</kbd> break</span>
                 <div class="compose-hint-divider"></div>
+                <span class="compose-hint"><kbd>####:</kbd> toast</span>
+                <div class="compose-hint-divider"></div>
                 <span class="compose-hint"><kbd>↑↓</kbd> navigate</span>
             </div>
         </div><!-- /.compose-bar-inner -->
@@ -6435,7 +6437,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 Toast.show({
                     id: `compose-hints-${Date.now()}`,
                     icon: '⌨️',
-                    message: '<span class="toast-accent">Enter</span> commit &nbsp;·&nbsp; <span class="toast-accent">Shift+Enter</span> line break &nbsp;·&nbsp; <span class="toast-accent">###</span> subchapter &nbsp;·&nbsp; <span class="toast-accent">dbl-tap</span> sentence to edit',
+                    message: '<span class="toast-accent">Enter</span> commit &nbsp;·&nbsp; <span class="toast-accent">Shift+Enter</span> line break &nbsp;·&nbsp; <span class="toast-accent">###:</span> chapter &nbsp;·&nbsp; <span class="toast-accent">##:</span> section &nbsp;·&nbsp; <span class="toast-accent">####:</span> toast &nbsp;·&nbsp; <span class="toast-accent">dbl-tap</span> sentence to edit',
                     duration: 10000,
                     force: true
                 });
