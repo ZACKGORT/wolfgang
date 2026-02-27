@@ -1378,6 +1378,139 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 .chapter-item.active .chapter-item-title { color: var(--accent); font-style: normal; }
 .chapter-item-progress { margin-left: auto; font-family: var(--ui-font); font-size: 8px; color: var(--ink-3); background: rgba(255,255,255,0.04); padding: 2px 5px; border-radius: 2px; }
 
+/* ── Flow mode music suggestion toast ── */
+@media (min-width: 769px) {
+    .flow-toast {
+        position: fixed;
+        bottom: 72px; /* just above music player at bottom: 20px + ~50px player height */
+        left: 50%;
+        transform: translateX(-50%) translateY(12px);
+        z-index: calc(var(--z-ui) + 40);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface-raised);
+        border: 1px solid var(--border-strong);
+        border-radius: 4px;
+        padding: 9px 14px;
+        font-family: var(--ui-font);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        color: var(--ink-2);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+        pointer-events: auto;
+        cursor: pointer;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .flow-toast.visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    .flow-toast-icon { font-size: 12px; opacity: 0.7; }
+    .flow-toast-text { color: var(--ink-2); }
+    .flow-toast-action {
+        margin-left: 6px;
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        border-left: 1px solid var(--border);
+        padding-left: 10px;
+    }
+    .flow-toast:hover .flow-toast-action { opacity: 0.8; }
+}
+.flow-mode-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--ink-3);
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.flow-mode-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--hover-tint);
+}
+.flow-mode-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--hover-tint);
+}
+.flow-mode-btn .flow-icon { font-size: 9px; line-height: 1; }
+
+/* ── Flow speed controls ── */
+.flow-controls {
+    display: none; /* hidden until flow is active */
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+body.flow-active .flow-controls { display: flex; }
+body.flow-active .flow-mode-btn { margin-left: 6px; }
+.flow-speed-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--ink-3);
+    font-family: var(--ui-font);
+    font-size: 11px;
+    line-height: 1;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.12s ease;
+}
+.flow-speed-btn:hover { border-color: var(--accent); color: var(--accent); }
+.flow-speed-label {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    min-width: 18px;
+    text-align: center;
+}
+
+/* ── Top-center sentence timer bar ── */
+.flow-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 33vw;
+    height: 2px;
+    z-index: calc(var(--z-ui) + 10);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.flow-progress-bar.visible { opacity: 1; }
+.flow-progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    opacity: 0.6;
+}
+.sentence { position: relative; }
+
 /* ===================================
    HEADER BUTTONS
    =================================== */
@@ -2937,6 +3070,15 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="chapter-dropdown-header" id="chapterDropdownHeader">
                     <span class="dropdown-drag-handle">⋮⋮</span>
                     <h3>Chapters</h3>
+                    <div class="flow-controls" id="flowControls">
+                        <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
+                        <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
+                        <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
+                    </div>
+                    <button class="flow-mode-btn" id="flowModeBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
+                        <span class="flow-icon">▶</span>
+                        <span>Flow</span>
+                    </button>
                 </div>
                 <ul class="chapter-dropdown-list" id="chapterDropdownList"></ul>
                 <div class="chapter-dropdown-footer">
@@ -4410,6 +4552,183 @@ function resetToBeginning() {
 }
 
 // ===================================
+// FLOW MODE
+// ===================================
+const flowMode = (() => {
+    let active = false;
+    let timer = null;
+    let barAnim = null;
+
+    // Speed: multiplier applied to pause durations. Higher = slower.
+    let speedMult = 1.0;
+    const SPEED_STEPS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const SPEED_LABELS = ['2×', '1.5×', '1×', '0.75×', '0.5×', '0.4×'];
+    let speedIdx = 2; // default: 1×
+
+    // Base timing
+    const MS_PER_WORD = 420;
+    const MIN_PAUSE   = 2200;
+    const MAX_PAUSE   = 7500;
+
+    function wordCount(el) {
+        return (el.textContent.trim().match(/\S+/g) || []).length;
+    }
+
+    function pauseFor(el) {
+        const words = wordCount(el);
+        const base = Math.min(MAX_PAUSE, Math.max(MIN_PAUSE, words * MS_PER_WORD));
+        return Math.round(base * speedMult);
+    }
+
+    function updateSpeedUI() {
+        const label = document.getElementById('flowSpeedLabel');
+        if (label) label.textContent = SPEED_LABELS[speedIdx];
+        document.getElementById('flowSlower')?.toggleAttribute('disabled', speedIdx >= SPEED_STEPS.length - 1);
+        document.getElementById('flowFaster')?.toggleAttribute('disabled', speedIdx <= 0);
+    }
+
+    function slower() {
+        if (speedIdx < SPEED_STEPS.length - 1) {
+            speedIdx++;
+            speedMult = SPEED_STEPS[speedIdx];
+            updateSpeedUI();
+        }
+    }
+
+    function faster() {
+        if (speedIdx > 0) {
+            speedIdx--;
+            speedMult = SPEED_STEPS[speedIdx];
+            updateSpeedUI();
+        }
+    }
+
+    // ── Top progress bar ──
+    function clearBar() {
+        if (barAnim) { barAnim.cancel(); barAnim = null; }
+        const fill = document.getElementById('flowProgressFill');
+        if (fill) fill.style.width = '0%';
+    }
+
+    function showBar() {
+        document.getElementById('flowProgressBar')?.classList.add('visible');
+    }
+
+    function hideBar() {
+        document.getElementById('flowProgressBar')?.classList.remove('visible');
+        clearBar();
+    }
+
+    function animateBar(duration) {
+        clearBar();
+        const fill = document.getElementById('flowProgressFill');
+        if (!fill) return;
+        barAnim = fill.animate(
+            [{ width: '0%', opacity: '0.7' }, { width: '100%', opacity: '0.35' }],
+            { duration, easing: 'linear', fill: 'forwards' }
+        );
+    }
+
+    function advance() {
+        if (!active) return;
+        const total = state.allSentenceElements.length;
+        if (total === 0) return;
+
+        let next = (state.currentSentenceIndex + 1) % total;
+        let safety = 0;
+        while (state.allSentenceElements[next]?.dataset.structural && safety++ < total) {
+            next = (next + 1) % total;
+        }
+        if (next === 0 || next <= state.currentSentenceIndex) {
+            stop();
+            return;
+        }
+
+        state.currentSentenceIndex = next;
+        highlightSentence(next, 1);
+
+        const sentenceEl = state.allSentenceElements[next];
+        const pause = pauseFor(sentenceEl);
+        animateBar(pause);
+        timer = setTimeout(advance, pause);
+    }
+
+    function startMusic() {
+        const playBtn = document.getElementById('musicPlayBtn');
+        if (!playBtn) return;
+        const icon = document.getElementById('musicPlayIcon');
+        const playing = icon && icon.innerHTML.includes('M6 19h4');
+        if (!playing) playBtn.click();
+    }
+
+    let flowToastTimer = null;
+
+    function showFlowToast() {
+        const t = document.getElementById('flowToast');
+        if (!t) return;
+        clearTimeout(flowToastTimer);
+        const icon = document.getElementById('musicPlayIcon');
+        const playing = icon && icon.innerHTML.includes('M6 19h4');
+        if (playing) return;
+        requestAnimationFrame(() => {
+            t.classList.add('visible');
+            flowToastTimer = setTimeout(hideFlowToast, 8000);
+        });
+    }
+
+    function hideFlowToast() {
+        const t = document.getElementById('flowToast');
+        if (t) t.classList.remove('visible');
+        clearTimeout(flowToastTimer);
+    }
+
+    document.getElementById('flowToast')?.addEventListener('click', () => {
+        hideFlowToast();
+        const playBtn = document.getElementById('musicPlayBtn');
+        if (playBtn) playBtn.click();
+    });
+
+    function start() {
+        if (active) { stop(); return; }
+        active = true;
+        document.body.classList.add('flow-active');
+        document.getElementById('flowModeBtn')?.classList.add('active');
+        document.getElementById('flowModeBtn').querySelector('.flow-icon').textContent = '■';
+        updateSpeedUI();
+
+        startMusic();
+        closeChapterDropdown();
+        showBar();
+        setTimeout(showFlowToast, 800);
+
+        if (state.currentSentenceIndex < 0) state.currentSentenceIndex = 0;
+        const sentenceEl = state.allSentenceElements[state.currentSentenceIndex];
+        if (sentenceEl) {
+            const pause = pauseFor(sentenceEl);
+            animateBar(pause);
+            timer = setTimeout(advance, pause);
+        }
+    }
+
+    function stop() {
+        active = false;
+        clearTimeout(timer);
+        hideBar();
+        hideFlowToast();
+        document.body.classList.remove('flow-active');
+        const btn = document.getElementById('flowModeBtn');
+        if (btn) {
+            btn.classList.remove('active');
+            btn.querySelector('.flow-icon').textContent = '▶';
+        }
+    }
+
+    function isActive() { return active; }
+
+    return { start, stop, isActive, slower, faster };
+})();
+
+// ===================================
 // UI UPDATE FUNCTIONS
 // ===================================
 function updateChapterProgress() {
@@ -4652,7 +4971,7 @@ function handleScroll(event) {
     const scrollDelta = event.deltaY;
     if (Math.abs(scrollDelta) >= CONFIG.SCROLL_THRESHOLD) {
         state.scrollCooldownActive = true;
-        if (scrollDelta > 0) nextSentence(); else previousSentence();
+        if (scrollDelta > 0) { flowMode.stop(); nextSentence(); } else { flowMode.stop(); previousSentence(); }
         setTimeout(() => { state.scrollCooldownActive = false; }, CONFIG.SCROLL_COOLDOWN);
     }
     event.preventDefault();
@@ -4982,7 +5301,18 @@ function initializeContextMenu() {
     document.addEventListener('contextmenu', e => {
         e.preventDefault();
         const isTouch = window.matchMedia('(pointer: coarse)').matches;
-        if (!isTouch) toggleChapterDropdown();
+        if (!isTouch) {
+            const dropdown = Utils.$('#chapterDropdown');
+            // Reset any dragged position — snap back to below the brand logo
+            if (dropdown) {
+                const brand = Utils.$('#brandLogo');
+                const brandRect = brand ? brand.getBoundingClientRect() : null;
+                dropdown.style.left = brandRect ? brandRect.left + 'px' : '';
+                dropdown.style.right = 'auto';
+                dropdown.style.top = brandRect ? (brandRect.bottom + 6) + 'px' : '';
+            }
+            toggleChapterDropdown();
+        }
     });
 
     // Mobile: long press on stream → hide UI; any scroll gesture restores it
@@ -5263,14 +5593,14 @@ function initializeKeyboardControls() {
             keyElement.style.borderColor = 'var(--accent)';
         }
         
-        if (e.key === 'Space' || e.code === 'Space') { e.preventDefault(); nextSentence(); }
+        if (e.key === 'Space' || e.code === 'Space') { e.preventDefault(); flowMode.stop(); nextSentence(); }
         else if (e.key.toLowerCase() === 'g') { e.preventDefault(); toggleImageGrid(); }
         else if (e.key.toLowerCase() === 'c') { e.preventDefault(); toggleChapterDropdown(); }
-        else if (e.key === 'Backspace') { e.preventDefault(); previousSentence(); }
-        else if (e.key === 'ArrowRight') { e.preventDefault(); nextChapter(); }
-        else if (e.key === 'ArrowLeft') { e.preventDefault(); previousChapter(); }
-        else if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); nextSentence(); }
-        else if (e.key === 'ArrowUp' || e.key === 'k') { e.preventDefault(); previousSentence(); }
+        else if (e.key === 'Backspace') { e.preventDefault(); flowMode.stop(); previousSentence(); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); flowMode.stop(); nextChapter(); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); flowMode.stop(); previousChapter(); }
+        else if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); flowMode.stop(); nextSentence(); }
+        else if (e.key === 'ArrowUp' || e.key === 'k') { e.preventDefault(); flowMode.stop(); previousSentence(); }
         else if (e.key === 'Shift') { e.preventDefault(); toggleLayout(); }
         else if (e.key === 'l') toggleLayout();
         else if (e.key.toLowerCase() === 't') toggleTheme();
@@ -5472,8 +5802,13 @@ document.addEventListener('DOMContentLoaded', () => {
         new MutationObserver(syncModeCluster).observe(document.body, { attributes: true, attributeFilter: ['class'] });
         syncModeCluster();
     }
-    Utils.$('#prevSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; previousSentence(); });
-    Utils.$('#nextSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; nextSentence(); });
+    Utils.$('#prevSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; flowMode.stop(); previousSentence(); });
+    Utils.$('#nextSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; flowMode.stop(); nextSentence(); });
+
+    // Flow mode button
+    Utils.$('#flowModeBtn')?.addEventListener('click', (e) => { e.stopPropagation(); flowMode.start(); });
+    Utils.$('#flowSlower')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.slower(); });
+    Utils.$('#flowFaster')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.faster(); });
     
     document.addEventListener('click', e => {
         if (!Utils.$('#brandLogo').contains(e.target) && !Utils.$('#chapterDropdown').contains(e.target) && !e.target.closest('.chapter-break')) closeChapterDropdown();
@@ -6624,5 +6959,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
     </script>
+    <!-- Flow mode sentence timer bar -->
+    <div class="flow-progress-bar" id="flowProgressBar">
+        <div class="flow-progress-bar-fill" id="flowProgressFill"></div>
+    </div>
+
+    <!-- Flow mode music suggestion toast -->
+    <div class="flow-toast" id="flowToast" role="status" aria-live="polite">
+        <span class="flow-toast-icon">♪</span>
+        <span class="flow-toast-text">Wolfgang's Walklist sets the pace</span>
+        <span class="flow-toast-action">Play</span>
+    </div>
+
 </body>
 </html>
