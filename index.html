@@ -5029,13 +5029,29 @@ const flowMode = (() => {
     const MIN_PAUSE   = 2200;
     const MAX_PAUSE   = 7500;
 
+    // Chapter indices for "You're Just a Good Boy" onward (last 4 chapters).
+    // pauseFor uses a slower floor there so the final arc fits within Walk With Wolfgang (4:10 = 250s).
+    // 43 sentences × ~5800ms ≈ 249s at 1×. Earlier chapters use the normal 2200ms floor.
+    const FINAL_CHAPTER_FLOOR = 5800; // ms — tuned for 43 sentences ≈ 250s
+
+    function isInFinalChapters() {
+        // "You're Just a Good Boy" is the chapter that kicks off the final arc.
+        // We detect it by checking if current sentence index is at or past its chapter start.
+        const finalChapterTitle = "You're Just a Good Boy";
+        const finalIdx = chapters.findIndex(c => c.title && c.title.includes("Just a Good Boy"));
+        if (finalIdx < 0) return false;
+        const startSentence = state.chapterStartIndices[finalIdx];
+        return startSentence >= 0 && state.currentSentenceIndex >= startSentence;
+    }
+
     function wordCount(el) {
         return (el.textContent.trim().match(/\S+/g) || []).length;
     }
 
     function pauseFor(el) {
         const words = wordCount(el);
-        const base = Math.min(MAX_PAUSE, Math.max(MIN_PAUSE, words * MS_PER_WORD));
+        const floor = isInFinalChapters() ? FINAL_CHAPTER_FLOOR : MIN_PAUSE;
+        const base = Math.min(MAX_PAUSE, Math.max(floor, words * MS_PER_WORD));
         return Math.round(base * speedMult);
     }
 
