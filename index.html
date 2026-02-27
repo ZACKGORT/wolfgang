@@ -1422,24 +1422,38 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     }
     .flow-toast:hover .flow-toast-action { opacity: 0.8; }
 }
-.flow-mode-btn {
-    margin-left: auto;
+/* ── Flow controller widget ── */
+.flow-controller {
+    position: fixed;
+    bottom: clamp(14px, 2vh, 24px);
+    right: clamp(16px, 3.5vw, 44px);
+    z-index: var(--z-ui);
     display: flex;
     align-items: center;
     gap: 5px;
-    background: none;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.flow-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 4px;
     color: var(--ink-3);
     font-family: var(--ui-font);
     font-size: 8px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 3px 7px;
+    padding: 5px 9px;
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
-    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 .flow-mode-btn:hover {
     border-color: var(--accent);
@@ -1450,6 +1464,7 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     border-color: var(--accent);
     color: var(--accent);
     background: var(--hover-tint);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 2px 12px rgba(0,0,0,0.3);
 }
 .flow-mode-btn .flow-icon { font-size: 9px; line-height: 1; }
 
@@ -1457,11 +1472,16 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 .flow-controls {
     display: none; /* hidden until flow is active */
     align-items: center;
-    gap: 4px;
-    margin-left: auto;
+    gap: 3px;
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 body.flow-active .flow-controls { display: flex; }
-body.flow-active .flow-mode-btn { margin-left: 6px; }
 .flow-speed-btn {
     background: none;
     border: 1px solid var(--border);
@@ -1939,12 +1959,13 @@ body.focus-mode .hover-image { opacity: 0 !important; }
 }
 
     /* ── UI fade-in on pageload ── */
-    .header, .scroll-progress, .left-rail, #statsWidget, .mode-cluster, #keyboardLegend {
+    .header, .scroll-progress, .left-rail, #statsWidget, .mode-cluster, #keyboardLegend, .flow-controller {
         transition: opacity 2.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s ease,
                     background 0.35s ease, border-color 0.35s ease;
     }
     body.ui-concealed .header, body.ui-concealed .scroll-progress, body.ui-concealed .left-rail,
-    body.ui-concealed #statsWidget, body.ui-concealed .mode-cluster, body.ui-concealed #keyboardLegend {
+    body.ui-concealed #statsWidget, body.ui-concealed .mode-cluster, body.ui-concealed #keyboardLegend,
+    body.ui-concealed .flow-controller {
         opacity: 0 !important; pointer-events: none !important;
     }
 
@@ -1952,7 +1973,8 @@ body.focus-mode .hover-image { opacity: 0 !important; }
     body.ui-hidden .header,
     body.ui-hidden .scroll-progress,
     body.ui-hidden .left-rail,
-    body.ui-hidden #keyboardLegend {
+    body.ui-hidden #keyboardLegend,
+    body.ui-hidden .flow-controller {
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;
@@ -3070,15 +3092,6 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="chapter-dropdown-header" id="chapterDropdownHeader">
                     <span class="dropdown-drag-handle">⋮⋮</span>
                     <h3>Chapters</h3>
-                    <div class="flow-controls" id="flowControls">
-                        <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
-                        <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
-                        <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
-                    </div>
-                    <button class="flow-mode-btn" id="flowModeBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
-                        <span class="flow-icon">▶</span>
-                        <span>Flow</span>
-                    </button>
                 </div>
                 <ul class="chapter-dropdown-list" id="chapterDropdownList"></ul>
                 <div class="chapter-dropdown-footer">
@@ -3151,6 +3164,19 @@ body.compose-mode { padding-bottom: 0; }
             <button class="mode-key compose-key" id="composeKeyDelete" aria-label="Delete active sentence" title="Delete active sentence">
                 <span class="mode-key-label">DEL</span>
                 <span class="mode-key-desc">Delete</span>
+            </button>
+        </div>
+
+        <!-- ── Flow mode controller ── -->
+        <div class="flow-controller" id="flowController" aria-label="Flow mode controls">
+            <div class="flow-controls" id="flowControls">
+                <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
+                <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
+                <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
+            </div>
+            <button class="flow-mode-btn" id="flowModeBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
+                <span class="flow-icon">▶</span>
+                <span>Flow</span>
             </button>
         </div>
     </header>
