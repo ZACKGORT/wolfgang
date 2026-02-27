@@ -1379,49 +1379,48 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 .chapter-item-progress { margin-left: auto; font-family: var(--ui-font); font-size: 8px; color: var(--ink-3); background: rgba(255,255,255,0.04); padding: 2px 5px; border-radius: 2px; }
 
 /* ── Flow mode music suggestion toast ── */
-@media (min-width: 769px) {
-    .flow-toast {
-        position: fixed;
-        bottom: 72px; /* just above music player at bottom: 20px + ~50px player height */
-        left: 50%;
-        transform: translateX(-50%) translateY(12px);
-        z-index: calc(var(--z-ui) + 40);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: var(--surface-raised);
-        border: 1px solid var(--border-strong);
-        border-radius: 4px;
-        padding: 9px 14px;
-        font-family: var(--ui-font);
-        font-size: 10px;
-        letter-spacing: 0.06em;
-        color: var(--ink-2);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.45);
-        pointer-events: auto;
-        cursor: pointer;
-        white-space: nowrap;
-        opacity: 0;
-        transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-    .flow-toast.visible {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-    .flow-toast-icon { font-size: 12px; opacity: 0.7; }
-    .flow-toast-text { color: var(--ink-2); }
-    .flow-toast-action {
-        margin-left: 6px;
-        color: var(--accent);
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        border-left: 1px solid var(--border);
-        padding-left: 10px;
-    }
-    .flow-toast:hover .flow-toast-action { opacity: 0.8; }
+.flow-toast {
+    position: fixed;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    z-index: calc(var(--z-ui) + 40);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 9px 14px;
+    font-family: var(--ui-font);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
+.flow-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.flow-toast-icon { font-size: 12px; opacity: 0.7; }
+.flow-toast-text { color: var(--ink-2); }
+.flow-toast-action {
+    margin-left: 6px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
+}
+.flow-toast:hover .flow-toast-action { opacity: 0.8; }
 .flow-mode-btn {
     margin-left: auto;
     display: flex;
@@ -1492,7 +1491,7 @@ body.flow-active .flow-mode-btn { margin-left: 6px; }
 /* ── Top-center sentence timer bar ── */
 .flow-progress-bar {
     position: fixed;
-    top: 0;
+    top: env(safe-area-inset-top, 0px);
     left: 50%;
     transform: translateX(-50%);
     width: 33vw;
@@ -1502,12 +1501,78 @@ body.flow-active .flow-mode-btn { margin-left: 6px; }
     opacity: 0;
     transition: opacity 0.3s ease;
 }
+@media (pointer: coarse) {
+    .flow-progress-bar { width: 60vw; height: 3px; }
+}
 .flow-progress-bar.visible { opacity: 1; }
 .flow-progress-bar-fill {
     height: 100%;
     width: 0%;
     background: var(--accent);
     opacity: 0.6;
+}
+
+/* ── Mobile flow controls bar ── */
+@media (pointer: coarse) {
+    .mobile-flow-bar {
+        display: none;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(72px + env(safe-area-inset-bottom)); /* above HUD */
+        z-index: calc(var(--z-mobile-bottom-rail) + 10);
+        align-items: center;
+        gap: 0;
+        background: var(--surface-raised);
+        border: 1px solid var(--border-strong);
+        border-radius: 24px;
+        padding: 4px 6px;
+        pointer-events: auto;
+        touch-action: manipulation;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    body.flow-active .mobile-flow-bar { display: flex; }
+
+    .mobile-flow-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: var(--ink-2);
+        font-family: var(--ui-font);
+        font-size: 14px;
+        font-weight: 600;
+        width: 44px;
+        height: 44px;
+        cursor: pointer;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        border-radius: 20px;
+        transition: background 0.1s ease;
+    }
+    .mobile-flow-btn:active { background: var(--hover-tint-strong); }
+    .mobile-flow-stop { color: var(--accent); font-size: 11px; letter-spacing: 0.08em; }
+    .mobile-flow-speed-label {
+        font-family: var(--ui-font);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        color: var(--ink-3);
+        min-width: 28px;
+        text-align: center;
+    }
+    .mobile-flow-divider {
+        width: 1px;
+        height: 20px;
+        background: var(--border);
+        margin: 0 2px;
+        flex-shrink: 0;
+    }
+
+    /* Push flow toast above HUD on mobile */
+    .flow-toast {
+        bottom: calc(130px + env(safe-area-inset-bottom));
+    }
 }
 .sentence { position: relative; }
 
@@ -4582,9 +4647,13 @@ const flowMode = (() => {
 
     function updateSpeedUI() {
         const label = document.getElementById('flowSpeedLabel');
+        const mLabel = document.getElementById('mobileFlowSpeedLabel');
         if (label) label.textContent = SPEED_LABELS[speedIdx];
+        if (mLabel) mLabel.textContent = SPEED_LABELS[speedIdx];
         document.getElementById('flowSlower')?.toggleAttribute('disabled', speedIdx >= SPEED_STEPS.length - 1);
         document.getElementById('flowFaster')?.toggleAttribute('disabled', speedIdx <= 0);
+        document.getElementById('mobileFlowSlower')?.toggleAttribute('disabled', speedIdx >= SPEED_STEPS.length - 1);
+        document.getElementById('mobileFlowFaster')?.toggleAttribute('disabled', speedIdx <= 0);
     }
 
     function slower() {
@@ -4682,7 +4751,13 @@ const flowMode = (() => {
         clearTimeout(flowToastTimer);
     }
 
-    document.getElementById('flowToast')?.addEventListener('click', () => {
+    function bindToast(fn) {
+        const t = document.getElementById('flowToast');
+        if (!t) return;
+        t.addEventListener('click', fn);
+        t.addEventListener('touchend', (e) => { e.preventDefault(); fn(); }, { passive: false });
+    }
+    bindToast(() => {
         hideFlowToast();
         const playBtn = document.getElementById('musicPlayBtn');
         if (playBtn) playBtn.click();
@@ -5769,6 +5844,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Event listeners
     Utils.$('#brandLogo').addEventListener('click', toggleChapterDropdown);
+    Utils.$('#brandLogo').addEventListener('touchend', (e) => { e.preventDefault(); toggleChapterDropdown(); }, { passive: false });
     Utils.$('#gridToggleBtn')?.addEventListener('click', toggleImageGrid);
     Utils.$('#layoutToggle')?.addEventListener('click', toggleLayout);
     Utils.$('#themeToggle')?.addEventListener('click', toggleTheme);
@@ -5805,10 +5881,19 @@ document.addEventListener('DOMContentLoaded', () => {
     Utils.$('#prevSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; flowMode.stop(); previousSentence(); });
     Utils.$('#nextSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; flowMode.stop(); nextSentence(); });
 
-    // Flow mode button
-    Utils.$('#flowModeBtn')?.addEventListener('click', (e) => { e.stopPropagation(); flowMode.start(); });
-    Utils.$('#flowSlower')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.slower(); });
-    Utils.$('#flowFaster')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.faster(); });
+    // Flow mode button — click + touchend for iOS
+    function bindFlowBtn(id, fn) {
+        const el = Utils.$(`#${id}`);
+        if (!el) return;
+        el.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
+    }
+    bindFlowBtn('flowModeBtn',      () => flowMode.start());
+    bindFlowBtn('flowSlower',       () => flowMode.slower());
+    bindFlowBtn('flowFaster',       () => flowMode.faster());
+    bindFlowBtn('mobileFlowStop',   () => flowMode.stop());
+    bindFlowBtn('mobileFlowSlower', () => flowMode.slower());
+    bindFlowBtn('mobileFlowFaster', () => flowMode.faster());
     
     document.addEventListener('click', e => {
         if (!Utils.$('#brandLogo').contains(e.target) && !Utils.$('#chapterDropdown').contains(e.target) && !e.target.closest('.chapter-break')) closeChapterDropdown();
@@ -6959,6 +7044,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
     </script>
+    <!-- Mobile flow controls bar (touch devices) -->
+    <div class="mobile-flow-bar" id="mobileFlowBar" aria-label="Flow mode controls">
+        <button class="mobile-flow-btn" id="mobileFlowSlower" aria-label="Slower" title="Slower">−</button>
+        <span class="mobile-flow-speed-label" id="mobileFlowSpeedLabel">1×</span>
+        <button class="mobile-flow-btn" id="mobileFlowFaster" aria-label="Faster" title="Faster">+</button>
+        <div class="mobile-flow-divider"></div>
+        <button class="mobile-flow-btn mobile-flow-stop" id="mobileFlowStop" aria-label="Stop flow" title="Stop">■ Stop</button>
+    </div>
+
     <!-- Flow mode sentence timer bar -->
     <div class="flow-progress-bar" id="flowProgressBar">
         <div class="flow-progress-bar-fill" id="flowProgressFill"></div>
