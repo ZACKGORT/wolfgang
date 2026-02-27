@@ -2942,7 +2942,9 @@ const state = {
     chaptersRead: new Set(),
     // Chapter-break dropdown opener tracking
     chapterBreakOpener: null,
-    lastNavWasKeyboard: false
+    lastNavWasKeyboard: false,
+    // Session timer
+    sessionStartTime: Date.now()
 };
 
 const cursor = { x: 0, y: 0, targetX: 0, targetY: 0, element: null, currentImageElement: null };
@@ -3059,14 +3061,15 @@ const imageMap = {
     'Goodnight.': 'https://i.ibb.co/gMfpCbRW/owl.jpg',
 
     'Bag-buddy': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Newlife.mp4',
-    'Works over WOOfi': 'https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp',
-    'Works under WOOfi': 'https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp',
-    'Heaphone': 'https://i.ibb.co/d0bT8TBD/metallicafanprobably.webp',
+    'Works over WOOFI': 'https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp',
+    'Works under WOOFI': 'https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp',
+    'Heaphone jack': 'https://i.ibb.co/d0bT8TBD/metallicafanprobably.webp',
 
     'near': 'https://i.ibb.co/bjK8FYHX/mydreamwastoownacafejustforwolfietohangoutin.webp',
     'nearer': 'https://i.ibb.co/vCYxMRbG/lookiftheysayanythingiamheretokeepyouontask.webp',
     'nearest': 'https://i.ibb.co/vCYxMRbG/lookiftheysayanythingiamheretokeepyouontask.webp',
     
+
 
     'is this the real life': 'https://i.ibb.co/nsKMYrDs/sowhatareyouupto.webp',
     'is this just fantasy': 'https://i.ibb.co/JwdP8xFc/floating.webp',
@@ -3128,7 +3131,7 @@ Living through lessons learned,
 No, this was no ordinary pet poodle []
 — the likes of legends, really. []
 
-###: Lost & Found.
+###: Lost & Found
 When you're lost and alone in Queens, with nowhere to go. [cornered, but in a good corner to find]
 And you happen across the path of a similar soul. 
 Neglected, abandoned, left without care.
@@ -3143,32 +3146,17 @@ And of course, for someone's hand. [Classic Wolfgang]
 
 >>:Wolfie| this feels nice — nighty-nite.
 
-###:Welcome Home, Wolfgang.
-
+###:Welcome Home, Wolfgang
 That feeling of belong. 
 When you know without notice.[Wolfie, then unnamed, making claim to his new domain — also, bath with Old Spice.]
 When you're out of place, but you've found home.
 Now, you got your mojo back.
-
-##: Walks With Wolfgang.
-You have complete agency.
+you have complete agency.
 You walk like a true New Yorker. [mildy miffed; furiously focused]
 You now walk amongst.
 New lease — no leash. [New life.]
-You decide your direction.[Wolfgang leads; I happily followed]
 You loathe a lazy walk.
-
-City walks. 
-Town walks. 
-River walks.
-Rocky walks.
-Really rocky walks.
-Walks into things.
-Walks into elevators.
-Walks out of elevators.
-
-
-
+You decide your direction.[Wolfgang leads; I happily followed]
 While windy walks were wild.
 The best walks were with dad — homeward bound, together.
 Because, calories are real. [delapidated doggie]
@@ -3181,9 +3169,9 @@ Goodnight.
 Well, wouldn't you know?
 Not broken — just needs some TLC. 
 New bag-buddy — never ever baggage.
-Works over WOOfi.
+Works over WOOFI.
 Tiny. [cafe photo]
-Headphone jack (no mute function)
+Headphone jack. [no mute function]
 Carries well. [obvi] 
 Travels well. [obvi]
 Travels comfortably.
@@ -3207,6 +3195,8 @@ Look to the sky.
 ##:So Helpful
 ##:Bed Bud
 ##:The Road Warrior.
+
+
 
 You need no sympathy.
 You wanted to be close.
@@ -3579,6 +3569,15 @@ const toastBehaviors = (() => {
         bracketNudgeSent = true; // suppress nudge once they've used one
     }
 
+    // ─── Elapsed time formatter ───
+    function formatElapsed(ms) {
+        const totalSec = Math.floor(ms / 1000);
+        const h = Math.floor(totalSec / 3600);
+        const m = Math.floor((totalSec % 3600) / 60);
+        const s = totalSec % 60;
+        return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+    }
+
     // ─── End-of-content CTA ───
     function onLastSentence() {
         if (Toast.hasShown('end-cta')) return;
@@ -3593,6 +3592,18 @@ const toastBehaviors = (() => {
             banner: true,
             onDismiss: () => setRailDot(false)
         });
+        // Show time-spent thank-you toast after a short delay
+        setTimeout(() => {
+            const elapsed = formatElapsed(Date.now() - state.sessionStartTime);
+            Toast.show({
+                id: 'end-time-thanks',
+                icon: '🐾',
+                message: `<span class="toast-accent">${elapsed}</span> — thank you for your time, Wolfgang.`,
+                duration: 0,
+                force: true,
+                onDismiss: () => {}
+            });
+        }, 1200);
     }
 
     function onSentenceAdvance() {
@@ -3619,6 +3630,22 @@ const toastBehaviors = (() => {
 
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
+
+        // Music prompt — 3rd in queue, fires ~5s after welcome banner
+        setTimeout(() => {
+            Toast.show({
+                id: 'music-prompt',
+                icon: '♪',
+                message: "There's a <span class=\"toast-accent\">playlist</span> for this — hit play whenever you're ready.",
+                actionLabel: 'Play',
+                actionFn: () => {
+                    const playBtn = document.getElementById('musicPlayBtn');
+                    if (playBtn) playBtn.click();
+                },
+                duration: 14000,
+                onDismiss: () => {}
+            });
+        }, 6800);
 
         // Ambient pool after 30s
         setTimeout(scheduleNextAmbient, 180000);
@@ -4066,14 +4093,24 @@ function nextChapter() {
     const cur = state.currentSentenceIndex;
     const stops = getStops();
     const next = stops.find(s => s.sentenceIndex > cur);
-    if (next) { state.currentSentenceIndex = next.sentenceIndex; highlightSentence(next.sentenceIndex); }
+    if (next) { state.currentSentenceIndex = next.sentenceIndex; highlightSentence(next.sentenceIndex, 1); }
 }
 
 function previousChapter() {
     const cur = state.currentSentenceIndex;
     const stops = getStops();
-    const prev = [...stops].reverse().find(s => s.sentenceIndex < cur);
-    if (prev) { state.currentSentenceIndex = prev.sentenceIndex; highlightSentence(prev.sentenceIndex); }
+    // If we're AT or just past a chapter/section break (within 1 sentence), skip back one more
+    const atStop = stops.find(s => s.sentenceIndex >= cur - 1 && s.sentenceIndex <= cur);
+    const searchFrom = atStop ? cur - 2 : cur;
+    const prev = [...stops].reverse().find(s => s.sentenceIndex <= searchFrom);
+    if (prev) {
+        state.currentSentenceIndex = prev.sentenceIndex;
+        highlightSentence(prev.sentenceIndex, -1);
+    } else if (stops.length > 0) {
+        // wrap to beginning
+        state.currentSentenceIndex = 0;
+        highlightSentence(0, -1);
+    }
 }
 
 // ===================================
