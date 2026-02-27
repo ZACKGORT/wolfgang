@@ -391,6 +391,49 @@ body.theme-memory .brand {
     letter-spacing: 0.1em;
 }
 
+/* ── Memory: sentence visibility nuance ──
+   Black bg + aggressive opacity rules = illegible in image-active, split, focus.
+   Lift inactive sentences enough to read without competing with the active one.
+*/
+
+/* image-active: global rule drops to 0.1 (invisible on black) — lift to 0.45 */
+body.theme-memory.image-active .sentence:not(.active) {
+    opacity: 0.45 !important;
+    color: #999999 !important;
+}
+body.theme-memory.image-active .sentence.active {
+    opacity: 1 !important;
+    color: var(--sentence-active-color) !important;
+    background: var(--sentence-active-bg) !important;
+}
+/* fully dimmed — keep a sliver so they don't vanish entirely */
+body.theme-memory.image-active .sentence.dimmed {
+    opacity: 0.15 !important;
+    color: #555555 !important;
+}
+
+/* split + image-active: global rule is 0.25 on ink-3 (#555) — invisible on black */
+body.theme-memory.layout-split.image-active .sentence:not(.active) {
+    opacity: 0.50 !important;
+    color: #aaaaaa !important;
+}
+
+/* focus mode — inactive legible, active pops with pink */
+body.theme-memory.focus-mode .sentence:not(.active) {
+    opacity: 0.40 !important;
+    color: #888888 !important;
+}
+body.theme-memory.focus-mode .sentence.active {
+    opacity: 1 !important;
+    color: var(--sentence-active-color) !important;
+    background: var(--sentence-active-bg) !important;
+}
+/* focus + image-active — dimmed but still legible */
+body.theme-memory.focus-mode.image-active .sentence:not(.active) {
+    opacity: 0.35 !important;
+    color: #777777 !important;
+}
+
 /* ===================================
    LAYOUT MODES
    =================================== */
@@ -3164,7 +3207,9 @@ const imageMap = {
     'hero': 'https://i.ibb.co/YBqRmT0f/batman.webp',
     'talks of bravery': 'https://i.ibb.co/3yYzQLjP/braveboy.webp',
     'Of fortitude': 'https://i.ibb.co/twP8m5wP/buildingburgerking.webp',
-    'Of rebellion': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
+    'Of rebellion': 'https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp',
+    'pee-pees': 'https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp',
+    
     'tale told': 'https://i.ibb.co/CknqHpK/happierinnewyork.webp',
     'inviting hope': 'https://i.ibb.co/G4qDyqZH/surviorandthriverfullcolor.webp',
     'Wanderlust': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Worldviewwalkieswithwolfgang.mp4',
@@ -3371,7 +3416,7 @@ You couldn't help yourself.
 >>:Wolfie|*wuf.*
 
 ###:Good Day, Now Good Night.
-"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
+"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pees, then sleep-pee's"
 [Good boy]
 #:#:
 Forever ferocious. Forever a place for you on my lap.
