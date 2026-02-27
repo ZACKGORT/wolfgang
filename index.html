@@ -2896,7 +2896,147 @@ body.compose-mode { padding-bottom: 0; }
         .music-player.dragged { transform: none; left: auto; bottom: auto; }
     }
 
-    </style>
+    
+/* ===================================
+   VISITOR REMARKS — LEFT RAIL
+   =================================== */
+
+/* Remark trigger button on the rail */
+.remark-rail-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--ink-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    position: relative;
+    flex-shrink: 0;
+}
+.remark-rail-btn:hover { background: var(--hover-tint-strong); border-color: var(--accent); color: var(--accent); }
+.remark-rail-btn svg { width: 13px; height: 13px; }
+.remark-rail-dot {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.remark-rail-dot.has-remarks { opacity: 1; }
+
+/* Compose panel — anchored to left rail */
+.visitor-compose {
+    position: fixed;
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: calc(var(--z-rail) + 10);
+    width: 260px;
+    background: var(--surface-raised);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.visitor-compose.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Anchor sentence preview */
+.visitor-compose-anchor {
+    font-family: var(--body-font);
+    font-size: 11px;
+    font-style: italic;
+    color: var(--ink-3);
+    border-left: 2px solid var(--accent);
+    padding-left: 8px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Textarea */
+.visitor-compose-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--ink);
+    font-family: var(--body-font);
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 8px 10px;
+    resize: none;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+    height: 60px;
+}
+.visitor-compose-input::placeholder { color: var(--ink-3); opacity: 0.5; }
+.visitor-compose-input:focus { border-color: rgba(218,165,32,0.4); }
+
+/* Footer row */
+.visitor-compose-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+.visitor-compose-count {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    transition: color 0.15s ease;
+}
+.visitor-compose-count.over { color: #c0392b; }
+.visitor-compose-send {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--ink-3);
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.visitor-compose-send:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--hover-tint); }
+.visitor-compose-send:disabled { opacity: 0.3; cursor: default; }
+
+/* Sent confirmation flash */
+.visitor-compose-sent {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.visitor-compose-sent.show { opacity: 1; }
+
+</style>
 </head>
 <body class="theme-newspaper">
     <!-- ════ PAGE LOADER ════ -->
@@ -3005,6 +3145,14 @@ body.compose-mode { padding-bottom: 0; }
                 </svg>
                 <span class="toast-rail-dot" id="toastRailDot"></span>
             </button>
+            <!-- Visitor remark button -->
+            <button class="remark-rail-btn" id="remarkRailBtn" title="Leave a remark" aria-label="Leave a remark at this moment">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="remark-rail-dot" id="remarkRailDot"></span>
+            </button>
+
             <div class="accessibility-controls">
                 <button class="accessibility-btn" id="accessibilityIncrease" aria-label="Increase accessibility" title="Increase">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3023,7 +3171,20 @@ body.compose-mode { padding-bottom: 0; }
         </div>
     </div>
 
-
+    <!-- Visitor remarks compose panel -->
+    <div class="visitor-compose" id="visitorCompose" role="dialog" aria-label="Leave a remark">
+        <div class="visitor-compose-anchor" id="visitorComposeAnchor">—</div>
+        <textarea class="visitor-compose-input" id="visitorComposeInput"
+            placeholder="A thought, a feeling, a word."
+            maxlength="80"
+            rows="2"
+            aria-label="Your remark"></textarea>
+        <div class="visitor-compose-footer">
+            <span class="visitor-compose-count" id="visitorComposeCount">80</span>
+            <span class="visitor-compose-sent" id="visitorComposeSent">left behind ✦</span>
+            <button class="visitor-compose-send" id="visitorComposeSend" disabled>Send</button>
+        </div>
+    </div>
 
     <!-- Compose bar — floating widget -->
     <div class="compose-bar" id="composeBar" aria-label="Compose">
@@ -4557,6 +4718,7 @@ function highlightSentence(index, dir = 1) {
         trackSentence(index);
         toastBehaviors.onSentenceAdvance();
         if (index === state.allSentenceElements.length - 1) toastBehaviors.onLastSentence();
+        VisitorRemarks.checkAndSurfaceRemark(index);
     }
     trackChapter(getCurrentChapter());
 
@@ -4571,6 +4733,176 @@ function highlightSentence(index, dir = 1) {
         hideImage();
     }
 }
+
+
+// ===================================
+// VISITOR REMARKS
+// ===================================
+const VisitorRemarks = (() => {
+    const STORAGE_KEY = 'wolfie:remarks';
+    const MAX_CHARS = 80;
+    let panelOpen = false;
+    let anchoredSentenceIndex = -1;
+    let anchoredSentenceText = '';
+    // Track which sentence remarks have already been shown this session
+    const shownThisSession = new Set();
+
+    // ── Storage helpers ──
+    async function loadRemarks() {
+        try {
+            const result = await window.storage.get(STORAGE_KEY, true);
+            return result ? JSON.parse(result.value) : [];
+        } catch (e) { return []; }
+    }
+
+    async function saveRemarks(remarks) {
+        try {
+            await window.storage.set(STORAGE_KEY, JSON.stringify(remarks), true);
+        } catch (e) {}
+    }
+
+    // ── Submit a remark ──
+    async function submitRemark(text, sentenceIndex, sentenceText) {
+        const remarks = await loadRemarks();
+        const remark = {
+            id: Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            sentenceIndex,
+            sentenceText,
+            text: text.trim(),
+            ts: Date.now()
+        };
+        remarks.push(remark);
+        await saveRemarks(remarks);
+        updateDot();
+        return remark;
+    }
+
+    // ── Check if current sentence has remarks, show one as toast ──
+    async function checkAndSurfaceRemark(sentenceIndex) {
+        if (shownThisSession.has(sentenceIndex)) return;
+        const remarks = await loadRemarks();
+        const matching = remarks.filter(r => r.sentenceIndex === sentenceIndex);
+        if (matching.length === 0) return;
+        // Pick one — prefer unseen, else random
+        const pick = matching[Math.floor(Math.random() * matching.length)];
+        shownThisSession.add(sentenceIndex);
+        // Small delay so it feels natural, not simultaneous with sentence highlight
+        setTimeout(() => {
+            Toast.show({
+                id: 'remark-' + pick.id,
+                icon: '✦',
+                message: '“' + pick.text + '”',
+                duration: 10000,
+                force: true,
+                banner: false,
+                onDismiss: () => {}
+            });
+        }, 900);
+    }
+
+    // ── Update dot indicator ──
+    async function updateDot() {
+        const dot = document.getElementById('remarkRailDot');
+        if (!dot) return;
+        const remarks = await loadRemarks();
+        dot.classList.toggle('has-remarks', remarks.length > 0);
+    }
+
+    // ── Open compose panel anchored to current sentence ──
+    function openPanel() {
+        const idx = state.currentSentenceIndex;
+        const el = state.allSentenceElements[idx];
+        anchoredSentenceIndex = idx;
+        anchoredSentenceText = el ? el.textContent.trim() : '';
+
+        const anchor = document.getElementById('visitorComposeAnchor');
+        if (anchor) anchor.textContent = anchoredSentenceText || '—';
+
+        const input = document.getElementById('visitorComposeInput');
+        if (input) { input.value = ''; input.focus(); }
+
+        const count = document.getElementById('visitorComposeCount');
+        if (count) { count.textContent = MAX_CHARS; count.classList.remove('over'); }
+
+        const send = document.getElementById('visitorComposeSend');
+        if (send) send.disabled = true;
+
+        const sent = document.getElementById('visitorComposeSent');
+        if (sent) sent.classList.remove('show');
+
+        const panel = document.getElementById('visitorCompose');
+        if (panel) panel.classList.add('open');
+        panelOpen = true;
+    }
+
+    function closePanel() {
+        const panel = document.getElementById('visitorCompose');
+        if (panel) panel.classList.remove('open');
+        panelOpen = false;
+    }
+
+    function togglePanel() {
+        if (panelOpen) closePanel(); else openPanel();
+    }
+
+    // ── Wire up UI ──
+    function init() {
+        updateDot();
+
+        const btn = document.getElementById('remarkRailBtn');
+        if (btn) {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); togglePanel(); });
+            btn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); togglePanel(); }, { passive: false });
+        }
+
+        const input = document.getElementById('visitorComposeInput');
+        const count = document.getElementById('visitorComposeCount');
+        const send  = document.getElementById('visitorComposeSend');
+        const sent  = document.getElementById('visitorComposeSent');
+
+        if (input) {
+            input.addEventListener('input', () => {
+                const len = input.value.length;
+                const remaining = MAX_CHARS - len;
+                if (count) {
+                    count.textContent = remaining;
+                    count.classList.toggle('over', remaining < 0);
+                }
+                if (send) send.disabled = len === 0 || len > MAX_CHARS;
+            });
+            // Enter submits (Shift+Enter = nothing — keep it single sentence)
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (send && !send.disabled) send.click();
+                }
+                if (e.key === 'Escape') closePanel();
+                e.stopPropagation(); // don't let sentence nav fire
+            });
+        }
+
+        if (send) {
+            send.addEventListener('click', async () => {
+                if (!input || input.value.trim().length === 0) return;
+                await submitRemark(input.value, anchoredSentenceIndex, anchoredSentenceText);
+                if (sent) { sent.classList.add('show'); setTimeout(() => sent.classList.remove('show'), 2000); }
+                if (input) input.value = '';
+                if (count) { count.textContent = MAX_CHARS; count.classList.remove('over'); }
+                if (send) send.disabled = true;
+                setTimeout(closePanel, 1400);
+            });
+        }
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!panelOpen) return;
+            if (e.target.closest('#visitorCompose') || e.target.closest('#remarkRailBtn')) return;
+            closePanel();
+        });
+    }
+
+    return { init, checkAndSurfaceRemark, openPanel, closePanel };
+})();
 
 function resetToBeginning() {
     if (state.allSentenceElements.length === 0) return;
@@ -5894,6 +6226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize toast system
     toastBehaviors.init();
+    VisitorRemarks.init();
 
     // Theme button starts at default (T / Theme label already in HTML)
 
