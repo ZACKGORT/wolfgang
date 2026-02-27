@@ -237,6 +237,160 @@ body.theme-sport {
     --selection-color: #ffffff;
 }
 
+/* ── TERMINAL THEME ── */
+body.theme-terminal {
+    --bg-color: #000000;
+    --ink: #e8e8e8;
+    --ink-2: #aaaaaa;
+    --ink-3: #555555;
+    --accent: #ff3d9a;
+
+    --surface: rgba(0, 0, 0, 0.97);
+    --surface-raised: #000000;
+    --border: rgba(255, 255, 255, 0.18);
+    --border-strong: rgba(255, 255, 255, 0.30);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --hover-tint: rgba(255, 61, 154, 0.08);
+    --hover-tint-strong: rgba(255, 61, 154, 0.16);
+
+    --sentence-color: #cccccc;
+    --sentence-active-color: #000000;
+    --sentence-active-bg: #ff3d9a;
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #ffffff;
+    --sentence-hover-bg: rgba(255, 61, 154, 0.08);
+    --sentence-dimmed-opacity: 0.30;
+    --sentence-dimmed-color: #444444;
+
+    --ui-font: 'Space Mono', monospace;
+    --body-font: 'Space Mono', monospace;
+    --stream-line-height: 1.9;
+    --stream-letter-spacing: 0.01em;
+    --ui-font-weight: 400;
+    --chapter-break-weight: 700;
+    --chapter-break-letter-spacing: 0.18em;
+    --chapter-break-font-size: 10px;
+    --chapter-break-border-width: 1px;
+
+    --chapter-bar-bg: rgba(255, 255, 255, 0.12);
+    --chapter-bar-hover-bg: rgba(255, 255, 255, 0.28);
+    --chapter-bar-completed-bg: rgba(255, 61, 154, 0.40);
+    --chapter-bar-completed-hover-bg: rgba(255, 61, 154, 0.65);
+    --chapter-tooltip-bg: #000000;
+
+    --grid-overlay-bg: #000000;
+    --grid-item-bg: #000000;
+    --grid-item-border: rgba(255, 255, 255, 0.15);
+    --grid-title-border: rgba(255, 255, 255, 0.15);
+
+    /* Kill all atmosphere */
+    --vig-opacity: 0;
+    --grain-opacity: 0;
+    --edge-blur: 0px;
+    --effects-display: none;
+
+    --bracket-color: #888888;
+    --bracket-hover: #ff3d9a;
+    --bracket-bg: rgba(255, 61, 154, 0.04);
+
+    --cursor-bg: #ff3d9a;
+    --cursor-border: #ff3d9a;
+    --cursor-blend: normal;
+    --cursor-opacity: 1;
+
+    --selection-bg: #ff3d9a;
+    --selection-color: #000000;
+
+    /* Flatten parallax — terminal doesn't move */
+    --text-parallax-strength: 0;
+    --image-parallax-strength: 0;
+    --center-magnet-strength: 0;
+}
+
+/* Terminal: hard edges everywhere — kill border-radius and backdrop-filter globally */
+body.theme-terminal .keyboard-legend,
+body.theme-terminal .mode-cluster,
+body.theme-terminal .stats-widget,
+body.theme-terminal .k-key,
+body.theme-terminal .mode-key,
+body.theme-terminal .stat-item,
+body.theme-terminal .nav-button,
+body.theme-terminal .mobile-nav-button,
+body.theme-terminal .chapter-bar,
+body.theme-terminal .lens-control-container,
+body.theme-terminal .toast,
+body.theme-terminal .toast-banner,
+body.theme-terminal .image-grid-overlay,
+body.theme-terminal .bracket-panel,
+body.theme-terminal .compose-dock,
+body.theme-terminal .chapter-dropdown,
+body.theme-terminal .hover-image,
+body.theme-terminal .mobile-right-rail {
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+/* Terminal: scanline overlay — thin horizontal rules to suggest CRT */
+body.theme-terminal::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.08) 3px,
+        rgba(0, 0, 0, 0.08) 4px
+    );
+}
+
+/* Terminal: monospace body text — reduce font size slightly for density */
+body.theme-terminal .stream {
+    font-size: clamp(13px, 1.5vw, 17px);
+}
+
+/* Terminal: image hover gets deeper b&w */
+body.theme-terminal .grid-image-item:hover img,
+body.theme-terminal .grid-image-item:hover video {
+    filter: grayscale(1) brightness(0.45) contrast(1.2);
+    opacity: 0.8;
+}
+
+body.theme-terminal .grid-image-item img,
+body.theme-terminal .grid-image-item video {
+    filter: grayscale(1) brightness(0.65) contrast(1.1);
+    opacity: 0.7;
+}
+
+/* Terminal: hover image gets the same b&w treatment */
+body.theme-terminal .hover-image {
+    filter: grayscale(1) brightness(0.75) contrast(1.1) !important;
+    opacity: 0.8 !important;
+}
+
+/* Terminal: cursor stays original circle shape, pink color via CSS vars */
+
+/* Terminal: chapter-bar becomes a pixel block */
+body.theme-terminal .chapter-bar {
+    width: 10px;
+    height: 10px;
+    border-radius: 0 !important;
+}
+body.theme-terminal .chapter-bar:hover {
+    width: 18px;
+    height: 18px;
+}
+
+/* Terminal: brand/logo gets the green monospace treatment */
+body.theme-terminal .brand {
+    font-family: 'Space Mono', monospace !important;
+    letter-spacing: 0.1em;
+}
+
 /* ===================================
    LAYOUT MODES
    =================================== */
@@ -3378,20 +3532,23 @@ const toastBehaviors = (() => {
         if (dot) dot.classList.toggle('active', active);
     }
 
-    // ─── Wolfgang factoids ───
+    // ─── Wolfgang, in his own words ───
     const AMBIENT_POOL = [
-        { id: 'amb-0',  message: () => 'Wawa water was Wolfgang\'s favorite.' },
-        { id: 'amb-1',  message: () => 'He never needed a leash. Not once.' },
-        { id: 'amb-2',  message: () => 'He did not eat the deer steak. A matter of principle.' },
-        { id: 'amb-3',  message: () => 'Pup cups at Sheetz changed the calculus of road trips.' },
-        { id: 'amb-4',  message: () => 'He sat through every recording session without being asked.' },
-        { id: 'amb-5',  message: () => 'Five hundred miles from West Virginia. He slept through most of it.' },
-        { id: 'amb-6',  message: () => 'He was happier in New York than anyone expected.' },
-        { id: 'amb-7',  message: () => 'He really, genuinely, deeply hated the rain.' },
-        { id: 'amb-8',  message: () => 'The mohawk was his era.' },
-        { id: 'amb-9',  message: () => 'Named after a musician. Became one himself, in his way.' },
-        { id: 'amb-10', message: () => 'Walkies by the river were his favorite.' },
-        { id: 'amb-11', message: () => 'He stayed. Without deciding to. That\'s the only way it counts.' },
+        { id: 'amb-0',  message: () => 'time for walkies.' },
+        { id: 'amb-1',  message: () => 'can we go to wawa? i\'d like a water.' },
+        { id: 'amb-2',  message: () => 'is that spot on your lap still available?' },
+        { id: 'amb-3',  message: () => 'i don\'t love the rain. i\'m just saying.' },
+        { id: 'amb-4',  message: () => 'that hoodie is mine now. i thought you knew.' },
+        { id: 'amb-5',  message: () => 'pup cup. sheetz. whenever you\'re ready.' },
+        { id: 'amb-6',  message: () => 'i heard you open the fridge. i\'m on my way.' },
+        { id: 'amb-7',  message: () => 'we could go for a walk. just a thought.' },
+        { id: 'amb-8',  message: () => 'you look like you could use a nap. i volunteer.' },
+        { id: 'amb-9',  message: () => 'the leash is unnecessary. i told you this.' },
+        { id: 'amb-10', message: () => 'i prefer the window seat. for the record.' },
+        { id: 'amb-11', message: () => 'you were gone for eleven minutes. felt longer.' },
+        { id: 'amb-12', message: () => 'i found a good spot. come sit. bring snacks.' },
+        { id: 'amb-13', message: () => 'this is my chair now. i hope that\'s clear.' },
+        { id: 'amb-14', message: () => 'walkies again? yes. always yes. what are you waiting for.' },
     ];
 
     let ambientTimer = null;
@@ -3636,7 +3793,7 @@ const toastBehaviors = (() => {
         // Start idle detection
         idleTimer = setTimeout(onIdle, IDLE_THRESHOLD);
 
-        // Music prompt — 3rd in queue, fires ~5s after welcome banner
+        // Music prompt — fires after welcome banner has had time to clear (banner lasts 12s, shown at 1.8s)
         setTimeout(() => {
             Toast.show({
                 id: 'music-prompt',
@@ -3650,7 +3807,7 @@ const toastBehaviors = (() => {
                 duration: 14000,
                 onDismiss: () => {}
             });
-        }, 6800);
+        }, 16000);
 
         // Ambient pool after 30s
         setTimeout(scheduleNextAmbient, 180000);
@@ -4897,14 +5054,36 @@ function toggleFocusMode() {
 
 function toggleTheme() {
     const body = document.body;
-    // Add a transitioning flag so grain/edge-blur don't flash during the swap
     body.classList.add('theme-transitioning');
     requestAnimationFrame(() => {
-        if (body.classList.contains('theme-sport')) body.classList.remove('theme-sport');
-        else if (body.classList.contains('theme-newspaper')) { body.classList.remove('theme-newspaper'); body.classList.add('theme-sport'); }
-        else body.classList.add('theme-newspaper');
-        const icon = Utils.$('.theme-icon');
-        icon.textContent = body.classList.contains('theme-sport') ? '⚡' : (body.classList.contains('theme-newspaper') ? '📖' : '☀️');
+        // Cycle: default → newspaper → sport → terminal → default
+        if (body.classList.contains('theme-terminal')) {
+            body.classList.remove('theme-terminal');
+        } else if (body.classList.contains('theme-sport')) {
+            body.classList.remove('theme-sport');
+            body.classList.add('theme-terminal');
+        } else if (body.classList.contains('theme-newspaper')) {
+            body.classList.remove('theme-newspaper');
+            body.classList.add('theme-sport');
+        } else {
+            body.classList.add('theme-newspaper');
+        }
+        const themeLabel = body.classList.contains('theme-terminal') ? '▓'
+            : body.classList.contains('theme-sport') ? '⚡'
+            : body.classList.contains('theme-newspaper') ? '📖'
+            : 'T';
+        const themeDesc = body.classList.contains('theme-terminal') ? 'Raw'
+            : body.classList.contains('theme-sport') ? 'Sport'
+            : body.classList.contains('theme-newspaper') ? 'Paper'
+            : 'Theme';
+        ['modeKeyT', 'modeKeyTCompose'].forEach(id => {
+            const btn = Utils.$(`#${id}`);
+            if (!btn) return;
+            const labelEl = btn.querySelector('.mode-key-label');
+            const descEl = btn.querySelector('.mode-key-desc');
+            if (labelEl) labelEl.textContent = themeLabel;
+            if (descEl) descEl.textContent = themeDesc;
+        });
         requestAnimationFrame(() => {
             body.classList.remove('theme-transitioning');
         });
@@ -5292,9 +5471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize toast system
     toastBehaviors.init();
 
-    // Sync theme icon to match default newspaper theme
-    const themeIconEl = Utils.$('.theme-icon');
-    if (themeIconEl) themeIconEl.textContent = '📖';
+    // Theme button starts at default (T / Theme label already in HTML)
 
     // Rail bell button — cycles through ambient pool, force-shows even if already seen
     const toastRailBtn = document.getElementById('toastRailBtn');
