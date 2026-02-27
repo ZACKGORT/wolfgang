@@ -3310,7 +3310,9 @@ body.compose-mode { padding-bottom: 0; }
                 <span class="mode-key-label">>></span>
                 <span class="mode-key-desc">Voice</span>
             </button>
-            <button class="mode-key compose-key" id="composeKeyBreak" aria-label="Insert line break #:" title="Insert line break #:">
+            <button class="mode-key compose-key" id="composeKeyToast" aria-label="Insert toast trigger ####:" title="Insert toast trigger ####:message">
+                <span class="mode-key-label">####:</span>
+            </button>
                 <span class="mode-key-label">#:</span>
                 <span class="mode-key-desc">Break</span>
             </button>
@@ -3788,6 +3790,7 @@ My Sweet Wolfgang.
 #:#:Forever ferocious. Forever a place for you on my lap.
 
 `;
+
 
 
 // ===================================
@@ -4471,11 +4474,17 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
 
+                    if (lineSegment.startsWith('####:')) {
+                        // Toast trigger — fires once per session when the next sentence is activated
+                        const message = lineSegment.substring(5).trim();
+                        if (message) parts.push({ type: 'toast-trigger', id: idCounter++, message });
+                        continue;
+                    }
                     if (lineSegment.startsWith('###:')) {
                         // Chapter break — title follows the colon
                         const title = lineSegment.substring(4).trim();
@@ -4751,6 +4760,11 @@ function highlightSentence(index, dir = 1) {
         toastBehaviors.onSentenceAdvance();
         if (index === state.allSentenceElements.length - 1) toastBehaviors.onLastSentence();
         VisitorRemarks.checkAndSurfaceRemark(index);
+        // ####: narrative toast — once per session
+        if (sentence.dataset.toast) {
+            const toastId = `narrative-toast-${index}`;
+            Toast.show({ id: toastId, icon: '✦', message: sentence.dataset.toast, duration: 7000, force: true, banner: true, noStackLimit: true });
+        }
     }
     trackChapter(getCurrentChapter());
 
@@ -5456,6 +5470,7 @@ function render() {
     let sentenceCount = 0;
     let nextChapterIndex = 0;
     let currentActiveChapter = 0;
+    let pendingToast = null; // ####: message waiting to attach to next sentence
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -5509,6 +5524,11 @@ function render() {
             return;
         }
 
+        if (part.type === 'toast-trigger') {
+            pendingToast = part.message;
+            return;
+        }
+
         if (part.type === 'sentence') {
             const span = document.createElement('span');
             span.className = 'sentence';
@@ -5528,6 +5548,7 @@ function render() {
                 if (e.key === 'Enter') { e.preventDefault(); state.currentSentenceIndex = parseInt(span.dataset.sentenceIndex); highlightSentence(state.currentSentenceIndex); }
             });
             state.allSentenceElements.push(span);
+            if (pendingToast) { span.dataset.toast = pendingToast; pendingToast = null; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
@@ -6501,7 +6522,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // ── Insert new sentence ──
+            // ####: Toast trigger — insert an invisible marker before the next sentence
+            if (raw.startsWith('####:')) {
+                const message = raw.substring(5).trim();
+                if (!message) { input.value = ''; if (hudSubmit) hudSubmit.disabled = true; return; }
+                // Store as a data attribute on the currently active sentence (will fire when that sentence activates next)
+                // We insert a zero-width placeholder span so the compose list shows it
+                const idx = compose.insertionIndex >= 0 ? compose.insertionIndex : state.allSentenceElements.length;
+                const marker = document.createElement('span');
+                marker.className = 'sentence toast-marker';
+                marker.dataset.structural = 'true';
+                marker.dataset.type = 'toast-trigger';
+                marker.dataset.toastMessage = message;
+                marker.dataset.sentenceIndex = idx;
+                marker.setAttribute('tabindex', '0');
+                marker.style.cssText = 'opacity:0.35;font-size:0.7em;font-family:var(--ui-font);color:var(--accent);display:block;padding:2px 0;cursor:default;';
+                marker.textContent = `✦ ${message}`;
+                // Attach the pending toast to the NEXT real sentence that gets pushed
+                // For now, tag via a session map keyed to the sentence index after
+                if (!window._pendingNarrativeToasts) window._pendingNarrativeToasts = {};
+                window._pendingNarrativeToasts[state.allSentenceElements.length] = message;
+                state.allSentenceElements.push(marker);
+                const stream = Utils.$('#stream');
+                const ref = state.allSentenceElements[compose.insertionIndex] || null;
+                if (ref) stream.insertBefore(marker, ref); else stream.appendChild(marker);
+                input.value = '';
+                if (hudSubmit) hudSubmit.disabled = true;
+                updateWordCount();
+                return;
+            }
+
             // ###: Chapter break
             if (raw.startsWith('###:')) {
                 const rawTitle = raw.substring(4).trim();
@@ -6950,6 +7000,16 @@ document.addEventListener('DOMContentLoaded', () => {
             input.value = '>>:Wolfie|';
             input.focus();
             input.setSelectionRange(10, 10);
+            if (hudSubmit) hudSubmit.disabled = false;
+        });
+
+        // ── Toast trigger quick-insert ──
+        const clusterToast = document.getElementById('composeKeyToast');
+        if (clusterToast) clusterToast.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.value = '####:';
+            input.focus();
+            input.setSelectionRange(5, 5);
             if (hudSubmit) hudSubmit.disabled = false;
         });
 
