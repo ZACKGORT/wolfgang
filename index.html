@@ -1329,6 +1329,13 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     touch-action: none;
     transform: none;
 }
+/* Desktop: anchor dropdown to the right edge, aligned with mode cluster */
+@media (min-width: 769px) {
+    .chapter-dropdown {
+        left: auto;
+        right: clamp(16px, 3.5vw, 44px);
+    }
+}
 .chapter-dropdown.open { opacity: 1; visibility: visible; }
 .chapter-dropdown.dragging { 
     transition: none !important; 
@@ -3207,9 +3214,7 @@ const imageMap = {
     'hero': 'https://i.ibb.co/YBqRmT0f/batman.webp',
     'talks of bravery': 'https://i.ibb.co/3yYzQLjP/braveboy.webp',
     'Of fortitude': 'https://i.ibb.co/twP8m5wP/buildingburgerking.webp',
-    'Of rebellion': 'https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp',
-    'pee-pees': 'https://i.ibb.co/RkxhHy9n/curbyourdogbw.webp',
-    
+    'Of rebellion': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
     'tale told': 'https://i.ibb.co/CknqHpK/happierinnewyork.webp',
     'inviting hope': 'https://i.ibb.co/G4qDyqZH/surviorandthriverfullcolor.webp',
     'Wanderlust': 'https://github.com/ZACKGORT/ifimaybefrank/raw/refs/heads/main/mp4/Worldviewwalkieswithwolfgang.mp4',
@@ -3389,21 +3394,24 @@ Nearer.
 
 ###: The King From Queens.
 Is this the real life? [a few weeks ago, we weren't aware of each other's worlds]
-Is this just fantasy? 
-[in many ways, we never were. I never asked his past. He didn't care about mine. All he knew, was that past, present, or future, this guy cooks pretty damn good food, takes me to all of the places, and gives free pets — and perhaps far too many kisses.]
-
-Caught in a landslide. 
-[a moment for some catharsis from the author: post-covid lay-offs hit the design agency scene hard. I had just wrapped up as lead product designer at a very large agency for a very large bank. Then I was just let go. So, off into the wild with Wolfie.]
-
-Let's escape from reality. 
-[Reality check: February of 2023, my mom died of a heart attack. Family at odds. Reached out anyway. Week later, suddenly and summarily laid-off. Not fired. Just given a measley severence and a cardboard box (an actual cardboard box with my office stuff in). Landlord refused to let me keep this dog. I reached out to family again. No one responded. Okay, I have my Wolfie — no problem.]
-
+Is this just fantasy? [in many ways, we never were. I never asked his past. He didn't care about mine. All he knew, was that past, present, or future, this guy cooks pretty damn good food, takes me to all of the places, and gives free pets — and perhaps far too many kisses.]
+Caught in a landslide. [a moment for some catharsis from the author: post-covid lay-offs hit the design agency scene hard. I had just wrapped up as lead product designer at a very large agency for a very large bank. Then I was just let go. So, off into the wild with Wolfie.]
+Let's escape from reality. [reality check: Reached out to family for help. No one responded. Okay, I have my Wolfie, no problem.]
 Open Your Eyes. [It's your world, Wolfgang — we're all just living in it']
 
-Look to the sky, and See. [capitalized for emphasis and intentionality]
 
+###:Look to the sky.
+& See.
 
 ###: You're Just a Good Boy. 
+
+##:The Road Warrior.
+##:So Helpful
+##:Bed Bud
+##:The Road Warrior.
+
+
+
 You need no sympathy.
 You wanted to be close.
 You couldn't say it.
@@ -3413,7 +3421,7 @@ You couldn't help yourself.
 >>:Wolfie|*wuf.*
 
 ###:Good Day, Now Good Night.
-"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pees, then sleep-pee's"
+"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee's, then sleep-pee's"
 [Good boy]
 #:#:
 Forever ferocious. Forever a place for you on my lap.
@@ -3975,6 +3983,7 @@ function initializeDraggableDropdown() {
     function applyPinnedPosition() {
         if (pinnedLeft !== null && pinnedTop !== null) {
             dropdown.style.left = pinnedLeft + 'px';
+            dropdown.style.right = 'auto';
             dropdown.style.top  = pinnedTop  + 'px';
         }
     }
@@ -3999,6 +4008,7 @@ function initializeDraggableDropdown() {
         }
         isDragging = true;
         dropdown.classList.add('dragging');
+        dropdown.style.right = 'auto'; // release CSS right-anchor so left can take over
         startX = clientX; startY = clientY;
         initLeft = pinnedLeft;
         initTop  = pinnedTop;
@@ -4968,8 +4978,12 @@ function render() {
 // CONTEXT MENU
 // ===================================
 function initializeContextMenu() {
-    // Suppress browser right-click context menu
-    document.addEventListener('contextmenu', e => e.preventDefault());
+    // Suppress browser right-click context menu; on desktop also open chapter dropdown
+    document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        const isTouch = window.matchMedia('(pointer: coarse)').matches;
+        if (!isTouch) toggleChapterDropdown();
+    });
 
     // Mobile: long press on stream → hide UI; any scroll gesture restores it
     const streamEl = Utils.$('#stream');
