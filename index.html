@@ -1318,7 +1318,7 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     position: fixed;
     top: 52px;
     left: clamp(16px, 3.5vw, 44px);
-    min-width: 260px; 
+    min-width: 300px; 
     background: var(--surface-raised); 
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
     border: 1px solid var(--border); border-radius: 6px; padding: 6px 0; 
@@ -1332,8 +1332,9 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 /* Desktop: anchor dropdown to the right edge, aligned with mode cluster */
 @media (min-width: 769px) {
     .chapter-dropdown {
-        left: auto;
-        right: clamp(16px, 3.5vw, 44px);
+        left: clamp(16px, 3.5vw, 44px);
+        right: auto;
+        min-width: 320px;
     }
 }
 .chapter-dropdown.open { opacity: 1; visibility: visible; }
@@ -1363,6 +1364,33 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     font-family: var(--ui-font); font-size: 9px; letter-spacing: 0.12em; 
     text-transform: uppercase; color: var(--ink-3); margin: 0; font-weight: 400; flex: 1;
 }
+/* Flow button inside the dropdown header */
+.dropdown-flow-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--ink-3);
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    pointer-events: auto;
+}
+.dropdown-flow-btn:hover { border-color: var(--accent); color: var(--accent); }
+.dropdown-flow-btn.active { 
+    border-color: var(--accent); color: var(--accent); 
+    background: color-mix(in srgb, var(--accent) 10%, transparent); 
+}
+.dropdown-flow-icon { font-size: 8px; line-height: 1; }
+
 .chapter-dropdown-list { 
     overflow-y: auto; padding: 0; margin: 0; list-style: none; 
     overscroll-behavior: contain; -webkit-overflow-scrolling: touch; 
@@ -1370,13 +1398,35 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 .chapter-dropdown-list::-webkit-scrollbar { width: 3px; }
 .chapter-dropdown-list::-webkit-scrollbar-track { background: transparent; }
 .chapter-dropdown-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.chapter-item { padding: 8px 14px; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; gap: 10px; }
+.chapter-item { padding: 8px 14px; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; gap: 10px; position: relative; }
 .chapter-item:hover { background: var(--hover-tint); }
 .chapter-item.active { background: var(--hover-tint-strong); border-left: 2px solid var(--accent); padding-left: 12px; }
-.chapter-item-number { font-family: var(--ui-font); font-size: 9px; color: var(--ink-3); min-width: 36px; letter-spacing: 0.04em; }
-.chapter-item-title { font-family: var(--body-font); font-size: 13px; color: var(--ink-2); font-style: italic; }
+.chapter-item-number { font-family: var(--ui-font); font-size: 9px; color: var(--ink-3); min-width: 36px; letter-spacing: 0.04em; flex-shrink: 0; }
+.chapter-item-title { font-family: var(--body-font); font-size: 13px; color: var(--ink-2); font-style: italic; flex: 1; min-width: 0; }
 .chapter-item.active .chapter-item-title { color: var(--accent); font-style: normal; }
-.chapter-item-progress { margin-left: auto; font-family: var(--ui-font); font-size: 8px; color: var(--ink-3); background: rgba(255,255,255,0.04); padding: 2px 5px; border-radius: 2px; }
+.chapter-item-progress { font-family: var(--ui-font); font-size: 8px; color: var(--ink-3); background: rgba(255,255,255,0.04); padding: 2px 5px; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
+/* Chapter play button — desktop hover only */
+.chapter-play-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--ink-3);
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    flex-shrink: 0;
+    pointer-events: auto;
+}
+.chapter-play-btn:hover { border-color: var(--accent) !important; color: var(--accent) !important; background: color-mix(in srgb, var(--accent) 10%, transparent); }
+@media (min-width: 769px) {
+    .chapter-item:hover .chapter-play-btn { display: flex; }
+    .chapter-item:hover .chapter-item-progress { display: none; }
+}
 
 /* ── Flow mode music suggestion toast ── */
 @media (min-width: 769px) {
@@ -1431,49 +1481,19 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     bottom: clamp(14px, 2vh, 24px);
     right: clamp(16px, 3.5vw, 44px);
     z-index: var(--z-ui);
-    display: flex;
+    display: none; /* hidden until flow is active */
     align-items: center;
     gap: 5px;
     pointer-events: auto;
     transition: opacity 0.3s ease;
 }
+body.flow-active .flow-controller { display: flex; }
 
-.flow-mode-btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--surface);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--ink-3);
-    font-family: var(--ui-font);
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 5px 9px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-}
-.flow-mode-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--hover-tint);
-}
-.flow-mode-btn.active {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--hover-tint);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent), 0 2px 12px rgba(0,0,0,0.3);
-}
-.flow-mode-btn .flow-icon { font-size: 9px; line-height: 1; }
+/* (flow-mode-btn styles removed — button now lives in .dropdown-flow-btn) */
 
 /* ── Flow speed controls ── */
 .flow-controls {
-    display: none; /* hidden until flow is active */
+    display: flex;
     align-items: center;
     gap: 3px;
     background: var(--surface);
@@ -3315,6 +3335,10 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="chapter-dropdown-header" id="chapterDropdownHeader">
                     <span class="dropdown-drag-handle">⋮⋮</span>
                     <h3>Chapters</h3>
+                    <button class="dropdown-flow-btn" id="dropdownFlowBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
+                        <span class="dropdown-flow-icon">▶</span>
+                        <span>Flow</span>
+                    </button>
                 </div>
                 <ul class="chapter-dropdown-list" id="chapterDropdownList"></ul>
                 <div class="chapter-dropdown-footer">
@@ -3394,17 +3418,13 @@ body.compose-mode { padding-bottom: 0; }
             </button>
         </div>
 
-        <!-- ── Flow mode controller ── -->
-        <div class="flow-controller" id="flowController" aria-label="Flow mode controls">
+        <!-- ── Flow mode controller — speed controls only, visible when flow is active ── -->
+        <div class="flow-controller" id="flowController" aria-label="Flow mode speed controls">
             <div class="flow-controls" id="flowControls">
                 <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
                 <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
                 <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
             </div>
-            <button class="flow-mode-btn" id="flowModeBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
-                <span class="flow-icon">▶</span>
-                <span>Flow</span>
-            </button>
         </div>
     </header>
 
@@ -3471,14 +3491,14 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="music-track" data-track="0">
                     <span class="music-track-num">1</span>
                     <div class="music-track-info">
-                        <div class="music-track-name">Walk With Wolfgang</div>
+                        <div class="music-track-name">Walk with Wolfie</div>
                         <div class="music-track-sub">original — guitar</div>
                     </div>
                 </div>
                 <div class="music-track" data-track="1">
                     <span class="music-track-num">2</span>
                     <div class="music-track-info">
-                        <div class="music-track-name">Wayward Wolfie</div>
+                        <div class="music-track-name">A Sublime Canine</div>
                         <div class="music-track-sub">original — guitar</div>
                     </div>
                 </div>
@@ -3486,14 +3506,14 @@ body.compose-mode { padding-bottom: 0; }
                     <span class="music-track-num">3</span>
                     <div class="music-track-info">
                         <div class="music-track-name">Beautiful Day</div>
-                        <div class="music-track-sub">U2, cover concept — guitar &amp; midi drums</div>
+                        <div class="music-track-sub">cover concept — guitar &amp; midi drums</div>
                     </div>
                 </div>
                 <div class="music-track" data-track="3">
                     <span class="music-track-num">4</span>
                     <div class="music-track-info">
-                        <div class="music-track-name">"Just Mammals"</div>
-                        <div class="music-track-sub">Bloodhound Gang, cover concept — guitar</div>
+                        <div class="music-track-name">Bad Touch</div>
+                        <div class="music-track-sub">cover concept — guitar</div>
                     </div>
                 </div>
             </div>
@@ -3843,7 +3863,6 @@ I knew.
 #:#:Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
 `;
-
 
 
 // ===================================
@@ -5163,12 +5182,19 @@ const flowMode = (() => {
         if (playBtn) playBtn.click();
     });
 
+    function syncFlowBtn(active) {
+        const btn = document.getElementById('dropdownFlowBtn');
+        if (!btn) return;
+        btn.classList.toggle('active', active);
+        const icon = btn.querySelector('.dropdown-flow-icon');
+        if (icon) icon.textContent = active ? '■' : '▶';
+    }
+
     function start() {
         if (active) { stop(); return; }
         active = true;
         document.body.classList.add('flow-active');
-        document.getElementById('flowModeBtn')?.classList.add('active');
-        document.getElementById('flowModeBtn').querySelector('.flow-icon').textContent = '■';
+        syncFlowBtn(true);
         updateSpeedUI();
 
         startMusic();
@@ -5191,11 +5217,7 @@ const flowMode = (() => {
         hideBar();
         hideFlowToast();
         document.body.classList.remove('flow-active');
-        const btn = document.getElementById('flowModeBtn');
-        if (btn) {
-            btn.classList.remove('active');
-            btn.querySelector('.flow-icon').textContent = '▶';
-        }
+        syncFlowBtn(false);
     }
 
     function isActive() { return active; }
@@ -5277,8 +5299,20 @@ function buildChapterDropdown() {
             <span class="chapter-item-number">${String(chapter.id + 1).padStart(2, '0')}</span>
             <span class="chapter-item-title">${chapter.title}</span>
             <span class="chapter-item-progress">${endIndex - startIndex} sentences</span>
+            <button class="chapter-play-btn" data-chapter-id="${chapter.id}" title="Flow from this chapter" aria-label="Flow from chapter ${chapter.title}">▶</button>
         `;
-        li.addEventListener('click', () => goToChapter(chapter.id));
+        li.addEventListener('click', (e) => {
+            if (e.target.closest('.chapter-play-btn')) return; // handled separately
+            goToChapter(chapter.id);
+        });
+        const playBtn = li.querySelector('.chapter-play-btn');
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToChapter(chapter.id);
+            closeChapterDropdown();
+            window.musicPlayer?.shuffleAndPlay();
+            if (!flowMode.isActive()) flowMode.start();
+        });
         dropdownList.appendChild(li);
     });
 }
@@ -6288,7 +6322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Utils.$('#nextSentenceBtn').addEventListener('click', () => { state.lastNavWasKeyboard = false; flowMode.stop(); nextSentence(); });
 
     // Flow mode button
-    Utils.$('#flowModeBtn')?.addEventListener('click', (e) => { e.stopPropagation(); flowMode.start(); });
+    Utils.$('#dropdownFlowBtn')?.addEventListener('click', (e) => { e.stopPropagation(); flowMode.start(); });
     Utils.$('#flowSlower')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.slower(); });
     Utils.$('#flowFaster')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.faster(); });
     
@@ -7492,6 +7526,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentTrack === i) playPause(); else loadTrack(i, true);
             }, { passive: false });
         });
+
+        // ── Shuffle and autoplay from a random track ──
+        function shuffleAndPlay() {
+            const order = Array.from({ length: TRACKS.length }, (_, i) => i)
+                .sort(() => Math.random() - 0.5);
+            loadTrack(order[0], true);
+        }
+
+        // Expose for external callers (chapter flow buttons)
+        window.musicPlayer = { shuffleAndPlay };
 
     })();
 
