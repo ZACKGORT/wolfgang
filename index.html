@@ -1155,6 +1155,182 @@ body.has-last-sentence .music-player {
     pointer-events: none;
     transition: opacity 1.8s ease;
 }
+/* ===================================
+   @@dark INTERSTITIAL SYSTEM
+   A sentence-scoped dark moment — font unchanged, palette inverted/shifted.
+   Applied via body.interstitial-dark; removed on @@/dark sentence.
+   Each theme defines its own character — same type, darker world.
+   =================================== */
+
+/* ── Transition wrapper ── */
+body.interstitial-dark {
+    transition:
+        background-color 1.4s ease,
+        color 1.4s ease;
+}
+
+/* ── DEFAULT THEME (dark gold/black base) — go even deeper, cooler ── */
+body.interstitial-dark:not([class*="theme-"]),
+body.interstitial-dark.theme-transitioning:not([class*="theme-"]) {
+    --bg-color: #050505;
+    --ink: #d4c9a8;
+    --ink-2: #8a7f68;
+    --ink-3: #4a4538;
+    --accent: #b8860b;
+    --sentence-color: rgba(212, 201, 168, 0.80);
+    --sentence-active-color: #050505;
+    --sentence-active-bg: #d4c9a8;
+    --sentence-active-shadow: none;
+    --sentence-dimmed-color: rgba(212, 201, 168, 0.30);
+    --vig-opacity: 0.95;
+    --grain-opacity: 0.12;
+}
+
+/* ── NEWSPAPER — warm parchment → near-black, ember accent, same serif ── */
+body.interstitial-dark.theme-newspaper {
+    --bg-color: #0e0b08;
+    --ink: #e8dcc8;
+    --ink-2: #a09070;
+    --ink-3: #5a4a38;
+    --accent: #7a3a10;
+    --surface: rgba(14, 11, 8, 0.92);
+    --surface-raised: rgba(14, 11, 8, 0.98);
+    --border: rgba(232, 220, 200, 0.10);
+    --border-strong: rgba(232, 220, 200, 0.16);
+    --hover-tint: rgba(122, 58, 16, 0.10);
+    --hover-tint-strong: rgba(122, 58, 16, 0.18);
+    --sentence-color: rgba(232, 220, 200, 0.82);
+    --sentence-active-color: #0e0b08;
+    --sentence-active-bg: #e8dcc8;
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #e8dcc8;
+    --sentence-hover-bg: rgba(122, 58, 16, 0.08);
+    --sentence-dimmed-opacity: 0.35;
+    --sentence-dimmed-color: rgba(232, 220, 200, 0.35);
+    --chapter-bar-bg: rgba(232, 220, 200, 0.10);
+    --chapter-bar-hover-bg: rgba(232, 220, 200, 0.20);
+    --chapter-bar-completed-bg: rgba(122, 58, 16, 0.40);
+    --chapter-bar-completed-hover-bg: rgba(122, 58, 16, 0.60);
+    --chapter-tooltip-bg: rgba(14, 11, 8, 0.97);
+    --grid-overlay-bg: rgba(14, 11, 8, 0.99);
+    --grid-item-bg: #1a1410;
+    --grid-item-border: rgba(232, 220, 200, 0.10);
+    --grid-title-border: rgba(232, 220, 200, 0.08);
+    --vig-opacity: 0.80;
+    --grain-opacity: 0.11;
+    --bracket-color: #6a4828;
+    --bracket-hover: #7a3a10;
+    --bracket-bg: rgba(122, 58, 16, 0.06);
+    --cursor-border: rgba(232, 220, 200, 0.35);
+    --cursor-blend: difference;
+    --selection-bg: rgba(122, 58, 16, 0.30);
+    --selection-color: #e8dcc8;
+}
+
+/* ── SPORT — electric orange → ash black, same Inter type ── */
+body.interstitial-dark.theme-sport {
+    --bg-color: #040404;
+    --ink: #c8c8c8;
+    --ink-2: #808080;
+    --ink-3: #404040;
+    --accent: #b02800;
+    --surface: rgba(4, 4, 4, 0.97);
+    --surface-raised: rgba(4, 4, 4, 0.99);
+    --border: rgba(176, 40, 0, 0.14);
+    --border-strong: rgba(176, 40, 0, 0.22);
+    --hover-tint: rgba(176, 40, 0, 0.08);
+    --hover-tint-strong: rgba(176, 40, 0, 0.14);
+    --sentence-color: rgba(200, 200, 200, 0.75);
+    --sentence-active-color: #ffffff;
+    --sentence-active-bg: #b02800;
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #ffffff;
+    --sentence-hover-bg: rgba(176, 40, 0, 0.10);
+    --sentence-dimmed-opacity: 0.25;
+    --sentence-dimmed-color: #383838;
+    --chapter-bar-bg: rgba(200, 200, 200, 0.08);
+    --chapter-bar-hover-bg: rgba(200, 200, 200, 0.18);
+    --chapter-bar-completed-bg: rgba(176, 40, 0, 0.40);
+    --chapter-bar-completed-hover-bg: rgba(176, 40, 0, 0.60);
+    --chapter-tooltip-bg: rgba(4, 4, 4, 0.99);
+    --vig-opacity: 0.88;
+    --grain-opacity: 0.06;
+    --bracket-color: #882000;
+    --bracket-hover: #b02800;
+    --selection-bg: rgba(176, 40, 0, 0.40);
+    --selection-color: #ffffff;
+}
+
+/* ── MEMORY — pink/mono → deep void, phosphor green ghost ── */
+body.interstitial-dark.theme-memory {
+    --bg-color: #000000;
+    --ink: #a0f080;
+    --ink-2: #608040;
+    --ink-3: #304020;
+    --accent: #70c050;
+    --surface: rgba(0, 0, 0, 0.99);
+    --surface-raised: #000000;
+    --border: rgba(160, 240, 128, 0.12);
+    --border-strong: rgba(160, 240, 128, 0.20);
+    --hover-tint: rgba(112, 192, 80, 0.08);
+    --hover-tint-strong: rgba(112, 192, 80, 0.16);
+    --sentence-color: rgba(160, 240, 128, 0.70);
+    --sentence-active-color: #000000;
+    --sentence-active-bg: #a0f080;
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #a0f080;
+    --sentence-hover-bg: rgba(112, 192, 80, 0.08);
+    --sentence-dimmed-opacity: 0.20;
+    --sentence-dimmed-color: #203010;
+    --chapter-bar-bg: rgba(160, 240, 128, 0.10);
+    --chapter-bar-hover-bg: rgba(160, 240, 128, 0.22);
+    --chapter-bar-completed-bg: rgba(112, 192, 80, 0.40);
+    --chapter-bar-completed-hover-bg: rgba(112, 192, 80, 0.60);
+    --chapter-tooltip-bg: #000000;
+    --vig-opacity: 0;
+    --grain-opacity: 0;
+    --bracket-color: #508030;
+    --bracket-hover: #70c050;
+    --cursor-bg: #a0f080;
+    --cursor-border: #a0f080;
+    --selection-bg: #a0f080;
+    --selection-color: #000000;
+}
+
+/* ── NIGHTFALL — sepia dark → true black, bone ink ── */
+body.interstitial-dark.theme-nightfall {
+    --bg-color: #030302;
+    --ink: #f0e8d8;
+    --ink-2: #a09080;
+    --ink-3: #504838;
+    --accent: #6a3010;
+    --surface: rgba(3, 3, 2, 0.95);
+    --surface-raised: rgba(3, 3, 2, 0.99);
+    --border: rgba(240, 232, 216, 0.09);
+    --border-strong: rgba(240, 232, 216, 0.14);
+    --hover-tint: rgba(106, 48, 16, 0.10);
+    --hover-tint-strong: rgba(106, 48, 16, 0.18);
+    --sentence-color: rgba(240, 232, 216, 0.78);
+    --sentence-active-color: #030302;
+    --sentence-active-bg: #f0e8d8;
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #f0e8d8;
+    --sentence-hover-bg: rgba(106, 48, 16, 0.07);
+    --sentence-dimmed-opacity: 0.30;
+    --sentence-dimmed-color: rgba(240, 232, 216, 0.30);
+    --chapter-bar-bg: rgba(240, 232, 216, 0.09);
+    --chapter-bar-hover-bg: rgba(240, 232, 216, 0.18);
+    --chapter-bar-completed-bg: rgba(106, 48, 16, 0.40);
+    --chapter-bar-completed-hover-bg: rgba(106, 48, 16, 0.58);
+    --chapter-tooltip-bg: rgba(3, 3, 2, 0.99);
+    --vig-opacity: 0.90;
+    --grain-opacity: 0.10;
+    --bracket-color: #604028;
+    --bracket-hover: #6a3010;
+    --selection-bg: rgba(106, 48, 16, 0.30);
+    --selection-color: #f0e8d8;
+}
+
 .bullet-item, .numbered-bullet-item { display: block; margin: 0.5em 0; padding-left: 1.5em; position: relative; }
 .bullet-marker, .numbered-marker { position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 .bullet-marker { font-size: 1.2em; line-height: 1.5; }
@@ -3289,7 +3465,7 @@ body.compose-mode { padding-bottom: 0; }
 
 </style>
 </head>
-<body class="theme-newspaper">
+<body class="theme-newspaper"><!-- default -->
     <!-- ════ PAGE LOADER ════ -->
     <div id="pageLoader">
         <video src="https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/soferocious.mp4"
@@ -4080,6 +4256,7 @@ First, we go pee-pee. [my boy]
 "Now, we go sleepy". [*thousands of kisses*, "good boy"]
 
 #:#:
+@@dark
 @@last
 Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
@@ -4767,13 +4944,21 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(####:[^\n]*|@@last|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|@@last|@@\/dark|@@dark|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
 
                     if (lineSegment === '@@last') {
                         parts.push({ type: 'last-marker', id: idCounter++ });
+                        continue;
+                    }
+                    if (lineSegment === '@@dark') {
+                        parts.push({ type: 'dark-start', id: idCounter++ });
+                        continue;
+                    }
+                    if (lineSegment === '@@/dark') {
+                        parts.push({ type: 'dark-end', id: idCounter++ });
                         continue;
                     }
                     if (lineSegment.startsWith('@theme:')) {
@@ -5072,20 +5257,65 @@ function highlightSentence(index, dir = 1) {
             console.log('[@@last] sentence computed bg:', getComputedStyle(sentence).background);
             toastBehaviors.onLastSentence();
         }
+        // @@dark / @@/dark — interstitial dark block
+        if (sentence.dataset.darkStart === 'true') {
+            // Entering: snapshot current theme, apply interstitial-dark
+            if (!document.body.classList.contains('interstitial-dark')) {
+                const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
+                state._preInterstitialTheme = ALL_THEMES.find(t => document.body.classList.contains(t)) || null;
+                document.body.classList.add('interstitial-dark');
+            }
+        } else if (sentence.dataset.darkEnd === 'true') {
+            // Exiting: restore saved theme
+            if (document.body.classList.contains('interstitial-dark')) {
+                document.body.classList.remove('interstitial-dark');
+                const saved = state._preInterstitialTheme;
+                if (saved) {
+                    const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
+                    ALL_THEMES.forEach(t => document.body.classList.remove(t));
+                    document.body.classList.add(saved);
+                }
+                state._preInterstitialTheme = null;
+            }
+        } else if (!sentence.dataset.darkStart && !sentence.dataset.darkEnd) {
+            // Plain sentence outside any interstitial block — ensure no stale interstitial
+            // (only strip if this sentence is before any @@dark marker, i.e. navigating backwards out)
+            const hasAnyDarkStart = state.allSentenceElements.slice(0, index + 1).some(s => s.dataset && s.dataset.darkStart === 'true');
+            const hasMatchingDarkEnd = state.allSentenceElements.slice(0, index + 1).some(s => s.dataset && s.dataset.darkEnd === 'true');
+            if (!hasAnyDarkStart || hasMatchingDarkEnd) {
+                if (document.body.classList.contains('interstitial-dark')) {
+                    document.body.classList.remove('interstitial-dark');
+                    const saved = state._preInterstitialTheme;
+                    if (saved) {
+                        const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
+                        ALL_THEMES.forEach(t => document.body.classList.remove(t));
+                        document.body.classList.add(saved);
+                    }
+                    state._preInterstitialTheme = null;
+                }
+            }
+        }
+
         VisitorRemarks.checkAndSurfaceRemark(index);
         // ####: narrative toast — fires every time
         if (sentence.dataset.toast) {
             const toastId = `narrative-toast-${index}`;
             Toast.show({ id: toastId, icon: '✦', message: sentence.dataset.toast, duration: 7000, force: true, banner: true, noStackLimit: true });
         }
-        // @theme: resolve correct theme for current position — scan back to nearest trigger, default newspaper
-        (function resolveTheme() {
-            for (let i = index; i >= 0; i--) {
-                const el = state.allSentenceElements[i];
-                if (el && el.dataset.theme) { setTheme(el.dataset.theme); return; }
-            }
-            setTheme('newspaper');
-        })();
+        // @theme: resolve correct theme for current position — scan back to nearest trigger.
+        // Skip theme resolution while inside an interstitial (interstitial owns the palette).
+        if (!document.body.classList.contains('interstitial-dark')) {
+            (function resolveTheme() {
+                for (let i = index; i >= 0; i--) {
+                    const el = state.allSentenceElements[i];
+                    if (el && el.dataset.theme) { setTheme(el.dataset.theme); return; }
+                }
+                // Default: restore initial body theme (set at load via body class)
+                const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
+                const initial = document.body.dataset.baseTheme || 'newspaper';
+                setTheme(initial);
+            })();
+        }
     }
     trackChapter(getCurrentChapter());
 
@@ -5835,9 +6065,11 @@ function render() {
     let sentenceCount = 0;
     let nextChapterIndex = 0;
     let currentActiveChapter = 0;
-    let pendingToast = null; // ####: message waiting to attach to next sentence
-    let pendingTheme = null; // @theme: name waiting to attach to next sentence
-    let pendingLast  = false; // @@last — marks next sentence as the designated finale
+    let pendingToast     = null;  // ####: message waiting to attach to next sentence
+    let pendingTheme     = null;  // @theme: name waiting to attach to next sentence
+    let pendingLast      = false; // @@last — marks next sentence as the designated finale
+    let pendingDarkStart = false; // @@dark — next sentence enters the dark interstitial
+    let pendingDarkEnd   = false; // @@/dark — next sentence exits the dark interstitial
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -5906,6 +6138,16 @@ function render() {
             return;
         }
 
+        if (part.type === 'dark-start') {
+            pendingDarkStart = true;
+            return;
+        }
+
+        if (part.type === 'dark-end') {
+            pendingDarkEnd = true;
+            return;
+        }
+
         if (part.type === 'sentence') {
             const span = document.createElement('span');
             span.className = 'sentence';
@@ -5925,9 +6167,11 @@ function render() {
                 if (e.key === 'Enter') { e.preventDefault(); state.currentSentenceIndex = parseInt(span.dataset.sentenceIndex); highlightSentence(state.currentSentenceIndex); }
             });
             state.allSentenceElements.push(span);
-            if (pendingToast) { span.dataset.toast = pendingToast; pendingToast = null; }
-            if (pendingTheme) { span.dataset.theme = pendingTheme; pendingTheme = null; }
-            if (pendingLast)  { span.dataset.lastSentence = 'true'; pendingLast = false; }
+            if (pendingToast)     { span.dataset.toast = pendingToast; pendingToast = null; }
+            if (pendingTheme)     { span.dataset.theme = pendingTheme; pendingTheme = null; }
+            if (pendingLast)      { span.dataset.lastSentence = 'true'; pendingLast = false; }
+            if (pendingDarkStart) { span.dataset.darkStart = 'true'; pendingDarkStart = false; }
+            if (pendingDarkEnd)   { span.dataset.darkEnd   = 'true'; pendingDarkEnd = false; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
@@ -6451,6 +6695,13 @@ function initializeInteractionHint() {
 // MAIN INITIALIZATION
 // ===================================
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Record initial theme so resolveTheme can restore it as the base ──
+    {
+        const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
+        const initial = ALL_THEMES.find(t => document.body.classList.contains(t));
+        document.body.dataset.baseTheme = initial ? initial.replace('theme-', '') : 'newspaper';
+    }
 
     // ── Page Loader ──
     (function initPageLoader() {
