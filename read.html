@@ -511,7 +511,7 @@ code {
         <section class="hero">
             <p class="hero-eyebrow">Platform documentation</p>
             <h1>Every mechanic of<br><em>wolfie.love</em></h1>
-            <p class="hero-lead">A sentence-by-sentence literary memorial for Wolfgang — a rescue dog, a three-year companion, a good boy. This document covers the full reading model: navigation, flow mode, themes, image triggers, chapters, remarks, keyboard shortcuts, and the interstitial dark moment. Consider it the operator's manual for something that isn't quite a website.</p>
+            <p class="hero-lead">A sentence-by-sentence literary memorial for Wolfgang — a rescue dog, a three-year companion, a good boy. This document covers the full reading model: navigation, flow mode, themes, image triggers, chapters, remarks, keyboard shortcuts, the interstitial dark moment, and the spatial grid — a driftable universe of photographs that lives alongside the narrative and returns you to it. Consider it the operator's manual for something that isn't quite a website.</p>
         </section>
 
         <!-- TOC -->
@@ -530,6 +530,7 @@ code {
                 <li><span class="toc-num">10</span><a href="#modes">View Modes</a></li>
                 <li><span class="toc-num">11</span><a href="#mobile">Mobile</a></li>
                 <li><span class="toc-num">12</span><a href="#toasts">Narrative Toasts</a></li>
+                <li><span class="toc-num">13</span><a href="#grid">Spatial Grid</a></li>
             </ul>
         </nav>
 
@@ -859,6 +860,10 @@ code {
                         <td class="key-action">Reset to first sentence</td>
                     </tr>
                     <tr>
+                        <td><span class="key-badge">G</span></td>
+                        <td class="key-action">Toggle the spatial grid open / closed</td>
+                    </tr>
+                    <tr>
                         <td><span class="key-badge">Esc</span></td>
                         <td class="key-action">Close overlay / exit mode / close dropdown</td>
                     </tr>
@@ -965,6 +970,52 @@ code {
             <div class="mechanic-block">
                 <p class="mechanic-title">Toast Stack</p>
                 <p>Up to two standard toasts stack at the bottom-left. Banner toasts (narrative and welcome) appear centered below the header, one at a time, and supersede the stack. The <code>aria-live="polite"</code> toast container ensures screen readers receive toast content without interrupting active reading.</p>
+            </div>
+        </section>
+
+        <!-- 13 SPATIAL GRID -->
+        <section class="section" id="grid">
+            <div class="section-header">
+                <span class="section-num">13</span>
+                <h2>Spatial Grid</h2>
+            </div>
+
+            <p>The spatial grid is a second world running alongside the narrative — a driftable, zoomable field of every photograph that exists within the piece. It is not a gallery. It has no sequence, no hierarchy, no caption required. It is the place where all the images that couldn't fit anywhere else finally have a home.</p>
+
+            <p>Access it via the <code>G</code> key or the grid button in the mode cluster. The narrative pauses exactly where you left it. The grid opens full-screen. When you're done, it closes and the sentence is still there waiting.</p>
+
+            <div class="callout">
+                <p>The reading engine demands precision — one image, one thought, earned. The grid has no such requirement. It only asks: <em>was this real?</em> If it was, it belongs.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Navigation</p>
+                <p>Drag to pan across the field. Scroll or pinch to zoom toward any point. Flick to send the grid moving with inertia — it decelerates naturally, with soft resistance at the edges. The grid does not snap or paginate. You move through it the way you move through memory: non-linearly, at your own speed, pulled by whatever catches your eye.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Navigable Tiles</p>
+                <p>Photographs that are bound to a specific sentence in the narrative are marked with a <strong>→</strong> in their label bar. Clicking or tapping one closes the grid and transports you to that exact sentence — in full context, with the prose that earned the image. The image and the sentence were always in conversation. The grid just makes the conversation visible.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Archive Tiles</p>
+                <p>Photographs with no sentence binding — images that existed in the life but found no single phrase to attach to — are present in the grid without the arrow. Tapping one zooms the grid toward it, bringing it forward. They are not navigable back into the narrative, because they belong to no single moment. They belong to all of them.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Image Loading</p>
+                <p>Images load progressively as you pan toward them. Unloaded tiles pulse softly — a placeholder shimmer that resolves into the photograph as it arrives. There is no loading screen. The grid is immediately inhabitable; it fills in around you as you explore.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">The Relationship to the Narrative</p>
+                <p>The narrative is linear by design — sentence by sentence, one direction, deliberate. The grid is the inverse: spatial, non-sequential, complete all at once. Together they describe the same thing from two different angles. The prose is how it felt in time. The grid is how it feels in memory. Memory is not linear. The grid isn't either.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Mobile</p>
+                <p>Fully supported. Drag to pan, pinch to zoom, tap to navigate or inspect. The same physics as desktop — inertia, edge resistance, progressive image loading. On mobile the grid may be the primary way most readers encounter the full photograph archive, since the image layer on small screens is necessarily compact.</p>
             </div>
         </section>
 
