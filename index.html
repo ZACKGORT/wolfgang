@@ -4003,7 +4003,6 @@ Nearer.
 
 
 ###: The King From Queens.
-@theme:memory
 Is this the real life? [a few weeks ago, we weren't aware of each other's worlds]
 Is this just fantasy? [in many ways, we never were. I never asked his past. He didn't care about mine. All he knew, was that past, present, or future, this guy cooks pretty damn good food, takes me to all of the places, and gives free pets — and perhaps far too many kisses.]
 Caught in a landslide. [a moment for some catharsis from the author: post-covid lay-offs hit the design agency scene hard. I had just wrapped up as lead product designer at a very large agency for a very large bank. Then I was just let go. So, off into the wild with Wolfie.]
@@ -4065,6 +4064,7 @@ First, we go pee-pee. [my boy]
 "Now, we go sleepy". [*thousands of kisses*, "good boy"]
 
 #:#:
+@theme:memory
 @@last
 Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
@@ -4758,7 +4758,7 @@ function parseNarrative(text) {
                     if (!lineSegment) continue;
 
                     if (lineSegment === '@@last') {
-                        pendingLast = true;
+                        parts.push({ type: 'last-marker', id: idCounter++ });
                         continue;
                     }
                     if (lineSegment.startsWith('@theme:')) {
@@ -5875,6 +5875,11 @@ function render() {
 
         if (part.type === 'theme-trigger') {
             pendingTheme = part.theme;
+            return;
+        }
+
+        if (part.type === 'last-marker') {
+            pendingLast = true;
             return;
         }
 
