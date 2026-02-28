@@ -1528,6 +1528,30 @@ body.flow-active .flow-controls { display: flex; }
     min-width: 18px;
     text-align: center;
 }
+.flow-controls-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--border);
+    margin: 0 3px;
+    flex-shrink: 0;
+}
+.flow-play-stop-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--accent);
+    font-size: 8px;
+    line-height: 1;
+    width: 22px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.12s ease;
+}
+.flow-play-stop-btn:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
 /* ── Top-center sentence timer bar ── */
 .flow-progress-bar {
@@ -3333,6 +3357,8 @@ body.compose-mode { padding-bottom: 0; }
             <!-- Flow speed controls — appear below logo when flow is active -->
             <div class="flow-controller" id="flowController" aria-label="Flow mode speed controls">
                 <div class="flow-controls" id="flowControls">
+                    <button class="flow-play-stop-btn" id="flowPlayStopBtn" title="Stop flow" aria-label="Stop flow">■</button>
+                    <div class="flow-controls-divider"></div>
                     <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
                     <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
                     <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
@@ -5197,10 +5223,16 @@ const flowMode = (() => {
 
     function syncFlowBtn(active) {
         const btn = document.getElementById('dropdownFlowBtn');
-        if (!btn) return;
-        btn.classList.toggle('active', active);
-        const icon = btn.querySelector('.dropdown-flow-icon');
-        if (icon) icon.textContent = active ? '■' : '▶';
+        if (btn) {
+            btn.classList.toggle('active', active);
+            const icon = btn.querySelector('.dropdown-flow-icon');
+            if (icon) icon.textContent = active ? '■' : '▶';
+        }
+        const playStop = document.getElementById('flowPlayStopBtn');
+        if (playStop) {
+            playStop.textContent = active ? '■' : '▶';
+            playStop.title = active ? 'Stop flow' : 'Play from chapter start';
+        }
     }
 
     function start() {
@@ -6360,6 +6392,19 @@ document.addEventListener('DOMContentLoaded', () => {
     Utils.$('#dropdownFlowBtn')?.addEventListener('click', (e) => { e.stopPropagation(); flowMode.start(); });
     Utils.$('#flowSlower')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.slower(); });
     Utils.$('#flowFaster')?.addEventListener('click',  (e) => { e.stopPropagation(); flowMode.faster(); });
+    Utils.$('#flowPlayStopBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (flowMode.isActive()) {
+            flowMode.stop();
+        } else {
+            // Restart from beginning of current chapter
+            const chapterId = getCurrentChapter();
+            const startIdx = state.chapterStartIndices[chapterId] ?? 0;
+            state.currentSentenceIndex = startIdx;
+            highlightSentence(startIdx);
+            flowMode.start();
+        }
+    });
     
     document.addEventListener('click', e => {
         if (!Utils.$('#brandLogo').contains(e.target) && !Utils.$('#chapterDropdown').contains(e.target) && !e.target.closest('.chapter-break')) closeChapterDropdown();
