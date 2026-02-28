@@ -1914,12 +1914,22 @@ body.layout-split .layout-icon-portrait { display: block; }
 /* ===================================
    IMAGE GRID OVERLAY
    =================================== */
-.image-grid-overlay { 
-    position: fixed; inset: 0; z-index: var(--z-overlay); background: var(--grid-overlay-bg); 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
-    display: none; flex-direction: column; opacity: 0; transition: opacity 0.3s ease; overflow-y: auto; 
+.image-grid-overlay {
+    position: fixed; inset: 0; z-index: var(--z-overlay);
+    display: none; opacity: 0; transition: opacity 0.35s ease;
+    background: #000;
 }
-.image-grid-overlay.open { display: flex; opacity: 1; }
+.image-grid-overlay.open { display: block; opacity: 1; }
+#gridCanvas { position: absolute; inset: 0; display: block; cursor: grab; touch-action: none; }
+#gridCanvas.grabbing { cursor: grabbing; }
+#gridHud {
+    position: absolute; top: 0; left: 0; right: 0; height: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; pointer-events: none; z-index: 2;
+}
+#gridHudLabel { font-family: var(--ui-font); font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+#gridCloseBtn { pointer-events: auto; background: transparent; border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.5); font-family: var(--ui-font); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; border-radius: 3px; transition: all .15s; }
+#gridCloseBtn:hover { border-color: rgba(255,255,255,.5); color: #fff; }
 .close-hotspot { 
     position: fixed; top: 0; right: 0; width: 25vw; height: 25vh; min-width: 150px; min-height: 150px; 
     z-index: calc(var(--z-overlay) + 10); cursor: none; display: none; pointer-events: auto; 
@@ -1931,133 +1941,7 @@ body.grid-open .grid-close-hotspot { display: block; }
 @media (orientation: portrait) { body.layout-split .rotate-close-hotspot { display: block; } }
 #cursor.close-mode { width: 60px; height: 60px; border-color: var(--accent); background: var(--hover-tint-strong); }
 #cursor.close-mode::before { content: '✕'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; font-weight: bold; color: var(--accent); line-height: 1; }
-/* ── Grid Chrome: Wireframe Background ── */
-.grid-wireframe-bg {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 48px 48px;
-    will-change: transform;
-}
-.grid-wireframe-bg.visible { opacity: 1; }
 
-/* ── Grid Chrome: Layout ── */
-.grid-content { 
-    padding: 80px 0 0 0; 
-    width: 100%; 
-    will-change: transform; 
-    transition: transform 0.1s linear;
-    position: relative;
-    z-index: 1;
-}
-.grid-chapter-section { margin-bottom: 0; }
-.grid-chapter-title { 
-    font-family: var(--ui-font); 
-    font-size: 10px; 
-    color: var(--accent); 
-    text-transform: uppercase; 
-    letter-spacing: 0.15em; 
-    padding: 10px 20px; 
-    border-bottom: 1px solid var(--border);
-    border-top: 1px solid var(--border);
-    opacity: 0.6;
-    background: rgba(255,255,255,0.01);
-}
-/* ── Continuous Chrome Grid ── */
-.grid-images-container { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 0;
-    border-left: 1px solid var(--border);
-    border-top: 1px solid var(--border);
-}
-
-/* ── Grid Item: Flat Chrome Cell ── */
-.grid-image-item { 
-    position: relative; 
-    aspect-ratio: 4/3; 
-    overflow: hidden; 
-    cursor: pointer; 
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.2s ease; 
-    background: transparent;
-}
-.grid-image-item:hover { background: rgba(255,255,255,0.02); }
-.grid-image-item img, .grid-image-item video { 
-    width: 100%; height: 100%; object-fit: cover; opacity: 0.85; 
-    transition: opacity 0.25s ease; display: block;
-}
-.grid-image-item:hover img,
-.grid-image-item:hover video { opacity: 0.45; filter: blur(1px); }
-
-/* ── Inline Edit: Caption/Title fields ── */
-.grid-image-caption { 
-    position: absolute; inset: 0; 
-    display: flex; flex-direction: column; align-items: center; justify-content: center; 
-    padding: 16px; opacity: 0; transition: opacity 0.2s ease; 
-}
-.grid-image-item:hover .grid-image-caption { opacity: 1; }
-.grid-inline-input {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #fff;
-    font-family: var(--body-font);
-    font-size: 15px;
-    line-height: 1.4;
-    text-align: center;
-    width: 100%;
-    resize: none;
-    cursor: text;
-    padding: 4px 6px;
-    border-radius: 2px;
-    transition: background 0.15s ease, border 0.15s ease;
-    border: 1px solid transparent;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.9);
-}
-.grid-inline-input:hover,
-.grid-inline-input:focus {
-    background: rgba(255,255,255,0.05);
-    border-color: var(--accent);
-    text-shadow: none;
-}
-.grid-inline-input::placeholder { color: rgba(255,255,255,0.3); font-size: 12px; }
-
-/* ── Hover-Triggered Delete Button ── */
-.grid-item-delete {
-    position: absolute;
-    top: 6px; right: 6px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid var(--border);
-    color: var(--ink-3);
-    font-family: var(--ui-font);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 3px 7px;
-    cursor: pointer;
-    border-radius: 2px;
-    z-index: 10;
-}
-.grid-item-delete:hover {
-    background: rgba(200,50,50,0.25);
-    border-color: rgba(220,80,80,0.5);
-    color: #ff8080;
-}
-.grid-image-item:hover .grid-item-delete {
-    opacity: 1;
-    pointer-events: auto;
-}
 
 /* ===================================
    CUSTOM CURSOR
@@ -3597,8 +3481,11 @@ body.compose-mode { padding-bottom: 0; }
     </div>
 
     <div class="image-grid-overlay" id="imageGridOverlay" aria-hidden="true">
-        <div class="grid-wireframe-bg" id="gridWireframeBg"></div>
-        <div class="grid-content" id="gridContent"></div>
+        <canvas id="gridCanvas"></canvas>
+        <div id="gridHud">
+            <span id="gridHudLabel">Wolfgang · Display</span>
+            <button id="gridCloseBtn">✕ Close</button>
+        </div>
     </div>
 
     <div id="cursor" aria-hidden="true"><img id="cursor-thumb" alt="" aria-hidden="true"></div>
@@ -3994,25 +3881,18 @@ let composeActive = false; // module-level flag so highlightSentence can read it
 // ===================================
 
 // ===================================
-
-//##: JEEP LIFE
-//Okay, lets go: https://i.ibb.co/wF05mLW2/joyful.webp
-//Different
-//>>:Wolfie|Okay — so, dad said something about "riding shotgun" — also, something about not touching the radio. He moved my bed. This is new. The door is right there. Does this mean more walkies?
-//
-//
-//
-//"There's food at home": https://i.ibb.co/9kggF1YH/somewhere765432.webp
-//##: Road Warrior
-//##: Journeyman
-//
-//
-//
-//
-//
-//
-//
-
+//Well, wouldn't you know?
+//Not broken — just needs some TLC. 
+//New bag-buddy — never ever baggage.
+//Works over WOOfi.
+//Tiny. [cafe photo]
+//Carries well. [obvi] 
+//Travels well. [obvi]
+//Travels comfortably.
+//Headphone jack (no mute function)
+//Works optimally when nearest.
+//Nearer.
+//*ahem* — nearest, thank you.
 
 
 
@@ -4123,13 +4003,10 @@ const imageMap = {
     'caught in a landslide': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/sleepspiral.mp4',
     'escape from reality': 'https://i.ibb.co/mCy62tkg/likereallyhatedtherain.webp',
     'Look to the sky': 'https://i.ibb.co/4RkM3rHt/intothevoid.webp',
-    'Open your eyes': 'https://i.ibb.co/rRLkbvPw/wakinguptothisface.webp',
 
     'So, this is new': 'https://i.ibb.co/gb3mMDBt/wolfgangsfirsttimeinthejeep.webp',
     'moved my bed': 'https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp',   
     'Dad moved my bed': 'https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp', 
-    'not to worry': 'https://i.ibb.co/ZzZcHSmN/love.webp',
-    'be okay': 'https://i.ibb.co/GfT4yhBy/love2.webp',
 
     'sleepies': 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
     'we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
@@ -5015,7 +4892,7 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(####:[^\n]*|@@last|@@\/dark|@@dark|@theme:[^\n]*|~pace:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|@@last|@@\/dark|@@dark|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
@@ -5036,13 +4913,6 @@ function parseNarrative(text) {
                         // Theme trigger — switches theme when this sentence activates
                         const themeName = lineSegment.substring(7).trim().toLowerCase();
                         if (themeName) parts.push({ type: 'theme-trigger', id: idCounter++, theme: themeName });
-                        continue;
-                    }
-                    if (lineSegment.startsWith('~pace:')) {
-                        // Pace hint — authorial timing override for the next sentence in Flow Mode
-                        // Valid hints: fast | slow | hold
-                        const hint = lineSegment.substring(6).trim().toLowerCase();
-                        if (hint) parts.push({ type: 'pace-trigger', id: idCounter++, hint });
                         continue;
                     }
                     if (lineSegment.startsWith('####:')) {
@@ -5623,54 +5493,11 @@ const flowMode = (() => {
         return (el.textContent.trim().match(/\S+/g) || []).length;
     }
 
-    // ── Image-aware pause bonuses ──
-    // mp4 sentences get a generous hold so the video can breathe;
-    // static-image sentences get a moderate hold;
-    // imageless sentences run a little faster.
-    const IMAGE_BONUS_VIDEO  = 3500;  // extra ms for mp4 triggers
-    const IMAGE_BONUS_STATIC = 1200;  // extra ms for static image triggers
-    const NO_IMAGE_FACTOR    = 0.78;  // multiplier applied to base when no image
-
-    // Author pace overrides via ~pace: markup
-    // If no ~pace: is set, auto-detection applies (image bonus / no-image trim).
-    // ~pace:default bypasses auto-detection entirely and uses the pure word-count base.
-    const PACE_OVERRIDE = {
-        fast:    0.55,  // ~pace:fast    — quick cut, no lingering
-        slow:    1.55,  // ~pace:slow    — settle in
-        hold:    2.40,  // ~pace:hold    — hold the frame, let it breathe
-        default: null,  // ~pace:default — pure word-count base, no image adjustment
-    };
-
-    function hasImageTrigger(el) {
-        const trigger = el.querySelector?.('.image-trigger');
-        if (!trigger) return null;
-        const url = trigger.getAttribute('data-image');
-        if (!url) return null;
-        return url.match(/\.mp4(\?|$)/i) ? 'video' : 'image';
-    }
-
     function pauseFor(el) {
         const words = wordCount(el);
         const floor = isInFinalChapters() ? FINAL_CHAPTER_FLOOR : MIN_PAUSE;
-        let base = Math.min(MAX_PAUSE, Math.max(floor, words * MS_PER_WORD));
-
-        const hint = el.dataset?.pace;                     // author's ~pace: value, or undefined
-        const isDefaultOverride = hint === 'default';      // explicit reset — skip all auto-adjustment
-        const paceScale = PACE_OVERRIDE[hint] ?? 1.0;      // null (default) and undefined both become 1.0
-
-        if (!isDefaultOverride) {
-            // Auto-adjust by image presence (skipped when author writes ~pace:default)
-            const imgKind = hasImageTrigger(el);
-            if (imgKind === 'video') {
-                base = Math.min(MAX_PAUSE + IMAGE_BONUS_VIDEO, base + IMAGE_BONUS_VIDEO);
-            } else if (imgKind === 'image') {
-                base = Math.min(MAX_PAUSE + IMAGE_BONUS_STATIC, base + IMAGE_BONUS_STATIC);
-            } else {
-                base = Math.round(base * NO_IMAGE_FACTOR);
-            }
-        }
-
-        return Math.round(base * speedMult * paceScale);
+        const base = Math.min(MAX_PAUSE, Math.max(floor, words * MS_PER_WORD));
+        return Math.round(base * speedMult);
     }
 
     function updateSpeedUI() {
@@ -6010,96 +5837,431 @@ function openDropdownFromChapterBreak(chapterBreakEl, chapterId) {
 // ===================================
 // IMAGE GRID
 // ===================================
-function isGridOpen() { return Utils.$('#imageGridOverlay').classList.contains('open'); }
+function isGridOpen() {
+    return document.getElementById('imageGridOverlay').classList.contains('open');
+}
 
-function toggleImageGrid() {
-    const overlay = Utils.$('#imageGridOverlay');
-    const btns = Utils.$$('.grid-toggle-btn');
-    if (overlay.classList.contains('open')) {
-        overlay.classList.remove('open');
-        document.body.classList.remove('grid-open');
-        document.body.style.overflow = '';
-        btns.forEach(btn => btn.querySelector('span:last-child').textContent = '▦');
-    } else {
+// ===================================
+// CANVAS PHOTO GRID
+// Pure 2D canvas. No external deps.
+// Drag + inertia + pinch-zoom + click
+// ===================================
+const _GRID = (function() {
+
+    // ── config ────────────────────────────────────────────────────────────
+    const COLS   = 7;
+    const TILE   = 240;   // base tile side in px
+    const GAP    = 8;
+    const BAR    = 30;    // label bar height
+    const FONT   = "11px 'Space Mono', monospace";
+
+    // ── state ─────────────────────────────────────────────────────────────
+    let canvas, ctx, items = [], loaded = new Map();
+    let ox = 0, oy = 0, vx = 0, vy = 0, scale = 1;
+    let dragActive = false, dragMoved = false;
+    let dragX0, dragY0, oxAtDrag, oyAtDrag;
+    let pinchDist0 = null, scaleAtPinch = 1;
+    let hovered = -1, rafId = null;
+    let listening = false;
+
+    // ── geometry ──────────────────────────────────────────────────────────
+    function gridW()    { return COLS * (TILE + GAP) - GAP; }
+    function gridH()    { return Math.ceil(items.length / COLS) * (TILE + GAP) - GAP; }
+    function step()     { return TILE + GAP; }
+
+    function clamp() {
+        const cw = canvas.width, ch = canvas.height;
+        const tw = gridW() * scale, th = gridH() * scale;
+        const px = 60, py = 60;
+        if (tw <= cw) ox = (cw - tw) / 2;
+        else ox = Math.min(px, Math.max(cw - tw - px, ox));
+        if (th <= ch) oy = (ch - th) / 2;
+        else oy = Math.min(py, Math.max(ch - th - py, oy));
+    }
+
+    // ── image loading ─────────────────────────────────────────────────────
+    function loadImg(src) {
+        if (loaded.has(src)) return;
+        loaded.set(src, null);
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload  = () => loaded.set(src, img);
+        img.onerror = () => loaded.set(src, false);
+        img.src = src;
+    }
+
+    // ── draw ──────────────────────────────────────────────────────────────
+    function drawTile(item, tx, ty, isHov) {
+        const img = loaded.get(item.src);
+        const iw = TILE, ih = TILE;
+        const imgH = ih - BAR;
+
+        // clip to tile
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(tx, ty, iw, ih);
+        ctx.clip();
+
+        // bg
+        ctx.fillStyle = isHov ? '#1c1c1c' : '#111';
+        ctx.fillRect(tx, ty, iw, ih);
+
+        // photo
+        if (img) {
+            const nw = img.naturalWidth || img.width;
+            const nh = img.naturalHeight || img.height;
+            if (nw && nh) {
+                const ir = nw / nh, ar = iw / imgH;
+                let dw, dh, dx, dy;
+                if (ir > ar) { dh = imgH; dw = ir * imgH; dx = tx + (iw - dw) / 2; dy = ty; }
+                else         { dw = iw; dh = iw / ir; dx = tx; dy = ty + (imgH - dh) / 2; }
+                ctx.globalAlpha = isHov ? 0.55 : 0.9;
+                ctx.drawImage(img, dx, dy, dw, dh);
+                ctx.globalAlpha = 1;
+            }
+        } else if (img === null) {
+            // loading — subtle pulse via time
+            const t = Date.now() / 1000;
+            const a = 0.04 + 0.03 * Math.sin(t * 2 + tx * 0.01);
+            ctx.fillStyle = `rgba(255,255,255,${a})`;
+            ctx.fillRect(tx, ty, iw, imgH);
+        }
+
+        // vignette on hover
+        if (isHov && img) {
+            const grad = ctx.createRadialGradient(tx+iw/2, ty+imgH/2, 0, tx+iw/2, ty+imgH/2, iw * 0.7);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.45)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(tx, ty, iw, imgH);
+        }
+
+        // label bar
+        ctx.fillStyle = '#000';
+        ctx.fillRect(tx, ty + imgH, iw, BAR);
+        ctx.fillStyle = 'rgba(255,255,255,0.07)';
+        ctx.fillRect(tx, ty + imgH, iw, 1);
+
+        ctx.restore();
+
+        // label text (outside clip so not affected)
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(tx + 8, ty + imgH, iw - 16, BAR);
+        ctx.clip();
+        ctx.font = FONT;
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = isHov ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.35)';
+        ctx.textAlign = 'left';
+        ctx.fillText(item.label || '—', tx + 8, ty + imgH + BAR / 2);
+        // arrow if navigable
+        if (item.sentenceIdx >= 0) {
+            ctx.fillStyle = isHov ? 'rgba(218,165,32,1)' : 'rgba(218,165,32,0.35)';
+            ctx.textAlign = 'right';
+            ctx.fillText('→', tx + iw - 8, ty + imgH + BAR / 2);
+        }
+        ctx.restore();
+    }
+
+    function draw() {
+        const cw = canvas.width, ch = canvas.height;
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, cw, ch);
+
+        ctx.save();
+        ctx.translate(ox, oy);
+        ctx.scale(scale, scale);
+
+        // visible range culling
+        const s = step();
+        const visX0 = -ox / scale,      visY0 = -oy / scale;
+        const visX1 = visX0 + cw / scale, visY1 = visY0 + ch / scale;
+        const c0 = Math.max(0, Math.floor(visX0 / s));
+        const c1 = Math.min(COLS - 1, Math.floor(visX1 / s));
+        const r0 = Math.max(0, Math.floor(visY0 / s));
+        const r1 = Math.min(Math.ceil(items.length / COLS), Math.floor(visY1 / s));
+
+        for (let r = r0; r <= r1; r++) {
+            for (let c = c0; c <= c1; c++) {
+                const idx = r * COLS + c;
+                if (idx >= items.length) break;
+                const tx = c * s, ty = r * s;
+                loadImg(items[idx].src);
+                drawTile(items[idx], tx, ty, idx === hovered);
+            }
+        }
+        ctx.restore();
+    }
+
+    // ── RAF loop ──────────────────────────────────────────────────────────
+    function tick() {
+        rafId = requestAnimationFrame(tick);
+        if (!dragActive) {
+            ox += vx; oy += vy;
+            vx *= 0.87; vy *= 0.87;
+            if (Math.abs(vx) < 0.15) vx = 0;
+            if (Math.abs(vy) < 0.15) vy = 0;
+            clamp();
+        }
+        draw();
+    }
+
+    // ── hit test ─────────────────────────────────────────────────────────
+    function tileAt(sx, sy) {
+        const wx = (sx - ox) / scale, wy = (sy - oy) / scale;
+        const s = step();
+        const c = Math.floor(wx / s), r = Math.floor(wy / s);
+        if (c < 0 || c >= COLS || r < 0) return -1;
+        const idx = r * COLS + c;
+        if (idx >= items.length) return -1;
+        const tx = c * s, ty = r * s;
+        if (wx < tx || wx > tx + TILE || wy < ty || wy > ty + TILE) return -1;
+        return idx;
+    }
+
+    // ── pointer ───────────────────────────────────────────────────────────
+    function onDown(e) {
+        if (e.pointerType !== 'touch') e.preventDefault();
+        dragActive = true; dragMoved = false;
+        dragX0 = e.clientX; dragY0 = e.clientY;
+        oxAtDrag = ox; oyAtDrag = oy;
+        vx = 0; vy = 0;
+        canvas.setPointerCapture(e.pointerId);
+        canvas.classList.add('grabbing');
+    }
+    function onMove(e) {
+        if (dragActive) {
+            const dx = e.clientX - dragX0, dy = e.clientY - dragY0;
+            if (Math.abs(dx) + Math.abs(dy) > 4) dragMoved = true;
+            const nx = oxAtDrag + dx, ny = oyAtDrag + dy;
+            vx = nx - ox; vy = ny - oy;
+            ox = nx; oy = ny;
+            clamp();
+        } else {
+            const prev = hovered;
+            hovered = tileAt(e.clientX, e.clientY);
+            canvas.style.cursor = hovered >= 0 ? 'pointer' : 'grab';
+        }
+    }
+    function onUp(e) {
+        canvas.classList.remove('grabbing');
+        const wasDrag = dragMoved;
+        dragActive = false;
+        if (!wasDrag) {
+            const idx = tileAt(e.clientX, e.clientY);
+            if (idx >= 0) clickTile(idx);
+        }
+    }
+    function onWheel(e) {
+        e.preventDefault();
+        const f = e.deltaY < 0 ? 1.09 : 0.92;
+        const mx = e.clientX, my = e.clientY;
+        const wx = (mx - ox) / scale, wy = (my - oy) / scale;
+        scale = Math.min(3, Math.max(0.2, scale * f));
+        ox = mx - wx * scale; oy = my - wy * scale;
+        clamp();
+    }
+    function onTouchStart(e) {
+        if (e.touches.length === 2) {
+            pinchDist0 = Math.hypot(
+                e.touches[1].clientX - e.touches[0].clientX,
+                e.touches[1].clientY - e.touches[0].clientY);
+            scaleAtPinch = scale;
+        }
+    }
+    function onTouchMove(e) {
+        if (e.touches.length === 2 && pinchDist0) {
+            e.preventDefault();
+            const d = Math.hypot(
+                e.touches[1].clientX - e.touches[0].clientX,
+                e.touches[1].clientY - e.touches[0].clientY);
+            const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            const wx = (cx - ox) / scale, wy = (cy - oy) / scale;
+            scale = Math.min(3, Math.max(0.2, scaleAtPinch * (d / pinchDist0)));
+            ox = cx - wx * scale; oy = cy - wy * scale;
+            clamp();
+        }
+    }
+    function onTouchEnd() { pinchDist0 = null; }
+
+    function clickTile(idx) {
+        const item = items[idx];
+        if (!item) return;
+        if (item.sentenceIdx >= 0) {
+            open_(false);
+            state.currentSentenceIndex = item.sentenceIdx;
+            highlightSentence(item.sentenceIdx);
+        }
+    }
+
+    // ── public open/close ──────────────────────────────────────────────────
+    function open_(show) {
+        const overlay = document.getElementById('imageGridOverlay');
+        const btns    = document.querySelectorAll('.grid-toggle-btn');
+        if (!show) {
+            overlay.classList.remove('open');
+            document.body.classList.remove('grid-open');
+            document.body.style.overflow = '';
+            btns.forEach(b => { const s = b.querySelector('span:last-child'); if (s) s.textContent = '▦'; });
+            return;
+        }
+
         overlay.classList.add('open');
         document.body.classList.add('grid-open');
         document.body.style.overflow = 'hidden';
-        btns.forEach(btn => btn.querySelector('span:last-child').textContent = '✕');
-        buildImageGrid();
-    }
-}
+        btns.forEach(b => { const s = b.querySelector('span:last-child'); if (s) s.textContent = '✕'; });
 
-function buildImageGrid() {
-    const content = Utils.$('#gridContent');
-    content.innerHTML = '';
-    const imagesByChapter = {};
-    state.gridImages.forEach(imgData => {
-        if (!imagesByChapter[imgData.chapterId]) imagesByChapter[imgData.chapterId] = [];
-        imagesByChapter[imgData.chapterId].push(imgData);
-    });
-    chapters.forEach(chapter => {
-        if (imagesByChapter[chapter.id] && imagesByChapter[chapter.id].length > 0) {
-            const section = document.createElement('div');
-            section.className = 'grid-chapter-section';
-            section.innerHTML = `<div class="grid-chapter-title">Chapter ${String(chapter.id + 1).padStart(2, '0')} · ${chapter.title}</div>`;
-            const grid = document.createElement('div');
-            grid.className = 'grid-images-container';
-            imagesByChapter[chapter.id].forEach(imgData => {
-                const item = document.createElement('div');
-                item.className = 'grid-image-item';
-                const isVid = imgData.url.match(/\.mp4(\?|$)/i);
-                const mediaEl = isVid
-                    ? `<video src="${imgData.url}" muted autoplay loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;opacity:0.85;transition:opacity 0.25s ease;display:block;"></video>`
-                    : `<img src="${imgData.url}" loading="lazy" alt="${imgData.text.replace(/"/g, '&quot;')}">`;
+        // grab canvas
+        canvas = document.getElementById('gridCanvas');
+        ctx    = canvas.getContext('2d');
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-                // Delete button (hidden until hover)
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'grid-item-delete';
-                deleteBtn.textContent = 'Delete';
-                deleteBtn.title = 'Remove this image';
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!confirm(`Remove image from grid?`)) return;
-                    // Remove from state
-                    const idx = state.gridImages.indexOf(imgData);
-                    if (idx > -1) state.gridImages.splice(idx, 1);
-                    // Clear image from the associated sentence element
-                    const sentenceEl = state.allSentenceElements[imgData.index];
-                    if (sentenceEl) {
-                        delete sentenceEl.dataset.imageUrl;
-                        const img = sentenceEl.querySelector('.hover-image');
-                        if (img) img.remove();
-                    }
-                    buildImageGrid();
-                });
+        // build item list
+        const seen = new Set();
+        items = [];
+        Object.entries(imageMap).forEach(([phrase, url]) => {
+            if (/\.mp4(\?|$)/i.test(url) || seen.has(url)) return;
+            seen.add(url);
+            const link = state.gridImages.find(g => g.url === url);
+            items.push({ src: url, label: phrase, sentenceIdx: link ? link.index : -1 });
+        });
+        state.gridImages.forEach(g => {
+            if (/\.mp4(\?|$)/i.test(g.url) || seen.has(g.url)) return;
+            seen.add(g.url);
+            items.push({ src: g.url, label: g.text || '', sentenceIdx: g.index });
+        });
+        [
+            ['https://i.ibb.co/Swk4v5Tv/wolfgang000.webp','road warrior'],
+            ['https://i.ibb.co/xqv72y7c/mohawk.webp','mohawk'],
+            ['https://i.ibb.co/wF05mLW2/joyful.webp','joyful'],
+            ['https://i.ibb.co/rfKXyv3q/theveryfirstofclassicwolfgang.jpg','brave leg'],
+            ['https://i.ibb.co/6J8QRGXg/sothisiswolfgang.webp','this is wolfgang'],
+            ['https://i.ibb.co/5gPCWkDf/nownamedgivenanappropriatemohawk.webp','mohawk reveal'],
+            ['https://i.ibb.co/Q7qvD3p8/atthismomentidecidedhewasmine.webp','decided'],
+            ['https://i.ibb.co/8g0HH5XG/elephantbywolfgang.webp','elephant'],
+            ['https://i.ibb.co/d4SkHwfB/icecream45678.webp','ice cream'],
+            ['https://i.ibb.co/zWbFdGF8/sowolfgangdiscoveredpupcupsatprettymucheverysheetz.webp','pup cup'],
+            ['https://i.ibb.co/83SsR99/thislittledudeexudedsomuchconfidence.webp','confidence'],
+            ['https://i.ibb.co/MxGzxSVk/wolfgang00.webp','wolf'],
+            ['https://i.ibb.co/mrsF2PP2/whereiswolfgang.webp','woofie-boo'],
+            ['https://i.ibb.co/d0MxCR6m/delicious.webp','delicious'],
+            ['https://i.ibb.co/3yYzQLjP/braveboy.webp','bravery'],
+            ['https://i.ibb.co/twP8m5wP/buildingburgerking.webp','fortitude'],
+            ['https://i.ibb.co/HTqtChHv/curbyourdog.webp','rebellion'],
+            ['https://i.ibb.co/CknqHpK/happierinnewyork.webp','new york'],
+            ['https://i.ibb.co/r2gFFwNf/oneofwolfgangsfavoriteplaces.webp','favorite place'],
+            ['https://i.ibb.co/rKbH2FFx/sweetestwolfgang.webp','pure joy'],
+            ['https://i.ibb.co/KJ9pcSh/sowolfiehatedtherain.webp','rain'],
+            ['https://i.ibb.co/BKymJdYK/itshisworld.webp','his world'],
+            ['https://i.ibb.co/5XLHJ6h3/assorgrasslass.webp','adventure'],
+            ['https://i.ibb.co/KxhDw7nS/loveinastoria.webp','astoria'],
+            ['https://i.ibb.co/93bMTmpY/newtothis.webp','new to this'],
+            ['https://i.ibb.co/KjCG862F/traininghumanonmyfavoritethingtodoperiod.webp','lap'],
+            ['https://i.ibb.co/bjK8FYHX/mydreamwastoownacafejustforwolfietohangoutin.webp','cafe dream'],
+            ['https://i.ibb.co/vCYxMRbG/lookiftheysayanythingiamheretokeepyouontask.webp','supervision'],
+            ['https://i.ibb.co/qFVszwVN/mylittledonut.webp','donut'],
+            ['https://i.ibb.co/gb3mMDBt/wolfgangsfirsttimeinthejeep.webp','jeep'],
+            ['https://i.ibb.co/0RM9H4bs/lastsleepies.webp','last sleepies'],
+            ['https://i.ibb.co/qfBwLrD/comfort1.webp','comfort'],
+            ['https://i.ibb.co/kV6CzpWS/comfort2.webp','comfort ii'],
+            ['https://i.ibb.co/M5Pcy9f9/homemademeals.webp','dinner'],
+            ['https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp','cafe'],
+            ['https://i.ibb.co/8Wbt6Jw/uhmtotallyfellasleepwithselfiemodereadyohlookathispawsomg.webp','selfie mode'],
+            ['https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp','validation'],
+            ['https://i.ibb.co/C3GsbwmT/thegoattheking.webp','the goat'],
+            ['https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp','sunlight'],
+            ['https://i.ibb.co/PvvP2j91/stolesomeofdadsicecream.webp','stolen'],
+            ['https://i.ibb.co/HfC0qCGB/shitsupervisor.webp','supervisor'],
+            ['https://i.ibb.co/DHyNdP33/saturdaymornings.webp','saturday'],
+            ['https://i.ibb.co/4rnzNzt/oncetheworkisdone2.webp','work done'],
+            ['https://i.ibb.co/HpxfkCrY/okfine.webp','ok fine'],
+            ['https://i.ibb.co/NdZQSPdr/okayletsgo.webp',"let's go"],
+            ['https://i.ibb.co/q3Tk5HWP/ohwhatisthis.webp','oh what'],
+            ['https://i.ibb.co/LdgdfZDM/ohformewhyyoushoulnthave.webp','for me?'],
+            ['https://i.ibb.co/B5NW72rq/noleashfromdayone.webp','no leash'],
+            ['https://i.ibb.co/TDHdkN3w/mypal.webp','my pal'],
+            ['https://i.ibb.co/Ngj3qTkw/mylittleguy.webp','little guy'],
+            ['https://i.ibb.co/zh2ZrzgJ/lowestoflowsbutstabilityforwolfgang.webp','stability'],
+            ['https://i.ibb.co/M5jT7kWj/lovethisface.webp','this face'],
+            ['https://i.ibb.co/JjVcwMw8/lovebruh.webp','love'],
+            ['https://i.ibb.co/jZ66mwX7/itsthisexactlookthatgetsmeeverysingletime.webp','that look'],
+            ['https://i.ibb.co/Mm07h9F/ilovehim.webp','i love him'],
+            ['https://i.ibb.co/whFvFR24/hydratedandhappy.webp','hydrated'],
+            ['https://i.ibb.co/r2ynCVfQ/homeiswhereyourest.webp','home'],
+            ['https://i.ibb.co/Ldmrtb7t/hislittleblacklips.webp','black lips'],
+            ['https://i.ibb.co/0RLXVg2g/hidaddy.webp','hi daddy'],
+            ['https://i.ibb.co/JjGbm5rh/heydaddy.webp','hey daddy'],
+            ['https://i.ibb.co/8L68BJFv/guardian.webp','guardian'],
+            ['https://i.ibb.co/7NBXqNfS/foreman.webp','foreman'],
+            ['https://i.ibb.co/YJbXh7S/fluffy.webp','fluffy'],
+            ['https://i.ibb.co/XxZ9sYZc/fivehundredmileroadtripfromwestvirginia.webp','500 miles'],
+            ['https://i.ibb.co/S45KWTfz/firstsnow.webp','first snow'],
+            ['https://i.ibb.co/93zWzBDm/firesidefavorites2.webp','fireside'],
+            ['https://i.ibb.co/nNJTsKj4/everyherohasagoodoriginstory.webp','origin story'],
+            ['https://i.ibb.co/NDk7kcW/drivethruluxurysuite.webp','drive thru'],
+            ['https://i.ibb.co/v9qfSnz/donthidebehindpillowbecomepillow.webp','become pillow'],
+            ['https://i.ibb.co/SDxTXcYS/dinnerforwolfgang.webp','dinner for wolf'],
+            ['https://i.ibb.co/XfJYXCw4/dailydrip.webp','daily drip'],
+            ['https://i.ibb.co/fV6xyHmQ/couchsurfing.webp','couch surfing'],
+            ['https://i.ibb.co/Hy8XwrB/calminganywhere.webp','calm anywhere'],
+            ['https://i.ibb.co/4RfTWWkp/burgerkingindeed.webp','burger king'],
+            ['https://i.ibb.co/n8Q5B3NT/atleastthegravyisgood.webp','gravy is good'],
+            ['https://i.ibb.co/mrphxssF/angel987654.webp','angel'],
+            ['https://i.ibb.co/wZ4jL08Y/precious.webp','precious'],
+            ['https://i.ibb.co/LdR4cY9N/loveinastoriabw.webp','astoria bw'],
+            ['https://i.ibb.co/qYS6Vj2h/improviseasolutionreallydad.webp','improvise'],
+            ['https://i.ibb.co/fVYPWX91/hoodie2.webp','hoodie'],
+            ['https://i.ibb.co/N6dbht9r/hehateditsomuch.webp','hated it'],
+            ['https://i.ibb.co/tw52Ly7b/firstfewweekswithwolfgang.webp','first weeks'],
+            ['https://i.ibb.co/qFjdZ2Py/classicwolfgang777.webp','classic'],
+            ['https://i.ibb.co/9kNPNs8m/refresher.webp','refresher'],
+        ].forEach(([src, label]) => {
+            if (seen.has(src)) return;
+            seen.add(src);
+            items.push({ src, label, sentenceIdx: -1 });
+        });
 
-                // Caption inline edit
-                const caption = document.createElement('div');
-                caption.className = 'grid-image-caption';
-                const captionInput = document.createElement('textarea');
-                captionInput.className = 'grid-inline-input';
-                captionInput.value = imgData.text || '';
-                captionInput.placeholder = 'Caption…';
-                captionInput.rows = 2;
-                captionInput.addEventListener('click', (e) => e.stopPropagation());
-                captionInput.addEventListener('change', (e) => {
-                    imgData.text = e.target.value;
-                    // update caption text in associated sentence too
-                    const sentenceEl = state.allSentenceElements[imgData.index];
-                    if (sentenceEl) sentenceEl.dataset.imageCaption = e.target.value;
-                });
-                caption.appendChild(captionInput);
+        // reset pan to center
+        scale = 1;
+        ox = (canvas.width - gridW()) / 2;
+        oy = 48;
+        clamp();
 
-                item.innerHTML = mediaEl;
-                item.appendChild(deleteBtn);
-                item.appendChild(caption);
-                item.addEventListener('click', () => { toggleImageGrid(); state.currentSentenceIndex = imgData.index; highlightSentence(imgData.index); });
-                grid.appendChild(item);
+        // attach events once
+        if (!listening) {
+            listening = true;
+            canvas.addEventListener('pointerdown', onDown,       { passive: false });
+            canvas.addEventListener('pointermove', onMove,       { passive: false });
+            canvas.addEventListener('pointerup',   onUp,         { passive: false });
+            canvas.addEventListener('wheel',       onWheel,      { passive: false });
+            canvas.addEventListener('touchstart',  onTouchStart, { passive: true });
+            canvas.addEventListener('touchmove',   onTouchMove,  { passive: false });
+            canvas.addEventListener('touchend',    onTouchEnd,   { passive: true });
+            window.addEventListener('resize', () => {
+                if (!canvas) return;
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+                clamp();
             });
-            section.appendChild(grid);
-            content.appendChild(section);
+            document.getElementById('gridCloseBtn')?.addEventListener('click', () => {
+                toggleImageGrid();
+                cursor.element?.classList.remove('close-mode');
+            });
         }
-    });
+
+        // kick off render loop
+        if (rafId) cancelAnimationFrame(rafId);
+        tick();
+    }
+
+    return { open: open_ };
+})();
+
+function toggleImageGrid() {
+    if (isGridOpen()) _GRID.open(false);
+    else              _GRID.open(true);
 }
 
 // ===================================
@@ -6165,18 +6327,8 @@ function updateParallax() {
     parallax.image.y += (parallax.image.targetY - parallax.image.y) * CONFIG.PARALLAX_DAMPING;
     const textLayer = Utils.$('#textLayer');
     const imageLayer = Utils.$('#imageLayer');
-    const gridOverlay = Utils.$('#gridContent');
-    const wireframeBg = Utils.$('#gridWireframeBg');
     if (textLayer) textLayer.style.transform = `translate3d(${parallax.text.x}px, ${parallax.text.y}px, 0)`;
     if (imageLayer) imageLayer.style.transform = `translate3d(${parallax.image.x}px, ${parallax.image.y}px, 0)`;
-    if (gridOverlay) gridOverlay.style.transform = `translate3d(${parallax.image.x * 0.5}px, ${parallax.image.y * 0.5}px, 0)`;
-    // Wireframe parallax: moves opposite/slower for depth cue
-    if (wireframeBg) {
-        wireframeBg.style.transform = `translate3d(${parallax.image.x * -0.18}px, ${parallax.image.y * -0.18}px, 0)`;
-        // Zoom visibility check
-        const scale = window.visualViewport ? window.visualViewport.scale : 1;
-        wireframeBg.classList.toggle('visible', scale >= 0.75 && document.body.classList.contains('grid-open'));
-    }
     requestAnimationFrame(updateParallax);
 }
 
@@ -6211,7 +6363,6 @@ function render() {
     let pendingLast      = false; // @@last — marks next sentence as the designated finale
     let pendingDarkStart = false; // @@dark — next sentence enters the dark interstitial
     let pendingDarkEnd   = false; // @@/dark — next sentence exits the dark interstitial
-    let pendingPace     = null;  // ~pace: hint waiting to attach to next sentence
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -6275,11 +6426,6 @@ function render() {
             return;
         }
 
-        if (part.type === 'pace-trigger') {
-            pendingPace = part.hint;
-            return;
-        }
-
         if (part.type === 'last-marker') {
             pendingLast = true;
             return;
@@ -6319,7 +6465,6 @@ function render() {
             if (pendingLast)      { span.dataset.lastSentence = 'true'; pendingLast = false; }
             if (pendingDarkStart) { span.dataset.darkStart = 'true'; pendingDarkStart = false; }
             if (pendingDarkEnd)   { span.dataset.darkEnd   = 'true'; pendingDarkEnd = false; }
-            if (pendingPace)     { span.dataset.pace = pendingPace; pendingPace = null; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
