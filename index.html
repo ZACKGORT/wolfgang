@@ -1169,6 +1169,39 @@ body.interstitial-dark {
         color 1.4s ease;
 }
 
+/* ── Fade everything except the active sentence ── */
+body.interstitial-dark .sentence:not(.active) {
+    opacity: 0.06 !important;
+    transition: opacity 1.6s ease;
+}
+body.interstitial-dark .sentence.active {
+    opacity: 1 !important;
+    transition: opacity 1.6s ease;
+}
+body.interstitial-dark .chapter-break,
+body.interstitial-dark .subchapter-break,
+body.interstitial-dark .section-break,
+body.interstitial-dark .pull-quote,
+body.interstitial-dark .pullquote-break,
+body.interstitial-dark .chapter-label,
+body.interstitial-dark .subchapter-title {
+    opacity: 0.06 !important;
+    transition: opacity 1.6s ease;
+}
+/* Dim UI chrome — softer than @@last since this may recur mid-story */
+body.interstitial-dark .header,
+body.interstitial-dark .left-rail,
+body.interstitial-dark .mode-cluster,
+body.interstitial-dark #statsWidget,
+body.interstitial-dark .flow-controller,
+body.interstitial-dark .scroll-progress,
+body.interstitial-dark .mobile-right-rail,
+body.interstitial-dark .music-player {
+    opacity: 0.05 !important;
+    pointer-events: none;
+    transition: opacity 1.6s ease;
+}
+
 /* ── DEFAULT THEME (dark gold/black base) — go even deeper, cooler ── */
 body.interstitial-dark:not([class*="theme-"]),
 body.interstitial-dark.theme-transitioning:not([class*="theme-"]) {
@@ -5602,6 +5635,23 @@ const flowMode = (() => {
         );
     }
 
+    // ── Preload next sentence's image while current is displaying ──
+    function preloadNext(currentIdx) {
+        const total = state.allSentenceElements.length;
+        let next = currentIdx + 1;
+        let safety = 0;
+        while (next < total && state.allSentenceElements[next]?.dataset.structural && safety++ < total) next++;
+        if (next >= total) return;
+        const el = state.allSentenceElements[next];
+        if (!el) return;
+        const trigger = el.querySelector?.('.image-trigger');
+        if (!trigger) return;
+        const url = trigger.getAttribute('data-image');
+        if (!url || url.match(/\.mp4(\?|$)/i)) return; // skip video, nothing to preload
+        const img = new Image();
+        img.src = url;
+    }
+
     function advance() {
         if (!active) return;
         const total = state.allSentenceElements.length;
@@ -5624,6 +5674,9 @@ const flowMode = (() => {
         const pause = pauseFor(sentenceEl);
         animateBar(pause);
         timer = setTimeout(advance, pause);
+
+        // Preload the sentence after this one so its image is ready before we get there
+        preloadNext(next);
     }
 
     function startMusic() {
@@ -5700,6 +5753,7 @@ const flowMode = (() => {
             const pause = pauseFor(sentenceEl);
             animateBar(pause);
             timer = setTimeout(advance, pause);
+            preloadNext(state.currentSentenceIndex);
         }
     }
 
