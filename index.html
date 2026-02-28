@@ -6021,7 +6021,9 @@ const _GRID = (function() {
 
     // ── pointer ───────────────────────────────────────────────────────────
     function onDown(e) {
-        if (e.pointerType !== 'touch') e.preventDefault();
+        e.preventDefault();
+        // ignore second finger (pinch handled separately)
+        if (e.isPrimary === false) return;
         dragActive = true; dragMoved = false;
         dragX0 = e.clientX; dragY0 = e.clientY;
         oxAtDrag = ox; oyAtDrag = oy;
@@ -6030,25 +6032,27 @@ const _GRID = (function() {
         canvas.classList.add('grabbing');
     }
     function onMove(e) {
-        if (dragActive) {
-            const dx = e.clientX - dragX0, dy = e.clientY - dragY0;
-            if (Math.abs(dx) + Math.abs(dy) > 4) dragMoved = true;
-            const nx = oxAtDrag + dx, ny = oyAtDrag + dy;
-            vx = nx - ox; vy = ny - oy;
-            ox = nx; oy = ny;
-            clamp();
-        } else {
-            const prev = hovered;
+        if (!dragActive) {
             hovered = tileAt(e.clientX, e.clientY);
             canvas.style.cursor = hovered >= 0 ? 'pointer' : 'grab';
+            return;
         }
+        const dx = e.clientX - dragX0, dy = e.clientY - dragY0;
+        // 12px threshold — forgiving for fingers
+        if (Math.abs(dx) + Math.abs(dy) > 12) dragMoved = true;
+        const nx = oxAtDrag + dx, ny = oyAtDrag + dy;
+        vx = nx - ox; vy = ny - oy;
+        ox = nx; oy = ny;
+        clamp();
     }
     function onUp(e) {
+        if (e.isPrimary === false) return;
         canvas.classList.remove('grabbing');
         const wasDrag = dragMoved;
         dragActive = false;
         if (!wasDrag) {
-            const idx = tileAt(e.clientX, e.clientY);
+            // use down coords for tap — more reliable than up coords on mobile
+            const idx = tileAt(dragX0, dragY0);
             if (idx >= 0) clickTile(idx);
         }
     }
@@ -6089,9 +6093,31 @@ const _GRID = (function() {
         const item = items[idx];
         if (!item) return;
         if (item.sentenceIdx >= 0) {
+            // navigable — return to narrative
             open_(false);
             state.currentSentenceIndex = item.sentenceIdx;
             highlightSentence(item.sentenceIdx);
+        } else {
+            // archive image — zoom to it so you can inspect
+            const s = step();
+            const col = idx % COLS, row = Math.floor(idx / COLS);
+            const cx = col * s + TILE / 2, cy = row * s + TILE / 2;
+            const targetScale = Math.min(3, Math.max(scale, 1.6));
+            const wx = (canvas.width  / 2 - cx * targetScale);
+            const wy = (canvas.height / 2 - cy * targetScale);
+            // animate pan + zoom toward tapped tile
+            const startOx = ox, startOy = oy, startScale = scale;
+            const dur = 280, t0 = performance.now();
+            function zoomAnim(now) {
+                const t = Math.min(1, (now - t0) / dur);
+                const ease = 1 - Math.pow(1 - t, 3);
+                scale = startScale + (targetScale - startScale) * ease;
+                ox    = startOx   + (wx - startOx) * ease;
+                oy    = startOy   + (wy - startOy) * ease;
+                clamp();
+                if (t < 1) requestAnimationFrame(zoomAnim);
+            }
+            requestAnimationFrame(zoomAnim);
         }
     }
 
