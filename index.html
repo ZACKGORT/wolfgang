@@ -1109,37 +1109,52 @@ body.theme-transitioning::after {
 .sentence.active { color: var(--sentence-active-color); opacity: 1; text-shadow: var(--sentence-active-shadow); background: var(--sentence-active-bg); padding: 2px 6px; border-radius: 2px; }
 .sentence.dimmed { opacity: var(--sentence-dimmed-opacity); color: var(--sentence-dimmed-color); }
 
-/* @@last — dim everything, show only the sentence and hover image */
-body.solo-finale .sentence:not(.active),
-body.solo-finale .chapter-break,
-body.solo-finale .subchapter-break,
-body.solo-finale .section-break,
-body.solo-finale .pull-quote,
-body.solo-finale .chapter-label,
-body.solo-finale .subchapter-title {
-    opacity: 0 !important;
-    pointer-events: none;
-    transition: opacity 1.8s ease;
-}
-body.solo-finale .sentence.active {
+/* @@last — inverted finale sentence, theme-aware, no font change */
+.sentence.last-sentence,
+.sentence.last-sentence.active {
+    display: inline-block;
+    background: var(--ink) !important;
+    color: var(--bg-color) !important;
+    text-shadow: none !important;
+    border-radius: 4px;
+    padding: 2px 8px;
     opacity: 1 !important;
+    transition: background 1.8s ease, color 1.8s ease, opacity 1.8s ease;
+}
+body.has-last-sentence .sentence.last-sentence,
+body.has-last-sentence .sentence.last-sentence.active {
+    background: var(--ink) !important;
+    color: var(--bg-color) !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+/* Dimmed sentences when finale is active */
+body.has-last-sentence .sentence:not(.active):not(.last-sentence) {
+    opacity: 0.08 !important;
     transition: opacity 1.8s ease;
 }
-/* Dim all UI chrome */
-body.solo-finale .header,
-body.solo-finale .left-rail,
-body.solo-finale .mode-cluster,
-body.solo-finale #statsWidget,
-body.solo-finale .flow-controller,
-body.solo-finale .scroll-progress,
-body.solo-finale .mobile-right-rail,
-body.solo-finale .music-player {
+body.has-last-sentence .chapter-break,
+body.has-last-sentence .subchapter-break,
+body.has-last-sentence .section-break,
+body.has-last-sentence .pull-quote,
+body.has-last-sentence .chapter-label,
+body.has-last-sentence .subchapter-title {
     opacity: 0.08 !important;
+    transition: opacity 1.8s ease;
+}
+/* Dim UI chrome */
+body.has-last-sentence .header,
+body.has-last-sentence .left-rail,
+body.has-last-sentence .mode-cluster,
+body.has-last-sentence #statsWidget,
+body.has-last-sentence .flow-controller,
+body.has-last-sentence .scroll-progress,
+body.has-last-sentence .mobile-right-rail,
+body.has-last-sentence .music-player {
+    opacity: 0.06 !important;
     pointer-events: none;
     transition: opacity 1.8s ease;
 }
-/* Keep hover image visible */
-body.solo-finale .hover-image { transition: opacity 1.8s ease; }
 .bullet-item, .numbered-bullet-item { display: block; margin: 0.5em 0; padding-left: 1.5em; position: relative; }
 .bullet-marker, .numbered-marker { position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 .bullet-marker { font-size: 1.2em; line-height: 1.5; }
@@ -4003,6 +4018,7 @@ Nearer.
 
 
 ###: The King From Queens.
+
 Is this the real life? [a few weeks ago, we weren't aware of each other's worlds]
 Is this just fantasy? [in many ways, we never were. I never asked his past. He didn't care about mine. All he knew, was that past, present, or future, this guy cooks pretty damn good food, takes me to all of the places, and gives free pets — and perhaps far too many kisses.]
 Caught in a landslide. [a moment for some catharsis from the author: post-covid lay-offs hit the design agency scene hard. I had just wrapped up as lead product designer at a very large agency for a very large bank. Then I was just let go. So, off into the wild with Wolfie.]
@@ -4064,7 +4080,6 @@ First, we go pee-pee. [my boy]
 "Now, we go sleepy". [*thousands of kisses*, "good boy"]
 
 #:#:
-@theme:memory
 @@last
 Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
@@ -5047,8 +5062,16 @@ function highlightSentence(index, dir = 1) {
         trackSentence(index);
         toastBehaviors.onSentenceAdvance();
         const isLast = sentence.dataset.lastSentence === 'true';
-        document.body.classList.toggle('solo-finale', isLast);
-        if (isLast) toastBehaviors.onLastSentence();
+        document.body.classList.toggle('has-last-sentence', isLast);
+        state.allSentenceElements.forEach(s => s.classList.remove('last-sentence'));
+        if (isLast) {
+            sentence.classList.add('last-sentence');
+            console.log('[@@last] Applied to:', sentence.textContent.trim().slice(0,30));
+            console.log('[@@last] --ink computed:', getComputedStyle(document.body).getPropertyValue('--ink'));
+            console.log('[@@last] --bg-color computed:', getComputedStyle(document.body).getPropertyValue('--bg-color'));
+            console.log('[@@last] sentence computed bg:', getComputedStyle(sentence).background);
+            toastBehaviors.onLastSentence();
+        }
         VisitorRemarks.checkAndSurfaceRemark(index);
         // ####: narrative toast — fires every time
         if (sentence.dataset.toast) {
