@@ -2350,7 +2350,9 @@ body.compose-mode .compose-bar {
 
 /* Hints tooltip button — mobile only */
 .compose-hints-btn {
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: 1px solid var(--border);
     border-radius: 3px;
@@ -2360,11 +2362,62 @@ body.compose-mode .compose-bar {
     transition: all 0.15s ease;
     line-height: 0;
     flex-shrink: 0;
+    position: relative;
 }
 .compose-hints-btn svg { width: 13px; height: 13px; }
 .compose-hints-btn:hover { border-color: var(--accent); color: var(--accent); }
-@media (max-width: 768px) {
-    .compose-hints-btn { display: flex; align-items: center; justify-content: center; }
+
+/* Info popover — shown on hover/focus of the ℹ button */
+.compose-hints-popover {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 10px 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: calc(var(--z-ui) + 10);
+    white-space: nowrap;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 220px;
+}
+.compose-hints-btn:hover .compose-hints-popover,
+.compose-hints-btn:focus-within .compose-hints-popover,
+.compose-hints-btn.open .compose-hints-popover {
+    display: flex;
+}
+.compose-hints-popover-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ui-font);
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+}
+.compose-hints-popover-row kbd {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1px 5px;
+    color: var(--ink-2);
+    flex-shrink: 0;
+    min-width: 56px;
+    text-align: center;
+}
+.compose-hints-popover-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 2px 0;
 }
 
 /* Close button — always present, styled like a small key */
@@ -2418,15 +2471,9 @@ body.compose-mode .compose-bar {
     background: rgba(255,255,255,0.06);
 }
 
-/* Desktop hint row */
+/* Desktop hint row — hidden, content now lives in ℹ popover */
 .compose-hints-desktop {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    padding-bottom: 4px;
-}
-@media (max-width: 768px) {
-    .compose-hints-desktop { display: none; }
+    display: none;
 }
 .compose-hint {
     font-family: var(--ui-font);
@@ -3397,9 +3444,23 @@ body.compose-mode { padding-bottom: 0; }
                     <select class="compose-chapter-select" id="composeChapterSelect" aria-label="Select chapter"></select>
                     <!-- Desktop: word count inline -->
                     <span class="compose-hint compose-wordcount-desktop" id="composeWordCount">0 words · 0 sentences</span>
-                    <!-- Mobile: tooltip/hints icon triggers toast -->
+                    <!-- Info icon — shows keyboard hints popover on hover -->
                     <button class="compose-hints-btn" id="composeHintsBtn" aria-label="Show keyboard hints" title="Keyboard hints">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                        <div class="compose-hints-popover" role="tooltip">
+                            <div class="compose-hints-popover-row"><kbd>Enter</kbd><span>commit sentence</span></div>
+                            <div class="compose-hints-popover-row"><kbd>Shift+Enter</kbd><span>line break</span></div>
+                            <div class="compose-hints-popover-divider"></div>
+                            <div class="compose-hints-popover-row"><kbd>###:</kbd><span>chapter</span></div>
+                            <div class="compose-hints-popover-row"><kbd>##:</kbd><span>section</span></div>
+                            <div class="compose-hints-popover-row"><kbd>#:</kbd><span>break</span></div>
+                            <div class="compose-hints-popover-divider"></div>
+                            <div class="compose-hints-popover-row"><kbd>####:</kbd><span>toast trigger</span></div>
+                            <div class="compose-hints-popover-row"><kbd>@theme:</kbd><span>theme trigger</span></div>
+                            <div class="compose-hints-popover-row"><kbd>@@last</kbd><span>finale sentence</span></div>
+                            <div class="compose-hints-popover-divider"></div>
+                            <div class="compose-hints-popover-row"><kbd>↑ ↓</kbd><span>navigate</span></div>
+                        </div>
                     </button>
                     <!-- Close — always visible -->
                     <button class="compose-close-btn" id="composeMobileClose" aria-label="Exit compose mode" title="Exit Compose">✕</button>
@@ -6763,18 +6824,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Close button inside compose bar
         if (mobileClose) mobileClose.addEventListener('click', exitCompose);
 
-        // Hints tooltip button → fires a toast on mobile
+        // Hints button — toggle popover open class (for mobile tap; desktop uses CSS hover)
         if (hintsBtn) {
             hintsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                Toast.show({
-                    id: `compose-hints-${Date.now()}`,
-                    icon: '⌨️',
-                    message: '<span class="toast-accent">Enter</span> commit &nbsp;·&nbsp; <span class="toast-accent">Shift+Enter</span> line break &nbsp;·&nbsp; <span class="toast-accent">###:</span> chapter &nbsp;·&nbsp; <span class="toast-accent">##:</span> section &nbsp;·&nbsp; <span class="toast-accent">####:</span> toast &nbsp;·&nbsp; <span class="toast-accent">dbl-tap</span> sentence to edit',
-                    duration: 10000,
-                    force: true
-                });
+                hintsBtn.classList.toggle('open');
             });
+            // Close popover when clicking elsewhere
+            document.addEventListener('click', () => hintsBtn.classList.remove('open'));
         }
 
         // ── Input state ──
