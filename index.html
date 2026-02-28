@@ -1109,8 +1109,14 @@ body.theme-transitioning::after {
 .sentence.active { color: var(--sentence-active-color); opacity: 1; text-shadow: var(--sentence-active-shadow); background: var(--sentence-active-bg); padding: 2px 6px; border-radius: 2px; }
 .sentence.dimmed { opacity: var(--sentence-dimmed-opacity); color: var(--sentence-dimmed-color); }
 
-/* Solo finale — last sentence only, everything else invisible */
-body.solo-finale .sentence:not(.active) {
+/* @@last — dim everything, show only the sentence and hover image */
+body.solo-finale .sentence:not(.active),
+body.solo-finale .chapter-break,
+body.solo-finale .subchapter-break,
+body.solo-finale .section-break,
+body.solo-finale .pull-quote,
+body.solo-finale .chapter-label,
+body.solo-finale .subchapter-title {
     opacity: 0 !important;
     pointer-events: none;
     transition: opacity 1.8s ease;
@@ -1119,15 +1125,21 @@ body.solo-finale .sentence.active {
     opacity: 1 !important;
     transition: opacity 1.8s ease;
 }
-body.solo-finale .chapter-break,
-body.solo-finale .subchapter-break,
-body.solo-finale .section-break,
-body.solo-finale .pull-quote,
-body.solo-finale .chapter-label,
-body.solo-finale .subchapter-title {
-    opacity: 0 !important;
+/* Dim all UI chrome */
+body.solo-finale .header,
+body.solo-finale .left-rail,
+body.solo-finale .mode-cluster,
+body.solo-finale #statsWidget,
+body.solo-finale .flow-controller,
+body.solo-finale .scroll-progress,
+body.solo-finale .mobile-right-rail,
+body.solo-finale .music-player {
+    opacity: 0.08 !important;
+    pointer-events: none;
     transition: opacity 1.8s ease;
 }
+/* Keep hover image visible */
+body.solo-finale .hover-image { transition: opacity 1.8s ease; }
 .bullet-item, .numbered-bullet-item { display: block; margin: 0.5em 0; padding-left: 1.5em; position: relative; }
 .bullet-marker, .numbered-marker { position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 .bullet-marker { font-size: 1.2em; line-height: 1.5; }
@@ -1401,11 +1413,8 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     touch-action: none;
     transform: none;
 }
-/* Desktop: anchor dropdown to the right edge, aligned with mode cluster */
 @media (min-width: 769px) {
     .chapter-dropdown {
-        left: auto;
-        right: clamp(16px, 3.5vw, 44px);
         min-width: 320px;
     }
 }
@@ -1501,8 +1510,10 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 }
 
 /* ── Flow mode music suggestion toast ── */
+.flow-toast { display: none; }
 @media (min-width: 769px) {
     .flow-toast {
+        display: flex;
         position: fixed;
         bottom: 72px; /* just above music player at bottom: 20px + ~50px player height */
         left: 50%;
@@ -2059,11 +2070,10 @@ body.focus-mode .hover-image { opacity: 0 !important; }
     .text-layer { padding: 12vh 6vw 20vh 50px; max-width: 95%; }
     .stream { font-size: clamp(16px, 4vw, 28px); }
     .hover-image { width: 800px; height: 600px; }
-    .chapter-dropdown { min-width: 300px; max-width: 92vw; left: 4vw; right: 4vw; }
+    .chapter-dropdown { min-width: unset; width: calc(100vw - 32px); max-width: 340px; left: 16px; right: auto; }
     /* On mobile, always show chapter play buttons (no hover needed) */
     .chapter-play-btn { display: flex !important; }
-    .chapter-item-progress { display: none; }
-    /* On mobile, don't re-hide on chapter-item hover (desktop rule doesn't apply) */
+    /* Keep sentence counts visible alongside play buttons */
     .grid-images-container { grid-template-columns: repeat(4, 1fr); gap: 0; }
     .grid-content { padding: 100px 10vw; }
     body.layout-split .text-layer { width: 100%; padding-left: 50px; padding-right: 20px; }
@@ -3466,7 +3476,7 @@ body.compose-mode { padding-bottom: 0; }
                 <ul class="chapter-dropdown-list" id="chapterDropdownList"></ul>
                 <div class="chapter-dropdown-footer">
                     <span class="dropdown-copyright">&copy; 2026 Zack Gort</span>
-                    
+                    <a class="dropdown-readme" href="https://wolfie.life" target="_blank" rel="noopener" style="text-decoration:none;opacity:0.5;letter-spacing:0.08em;text-transform:uppercase;transition:opacity 0.15s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">wolfie.life ↗</a>
                 </div>
             </div>
         </div>
@@ -3932,6 +3942,7 @@ Nearer.
 
 
 ###: The King From Queens.
+@theme:memory
 Is this the real life? [a few weeks ago, we weren't aware of each other's worlds]
 Is this just fantasy? [in many ways, we never were. I never asked his past. He didn't care about mine. All he knew, was that past, present, or future, this guy cooks pretty damn good food, takes me to all of the places, and gives free pets — and perhaps far too many kisses.]
 Caught in a landslide. [a moment for some catharsis from the author: post-covid lay-offs hit the design agency scene hard. I had just wrapped up as lead product designer at a very large agency for a very large bank. Then I was just let go. So, off into the wild with Wolfie.]
@@ -3992,8 +4003,9 @@ But, it's time to go sleepies.
 First, we go pee-pee. [my boy] 
 "Now, we go sleepy". [*thousands of kisses*, "good boy"]
 
-@theme:memory
-#:#:Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
+#:#:
+@@last
+Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
 `;
 
