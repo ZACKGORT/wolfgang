@@ -1297,7 +1297,7 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     padding: clamp(14px, 2vh, 24px) clamp(16px, 3.5vw, 44px); 
     display: flex; justify-content: space-between; align-items: center; pointer-events: none; 
 }
-.brand-container { position: relative; pointer-events: auto; }
+.brand-container { position: relative; pointer-events: auto; display: flex; flex-direction: column; align-items: flex-start; }
 .header-right { display: flex; align-items: center; gap: 8px; pointer-events: auto; }
 .brand { 
     font-family: var(--ui-font); font-size: 10px; letter-spacing: 0.1em; 
@@ -1332,8 +1332,8 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 /* Desktop: anchor dropdown to the right edge, aligned with mode cluster */
 @media (min-width: 769px) {
     .chapter-dropdown {
-        left: clamp(16px, 3.5vw, 44px);
-        right: auto;
+        left: auto;
+        right: clamp(16px, 3.5vw, 44px);
         min-width: 320px;
     }
 }
@@ -1477,13 +1477,10 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 }
 /* ── Flow controller widget ── */
 .flow-controller {
-    position: fixed;
-    bottom: clamp(14px, 2vh, 24px);
-    right: clamp(16px, 3.5vw, 44px);
-    z-index: var(--z-ui);
-    display: none; /* hidden until flow is active */
+    display: none;
     align-items: center;
-    gap: 5px;
+    justify-content: flex-start;
+    padding: 3px 0 0 2px;
     pointer-events: auto;
     transition: opacity 0.3s ease;
 }
@@ -3331,6 +3328,14 @@ body.compose-mode { padding-bottom: 0; }
                 <span>For Wolfgang</span>
                 <span class="brand-dropdown-icon">▼</span>
             </div>
+            <!-- Flow speed controls — appear below logo when flow is active -->
+            <div class="flow-controller" id="flowController" aria-label="Flow mode speed controls">
+                <div class="flow-controls" id="flowControls">
+                    <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
+                    <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
+                    <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
+                </div>
+            </div>
             <div class="chapter-dropdown" id="chapterDropdown" aria-hidden="true">
                 <div class="chapter-dropdown-header" id="chapterDropdownHeader">
                     <span class="dropdown-drag-handle">⋮⋮</span>
@@ -3416,15 +3421,6 @@ body.compose-mode { padding-bottom: 0; }
                 <span class="mode-key-label">DEL</span>
                 <span class="mode-key-desc">Delete</span>
             </button>
-        </div>
-
-        <!-- ── Flow mode controller — speed controls only, visible when flow is active ── -->
-        <div class="flow-controller" id="flowController" aria-label="Flow mode speed controls">
-            <div class="flow-controls" id="flowControls">
-                <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
-                <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
-                <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
-            </div>
         </div>
     </header>
 
