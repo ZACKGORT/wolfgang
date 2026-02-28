@@ -3302,6 +3302,8 @@ body.compose-mode { padding-bottom: 0; }
                 <span class="compose-hint"><kbd>#:</kbd> break</span>
                 <div class="compose-hint-divider"></div>
                 <span class="compose-hint"><kbd>####:</kbd> toast</span>
+                <span class="compose-hint-divider">·</span>
+                <span class="compose-hint"><kbd>@theme:</kbd> theme</span>
                 <div class="compose-hint-divider"></div>
                 <span class="compose-hint"><kbd>↑↓</kbd> navigate</span>
             </div>
@@ -3404,6 +3406,10 @@ body.compose-mode { padding-bottom: 0; }
             <button class="mode-key compose-key" id="composeKeyToast" aria-label="Insert toast trigger ####:" title="Insert toast trigger ####:message">
                 <span class="mode-key-label">####:</span>
                 <span class="mode-key-desc">Toast</span>
+            </button>
+            <button class="mode-key compose-key" id="composeKeyTheme" aria-label="Insert theme trigger @theme:" title="Insert theme trigger @theme:name">
+                <span class="mode-key-label">@theme:</span>
+                <span class="mode-key-desc">Theme</span>
             </button>
             <button class="mode-key compose-key" id="composeKeyBreak" aria-label="Insert line break #:" title="Insert line break #:">
                 <span class="mode-key-label">#:</span>
@@ -3859,6 +3865,7 @@ I knew.
 #:#:Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
 `;
+
 
 
 // ===================================
@@ -4542,11 +4549,17 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(####:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
 
+                    if (lineSegment.startsWith('@theme:')) {
+                        // Theme trigger — switches theme when this sentence activates
+                        const themeName = lineSegment.substring(7).trim().toLowerCase();
+                        if (themeName) parts.push({ type: 'theme-trigger', id: idCounter++, theme: themeName });
+                        continue;
+                    }
                     if (lineSegment.startsWith('####:')) {
                         // Toast trigger — fires once per session when the next sentence is activated
                         const message = lineSegment.substring(5).trim();
@@ -4828,10 +4841,14 @@ function highlightSentence(index, dir = 1) {
         toastBehaviors.onSentenceAdvance();
         if (index === state.allSentenceElements.length - 1) toastBehaviors.onLastSentence();
         VisitorRemarks.checkAndSurfaceRemark(index);
-        // ####: narrative toast — once per session
+        // ####: narrative toast — fires every time
         if (sentence.dataset.toast) {
             const toastId = `narrative-toast-${index}`;
             Toast.show({ id: toastId, icon: '✦', message: sentence.dataset.toast, duration: 7000, force: true, banner: true, noStackLimit: true });
+        }
+        // @theme: narrative theme trigger — switches theme when sentence activates
+        if (sentence.dataset.theme) {
+            setTheme(sentence.dataset.theme);
         }
     }
     trackChapter(getCurrentChapter());
@@ -5570,6 +5587,7 @@ function render() {
     let nextChapterIndex = 0;
     let currentActiveChapter = 0;
     let pendingToast = null; // ####: message waiting to attach to next sentence
+    let pendingTheme = null; // @theme: name waiting to attach to next sentence
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -5628,6 +5646,11 @@ function render() {
             return;
         }
 
+        if (part.type === 'theme-trigger') {
+            pendingTheme = part.theme;
+            return;
+        }
+
         if (part.type === 'sentence') {
             const span = document.createElement('span');
             span.className = 'sentence';
@@ -5648,6 +5671,7 @@ function render() {
             });
             state.allSentenceElements.push(span);
             if (pendingToast) { span.dataset.toast = pendingToast; pendingToast = null; }
+            if (pendingTheme) { span.dataset.theme = pendingTheme; pendingTheme = null; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
@@ -5990,6 +6014,21 @@ function toggleTheme() {
         requestAnimationFrame(() => {
             body.classList.remove('theme-transitioning');
         });
+    });
+}
+
+// Set a specific theme by name. Valid names: default, newspaper, sport, memory
+function setTheme(name) {
+    const body = document.body;
+    const ALL_THEMES = ['theme-newspaper', 'theme-sport', 'theme-memory'];
+    const target = name === 'default' ? null : `theme-${name}`;
+    if (target && !ALL_THEMES.includes(target)) return; // unknown theme — ignore
+    if (body.classList.contains(target || '__none__') || (!target && ALL_THEMES.every(t => !body.classList.contains(t)))) return; // already set
+    body.classList.add('theme-transitioning');
+    requestAnimationFrame(() => {
+        ALL_THEMES.forEach(t => body.classList.remove(t));
+        if (target) body.classList.add(target);
+        requestAnimationFrame(() => body.classList.remove('theme-transitioning'));
     });
 }
 
@@ -6656,6 +6695,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // @theme: Theme trigger — insert a visible marker in the compose list
+            if (raw.startsWith('@theme:')) {
+                const themeName = raw.substring(7).trim().toLowerCase();
+                const validThemes = ['default', 'newspaper', 'sport', 'memory'];
+                if (!themeName || !validThemes.includes(themeName)) {
+                    Toast.show({ id: 'theme-trigger-err', message: `Valid themes: ${validThemes.join(', ')}`, duration: 4000 });
+                    input.value = '@theme:';
+                    input.focus();
+                    return;
+                }
+                const marker = document.createElement('span');
+                marker.className = 'sentence theme-marker';
+                marker.dataset.structural = 'true';
+                marker.dataset.type = 'theme-trigger';
+                marker.dataset.themeName = themeName;
+                marker.dataset.sentenceIndex = state.allSentenceElements.length;
+                marker.setAttribute('tabindex', '0');
+                marker.style.cssText = 'opacity:0.35;font-size:0.7em;font-family:var(--ui-font);color:var(--accent);display:block;padding:2px 0;cursor:default;';
+                marker.textContent = `◈ @theme:${themeName}`;
+                if (!window._pendingNarrativeThemes) window._pendingNarrativeThemes = {};
+                window._pendingNarrativeThemes[state.allSentenceElements.length] = themeName;
+                state.allSentenceElements.push(marker);
+                const stream = Utils.$('#stream');
+                const ref = state.allSentenceElements[compose.insertionIndex] || null;
+                if (ref) stream.insertBefore(marker, ref); else stream.appendChild(marker);
+                input.value = '';
+                if (hudSubmit) hudSubmit.disabled = true;
+                updateWordCount();
+                return;
+            }
+
             // ###: Chapter break
             if (raw.startsWith('###:')) {
                 const rawTitle = raw.substring(4).trim();
@@ -7114,6 +7184,15 @@ document.addEventListener('DOMContentLoaded', () => {
             input.value = '####:';
             input.focus();
             input.setSelectionRange(5, 5);
+            if (hudSubmit) hudSubmit.disabled = false;
+        });
+
+        const clusterThemeTrigger = document.getElementById('composeKeyTheme');
+        if (clusterThemeTrigger) clusterThemeTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.value = '@theme:';
+            input.focus();
+            input.setSelectionRange(7, 7);
             if (hudSubmit) hudSubmit.disabled = false;
         });
 
