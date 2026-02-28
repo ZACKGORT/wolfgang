@@ -1056,6 +1056,26 @@ body.theme-transitioning::after {
 .sentence { display: inline; transition: opacity 0.3s ease, color 0.3s ease, background 0.3s ease; cursor: none; position: relative; z-index: 2; letter-spacing: -0.01em; }
 .sentence.active { color: var(--sentence-active-color); opacity: 1; text-shadow: var(--sentence-active-shadow); background: var(--sentence-active-bg); padding: 2px 6px; border-radius: 2px; }
 .sentence.dimmed { opacity: var(--sentence-dimmed-opacity); color: var(--sentence-dimmed-color); }
+
+/* Solo finale — last sentence only, everything else invisible */
+body.solo-finale .sentence:not(.active) {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition: opacity 1.8s ease;
+}
+body.solo-finale .sentence.active {
+    opacity: 1 !important;
+    transition: opacity 1.8s ease;
+}
+body.solo-finale .chapter-break,
+body.solo-finale .subchapter-break,
+body.solo-finale .section-break,
+body.solo-finale .pull-quote,
+body.solo-finale .chapter-label,
+body.solo-finale .subchapter-title {
+    opacity: 0 !important;
+    transition: opacity 1.8s ease;
+}
 .bullet-item, .numbered-bullet-item { display: block; margin: 0.5em 0; padding-left: 1.5em; position: relative; }
 .bullet-marker, .numbered-marker { position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 .bullet-marker { font-size: 1.2em; line-height: 1.5; }
@@ -1332,8 +1352,8 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
 /* Desktop: anchor dropdown to the right edge, aligned with mode cluster */
 @media (min-width: 769px) {
     .chapter-dropdown {
-        left: clamp(16px, 3.5vw, 44px);
-        right: auto;
+        left: auto;
+        right: clamp(16px, 3.5vw, 44px);
         min-width: 320px;
     }
 }
@@ -3609,10 +3629,18 @@ let composeActive = false; // module-level flag so highlightSentence can read it
 // ===================================
 
 // ===================================
-//###:Good Day, Now Good Night.
-//"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee, then sleepy"
-//[Good boy] https://i.ibb.co/204XKS7B/lastsleepies.jpg
-// 'Firsts, we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp'
+//Well, wouldn't you know?
+//Not broken — just needs some TLC. 
+//New bag-buddy — never ever baggage.
+//Works over WOOfi.
+//Tiny. [cafe photo]
+//Carries well. [obvi] 
+//Travels well. [obvi]
+//Travels comfortably.
+//Headphone jack (no mute function)
+//Works optimally when nearest.
+//Nearer.
+//*ahem* — nearest, thank you.
 
 
 
@@ -3725,7 +3753,6 @@ const imageMap = {
     'escape from reality': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/sleepspiral.mp4',
     'Look to the sky': 'https://i.ibb.co/BKymJdYK/itshisworld.webp',
 
-    
     'sleepies': 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
     'we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
     'we go sleepy': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/Sleepingbeauty.mp4',
@@ -3885,13 +3912,16 @@ I knew.
 >>:Wolfie| We're going Wawa again. Dad is me driving through a blizzard. I have my blanket. He's calm. It's quiet. He's driving really, really slowly. It's okay, we're not in a rush. We're there!  Carry me? He's hugging me closer than usual. Yeah, yeah, I know you tell me a million times every day — Love you too.
 
 ###:Good Day, Now Good Night.
-"We had a busy day buddy. You were so helpful. But, it's time to go sleepies. First, we go pee-pee. Now, we go sleepy".
-[*thousands of kisses*, "good boy"]
+"We had a busy day buddy. 
+You were so helpful. 
+But, it's time to go sleepies. 
+First, we go pee-pee. [my boy] 
+"Now, we go sleepy". [*thousands of kisses*, "good boy"]
 
+@theme:memory
 #:#:Forever Ferocious. [*ferociously sweet. Thank you my sweet boy.]
 
 `;
-
 
 
 // ===================================
@@ -4865,7 +4895,9 @@ function highlightSentence(index, dir = 1) {
     if (!sentence.dataset.structural) {
         trackSentence(index);
         toastBehaviors.onSentenceAdvance();
-        if (index === state.allSentenceElements.length - 1) toastBehaviors.onLastSentence();
+        const isLast = index === state.allSentenceElements.length - 1;
+        document.body.classList.toggle('solo-finale', isLast);
+        if (isLast) toastBehaviors.onLastSentence();
         VisitorRemarks.checkAndSurfaceRemark(index);
         // ####: narrative toast — fires every time
         if (sentence.dataset.toast) {
