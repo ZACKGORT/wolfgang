@@ -175,6 +175,58 @@ body.theme-newspaper {
     --selection-color: #ffffff;
 }
 
+/* ── NIGHTFALL THEME ── newspaper typography, dark palette */
+/* Used for the Good Day, Now Good Night chapter — color shift only, no font change */
+body.theme-nightfall {
+    --bg-color: #0d0c0a;
+    --ink: #e8e0d0;
+    --ink-2: #b0a898;
+    --ink-3: #706860;
+    --accent: #8b4513;
+
+    --surface: rgba(13, 12, 10, 0.85);
+    --surface-raised: rgba(13, 12, 10, 0.97);
+    --border: rgba(232, 224, 208, 0.10);
+    --border-strong: rgba(232, 224, 208, 0.15);
+    --hover-tint: rgba(139, 69, 19, 0.08);
+    --hover-tint-strong: rgba(139, 69, 19, 0.14);
+
+    --sentence-color: rgba(232, 224, 208, 0.85);
+    --sentence-active-color: #e8e0d0;
+    --sentence-active-bg: rgba(13, 12, 10, 0.97);
+    --sentence-active-shadow: none;
+    --sentence-hover-color: #e8e0d0;
+    --sentence-hover-bg: rgba(139, 69, 19, 0.06);
+    --sentence-dimmed-opacity: 0.45;
+    --sentence-dimmed-color: rgba(232, 224, 208, 0.45);
+
+    --chapter-bar-bg: rgba(232, 224, 208, 0.10);
+    --chapter-bar-hover-bg: rgba(232, 224, 208, 0.22);
+    --chapter-bar-completed-bg: rgba(139, 69, 19, 0.35);
+    --chapter-bar-completed-hover-bg: rgba(139, 69, 19, 0.55);
+    --chapter-tooltip-bg: rgba(13, 12, 10, 0.95);
+
+    --grid-overlay-bg: rgba(13, 12, 10, 0.98);
+    --grid-item-bg: #1a1916;
+    --grid-item-border: rgba(232, 224, 208, 0.10);
+    --grid-title-border: rgba(232, 224, 208, 0.10);
+
+    --vig-opacity: 0.70;
+    --grain-opacity: 0.09;
+
+    --bracket-color: #7a6040;
+    --bracket-hover: #8b4513;
+    --bracket-bg: rgba(139, 69, 19, 0.04);
+
+    --cursor-bg: transparent;
+    --cursor-border: rgba(232, 224, 208, 0.40);
+    --cursor-blend: difference;
+    --cursor-opacity: 1;
+
+    --selection-bg: rgba(139, 69, 19, 0.25);
+    --selection-color: #e8e0d0;
+}
+
 /* ── SPORT THEME ── */
 body.theme-sport {
     --bg-color: #0a0a0a;
@@ -2007,7 +2059,11 @@ body.focus-mode .hover-image { opacity: 0 !important; }
     .text-layer { padding: 12vh 6vw 20vh 50px; max-width: 95%; }
     .stream { font-size: clamp(16px, 4vw, 28px); }
     .hover-image { width: 800px; height: 600px; }
-    .chapter-dropdown { min-width: 240px; }
+    .chapter-dropdown { min-width: 300px; max-width: 92vw; left: 4vw; right: 4vw; }
+    /* On mobile, always show chapter play buttons (no hover needed) */
+    .chapter-play-btn { display: flex !important; }
+    .chapter-item-progress { display: none; }
+    /* On mobile, don't re-hide on chapter-item hover (desktop rule doesn't apply) */
     .grid-images-container { grid-template-columns: repeat(4, 1fr); gap: 0; }
     .grid-content { padding: 100px 10vw; }
     body.layout-split .text-layer { width: 100%; padding-left: 50px; padding-right: 20px; }
@@ -2616,6 +2672,15 @@ body.compose-mode .mode-key.reader-key { display: none; }
     color: var(--accent);
     background: var(--hover-tint);
 }
+.hud-flow-btn {
+    display: none;
+    color: var(--ink-3);
+    transition: color 0.15s ease, background 0.15s ease;
+}
+.hud-flow-btn.active {
+    color: var(--accent);
+    background: var(--hover-tint);
+}
 
 /* HUD submit button — compose mode on mobile, accent colored */
 .hud-submit-btn {
@@ -2681,11 +2746,13 @@ body.compose-mode .mode-key.reader-key { display: none; }
 }
 
 @media (max-width: 768px) {
-    /* Reader mode: show compose toggle */
+    /* Reader mode: show compose toggle and flow button */
     .hud-compose-btn { display: flex; }
-    /* Compose mode: swap compose toggle for submit */
+    .hud-flow-btn { display: flex; }
+    /* Compose mode: swap compose toggle for submit, hide flow */
     body.compose-mode .hud-submit-btn { display: flex; }
     body.compose-mode .hud-compose-btn { display: none; }
+    body.compose-mode .hud-flow-btn { display: none; }
     /* Mobile: show compose fob (music widget replaces it on desktop) */
     .compose-toggle { display: flex; }
 }
@@ -3239,6 +3306,9 @@ body.compose-mode { padding-bottom: 0; }
             <button class="hud-nav-btn" id="hudPrevBtn" aria-label="Previous Sentence" title="Previous (long-press for prev chapter)">
                 <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
             </button>
+            <button class="hud-nav-btn hud-flow-btn" id="hudFlowBtn" aria-label="Toggle flow mode" title="Flow mode">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
             <button class="hud-nav-btn" id="hudNextBtn" aria-label="Next Sentence" title="Next (long-press for next chapter)">
                 <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
             </button>
@@ -3456,6 +3526,10 @@ body.compose-mode { padding-bottom: 0; }
             <button class="mode-key compose-key" id="composeKeyTheme" aria-label="Insert theme trigger @theme:" title="Insert theme trigger @theme:name">
                 <span class="mode-key-label">@theme:</span>
                 <span class="mode-key-desc">Theme</span>
+            </button>
+            <button class="mode-key compose-key" id="composeKeyLast" aria-label="Insert last sentence marker @@last" title="Marks next sentence as the designated finale">
+                <span class="mode-key-label">@@last</span>
+                <span class="mode-key-desc">Finale</span>
             </button>
             <button class="mode-key compose-key" id="composeKeyBreak" aria-label="Insert line break #:" title="Insert line break #:">
                 <span class="mode-key-label">#:</span>
@@ -4605,11 +4679,15 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(####:[^\n]*|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|@@last|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
 
+                    if (lineSegment === '@@last') {
+                        pendingLast = true;
+                        continue;
+                    }
                     if (lineSegment.startsWith('@theme:')) {
                         // Theme trigger — switches theme when this sentence activates
                         const themeName = lineSegment.substring(7).trim().toLowerCase();
@@ -4895,7 +4973,7 @@ function highlightSentence(index, dir = 1) {
     if (!sentence.dataset.structural) {
         trackSentence(index);
         toastBehaviors.onSentenceAdvance();
-        const isLast = index === state.allSentenceElements.length - 1;
+        const isLast = sentence.dataset.lastSentence === 'true';
         document.body.classList.toggle('solo-finale', isLast);
         if (isLast) toastBehaviors.onLastSentence();
         VisitorRemarks.checkAndSurfaceRemark(index);
@@ -4904,10 +4982,14 @@ function highlightSentence(index, dir = 1) {
             const toastId = `narrative-toast-${index}`;
             Toast.show({ id: toastId, icon: '✦', message: sentence.dataset.toast, duration: 7000, force: true, banner: true, noStackLimit: true });
         }
-        // @theme: narrative theme trigger — switches theme when sentence activates
-        if (sentence.dataset.theme) {
-            setTheme(sentence.dataset.theme);
-        }
+        // @theme: resolve correct theme for current position — scan back to nearest trigger, default newspaper
+        (function resolveTheme() {
+            for (let i = index; i >= 0; i--) {
+                const el = state.allSentenceElements[i];
+                if (el && el.dataset.theme) { setTheme(el.dataset.theme); return; }
+            }
+            setTheme('newspaper');
+        })();
     }
     trackChapter(getCurrentChapter());
 
@@ -5264,6 +5346,13 @@ const flowMode = (() => {
         if (playStop) {
             playStop.textContent = active ? '■' : '▶';
             playStop.title = active ? 'Stop flow' : 'Play from chapter start';
+        }
+        const hudFlow = document.getElementById('hudFlowBtn');
+        if (hudFlow) {
+            hudFlow.classList.toggle('active', active);
+            // swap play ▶ / stop ■ icon
+            const svgPath = hudFlow.querySelector('path');
+            if (svgPath) svgPath.setAttribute('d', active ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z');
         }
     }
 
@@ -5652,6 +5741,7 @@ function render() {
     let currentActiveChapter = 0;
     let pendingToast = null; // ####: message waiting to attach to next sentence
     let pendingTheme = null; // @theme: name waiting to attach to next sentence
+    let pendingLast  = false; // @@last — marks next sentence as the designated finale
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -5736,6 +5826,7 @@ function render() {
             state.allSentenceElements.push(span);
             if (pendingToast) { span.dataset.toast = pendingToast; pendingToast = null; }
             if (pendingTheme) { span.dataset.theme = pendingTheme; pendingTheme = null; }
+            if (pendingLast)  { span.dataset.lastSentence = 'true'; pendingLast = false; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
@@ -6081,10 +6172,10 @@ function toggleTheme() {
     });
 }
 
-// Set a specific theme by name. Valid names: default, newspaper, sport, memory
+// Set a specific theme by name. Valid names: default, newspaper, sport, memory, nightfall
 function setTheme(name) {
     const body = document.body;
-    const ALL_THEMES = ['theme-newspaper', 'theme-sport', 'theme-memory'];
+    const ALL_THEMES = ['theme-newspaper', 'theme-sport', 'theme-memory', 'theme-nightfall'];
     const target = name === 'default' ? null : `theme-${name}`;
     if (target && !ALL_THEMES.includes(target)) return; // unknown theme — ignore
     if (body.classList.contains(target || '__none__') || (!target && ALL_THEMES.every(t => !body.classList.contains(t)))) return; // already set
@@ -6429,7 +6520,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (flowMode.isActive()) {
             flowMode.stop();
         } else {
-            // Restart from beginning of current chapter
+            const chapterId = getCurrentChapter();
+            const startIdx = state.chapterStartIndices[chapterId] ?? 0;
+            state.currentSentenceIndex = startIdx;
+            highlightSentence(startIdx);
+            flowMode.start();
+        }
+    });
+
+    Utils.$('#hudFlowBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (flowMode.isActive()) {
+            flowMode.stop();
+        } else {
             const chapterId = getCurrentChapter();
             const startIdx = state.chapterStartIndices[chapterId] ?? 0;
             state.currentSentenceIndex = startIdx;
@@ -6772,10 +6875,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // @@last — marks the next sentence as the designated finale (solo-finale effect)
+            if (raw.trim() === '@@last') {
+                const marker = document.createElement('span');
+                marker.className = 'sentence last-marker';
+                marker.dataset.structural = 'true';
+                marker.dataset.type = 'last-marker';
+                marker.dataset.sentenceIndex = state.allSentenceElements.length;
+                marker.setAttribute('tabindex', '0');
+                marker.style.cssText = 'opacity:0.35;font-size:0.7em;font-family:var(--ui-font);color:var(--accent);display:block;padding:2px 0;cursor:default;';
+                marker.textContent = '◉ @@last';
+                if (!window._pendingLastSentence) window._pendingLastSentence = true;
+                state.allSentenceElements.push(marker);
+                const stream = Utils.$('#stream');
+                const ref = state.allSentenceElements[compose.insertionIndex] || null;
+                if (ref) stream.insertBefore(marker, ref); else stream.appendChild(marker);
+                input.value = '';
+                if (hudSubmit) hudSubmit.disabled = true;
+                updateWordCount();
+                return;
+            }
+
             // @theme: Theme trigger — insert a visible marker in the compose list
             if (raw.startsWith('@theme:')) {
                 const themeName = raw.substring(7).trim().toLowerCase();
-                const validThemes = ['default', 'newspaper', 'sport', 'memory'];
+                const validThemes = ['default', 'newspaper', 'sport', 'memory', 'nightfall'];
                 if (!themeName || !validThemes.includes(themeName)) {
                     Toast.show({ id: 'theme-trigger-err', message: `Valid themes: ${validThemes.join(', ')}`, duration: 4000 });
                     input.value = '@theme:';
@@ -7271,6 +7395,14 @@ document.addEventListener('DOMContentLoaded', () => {
             input.focus();
             input.setSelectionRange(7, 7);
             if (hudSubmit) hudSubmit.disabled = false;
+        });
+
+        const clusterLast = document.getElementById('composeKeyLast');
+        if (clusterLast) clusterLast.addEventListener('click', (e) => {
+            e.stopPropagation();
+            input.value = '@@last';
+            if (hudSubmit) hudSubmit.disabled = false;
+            commitSentence();
         });
 
         // ── Line break quick-insert ──
