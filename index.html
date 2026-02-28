@@ -5352,10 +5352,9 @@ function highlightSentence(index, dir = 1) {
                     const el = state.allSentenceElements[i];
                     if (el && el.dataset.theme) { setTheme(el.dataset.theme); return; }
                 }
-                // Default: restore initial body theme (set at load via body class)
-                const ALL_THEMES = ['theme-newspaper','theme-sport','theme-memory','theme-nightfall'];
-                const initial = document.body.dataset.baseTheme || 'newspaper';
-                setTheme(initial);
+                // No @theme marker found — preserve whatever theme the user has active.
+                // Only fall back to baseTheme if it was set by a content marker (not just page default),
+                // so manual theme toggles persist through sentence navigation.
             })();
         }
     }
