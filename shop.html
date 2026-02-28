@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Air Jordan 11 Retro · Cool Grey — wolfie.love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════════
+   ROOT
+═══════════════════════════════════════════════ */
+:root {
+  --bg:       #080808;
+  --ink:      #efefef;
+  --ink-2:    #888;
+  --ink-3:    #3a3a3a;
+  --accent:   #fa3c00;
+  --accent-d: rgba(250,60,0,0.12);
+  --gold:     #c8a96e;
+  --border:   rgba(255,255,255,0.06);
+  --ui:       'Space Mono', monospace;
+  --disp:     'Barlow Condensed', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  cursor: none;
+  min-height: 100vh;
+}
+
+/* grain */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9000;
+  opacity: 0.045;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px;
+}
+
+/* ═══════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════ */
+#cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width .14s, height .14s, border-radius .14s, background .14s;
+  mix-blend-mode: difference;
+}
+#cursor.big { width: 40px; height: 40px; }
+a, button, [data-idx] { cursor: none; }
+
+/* ═══════════════════════════════════════════════
+   IMAGE LAYER — full viewport, behind everything
+═══════════════════════════════════════════════ */
+#image-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+#image-layer img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  transform: scale(1.03);
+  transition: opacity 0.55s ease, transform 6s ease;
+}
+#image-layer img.visible {
+  opacity: 0.22;
+  transform: scale(1);
+}
+#image-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to right, rgba(8,8,8,0.98) 0%, rgba(8,8,8,0.7) 55%, rgba(8,8,8,0.2) 100%),
+    linear-gradient(to top, rgba(8,8,8,0.8) 0%, transparent 40%);
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════ */
+#shell {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  grid-template-rows: 52px 1fr;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+header {
+  grid-column: 1 / -1;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(14px);
+  position: sticky; top: 0; z-index: 100;
+}
+
+.h-brand {
+  font-family: var(--ui);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+  transition: color .15s;
+}
+.h-brand:hover { color: var(--ink); }
+.h-brand-sep { color: var(--ink-3); }
+
+.h-center {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.h-product-name {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.h-product-price {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.h-actions { display: flex; gap: 10px; align-items: center; }
+
+.h-btn {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+  padding: 5px 12px;
+  border-radius: 2px;
+  transition: all .15s;
+}
+.h-btn:hover { border-color: var(--accent); color: var(--accent); }
+.h-btn.cta {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.h-btn.cta:hover { background: #e03500; }
+
+/* progress bar */
+#progress {
+  position: fixed;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 200;
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   LEFT COLUMN — sentence stream
+═══════════════════════════════════════════════ */
+#stream-col {
+  grid-column: 1;
+  grid-row: 2;
+  padding: clamp(48px, 7vh, 80px) clamp(28px, 5vw, 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 52px);
+  position: relative;
+}
+
+/* ── SENTENCES ── */
+.sentence {
+  display: block;
+  position: relative;
+  padding: 5px 0 5px 0;
+  transition: opacity 0.3s ease, color 0.3s ease;
+  opacity: 0.12;
+}
+
+/* POSTER — giant product title sentences */
+.sentence.poster {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: clamp(52px, 7.5vw, 100px);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+.sentence.poster .ac { color: var(--accent); }
+.sentence.poster .dim { color: var(--ink-2); font-weight: 300; font-style: italic; }
+
+/* BODY — narrative sentences */
+.sentence.body {
+  font-family: var(--disp);
+  font-weight: 300;
+  font-size: clamp(17px, 2.2vw, 24px);
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+  color: var(--ink-2);
+  max-width: 560px;
+}
+
+/* SPEC — technical detail sentences */
+.sentence.spec {
+  font-family: var(--ui);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 3px 0;
+}
+.sentence.spec .spec-key {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 8px;
+  color: var(--ink-3);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.sentence.spec .spec-val {
+  color: var(--ink-2);
+}
+
+/* LABEL — section markers */
+.sentence.label {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 12px 0 4px;
+}
+
+/* BREAK — visual separator */
+.sentence.break {
+  padding: 8px 0;
+}
+.sentence.break::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* CTA sentence — the moment */
+.sentence.cta-sentence {
+  padding: 24px 0 8px;
+}
+
+/* States */
+.sentence.active { opacity: 1; }
+.sentence.active.body { color: var(--ink); }
+.sentence.active.spec .spec-val { color: var(--ink); }
+.sentence.revealed { opacity: 0.38; }
+.sentence.revealed.body { color: var(--ink-2); }
+.sentence:hover:not(.active):not(.break):not(.label) { opacity: 0.65; }
+
+/* active glow on poster sentences */
+.sentence.poster.active::before {
+  content: '';
+  position: absolute;
+  left: -28px; top: 0; bottom: 0; width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* image trigger links */
+.trigger {
+  text-decoration: underline;
+  text-decoration-color: rgba(250,60,0,0.35);
+  text-underline-offset: 3px;
+  transition: text-decoration-color .2s;
+}
+.trigger:hover { text-decoration-color: var(--accent); }
+
+/* ═══════════════════════════════════════════════
+   RIGHT COLUMN — sticky commerce panel
+═══════════════════════════════════════════════ */
+#panel {
+  grid-column: 2;
+  grid-row: 2;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: rgba(8,8,8,0.6);
+  backdrop-filter: blur(20px);
+  overflow-y: auto;
+  padding: 32px 28px 48px;
+}
+
+/* product image area */
+.panel-img-area {
+  position: relative;
+  aspect-ratio: 1;
+  background: #0f0f0f;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+.panel-img-area img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute; inset: 0;
+  transition: opacity 0.4s ease;
+}
+.panel-img-area img.vis { opacity: 0.9; }
+.panel-img-thumb-row {
+  display: flex; gap: 4px; margin-bottom: 20px; flex-shrink: 0;
+}
+.thumb {
+  width: 52px; height: 52px;
+  object-fit: cover;
+  opacity: 0.4;
+  border: 1px solid transparent;
+  transition: opacity .2s, border-color .2s;
+  flex-shrink: 0;
+}
+.thumb.active { opacity: 1; border-color: var(--accent); }
+
+/* colorway picker */
+.panel-section-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.colorway-row {
+  display: flex; gap: 6px; margin-bottom: 24px;
+}
+.cw-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+}
+.cw-swatch.active { border-color: var(--accent); transform: scale(1.12); }
+.cw-swatch:hover:not(.active) { border-color: rgba(255,255,255,0.2); }
+
+/* size grid */
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 24px;
+}
+.sz {
+  aspect-ratio: unset;
+  padding: 9px 4px;
+  font-family: var(--ui);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--ink-2);
+  transition: all .15s;
+}
+.sz:hover { border-color: rgba(255,255,255,0.2); color: var(--ink); }
+.sz.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sz.out {
+  opacity: 0.2;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+
+/* CTA buttons */
+.btn-add {
+  width: 100%;
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: background .15s;
+}
+.btn-add::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.08);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s ease;
+}
+.btn-add:hover { background: #e03500; }
+.btn-add:hover::after { transform: scaleX(1); }
+.btn-add:active { transform: scale(0.99); }
+
+.btn-fav {
+  width: 100%;
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+  padding: 12px;
+  margin-bottom: 20px;
+  transition: all .15s;
+}
+.btn-fav:hover { border-color: rgba(255,255,255,0.15); color: var(--ink-2); }
+
+/* sentence counter in panel */
+.panel-progress {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.panel-progress-bar {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+}
+.panel-progress-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ═══════════════════════════════════════════════
+   NAV HUD
+═══════════════════════════════════════════════ */
+#hud {
+  position: fixed;
+  bottom: 28px;
+  left: clamp(28px, 5vw, 72px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(8,8,8,0.9);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.hud-btn {
+  font-family: var(--ui);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  background: none;
+  border: none;
+  padding: 9px 14px;
+  border-right: 1px solid var(--border);
+  transition: color .15s, background .15s;
+}
+.hud-btn:last-child { border-right: none; }
+.hud-btn:hover, .hud-btn.on { color: var(--accent); }
+#hud-counter {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  padding: 9px 12px;
+  border-right: 1px solid var(--border);
+  min-width: 56px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════
+   GRID OVERLAY — colorway / angle browser
+═══════════════════════════════════════════════ */
+#grid-overlay {
+  position: fixed; inset: 0;
+  z-index: 400;
+  background: #000;
+  display: none; opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#grid-overlay.open { display: block; opacity: 1; }
+#grid-canvas {
+  position: absolute; inset: 0;
+  display: block;
+  touch-action: none;
+}
+#grid-canvas.grab { cursor: grab; }
+#grid-canvas.grabbing { cursor: grabbing; }
+#grid-hud {
+  position: absolute; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(8,8,8,0.95);
+  z-index: 10;
+}
+#grid-label {
+  font-family: var(--ui);
+  font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); opacity: 0.8;
+}
+#grid-close {
+  font-family: var(--ui); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; background: none;
+  border: 1px solid rgba(255,255,255,0.1); color: var(--ink-3);
+  padding: 5px 14px; border-radius: 2px; transition: all .15s;
+}
+#grid-close:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
+  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px; }
+  .h-center { display: none; }
+  .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
+  .sentence.poster.active::before { left: -18px; }
+  #stream-col { padding-left: 24px; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<!-- IMAGE LAYER -->
+<div id="image-layer">
+  <img id="img-0" src="https://i.ibb.co/0RM9H4bs/lastsleepies.webp" alt="">
+  <img id="img-1" src="https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp" alt="">
+  <img id="img-2" src="https://i.ibb.co/BKymJdYK/itshisworld.webp" alt="">
+  <img id="img-3" src="https://i.ibb.co/Swk4v5Tv/wolfgang000.webp" alt="">
+  <img id="img-4" src="https://i.ibb.co/kV6CzpWS/comfort2.webp" alt="">
+  <img id="img-5" src="https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp" alt="">
+</div>
+
+<div id="shell">
+
+  <!-- HEADER -->
+  <header>
+    <a href="/" class="h-brand">🐾 wolfie.love <span class="h-brand-sep">/</span> Shop</a>
+    <div class="h-center">
+      <span class="h-product-name">Air Jordan 11 Retro</span>
+      <span class="h-product-price">$225</span>
+    </div>
+    <div class="h-actions">
+      <button class="h-btn" onclick="openGrid()">▦ Views</button>
+      <button class="h-btn cta" id="h-cart-btn" style="display:none" onclick="addToCart()">Add to Cart</button>
+    </div>
+  </header>
+
+  <!-- LEFT: STREAM -->
+  <main id="stream-col">
+
+    <!-- ACT I: THE NAME -->
+    <span class="sentence label"   data-idx="0" data-img="0">Nike · Air Jordan · Retro</span>
+    <span class="sentence poster"  data-idx="1" data-img="0">Air<br>Jordan <span class="ac">11</span></span>
+    <span class="sentence poster"  data-idx="2" data-img="0"><span class="dim">Cool</span><br>Grey.</span>
+    <span class="sentence break"   data-idx="3"></span>
+
+    <!-- ACT II: THE STORY -->
+    <span class="sentence label"   data-idx="4" data-img="1">The Story</span>
+    <span class="sentence body"    data-idx="5" data-img="1">Michael wore them when the game changed. Not for the cameras. Not for the contract. For the same reason anyone laces up — because the floor demands it and you answered.</span>
+    <span class="sentence body"    data-idx="6" data-img="2">The Cool Grey is the absence of noise. It's what's left when you strip everything that's trying to say something. Patent leather shell. Woven upper. The Jumpman where it belongs.</span>
+    <span class="sentence body"    data-idx="7" data-img="3">These aren't shoes you explain. You put them on and something shifts. The floor feels different. You stand differently. You know something you didn't before.</span>
+    <span class="sentence break"   data-idx="8"></span>
+
+    <!-- ACT III: THE CRAFT -->
+    <span class="sentence label"   data-idx="9"  data-img="4">Craft</span>
+    <span class="sentence body"    data-idx="10" data-img="4">The <span class="trigger">patent leather shell</span> catches light differently than anything else in the room. That's intentional. That's not an accident of material. That's thirty years of knowing exactly what you're building.</span>
+    <span class="sentence body"    data-idx="11" data-img="5">The carbon fiber shank doesn't flex. It responds. There's a difference. Flex is passive. Response is a conversation between your foot and the floor — and this sole has been having that conversation since 1995.</span>
+    <span class="sentence break"   data-idx="12"></span>
+
+    <!-- ACT IV: SPECS -->
+    <span class="sentence label"   data-idx="13" data-img="5">Details</span>
+    <span class="sentence spec"    data-idx="14"><span class="spec-key">Style</span><span class="spec-val">CT8012-005</span></span>
+    <span class="sentence spec"    data-idx="15"><span class="spec-key">Colorway</span><span class="spec-val">Black / White / Cool Grey</span></span>
+    <span class="sentence spec"    data-idx="16"><span class="spec-key">Release</span><span class="spec-val">December 2024</span></span>
+    <span class="sentence spec"    data-idx="17"><span class="spec-key">Upper</span><span class="spec-val">Leather / Patent Leather</span></span>
+    <span class="sentence spec"    data-idx="18"><span class="spec-key">Midsole</span><span class="spec-val">Air-Sole unit / Carbon fiber shank</span></span>
+    <span class="sentence spec"    data-idx="19"><span class="spec-key">Retail</span><span class="spec-val">$225</span></span>
+    <span class="sentence break"   data-idx="20"></span>
+
+    <!-- ACT V: THE CLOSE -->
+    <span class="sentence label"   data-idx="21" data-img="0">The Moment</span>
+    <span class="sentence poster"  data-idx="22" data-img="0">You<br>already<br><span class="ac">know.</span></span>
+    <span class="sentence body"    data-idx="23" data-img="0">You've known since sentence one. Select your size. That's all that's left.</span>
+    <span class="sentence cta-sentence" data-idx="24">
+      <!-- size picker inline in stream -->
+    </span>
+
+  </main>
+
+  <!-- RIGHT: PANEL -->
+  <aside id="panel">
+
+    <!-- reading progress -->
+    <div class="panel-progress">
+      <span id="panel-pct">0%</span>
+      <div class="panel-progress-bar">
+        <div class="panel-progress-fill" id="panel-fill"></div>
+      </div>
+      <span>Read</span>
+    </div>
+
+    <!-- product image -->
+    <div class="panel-img-area">
+      <img src="https://i.ibb.co/0RM9H4bs/lastsleepies.webp" alt="AJ11 Cool Grey" class="vis" id="panel-img-main">
+    </div>
+
+    <!-- thumbnails -->
+    <div class="panel-img-thumb-row" id="thumb-row">
+      <img class="thumb active" src="https://i.ibb.co/0RM9H4bs/lastsleepies.webp" alt="" onclick="setThumb(0,this)">
+      <img class="thumb" src="https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp" alt="" onclick="setThumb(1,this)">
+      <img class="thumb" src="https://i.ibb.co/BKymJdYK/itshisworld.webp" alt="" onclick="setThumb(2,this)">
+      <img class="thumb" src="https://i.ibb.co/kV6CzpWS/comfort2.webp" alt="" onclick="setThumb(3,this)">
+      <img class="thumb" src="https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp" alt="" onclick="setThumb(4,this)">
+      <button class="thumb" style="background:#111;border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-family:var(--ui);font-size:8px;color:var(--accent)" onclick="openGrid()">▦ All</button>
+    </div>
+
+    <!-- colorway -->
+    <p class="panel-section-label">Colorway</p>
+    <div class="colorway-row" id="cw-row">
+      <div class="cw-swatch active" style="background:linear-gradient(135deg,#222,#555)" title="Cool Grey" onclick="selectCw(this,'Cool Grey')"></div>
+      <div class="cw-swatch" style="background:linear-gradient(135deg,#001f5b,#fff)" title="UNC" onclick="selectCw(this,'UNC')"></div>
+      <div class="cw-swatch" style="background:linear-gradient(135deg,#8b0000,#000)" title="Bred" onclick="selectCw(this,'Bred')"></div>
+      <div class="cw-swatch" style="background:linear-gradient(135deg,#c8a96e,#1a1a1a)" title="Concord" onclick="selectCw(this,'Concord')"></div>
+      <div class="cw-swatch" style="background:linear-gradient(135deg,#2d5a1b,#fff)" title="Low Emerald" onclick="selectCw(this,'Low Emerald')"></div>
+    </div>
+    <p id="cw-name" style="font-family:var(--ui);font-size:8px;letter-spacing:.1em;color:var(--ink-3);margin-bottom:20px">Cool Grey</p>
+
+    <!-- sizes -->
+    <p class="panel-section-label">Size (US Men's)</p>
+    <div class="size-grid" id="size-grid">
+      <button class="sz out">7</button>
+      <button class="sz" onclick="selectSize(this)">7.5</button>
+      <button class="sz" onclick="selectSize(this)">8</button>
+      <button class="sz" onclick="selectSize(this)">8.5</button>
+      <button class="sz" onclick="selectSize(this)">9</button>
+      <button class="sz out">9.5</button>
+      <button class="sz" onclick="selectSize(this)">10</button>
+      <button class="sz" onclick="selectSize(this)">10.5</button>
+      <button class="sz" onclick="selectSize(this)">11</button>
+      <button class="sz" onclick="selectSize(this)">11.5</button>
+      <button class="sz" onclick="selectSize(this)">12</button>
+      <button class="sz out">13</button>
+    </div>
+
+    <!-- CTA -->
+    <button class="btn-add" id="add-btn" onclick="addToCart()">Add to Cart — $225</button>
+    <button class="btn-fav">♡ Favorite</button>
+
+    <!-- shipping note -->
+    <p style="font-family:var(--ui);font-size:8px;letter-spacing:.06em;color:var(--ink-3);line-height:1.7;border-top:1px solid var(--border);padding-top:16px">
+      Free shipping on orders $100+.<br>
+      Free returns within 30 days.<br>
+      <span style="color:var(--accent)">Members save 15%</span> on select styles.
+    </p>
+
+  </aside>
+
+</div><!-- /shell -->
+
+<!-- NAV HUD -->
+<div id="hud">
+  <button class="hud-btn" id="hud-prev">↑</button>
+  <span id="hud-counter">01 / 24</span>
+  <button class="hud-btn" id="hud-next">↓</button>
+  <button class="hud-btn on" onclick="openGrid()">▦</button>
+</div>
+
+<!-- GRID OVERLAY -->
+<div id="grid-overlay">
+  <canvas id="grid-canvas" class="grab"></canvas>
+  <div id="grid-hud">
+    <span id="grid-label">All Views · Air Jordan 11 Cool Grey</span>
+    <button id="grid-close" onclick="closeGrid()">✕ Close</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  CURSOR
+// ══════════════════════════════════════════════
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a,button,[data-idx]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// ══════════════════════════════════════════════
+//  IMAGE LAYER
+// ══════════════════════════════════════════════
+const imgs = document.querySelectorAll('#image-layer img');
+let currentImg = 0;
+
+function setImage(n) {
+  if (n === currentImg) return;
+  imgs[currentImg]?.classList.remove('visible');
+  imgs[n]?.classList.add('visible');
+  currentImg = n;
+
+  // sync panel image too
+  const panelImg = document.getElementById('panel-img-main');
+  if (imgs[n]) panelImg.src = imgs[n].src;
+}
+imgs[0].classList.add('visible');
+
+// ══════════════════════════════════════════════
+//  SENTENCE ENGINE
+// ══════════════════════════════════════════════
+const all = Array.from(document.querySelectorAll('[data-idx]'));
+const navigable = all.filter(el =>
+  !el.classList.contains('break') &&
+  !el.classList.contains('label') &&
+  !el.classList.contains('cta-sentence')
+);
+let current = 0;
+
+function goTo(n) {
+  n = Math.max(0, Math.min(navigable.length - 1, n));
+
+  navigable.forEach((el, i) => {
+    el.classList.remove('active', 'revealed');
+    if (i < n) el.classList.add('revealed');
+    else if (i === n) el.classList.add('active');
+  });
+
+  // breaks and labels reveal when their surrounding content does
+  all.forEach(el => {
+    if (el.classList.contains('break') || el.classList.contains('label') || el.classList.contains('cta-sentence')) {
+      const idx = parseInt(el.dataset.idx);
+      const navBefore = navigable.filter(n => parseInt(n.dataset.idx) < idx);
+      if (navBefore.length > 0 && navBefore[navBefore.length-1].classList.contains('revealed')) {
+        el.classList.add('revealed');
+      } else if (navigable[n] && parseInt(navigable[n].dataset.idx) >= idx - 1) {
+        el.classList.add('revealed');
+      }
+      el.classList.remove('active');
+    }
+  });
+
+  // image update
+  const activeEl = navigable[n];
+  if (activeEl && activeEl.dataset.img !== undefined) {
+    setImage(parseInt(activeEl.dataset.img));
+  }
+
+  current = n;
+
+  // scroll into view
+  activeEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // counter
+  document.getElementById('hud-counter').textContent =
+    String(n + 1).padStart(2,'0') + ' / ' + String(navigable.length).padStart(2,'0');
+
+  // progress
+  const pct = Math.round((n / (navigable.length - 1)) * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('panel-fill').style.width = pct + '%';
+  document.getElementById('panel-pct').textContent = pct + '%';
+
+  // reveal cart button at end
+  const nearEnd = n >= navigable.length - 4;
+  document.getElementById('h-cart-btn').style.display = nearEnd ? 'block' : 'none';
+}
+
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+
+document.getElementById('hud-next').addEventListener('click', next);
+document.getElementById('hud-prev').addEventListener('click', prev);
+
+// click any sentence to jump
+navigable.forEach((el, i) => {
+  el.addEventListener('click', () => goTo(i));
+});
+
+// keyboard
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('open')) {
+    if (e.key === 'Escape') closeGrid();
+    return;
+  }
+  if (e.key === 'ArrowDown' || e.key === 'j' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
+  if (e.key === 'g' || e.key === 'G') { e.preventDefault(); openGrid(); }
+});
+
+// scroll
+let lastWheel = 0;
+document.getElementById('stream-col').addEventListener('wheel', e => {
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastWheel < 550) return;
+  lastWheel = now;
+  e.deltaY > 0 ? next() : prev();
+}, { passive: false });
+
+// swipe
+let touchY = 0;
+document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (document.getElementById('grid-overlay').classList.contains('open')) return;
+  const dy = touchY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) { dy > 0 ? next() : prev(); }
+}, { passive: true });
+
+goTo(0);
+
+// ══════════════════════════════════════════════
+//  PANEL INTERACTIONS
+// ══════════════════════════════════════════════
+function setThumb(n, el) {
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const srcs = [
+    'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
+    'https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp',
+    'https://i.ibb.co/BKymJdYK/itshisworld.webp',
+    'https://i.ibb.co/kV6CzpWS/comfort2.webp',
+    'https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp',
+  ];
+  if (srcs[n]) document.getElementById('panel-img-main').src = srcs[n];
+}
+
+function selectCw(el, name) {
+  document.querySelectorAll('.cw-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cw-name').textContent = name;
+}
+
+let selectedSize = null;
+function selectSize(el) {
+  document.querySelectorAll('.sz').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedSize = el.textContent.trim();
+  document.getElementById('add-btn').textContent = `Add to Cart — $225 · Size ${selectedSize}`;
+}
+
+function addToCart() {
+  const btn = document.getElementById('add-btn');
+  const hBtn = document.getElementById('h-cart-btn');
+  if (!selectedSize) {
+    document.getElementById('size-grid').style.outline = '1px solid var(--accent)';
+    setTimeout(() => document.getElementById('size-grid').style.outline = '', 1200);
+    return;
+  }
+  btn.textContent = '✓ Added';
+  btn.style.background = '#1a6b2a';
+  hBtn.textContent = '✓ In Cart';
+  hBtn.style.background = '#1a6b2a';
+  setTimeout(() => {
+    btn.textContent = `Add to Cart — $225 · Size ${selectedSize}`;
+    btn.style.background = '';
+  }, 2400);
+}
+
+// ══════════════════════════════════════════════
+//  CANVAS GRID — all product views
+// ══════════════════════════════════════════════
+const GRID_IMGS = [
+  { src: 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',         label: 'Main' },
+  { src: 'https://i.ibb.co/GvH63fQ8/thisthisisthevalidationiseek.webp', label: 'Side' },
+  { src: 'https://i.ibb.co/BKymJdYK/itshisworld.webp',           label: 'Top' },
+  { src: 'https://i.ibb.co/kV6CzpWS/comfort2.webp',              label: 'Detail' },
+  { src: 'https://i.ibb.co/Z1Xfwcx6/sunlightsweetheart.webp',   label: 'On-foot' },
+  { src: 'https://i.ibb.co/Swk4v5Tv/wolfgang000.webp',           label: 'Heritage' },
+  { src: 'https://i.ibb.co/wF05mLW2/joyful.webp',                label: 'Story' },
+  { src: 'https://i.ibb.co/3yYzQLjP/braveboy.webp',              label: 'Archive' },
+  { src: 'https://i.ibb.co/rKbH2FFx/sweetestwolfgang.webp',      label: 'Archive' },
+  { src: 'https://i.ibb.co/d4SkHwfB/icecream45678.webp',         label: 'Campaign' },
+  { src: 'https://i.ibb.co/KxhDw7nS/loveinastoria.webp',         label: 'Campaign' },
+  { src: 'https://i.ibb.co/DHFBm7HM/hisfavoritecafe.webp',       label: 'Lifestyle' },
+];
+
+const COLS = 4, TILE = 280, GAP = 4, LBAR = 32;
+let gC, gCtx, gLoaded = new Map();
+let gOx=0, gOy=0, gVx=0, gVy=0, gSc=1;
+let gDrag=false, gMoved=false, gX0, gY0, gOx0, gOy0;
+let gPinch=null, gSc0=1, gHov=-1, gRaf=null, gBound=false;
+
+function gW(){ return COLS*(TILE+GAP)-GAP; }
+function gH(){ return Math.ceil(GRID_IMGS.length/COLS)*(TILE+GAP)-GAP; }
+
+function gClamp(){
+  const cw=gC.width, ch=gC.height, tw=gW()*gSc, th=gH()*gSc, p=48;
+  gOx = tw<=cw ? (cw-tw)/2 : Math.min(p, Math.max(cw-tw-p, gOx));
+  gOy = th<=ch ? (ch-th)/2 : Math.min(p, Math.max(ch-th-p, gOy));
+}
+
+function gLoad(src){
+  if (gLoaded.has(src)) return;
+  gLoaded.set(src, null);
+  const img = new Image(); img.crossOrigin='anonymous';
+  img.onload  = () => gLoaded.set(src, img);
+  img.onerror = () => gLoaded.set(src, false);
+  img.src = src;
+}
+
+function gDraw(){
+  const cw=gC.width, ch=gC.height;
+  gCtx.fillStyle='#000'; gCtx.fillRect(0,0,cw,ch);
+  gCtx.save();
+  gCtx.translate(gOx, gOy);
+  gCtx.scale(gSc, gSc);
+
+  const s=TILE+GAP;
+  const vx0=-gOx/gSc, vy0=-gOy/gSc;
+  const vx1=vx0+cw/gSc, vy1=vy0+ch/gSc;
+  const c0=Math.max(0,Math.floor(vx0/s)), c1=Math.min(COLS-1,Math.floor(vx1/s));
+  const r0=Math.max(0,Math.floor(vy0/s)), r1=Math.min(Math.ceil(GRID_IMGS.length/COLS),Math.floor(vy1/s));
+
+  for (let r=r0; r<=r1; r++) {
+    for (let c=c0; c<=c1; c++) {
+      const idx=r*COLS+c;
+      if (idx>=GRID_IMGS.length) break;
+      const item=GRID_IMGS[idx];
+      const tx=c*s, ty=r*s;
+      gLoad(item.src);
+
+      const imgH=TILE-LBAR;
+      const hover=idx===gHov;
+      gCtx.save();
+      gCtx.beginPath(); gCtx.rect(tx,ty,TILE,TILE); gCtx.clip();
+      gCtx.fillStyle=hover?'#191919':'#0e0e0e'; gCtx.fillRect(tx,ty,TILE,TILE);
+
+      const img=gLoaded.get(item.src);
+      if (img && img.complete) {
+        const iw=img.naturalWidth, ih=img.naturalHeight;
+        const ir=iw/ih, ar=TILE/imgH;
+        let dw,dh,dx,dy;
+        if(ir>ar){dh=imgH;dw=ir*imgH;dx=tx+(TILE-dw)/2;dy=ty;}
+        else{dw=TILE;dh=TILE/ir;dx=tx;dy=ty+(imgH-dh)/2;}
+        gCtx.globalAlpha=hover?0.6:0.88;
+        gCtx.drawImage(img,dx,dy,dw,dh);
+        gCtx.globalAlpha=1;
+      } else {
+        const t=Date.now()/1000;
+        gCtx.fillStyle=`rgba(250,60,0,${0.03+0.02*Math.sin(t*1.5+idx)})`;
+        gCtx.fillRect(tx,ty,TILE,imgH);
+      }
+
+      // label bar
+      gCtx.fillStyle='#000'; gCtx.fillRect(tx,ty+imgH,TILE,LBAR);
+      gCtx.fillStyle='rgba(250,60,0,0.18)'; gCtx.fillRect(tx,ty+imgH,TILE,1);
+      gCtx.restore();
+
+      // label text
+      gCtx.save();
+      gCtx.beginPath(); gCtx.rect(tx+8,ty+imgH,TILE-16,LBAR); gCtx.clip();
+      gCtx.font=`400 9px 'Space Mono', monospace`;
+      gCtx.textBaseline='middle'; gCtx.textAlign='left';
+      gCtx.fillStyle=hover?'rgba(250,60,0,0.9)':'rgba(255,255,255,0.28)';
+      gCtx.fillText(item.label.toUpperCase(), tx+8, ty+imgH+LBAR/2);
+      if (hover) {
+        gCtx.textAlign='right';
+        gCtx.fillText('SELECT →', tx+TILE-8, ty+imgH+LBAR/2);
+      }
+      gCtx.restore();
+    }
+  }
+  gCtx.restore();
+}
+
+function gTick(){
+  gRaf=requestAnimationFrame(gTick);
+  if (!gDrag) {
+    gOx+=gVx; gOy+=gVy;
+    gVx*=0.87; gVy*=0.87;
+    if(Math.abs(gVx)<0.1)gVx=0;
+    if(Math.abs(gVy)<0.1)gVy=0;
+    gClamp();
+  }
+  gDraw();
+}
+
+function gHit(sx,sy){
+  const s=TILE+GAP;
+  const wx=(sx-gOx)/gSc, wy=(sy-gOy)/gSc;
+  const c=Math.floor(wx/s), r=Math.floor(wy/s);
+  if(c<0||c>=COLS||r<0)return -1;
+  const idx=r*COLS+c;
+  if(idx>=GRID_IMGS.length)return -1;
+  const tx=c*s,ty=r*s;
+  if(wx<tx||wx>tx+TILE||wy<ty||wy>ty+TILE)return -1;
+  return idx;
+}
+
+function gOnDown(e){ e.preventDefault(); if(!e.isPrimary)return; gDrag=true; gMoved=false; gX0=e.clientX; gY0=e.clientY; gOx0=gOx; gOy0=gOy; gVx=0; gVy=0; gC.setPointerCapture(e.pointerId); gC.classList.remove('grab'); gC.classList.add('grabbing'); }
+function gOnMove(e){
+  if(!gDrag){ gHov=gHit(e.clientX,e.clientY); gC.style.cursor=gHov>=0?'none':'grab'; return; }
+  const dx=e.clientX-gX0, dy=e.clientY-gY0;
+  if(Math.abs(dx)+Math.abs(dy)>10)gMoved=true;
+  const nx=gOx0+dx, ny=gOy0+dy;
+  gVx=nx-gOx; gVy=ny-gOy; gOx=nx; gOy=ny; gClamp();
+}
+function gOnUp(e){
+  if(!e.isPrimary)return;
+  gC.classList.remove('grabbing'); gC.classList.add('grab');
+  const was=gMoved; gDrag=false;
+  if(!was){
+    const idx=gHit(gX0,gY0);
+    if(idx>=0){
+      // clicking a view image syncs to panel
+      const item=GRID_IMGS[idx];
+      document.getElementById('panel-img-main').src=item.src;
+      closeGrid();
+    }
+  }
+}
+function gOnWheel(e){ e.preventDefault(); const f=e.deltaY<0?1.09:0.92; const wx=(e.clientX-gOx)/gSc,wy=(e.clientY-gOy)/gSc; gSc=Math.min(3,Math.max(0.2,gSc*f)); gOx=e.clientX-wx*gSc; gOy=e.clientY-wy*gSc; gClamp(); }
+function gOnTouchStart(e){ if(e.touches.length===2){gPinch=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);gSc0=gSc;} }
+function gOnTouchMove(e){ if(e.touches.length===2&&gPinch){e.preventDefault();const d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);const cx=(e.touches[0].clientX+e.touches[1].clientX)/2,cy=(e.touches[0].clientY+e.touches[1].clientY)/2;const wx=(cx-gOx)/gSc,wy=(cy-gOy)/gSc;gSc=Math.min(3,Math.max(0.2,gSc0*(d/gPinch)));gOx=cx-wx*gSc;gOy=cy-wy*gSc;gClamp();} }
+
+function openGrid(){
+  const ov=document.getElementById('grid-overlay');
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+
+  gC=document.getElementById('grid-canvas');
+  gCtx=gC.getContext('2d');
+  gC.width=window.innerWidth;
+  gC.height=window.innerHeight;
+  gSc=1; gVx=0; gVy=0;
+  gOx=(gC.width-gW())/2; gOy=60; gClamp();
+
+  if(!gBound){
+    gBound=true;
+    gC.addEventListener('pointerdown',  gOnDown,      {passive:false});
+    gC.addEventListener('pointermove',  gOnMove,      {passive:false});
+    gC.addEventListener('pointerup',    gOnUp,        {passive:false});
+    gC.addEventListener('wheel',        gOnWheel,     {passive:false});
+    gC.addEventListener('touchstart',   gOnTouchStart,{passive:true});
+    gC.addEventListener('touchmove',    gOnTouchMove, {passive:false});
+    gC.addEventListener('touchend',     ()=>{gPinch=null;},{passive:true});
+    window.addEventListener('resize',()=>{
+      if(!gC)return;
+      gC.width=window.innerWidth; gC.height=window.innerHeight; gClamp();
+    });
+  }
+  if(gRaf)cancelAnimationFrame(gRaf);
+  gTick();
+}
+
+function closeGrid(){
+  document.getElementById('grid-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  if(gRaf){cancelAnimationFrame(gRaf);gRaf=null;}
+}
+</script>
+</body>
+</html>
