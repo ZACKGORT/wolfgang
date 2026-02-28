@@ -3994,18 +3994,25 @@ let composeActive = false; // module-level flag so highlightSentence can read it
 // ===================================
 
 // ===================================
-//Well, wouldn't you know?
-//Not broken — just needs some TLC. 
-//New bag-buddy — never ever baggage.
-//Works over WOOfi.
-//Tiny. [cafe photo]
-//Carries well. [obvi] 
-//Travels well. [obvi]
-//Travels comfortably.
-//Headphone jack (no mute function)
-//Works optimally when nearest.
-//Nearer.
-//*ahem* — nearest, thank you.
+
+//##: JEEP LIFE
+//Okay, lets go: https://i.ibb.co/wF05mLW2/joyful.webp
+//Different
+//>>:Wolfie|Okay — so, dad said something about "riding shotgun" — also, something about not touching the radio. He moved my bed. This is new. The door is right there. Does this mean more walkies?
+//
+//
+//
+//"There's food at home": https://i.ibb.co/9kggF1YH/somewhere765432.webp
+//##: Road Warrior
+//##: Journeyman
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -4116,10 +4123,13 @@ const imageMap = {
     'caught in a landslide': 'https://raw.githubusercontent.com/ZACKGORT/ifimaybefrank/main/mp4/sleepspiral.mp4',
     'escape from reality': 'https://i.ibb.co/mCy62tkg/likereallyhatedtherain.webp',
     'Look to the sky': 'https://i.ibb.co/4RkM3rHt/intothevoid.webp',
+    'Open your eyes': 'https://i.ibb.co/rRLkbvPw/wakinguptothisface.webp',
 
     'So, this is new': 'https://i.ibb.co/gb3mMDBt/wolfgangsfirsttimeinthejeep.webp',
     'moved my bed': 'https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp',   
     'Dad moved my bed': 'https://i.ibb.co/QjqjMtpN/mamaweremovingout.webp', 
+    'not to worry': 'https://i.ibb.co/ZzZcHSmN/love.webp',
+    'be okay': 'https://i.ibb.co/GfT4yhBy/love2.webp',
 
     'sleepies': 'https://i.ibb.co/0RM9H4bs/lastsleepies.webp',
     'we go pee-pee': 'https://i.ibb.co/HTqtChHv/curbyourdog.webp',
@@ -5005,7 +5015,7 @@ function parseNarrative(text) {
             } else {
                 // Split on #: markers — capture the delimiter so we can classify each chunk
                 // Order matters: ###: before ##: before >>: before #:
-                const lineSegments = segment.split(/(####:[^\n]*|@@last|@@\/dark|@@dark|@theme:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
+                const lineSegments = segment.split(/(####:[^\n]*|@@last|@@\/dark|@@dark|@theme:[^\n]*|~pace:[^\n]*|###:[^\n]*|##:[^\n]*|>>:[^\n]*|#:)/);
                 for (let j = 0; j < lineSegments.length; j++) {
                     const lineSegment = lineSegments[j];
                     if (!lineSegment) continue;
@@ -5026,6 +5036,13 @@ function parseNarrative(text) {
                         // Theme trigger — switches theme when this sentence activates
                         const themeName = lineSegment.substring(7).trim().toLowerCase();
                         if (themeName) parts.push({ type: 'theme-trigger', id: idCounter++, theme: themeName });
+                        continue;
+                    }
+                    if (lineSegment.startsWith('~pace:')) {
+                        // Pace hint — authorial timing override for the next sentence in Flow Mode
+                        // Valid hints: fast | slow | hold
+                        const hint = lineSegment.substring(6).trim().toLowerCase();
+                        if (hint) parts.push({ type: 'pace-trigger', id: idCounter++, hint });
                         continue;
                     }
                     if (lineSegment.startsWith('####:')) {
@@ -5606,11 +5623,54 @@ const flowMode = (() => {
         return (el.textContent.trim().match(/\S+/g) || []).length;
     }
 
+    // ── Image-aware pause bonuses ──
+    // mp4 sentences get a generous hold so the video can breathe;
+    // static-image sentences get a moderate hold;
+    // imageless sentences run a little faster.
+    const IMAGE_BONUS_VIDEO  = 3500;  // extra ms for mp4 triggers
+    const IMAGE_BONUS_STATIC = 1200;  // extra ms for static image triggers
+    const NO_IMAGE_FACTOR    = 0.78;  // multiplier applied to base when no image
+
+    // Author pace overrides via ~pace: markup
+    // If no ~pace: is set, auto-detection applies (image bonus / no-image trim).
+    // ~pace:default bypasses auto-detection entirely and uses the pure word-count base.
+    const PACE_OVERRIDE = {
+        fast:    0.55,  // ~pace:fast    — quick cut, no lingering
+        slow:    1.55,  // ~pace:slow    — settle in
+        hold:    2.40,  // ~pace:hold    — hold the frame, let it breathe
+        default: null,  // ~pace:default — pure word-count base, no image adjustment
+    };
+
+    function hasImageTrigger(el) {
+        const trigger = el.querySelector?.('.image-trigger');
+        if (!trigger) return null;
+        const url = trigger.getAttribute('data-image');
+        if (!url) return null;
+        return url.match(/\.mp4(\?|$)/i) ? 'video' : 'image';
+    }
+
     function pauseFor(el) {
         const words = wordCount(el);
         const floor = isInFinalChapters() ? FINAL_CHAPTER_FLOOR : MIN_PAUSE;
-        const base = Math.min(MAX_PAUSE, Math.max(floor, words * MS_PER_WORD));
-        return Math.round(base * speedMult);
+        let base = Math.min(MAX_PAUSE, Math.max(floor, words * MS_PER_WORD));
+
+        const hint = el.dataset?.pace;                     // author's ~pace: value, or undefined
+        const isDefaultOverride = hint === 'default';      // explicit reset — skip all auto-adjustment
+        const paceScale = PACE_OVERRIDE[hint] ?? 1.0;      // null (default) and undefined both become 1.0
+
+        if (!isDefaultOverride) {
+            // Auto-adjust by image presence (skipped when author writes ~pace:default)
+            const imgKind = hasImageTrigger(el);
+            if (imgKind === 'video') {
+                base = Math.min(MAX_PAUSE + IMAGE_BONUS_VIDEO, base + IMAGE_BONUS_VIDEO);
+            } else if (imgKind === 'image') {
+                base = Math.min(MAX_PAUSE + IMAGE_BONUS_STATIC, base + IMAGE_BONUS_STATIC);
+            } else {
+                base = Math.round(base * NO_IMAGE_FACTOR);
+            }
+        }
+
+        return Math.round(base * speedMult * paceScale);
     }
 
     function updateSpeedUI() {
@@ -6151,6 +6211,7 @@ function render() {
     let pendingLast      = false; // @@last — marks next sentence as the designated finale
     let pendingDarkStart = false; // @@dark — next sentence enters the dark interstitial
     let pendingDarkEnd   = false; // @@/dark — next sentence exits the dark interstitial
+    let pendingPace     = null;  // ~pace: hint waiting to attach to next sentence
 
     parsedContent.forEach(part => {
         // ── Legacy startText-based chapter detection (for chapters[] array entries) ──
@@ -6214,6 +6275,11 @@ function render() {
             return;
         }
 
+        if (part.type === 'pace-trigger') {
+            pendingPace = part.hint;
+            return;
+        }
+
         if (part.type === 'last-marker') {
             pendingLast = true;
             return;
@@ -6253,6 +6319,7 @@ function render() {
             if (pendingLast)      { span.dataset.lastSentence = 'true'; pendingLast = false; }
             if (pendingDarkStart) { span.dataset.darkStart = 'true'; pendingDarkStart = false; }
             if (pendingDarkEnd)   { span.dataset.darkEnd   = 'true'; pendingDarkEnd = false; }
+            if (pendingPace)     { span.dataset.pace = pendingPace; pendingPace = null; }
             sentenceCount++;
             fragment.appendChild(span);
         } else if (part.type === 'line-break') {
