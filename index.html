@@ -3745,7 +3745,7 @@ body.compose-mode { padding-bottom: 0; }
                     <button class="flow-play-stop-btn" id="flowPlayStopBtn" title="Stop flow" aria-label="Stop flow">■</button>
                     <div class="flow-controls-divider"></div>
                     <button class="flow-speed-btn" id="flowSlower" title="Slower" aria-label="Slower">−</button>
-                    <span class="flow-speed-label" id="flowSpeedLabel">1×</span>
+                    <span class="flow-speed-label" id="flowSpeedLabel">0.75×</span>
                     <button class="flow-speed-btn" id="flowFaster" title="Faster" aria-label="Faster">+</button>
                 </div>
             </div>
@@ -3753,10 +3753,6 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="chapter-dropdown-header" id="chapterDropdownHeader">
                     <span class="dropdown-drag-handle">⋮⋮</span>
                     <h3>Chapters</h3>
-                    <button class="dropdown-flow-btn" id="dropdownFlowBtn" title="Flow mode — auto-reads with music" aria-label="Toggle flow mode">
-                        <span class="dropdown-flow-icon">▶</span>
-                        <span>Flow</span>
-                    </button>
                 </div>
                 <ul class="chapter-dropdown-list" id="chapterDropdownList"></ul>
                 <div class="chapter-dropdown-footer">
@@ -3908,14 +3904,14 @@ body.compose-mode { padding-bottom: 0; }
                 <div class="music-track" data-track="0">
                     <span class="music-track-num">1</span>
                     <div class="music-track-info">
-                        <div class="music-track-name">Walk with Wolfie</div>
+                        <div class="music-track-name">Walk with Wolfgang</div>
                         <div class="music-track-sub">original — guitar</div>
                     </div>
                 </div>
                 <div class="music-track" data-track="1">
                     <span class="music-track-num">2</span>
                     <div class="music-track-info">
-                        <div class="music-track-name">A Sublime Canine</div>
+                        <div class="music-track-name">Carry on Wayward Wolf(ie)</div>
                         <div class="music-track-sub">original — guitar</div>
                     </div>
                 </div>
@@ -5553,7 +5549,7 @@ const flowMode = (() => {
     let speedMult = 1.0;
     const SPEED_STEPS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
     const SPEED_LABELS = ['2×', '1.5×', '1×', '0.75×', '0.5×', '0.4×'];
-    let speedIdx = 2; // default: 1×
+    let speedIdx = 3; // default: 0.75× speed (1.25× duration)
 
     // Base timing
     const MS_PER_WORD = 420;
