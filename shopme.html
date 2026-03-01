@@ -811,12 +811,12 @@ code {
 
             <div class="mechanic-block">
                 <p class="mechanic-title">Entering Scroll Mode</p>
-                <p>All sentences reveal at full opacity. A lockout overlay sits over the stream content at z-490, absorbing pointer events so the sentence engine does not activate on click. The panel remains fully interactive — commerce is never locked. The HUD fades to 18% opacity.</p>
+                <p>All sentences reveal at full opacity. A lockout overlay sits over the stream content at z-490, absorbing pointer events — the sentence engine does not activate on scroll, but it <em>does</em> respond to a click anywhere in the content area. That click is the exit. The panel remains fully interactive — commerce is never locked. The HUD fades to 18% opacity.</p>
             </div>
 
             <div class="mechanic-block">
                 <p class="mechanic-title">Exiting Scroll Mode</p>
-                <p>Tapping or clicking the toggle exits. The reader stays exactly where they are in the document — the engine restores sentence states around the current scroll position without moving the viewport. <code>goTo(current, &#123; noScroll: true &#125;)</code> re-applies active/revealed classes without triggering <code>scrollIntoView</code>.</p>
+                <p>A click anywhere in the stream — or a tap on the toggle itself — exits scroll mode. The lockout overlay is the exit trigger: it absorbs the pointer event, turns itself off, and hands the click back to the engine. The toggle extinguishes as a consequence, not a cause. The reader stays exactly where they are — <code>goTo(current, &#123; noScroll: true &#125;)</code> restores sentence states around the current scroll position without moving the viewport.</p>
             </div>
 
             <div class="mechanic-block">
