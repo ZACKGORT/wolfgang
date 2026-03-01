@@ -1621,6 +1621,65 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
 
 
 
+/* ─────────────────────────────────────────────
+   SPEC HOVER OVERLAY — desktop: surfaces the tiny spec data
+   at ADA-readable scale, same HUD-inverted palette.
+   Anchors near the hovered row, stays within viewport.
+   Mobile: handled via toast, this overlay hidden.
+───────────────────────────────────────────── */
+#spec-hover {
+  position: fixed;
+  z-index: 800;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: translateY(6px);
+}
+#spec-hover.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.spec-hover-inner {
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  border-radius: 10px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.15);
+  padding: 18px 24px 16px;
+  min-width: 220px;
+  max-width: 380px;
+  transition: background 1.2s ease, border-color 1.2s ease;
+}
+
+.spec-hover-key {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hud-ink-3);
+  margin-bottom: 8px;
+  display: block;
+  transition: color 1.2s ease;
+}
+
+.spec-hover-val {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: clamp(22px, 3.5vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--hud-ink);
+  display: block;
+  transition: color 1.2s ease;
+}
+
+/* Mobile — overlay hidden, toast handles it */
+@media (max-width: 760px) {
+  #spec-hover { display: none !important; }
+}
+
 /* panel end-of-journey pulse */
 #panel.journey-end {
   animation: panel-beckon 1.8s ease-in-out 2;
@@ -1918,6 +1977,14 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
       <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">↓</button>
     </div>
 
+  </div>
+</div>
+
+<!-- ══ SPEC HOVER OVERLAY — desktop ══ -->
+<div id="spec-hover" role="tooltip" aria-hidden="true">
+  <div class="spec-hover-inner">
+    <span class="spec-hover-key" id="spec-hover-key"></span>
+    <span class="spec-hover-val" id="spec-hover-val"></span>
   </div>
 </div>
 
@@ -2453,6 +2520,125 @@ function selectSize(el) {
 function addToCart() {
   showToast();
 }
+
+// ══════════════════════════════════════════════
+//  SPEC HOVER OVERLAY
+//  Desktop: floats a readable panel near the hovered spec row.
+//  Mobile: fires a toast on tap (touch not classified as swipe).
+// ══════════════════════════════════════════════
+(function initSpecHover() {
+  const overlay  = document.getElementById('spec-hover');
+  const keyEl    = document.getElementById('spec-hover-key');
+  const valEl    = document.getElementById('spec-hover-val');
+  const DELAY    = 80; // ms — intentional, not accidental
+
+  let hoverTimer = null;
+  let activeSpec = null;
+  const isMobile = () => window.innerWidth <= 760;
+
+  function showSpecOverlay(specEl) {
+    const key = specEl.querySelector('.spec-key')?.textContent.trim() || '';
+    const val = specEl.querySelector('.spec-val')?.textContent.trim() || '';
+    keyEl.textContent = key;
+    valEl.textContent = val;
+
+    // Position: above the hovered element, horizontally aligned to it, clamped to viewport
+    const rect = specEl.getBoundingClientRect();
+    const overlayW = 300; // approximate before render
+    const MARGIN   = 16;
+
+    // Prefer above; if not enough room, go below
+    const overlayH = 96; // approximate
+    let top, left;
+
+    if (rect.top - overlayH - 12 > MARGIN) {
+      top = rect.top - overlayH - 12;
+    } else {
+      top = rect.bottom + 12;
+    }
+
+    left = rect.left;
+    // clamp right edge
+    if (left + overlayW > window.innerWidth - MARGIN) {
+      left = window.innerWidth - overlayW - MARGIN;
+    }
+    // clamp left edge
+    if (left < MARGIN) left = MARGIN;
+
+    overlay.style.top  = top  + 'px';
+    overlay.style.left = left + 'px';
+    overlay.classList.add('visible');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function hideSpecOverlay() {
+    overlay.classList.remove('visible');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  // Desktop: mouseenter / mouseleave
+  document.querySelectorAll('.sentence.spec').forEach(specEl => {
+    specEl.addEventListener('mouseenter', () => {
+      if (isMobile()) return;
+      activeSpec = specEl;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        if (activeSpec === specEl) showSpecOverlay(specEl);
+      }, DELAY);
+    });
+
+    specEl.addEventListener('mouseleave', () => {
+      if (isMobile()) return;
+      clearTimeout(hoverTimer);
+      if (activeSpec === specEl) {
+        activeSpec = null;
+        hideSpecOverlay();
+      }
+    });
+
+    // Mobile: tap on a spec row shows it in the toast
+    // Only fires if the touch wasn't a swipe (we check displacement)
+    let tapY = 0, tapX = 0;
+    specEl.addEventListener('touchstart', e => {
+      tapY = e.touches[0].clientY;
+      tapX = e.touches[0].clientX;
+    }, { passive: true });
+
+    specEl.addEventListener('touchend', e => {
+      if (!isMobile()) return;
+      const dy = Math.abs(e.changedTouches[0].clientY - tapY);
+      const dx = Math.abs(e.changedTouches[0].clientX - tapX);
+      if (dy > 12 || dx > 12) return; // was a scroll, not a tap
+
+      const key = specEl.querySelector('.spec-key')?.textContent.trim() || '';
+      const val = specEl.querySelector('.spec-val')?.textContent.trim() || '';
+
+      // Repurpose toast with spec content
+      const toastEl    = document.getElementById('toast');
+      const titleEl    = toastEl.querySelector('.toast-title');
+      const subEl      = toastEl.querySelector('.toast-sub');
+      const iconEl     = toastEl.querySelector('.toast-icon');
+
+      iconEl.textContent  = '◈';
+      titleEl.textContent = key;
+      subEl.textContent   = val;
+
+      showToast();
+      // Auto-restore toast defaults on hide
+      toastTimer = setTimeout(() => {
+        dismissToast();
+        setTimeout(() => {
+          iconEl.textContent  = '🐾';
+          titleEl.textContent = 'You are on the list';
+          subEl.textContent   = 'Nike will notify you the moment it drops · wolfie.love';
+        }, 400);
+      }, 3000);
+    }, { passive: true });
+  });
+
+  // Also hide overlay on scroll (wheel) or nav
+  document.getElementById('stream-col').addEventListener('wheel', hideSpecOverlay, { passive: true });
+})();
 
 // ══════════════════════════════════════════════
 //  TOAST
