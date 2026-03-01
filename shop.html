@@ -185,6 +185,11 @@ body {
   overflow-x: hidden;
   cursor: none;
   min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+html {
+  overscroll-behavior: none;
 }
 
 /* grain */
@@ -1392,28 +1397,29 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
   .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
   .sentence.poster.active::before { left: -18px; }
 
-  /* HUD → full-width horizontal bar pinned to bottom */
+  /* HUD → floating centered pill, lifted off the viewport floor */
   #nav-widget {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: 50%;
+    right: auto;
     top: auto;
-    transform: none;
+    transform: translateX(-50%);
     z-index: 300;
+    width: auto;
   }
-  #nav-widget.nw-free { top: auto; left: 0; right: 0; transform: none; }
+  #nav-widget.nw-free { top: auto; left: 50%; right: auto; transform: translateX(-50%); }
 
   .nw-shell {
     flex-direction: row;
     align-items: stretch;
-    border-radius: 20px 20px 0 0;
-    border-left: none; border-right: none; border-bottom: none;
-    border-top: 1px solid var(--hud-border);
+    border-radius: 24px;
+    border: 1px solid var(--hud-border);
     min-width: unset;
-    width: 100%;
+    width: auto;
     padding: 0;
-    padding-bottom: env(safe-area-inset-bottom);
     gap: 0;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.28), 0 0 0 0.5px rgba(0,0,0,0.2);
   }
 
   /* hide everything except the 4 mobile buttons */
@@ -1428,10 +1434,11 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
     border: none;
     border-right: 1px solid var(--hud-border);
     border-radius: 0;
-    padding: 12px 8px 10px;
+    padding: 12px 14px 10px;
     font-size: 16px;
     gap: 4px;
   }
+  .nw-action-btn:first-of-type { border-radius: 24px 0 0 24px; }
   .nw-action-btn:last-of-type { border-right: none; }
 
   /* nav section — becomes two equal slots */
@@ -1452,13 +1459,17 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
     border: none;
     border-left: 1px solid var(--hud-border);
     background: none;
+    padding: 0 16px;
   }
   .nw-btn-prev { border-radius: 0; }
-  .nw-btn-next { border-radius: 0 20px 0 0; }
+  .nw-btn-next { border-radius: 0 24px 24px 0; }
 
-  /* toast and credit above bar */
-  #toast { bottom: calc(60px + env(safe-area-inset-bottom)); }
-  #wolfie-credit { bottom: calc(68px + env(safe-area-inset-bottom)); }
+  /* stream padding to clear the floating pill */
+  #stream-col { padding-bottom: 120px; }
+
+  /* toast and credit above the floating pill */
+  #toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  #wolfie-credit { bottom: calc(88px + env(safe-area-inset-bottom)); }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1608,18 +1619,7 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
 }
 
 
-.sentence.spec.auto-flow.active::after {
-  content: '';
-  position: absolute;
-  bottom: 2px; left: 0;
-  height: 1px;
-  background: var(--accent);
-  animation: spec-scan 0.9s linear forwards;
-}
-@keyframes spec-scan {
-  from { width: 0; }
-  to   { width: 100%; }
-}
+
 
 /* panel end-of-journey pulse */
 #panel.journey-end {
@@ -2061,6 +2061,8 @@ function next() { goTo(current + 1); }
 function prev() { goTo(current - 1); }
 
 // ── AUTO-FLOW for Details specs ──────────────────
+// Entire spec block is treated as one section — all reveal together when the first is reached.
+// No individual timers; the reader navigates themselves.
 let autoFlowTimer = null;
 function clearAutoFlow() {
   if (autoFlowTimer) { clearTimeout(autoFlowTimer); autoFlowTimer = null; }
@@ -2069,10 +2071,17 @@ function scheduleAutoFlow(n) {
   clearAutoFlow();
   const el = navigable[n];
   if (!el || !el.classList.contains('auto-flow')) return;
-  // next sentence exists and is also auto-flow? advance after 0.95s
-  const nextEl = navigable[n + 1];
-  if (nextEl) {
-    autoFlowTimer = setTimeout(() => goTo(n + 1), 950);
+  // Find the first auto-flow sentence in this group
+  let firstAF = n;
+  while (firstAF > 0 && navigable[firstAF - 1]?.classList.contains('auto-flow')) firstAF--;
+  // Reveal all auto-flow sentences in the group immediately
+  let i = firstAF;
+  while (i < navigable.length && navigable[i]?.classList.contains('auto-flow')) {
+    if (i !== n) {
+      navigable[i].classList.remove('active');
+      navigable[i].classList.add('revealed');
+    }
+    i++;
   }
 }
 
@@ -2188,14 +2197,30 @@ function attachWheelHandler() {
 }
 attachWheelHandler();
 
-// swipe
-let touchY = 0;
-document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
-document.addEventListener('touchend', e => {
+// swipe — wolfie-style: firm threshold, preventDefault in touchmove kills rubber-band
+let touchStartY = 0, touchStartX = 0, touchMoved = false, swipeCooldown = false;
+window.addEventListener('touchstart', e => {
+  touchStartY = e.touches[0].clientY;
+  touchStartX = e.touches[0].clientX;
+  touchMoved = false;
+}, { passive: true });
+window.addEventListener('touchmove', e => {
+  touchMoved = true;
+  if (document.getElementById('grid-overlay').classList.contains('open')) return;
+  if (document.body.classList.contains('scroll-free')) return;
+  if (e.cancelable) e.preventDefault();
+}, { passive: false });
+window.addEventListener('touchend', e => {
+  if (!touchMoved || swipeCooldown) return;
   if (document.body.classList.contains('scroll-free')) return;
   if (document.getElementById('grid-overlay').classList.contains('open')) return;
-  const dy = touchY - e.changedTouches[0].clientY;
-  if (Math.abs(dy) > 40) { dy > 0 ? next() : prev(); }
+  const dy = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 50) {
+    swipeCooldown = true;
+    clearAutoFlow();
+    dy > 0 ? next() : prev();
+    setTimeout(() => { swipeCooldown = false; }, 100);
+  }
 }, { passive: true });
 
 goTo(0);
