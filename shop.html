@@ -80,7 +80,7 @@ header,
 #panel,
 #nav-widget .nw-shell,
 #nav-widget .nw-cell-value,
-#nav-widget .nw-pip-fill,
+#nav-widget .nw-nav-pip-fill,
 #progress,
 .panel-progress-fill,
 .sentence.label,
@@ -90,7 +90,9 @@ header,
 .h-product-price,
 .h-btn.cta,
 #grid-label,
-.cw-swatch.active {
+.cw-swatch.active,
+.ch-header-label,
+.ch-header-title {
   transition-property: background-color, border-color, color, background;
   transition-duration: 1.2s;
   transition-timing-function: ease;
@@ -273,15 +275,15 @@ a, button, [data-idx] { cursor: none; }
   transition: opacity 0.55s ease, transform 6s ease;
 }
 #image-layer img.visible {
-  opacity: 0.22;
+  opacity: 0.55;
   transform: scale(1);
 }
 #image-layer::after {
   content: '';
   position: absolute; inset: 0;
   background:
-    linear-gradient(to right, rgba(8,8,8,0.98) 0%, rgba(8,8,8,0.7) 55%, rgba(8,8,8,0.2) 100%),
-    linear-gradient(to top, rgba(8,8,8,0.8) 0%, transparent 40%);
+    linear-gradient(to right, rgba(8,8,8,0.82) 0%, rgba(8,8,8,0.45) 55%, rgba(8,8,8,0.1) 100%),
+    linear-gradient(to top, rgba(8,8,8,0.65) 0%, transparent 40%);
   z-index: 1;
 }
 
@@ -575,14 +577,14 @@ header:hover .h-btn.cta {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(8,8,8,0.72);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.28);
   backdrop-filter: blur(14px);
   font-family: var(--ui);
   font-size: 7px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255,255,255,0.72);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -595,8 +597,9 @@ header:hover .h-btn.cta {
   padding: 0;
 }
 #scroll-toggle:hover {
-  color: var(--ink);
-  border-color: rgba(255,255,255,0.22);
+  color: #fff;
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.2);
 }
 /* ON state — glowing accent, now fixed, follows you */
 #scroll-toggle.on {
@@ -634,7 +637,7 @@ body.scroll-free .sentence {
 body.scroll-free .sentence.body { color: var(--ink-2) !important; }
 body.scroll-free .sentence.spec .spec-val { color: var(--ink-2) !important; }
 body.scroll-free .sentence.label { color: var(--accent) !important; }
-body.scroll-free .ch-gate { opacity: 1 !important; }
+body.scroll-free .ch-header { opacity: 1 !important; }
 
 /* lockout overlay — covers the stream content area only.
    Panel stays interactive — commerce must always be reachable. */
@@ -654,6 +657,18 @@ body.scroll-free #nav-widget {
   pointer-events: none;
   filter: grayscale(0.5);
   transition: opacity 0.4s ease, filter 0.4s ease;
+}
+
+/* nav widget — fades when panel is hovered (desktop only) */
+@media (min-width: 761px) {
+  #nav-widget {
+    transition: opacity 0.4s ease, box-shadow 0.15s ease, right 0.3s ease;
+  }
+  #panel:hover ~ #nav-widget,
+  body:has(#panel:hover) #nav-widget {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 /* panel stays fully alive */
 body.scroll-free #panel {
@@ -876,87 +891,131 @@ body.scroll-free #panel {
 }
 
 /* ═══════════════════════════════════════════════
-   NAV WIDGET — positionable command pod
+   NAV WIDGET — vertical pill on desktop, bottom bar on mobile
+   Inverted color schema: light bg, dark text per theme
 ═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   NAV WIDGET — horizontal pill, wolfie.love style
-═══════════════════════════════════════════════ */
+
+/* ── HUD theme-inverted colors ── */
+:root {
+  --hud-bg:      rgba(240,238,234,0.96);
+  --hud-ink:     #111;
+  --hud-ink-2:   #555;
+  --hud-ink-3:   #999;
+  --hud-border:  rgba(0,0,0,0.10);
+  --hud-accent:  #4a7fd4;
+}
+body.ch-2 {
+  --hud-bg:      rgba(245,240,230,0.97);
+  --hud-ink:     #2a1f10;
+  --hud-ink-2:   #6a5540;
+  --hud-ink-3:   #b8a090;
+  --hud-border:  rgba(42,31,16,0.10);
+  --hud-accent:  #b89a6a;
+}
+body.ch-3 {
+  --hud-bg:      rgba(220,232,255,0.96);
+  --hud-ink:     #0a1428;
+  --hud-ink-2:   #2a4070;
+  --hud-ink-3:   #8090b0;
+  --hud-border:  rgba(10,20,40,0.10);
+  --hud-accent:  #2a5fc4;
+}
+body.ch-4 {
+  --hud-bg:      rgba(245,242,234,0.97);
+  --hud-ink:     #1a1810;
+  --hud-ink-2:   #4a4840;
+  --hud-ink-3:   #909080;
+  --hud-border:  rgba(26,24,16,0.10);
+  --hud-accent:  #6a6050;
+}
+body.ch-5 {
+  --hud-bg:      rgba(224,236,255,0.97);
+  --hud-ink:     #04080e;
+  --hud-ink-2:   #1a3060;
+  --hud-ink-3:   #6080b0;
+  --hud-border:  rgba(4,8,14,0.10);
+  --hud-accent:  #2a60d4;
+}
+
 #nav-widget {
   position: fixed;
-  top: calc(52px + clamp(20px, 4vh, 36px) + 52px + 10px);
-  right: clamp(20px, 3vw, 40px);
+  top: 50%;
+  right: 400px;
   bottom: auto;
   left: auto;
+  transform: translateY(-50%);
   z-index: 300;
   user-select: none;
   touch-action: none;
-  transition: box-shadow 0.15s ease;
+  transition: opacity 0.4s ease, box-shadow 0.15s ease, right 0.3s ease;
 }
 #nav-widget.dragging {
   transition: none;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px var(--accent);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--hud-accent);
 }
 #nav-widget.nw-free {
   top: auto;
   right: auto;
+  transform: none;
 }
 
-/* ── pill shell — horizontal ── */
+/* ── vertical pill shell ── */
 .nw-shell {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  background: rgba(6,6,6,0.94);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(18px);
-  border-radius: 6px;
-  padding: 4px 2px 4px 4px;
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 6px 4px;
   gap: 0;
-  transition: border-color 1.2s ease;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  transition: background 1.2s ease, border-color 1.2s ease;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.12);
+  min-width: 62px;
 }
 
-/* drag handle — vertical dots on far left */
+/* drag handle — horizontal dots at top */
 .nw-handle {
   display: flex;
   align-items: center;
-  align-self: stretch;
-  padding: 0 8px 0 4px;
-  border-right: 1px solid var(--border);
+  justify-content: center;
+  width: 100%;
+  padding: 6px 0 5px;
+  border-bottom: 1px solid var(--hud-border);
   cursor: grab;
-  margin-right: 0;
   flex-shrink: 0;
 }
 .nw-handle:active { cursor: grabbing; }
 .nw-drag-dots {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 3px;
-  opacity: 0.25;
+  opacity: 0.3;
   pointer-events: none;
-  letter-spacing: -3px;
-  font-size: 12px;
-  color: var(--ink-3);
+  font-size: 10px;
+  color: var(--hud-ink-2);
   line-height: 1;
+  letter-spacing: 1px;
 }
 
-/* ── stat cells — value over label ── */
+/* ── stat cells — centered in column ── */
 .nw-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 10px;
-  gap: 2px;
-  border-right: 1px solid var(--border);
-  min-width: 52px;
+  padding: 8px 10px;
+  gap: 3px;
+  border-bottom: 1px solid var(--hud-border);
+  width: 100%;
   flex-shrink: 0;
 }
-.nw-cell:last-of-type { border-right: none; }
+.nw-cell:last-of-type { border-bottom: none; }
 .nw-cell-value {
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--hud-accent);
   line-height: 1;
   font-variant-numeric: tabular-nums;
   transition: color 1.2s ease;
@@ -965,7 +1024,7 @@ body.scroll-free #panel {
 .nw-cell-label {
   font-family: var(--ui);
   font-size: 7px;
-  color: var(--ink-3);
+  color: var(--hud-ink-3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -973,54 +1032,58 @@ body.scroll-free #panel {
   transition: color 1.2s ease;
 }
 
-/* chapter cell — label in accent, value is chapter name */
+/* chapter cell */
 .nw-cell.nw-chapter-cell .nw-cell-value {
   font-size: 10px;
   letter-spacing: 0.04em;
-  max-width: 100px;
+  max-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
 }
 
-/* progress pip inside its own cell */
+/* progress pip cell — vertical bar */
 .nw-pip-cell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 10px;
-  gap: 4px;
-  border-right: 1px solid var(--border);
-  min-width: 60px;
+  padding: 8px 10px;
+  gap: 5px;
+  border-bottom: 1px solid var(--hud-border);
+  width: 100%;
   flex-shrink: 0;
 }
 .nw-pip {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
+  width: 2px;
+  height: 52px;
+  background: var(--hud-border);
   position: relative;
   overflow: hidden;
+  border-radius: 1px;
+  align-self: center;
 }
 .nw-pip-fill {
   position: absolute;
-  left: 0; top: 0; bottom: 0;
-  background: var(--accent);
-  width: 0%;
-  transition: width 0.3s ease, background 1.2s ease;
+  top: 0; left: 0; right: 0;
+  background: var(--hud-accent);
+  height: 0%;
+  width: 100%;
+  transition: height 0.3s ease, background 1.2s ease;
 }
 .nw-pip-pct {
   font-family: var(--ui);
   font-size: 7px;
-  color: var(--ink-3);
+  color: var(--hud-ink-3);
   letter-spacing: 0.08em;
   line-height: 1;
 }
 
 /* ── divider ── */
 .nw-divider {
-  width: 1px;
-  align-self: stretch;
-  background: var(--border);
-  margin: 4px 3px;
+  height: 1px;
+  width: 70%;
+  background: var(--hud-border);
+  margin: 3px auto;
   flex-shrink: 0;
 }
 
@@ -1029,70 +1092,389 @@ body.scroll-free #panel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 10px;
-  gap: 2px;
-  border-right: 1px solid var(--border);
-  min-width: 44px;
+  padding: 8px 10px;
+  gap: 3px;
+  border-bottom: 1px solid var(--hud-border);
+  width: 100%;
   flex-shrink: 0;
   font-family: var(--ui);
-  font-size: 11px;
-  color: var(--ink-3);
+  font-size: 12px;
+  color: var(--hud-ink-2);
   background: none;
   border-top: none;
-  border-bottom: none;
   border-left: none;
+  border-right: none;
   transition: color 0.12s, background 0.12s;
   cursor: none;
   white-space: nowrap;
+  border-radius: 0;
 }
 .nw-action-btn .nw-action-label {
   font-size: 7px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--hud-ink-3);
   transition: color 0.12s;
 }
-.nw-action-btn:hover { color: var(--accent); background: rgba(250,60,0,0.05); }
-.nw-action-btn:hover .nw-action-label { color: var(--accent); }
-.nw-action-btn:last-of-type { border-right: none; }
+.nw-action-btn:hover { color: var(--hud-accent); background: rgba(0,0,0,0.04); }
+.nw-action-btn:hover .nw-action-label { color: var(--hud-accent); }
+.nw-action-btn:last-of-type { border-bottom: none; }
 
 /* cart — hidden until near end */
 .nw-cart-btn { display: none; }
 .nw-cart-btn.visible { display: flex; }
 .nw-cart-btn .nw-cell-value,
-.nw-cart-btn .nw-action-label { color: var(--accent); }
-.nw-cart-btn:hover { background: var(--accent) !important; }
+.nw-cart-btn .nw-action-label { color: var(--hud-accent); }
+.nw-cart-btn:hover { background: var(--hud-accent) !important; }
 .nw-cart-btn:hover .nw-cell-value,
 .nw-cart-btn:hover .nw-action-label { color: #fff !important; }
 
-/* ── nav buttons — ← and → on far right ── */
+/* ── nav section — prev / progress pip / next ── */
 .nw-nav {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 2px 3px;
+  gap: 0;
+  padding: 4px 4px;
   flex-shrink: 0;
+  width: 100%;
 }
 .nw-btn-prev,
 .nw-btn-next {
-  width: 36px;
-  height: 36px;
-  border-radius: 5px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
+  width: 46px;
+  height: 42px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid var(--hud-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent);
+  color: var(--hud-ink-2);
   font-family: var(--ui);
-  font-size: 16px;
+  font-size: 18px;
   transition: background 0.12s, transform 0.08s, color 0.12s;
   cursor: none;
   flex-shrink: 0;
+  width: 100%;
 }
-.nw-btn-prev:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
-.nw-btn-next:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.88); }
+.nw-btn-prev { border-radius: 8px 8px 4px 4px; }
+.nw-btn-next { border-radius: 4px 4px 8px 8px; }
+.nw-btn-prev:hover { background: rgba(0,0,0,0.08); color: var(--hud-ink); }
+.nw-btn-next:hover { background: var(--hud-accent); color: #fff; border-color: var(--hud-accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.92); }
+
+/* pip between nav buttons */
+.nw-nav-pip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  width: 100%;
+}
+.nw-nav-pip-bar {
+  width: 2px;
+  height: 40px;
+  background: var(--hud-border);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1px;
+  align-self: center;
+}
+.nw-nav-pip-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  background: var(--hud-accent);
+  height: 0%;
+  width: 100%;
+  transition: height 0.3s ease, background 1.2s ease;
+}
+.nw-nav-pip-pct {
+  font-family: var(--ui);
+  font-size: 7px;
+  color: var(--hud-ink-3);
+  letter-spacing: 0.06em;
+}
+
+/* ─────────────────────────────────────────────
+   TOAST NOTIFICATION
+───────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--hud-bg);
+  border: 1px solid var(--hud-border);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  backdrop-filter: blur(20px);
+  border-radius: 10px;
+  padding: 14px 24px 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--ui);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--hud-ink);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9000;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  max-width: 90vw;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+#toast .toast-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+#toast .toast-body { display: flex; flex-direction: column; gap: 2px; }
+#toast .toast-title {
+  font-weight: 700;
+  color: var(--hud-ink);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+#toast .toast-sub {
+  color: var(--hud-ink-2);
+  font-size: 8px;
+  letter-spacing: 0.05em;
+}
+#toast .toast-dismiss {
+  margin-left: 8px;
+  background: none;
+  border: none;
+  color: var(--hud-ink-3);
+  font-family: var(--ui);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+#toast .toast-dismiss:hover { color: var(--hud-ink); }
+
+/* ─────────────────────────────────────────────
+   WOLFIE CREDIT
+───────────────────────────────────────────── */
+#wolfie-credit {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  z-index: 50;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: color 1.2s ease;
+}
+body.ch-2 #wolfie-credit,
+body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
+
+/* ─────────────────────────────────────────────
+   CENTERED CHAPTER HEADERS — replace ch-gate
+   rendered inline above each chapter section
+───────────────────────────────────────────── */
+.ch-header {
+  display: block;
+  text-align: center;
+  padding: 64px 0 20px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.ch-header.revealed { opacity: 1; }
+.ch-header-rule {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  margin: 0 auto 16px;
+  transition: background 1.2s ease;
+}
+.ch-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ch-header-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: color 1.2s ease;
+}
+.ch-header-num {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: clamp(52px, 8vw, 96px);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.06);
+  user-select: none;
+}
+.ch-header-title {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: clamp(22px, 3vw, 38px);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--ink);
+  transition: color 1.2s ease;
+}
+.ch-header-sub {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  transition: color 1.2s ease;
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE — bottom HUD bar, safe area aware
+───────────────────────────────────────────── */
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
+  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 120px; }
+  .h-center { display: none; }
+  .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
+  .sentence.poster.active::before { left: -18px; }
+  #stream-col { padding-left: 24px; }
+
+  /* widget becomes a bottom bar */
+  #nav-widget {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    top: auto;
+    transform: none;
+    z-index: 300;
+  }
+  #nav-widget.nw-free {
+    top: auto;
+    left: 0; right: 0;
+    transform: none;
+  }
+  .nw-shell {
+    flex-direction: row;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    min-width: unset;
+    width: 100%;
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--hud-border);
+    justify-content: space-between;
+    gap: 0;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  }
+  /* hide drag handle on mobile */
+  .nw-handle { display: none; }
+  /* chapter cell */
+  .nw-cell { 
+    border-bottom: none; 
+    border-right: 1px solid var(--hud-border);
+    padding: 4px 12px;
+    min-width: unset;
+  }
+  .nw-cell:last-of-type { border-right: none; }
+  .nw-cell.nw-chapter-cell .nw-cell-value { max-width: 90px; }
+  /* pip cell */
+  .nw-pip-cell {
+    border-bottom: none;
+    border-right: 1px solid var(--hud-border);
+    padding: 4px 12px;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  .nw-pip {
+    width: 48px;
+    height: 2px;
+  }
+  .nw-pip-fill {
+    top: 0; bottom: 0; left: 0;
+    width: 0%;
+    height: 100%;
+    transition: width 0.3s ease, background 1.2s ease;
+  }
+  /* divider */
+  .nw-divider {
+    height: 100%;
+    width: 1px;
+    margin: 4px 0;
+  }
+  /* action buttons */
+  .nw-action-btn {
+    border-bottom: none;
+    border-right: 1px solid var(--hud-border);
+    padding: 4px 10px;
+    min-width: unset;
+  }
+  /* nav becomes horizontal row */
+  .nw-nav {
+    flex-direction: row;
+    padding: 2px 4px;
+    gap: 4px;
+    width: auto;
+    align-items: center;
+  }
+  .nw-btn-prev, .nw-btn-next {
+    width: 40px;
+    height: 36px;
+    font-size: 16px;
+  }
+  .nw-btn-prev { border-radius: 8px 4px 4px 8px; }
+  .nw-btn-next { border-radius: 4px 8px 8px 4px; }
+  /* pip between nav buttons on mobile — horizontal */
+  .nw-nav-pip {
+    flex-direction: row;
+    gap: 4px;
+    padding: 0 4px;
+    width: auto;
+    align-items: center;
+  }
+  .nw-nav-pip-bar {
+    width: 36px;
+    height: 2px;
+  }
+  .nw-nav-pip-fill {
+    top: 0; left: 0; right: auto;
+    width: 0%;
+    height: 100%;
+    transition: width 0.3s ease, background 1.2s ease;
+  }
+  .nw-nav-pip-pct { display: none; }
+  /* toast above bottom bar */
+  #toast { bottom: calc(72px + env(safe-area-inset-bottom)); }
+  #wolfie-credit { bottom: calc(80px + env(safe-area-inset-bottom)); }
+  /* scroll toggle on mobile — top left to avoid HUD */
+  #scroll-toggle {
+    top: 68px;
+    right: auto;
+    left: 16px;
+  }
+}
+
+/* grid overlay */
 #grid-overlay {
   position: fixed; inset: 0;
   z-index: 400;
@@ -1128,19 +1510,6 @@ body.scroll-free #panel {
   padding: 5px 14px; border-radius: 2px; transition: all .15s;
 }
 #grid-close:hover { color: var(--accent); border-color: var(--accent); }
-
-/* ═══════════════════════════════════════════════
-   MOBILE
-═══════════════════════════════════════════════ */
-@media (max-width: 760px) {
-  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
-  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
-  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px; }
-  .h-center { display: none; }
-  .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
-  .sentence.poster.active::before { left: -18px; }
-  #stream-col { padding-left: 24px; }
-}
 
 </style>
 </head>
@@ -1190,15 +1559,14 @@ body.scroll-free #panel {
     <span class="sentence poster"  data-idx="2" data-img="1" data-ch="1"><span class="dim">Pale Ivory</span><br>× Psychic<br><span class="ac">Blue.</span></span>
     <span class="sentence break"   data-idx="3"></span>
 
-    <!-- Ch 2 gate -->
-    <div class="ch-gate" data-ch="2">
-      <div class="ch-gate-rule"></div>
-      <div class="ch-gate-inner">
-        <span class="ch-gate-num">02</span>
-        <div class="ch-gate-text">
-          <span class="ch-gate-label">Chapter</span>
-          <span class="ch-gate-title">The Origin</span>
-        </div>
+    <!-- Ch 2 header — centered -->
+    <div class="ch-header" data-ch="2">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Chapter</span>
+        <span class="ch-header-num">02</span>
+        <span class="ch-header-title">The Origin</span>
+        <span class="ch-header-sub">1985 · The shoe that started everything</span>
       </div>
     </div>
 
@@ -1208,15 +1576,14 @@ body.scroll-free #panel {
     <span class="sentence body"    data-idx="8" data-img="1" data-ch="2">Forty years on and this silhouette is still making the same argument. For showing up before you're invited. For wearing something before the room decides it's acceptable. The AJ1 has always been about that permission — the kind no one else can give you.</span>
     <span class="sentence break"   data-idx="9"></span>
 
-    <!-- Ch 3 gate -->
-    <div class="ch-gate" data-ch="3">
-      <div class="ch-gate-rule"></div>
-      <div class="ch-gate-inner">
-        <span class="ch-gate-num">03</span>
-        <div class="ch-gate-text">
-          <span class="ch-gate-label">Chapter</span>
-          <span class="ch-gate-title">The Craft</span>
-        </div>
+    <!-- Ch 3 header — centered -->
+    <div class="ch-header" data-ch="3">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Chapter</span>
+        <span class="ch-header-num">03</span>
+        <span class="ch-header-title">The Craft</span>
+        <span class="ch-header-sub">Material intelligence · visible seams · hidden cushion</span>
       </div>
     </div>
 
@@ -1225,15 +1592,14 @@ body.scroll-free #panel {
     <span class="sentence body"    data-idx="13" data-img="4" data-ch="3">They included lace jewels. Six of them: a red bow, a blue Jumpman, a green Jumpman, a white 23, a gold Wings logo, a blue Wings logo. This is not an accessory pack. It's a personality test in a box. Wear all six at once. Wear none. The shoe already knows what it is.</span>
     <span class="sentence break"   data-idx="14"></span>
 
-    <!-- Ch 4 gate -->
-    <div class="ch-gate" data-ch="4">
-      <div class="ch-gate-rule"></div>
-      <div class="ch-gate-inner">
-        <span class="ch-gate-num">04</span>
-        <div class="ch-gate-text">
-          <span class="ch-gate-label">Chapter</span>
-          <span class="ch-gate-title">The Details</span>
-        </div>
+    <!-- Ch 4 header — centered -->
+    <div class="ch-header" data-ch="4">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Chapter</span>
+        <span class="ch-header-num">04</span>
+        <span class="ch-header-title">The Details</span>
+        <span class="ch-header-sub">FD2596-102 · Pale Ivory / Coconut Milk / Psychic Blue</span>
       </div>
     </div>
 
@@ -1247,15 +1613,14 @@ body.scroll-free #panel {
     <span class="sentence spec"    data-idx="21" data-ch="4"><span class="spec-key">Retail</span><span class="spec-val">$185</span></span>
     <span class="sentence break"   data-idx="22"></span>
 
-    <!-- Ch 5 gate -->
-    <div class="ch-gate" data-ch="5">
-      <div class="ch-gate-rule"></div>
-      <div class="ch-gate-inner">
-        <span class="ch-gate-num">05</span>
-        <div class="ch-gate-text">
-          <span class="ch-gate-label">Chapter</span>
-          <span class="ch-gate-title">The Moment</span>
-        </div>
+    <!-- Ch 5 header — centered -->
+    <div class="ch-header" data-ch="5">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Chapter</span>
+        <span class="ch-header-num">05</span>
+        <span class="ch-header-title">The Moment</span>
+        <span class="ch-header-sub">Members get first. Everyone else waits.</span>
       </div>
     </div>
 
@@ -1304,9 +1669,7 @@ body.scroll-free #panel {
         Nike Members get first access at drop.<br>
         Sign in or create a free account to be notified the moment this releases.
       </div>
-      <a href="https://www.nike.com/t/air-jordan-1-retro-high-og-womens-shoes-FO6hGtmD/FD2596-102" target="_blank" rel="noopener" style="display:block;text-decoration:none">
-        <button class="btn-add" id="add-btn" style="letter-spacing:.06em;font-size:13px">Notify Me on Nike.com →</button>
-      </a>
+      <button class="btn-add" id="add-btn" onclick="showToast()" style="letter-spacing:.06em;font-size:13px">Notify Me on Nike.com →</button>
       <button class="btn-fav">♡ Save for Later</button>
     </div>
 
@@ -1323,25 +1686,19 @@ body.scroll-free #panel {
 <!-- scroll lockout overlay — active when scroll-free; only toggle can escape -->
 <div id="scroll-lockout"></div>
 
-<!-- ══ NAV WIDGET — positionable command pod ══ -->
+<!-- ══ NAV WIDGET — vertical pill on desktop, bottom bar on mobile ══ -->
 <div id="nav-widget">
   <div class="nw-shell">
 
-    <!-- drag handle — far left -->
+    <!-- drag handle — top dots (desktop only) -->
     <div class="nw-handle" id="nw-handle">
-      <div class="nw-drag-dots">⋮⋮</div>
+      <div class="nw-drag-dots">· · ·</div>
     </div>
 
     <!-- chapter cell -->
     <div class="nw-cell nw-chapter-cell">
       <span class="nw-cell-value" id="nw-chapter">Entry</span>
       <span class="nw-cell-label" id="nw-chapter-num">Ch. 1</span>
-    </div>
-
-    <!-- progress pip cell -->
-    <div class="nw-pip-cell">
-      <div class="nw-pip"><div class="nw-pip-fill" id="nw-pip"></div></div>
-      <span class="nw-pip-pct" id="nw-counter">01 / 13</span>
     </div>
 
     <div class="nw-divider"></div>
@@ -1355,21 +1712,38 @@ body.scroll-free #panel {
       <span class="nw-cell-value">⊡</span>
       <span class="nw-action-label">Panel</span>
     </button>
-    <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Add to cart">
+    <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Notify me">
       <span class="nw-cell-value">⊕</span>
-      <span class="nw-action-label">Cart</span>
+      <span class="nw-action-label">Notify</span>
     </button>
 
     <div class="nw-divider"></div>
 
-    <!-- nav buttons — far right -->
+    <!-- nav: prev / progress pip / next (vertical on desktop, horizontal on mobile) -->
     <div class="nw-nav">
-      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous sentence">←</button>
-      <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">→</button>
+      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous sentence">↑</button>
+      <div class="nw-nav-pip">
+        <div class="nw-nav-pip-bar"><div class="nw-nav-pip-fill" id="nw-nav-pip"></div></div>
+        <span class="nw-nav-pip-pct" id="nw-counter">01 / 10</span>
+      </div>
+      <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">↓</button>
     </div>
 
   </div>
 </div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast">
+  <span class="toast-icon">🐾</span>
+  <div class="toast-body">
+    <span class="toast-title">You're on the list</span>
+    <span class="toast-sub">Nike will notify you the moment it drops · wolfie.love</span>
+  </div>
+  <button class="toast-dismiss" onclick="dismissToast()">✕</button>
+</div>
+
+<!-- ══ WOLFIE CREDIT ══ -->
+<div id="wolfie-credit">concept crafted by wolfie · <a href="https://wolfie.love" target="_blank" style="color:inherit;text-decoration:none">wolfie.love</a></div>
 
 <div id="grid-overlay">
   <canvas id="grid-canvas" class="grab"></canvas>
@@ -1465,7 +1839,8 @@ function goTo(n) {
   document.getElementById('progress').style.width = pct + '%';
   document.getElementById('panel-fill').style.width = pct + '%';
   document.getElementById('panel-pct').textContent = pct + '%';
-  document.getElementById('nw-pip').style.width = pct + '%';
+  // vertical pip: use height %
+  document.getElementById('nw-nav-pip').style.height = pct + '%';
 
   // reveal cart button at end
   const nearEnd = n >= navigable.length - 4;
@@ -1479,14 +1854,14 @@ function goTo(n) {
   // swap body class
   document.body.className = document.body.className.replace(/\bch-\d\b/g, '').trim();
   if (ch > 1) document.body.classList.add('ch-' + ch);
-  // reveal gates up to and including current chapter
-  document.querySelectorAll('.ch-gate').forEach(g => {
+  // reveal ch-headers up to and including current chapter
+  document.querySelectorAll('.ch-header').forEach(g => {
     const gch = parseInt(g.dataset.ch);
     if (gch <= ch) g.classList.add('revealed');
     else g.classList.remove('revealed');
   });
   // update widget chapter label
-  const CH_NAMES = ['','Entry','The Story','The Craft','The Details','The Moment'];
+  const CH_NAMES = ['','Entry','The Origin','The Craft','The Details','The Moment'];
   document.getElementById('nw-chapter').textContent = CH_NAMES[ch] || ('Ch.' + ch);
   document.getElementById('nw-chapter-num').textContent = 'Ch. ' + ch;
 }
@@ -1581,7 +1956,7 @@ goTo(0);
       el.classList.add('revealed');
       el.classList.remove('active');
     });
-    document.querySelectorAll('.ch-gate').forEach(g => g.classList.add('revealed'));
+    document.querySelectorAll('.ch-header').forEach(g => g.classList.add('revealed'));
 
     // Clear nav cursor states
     ALL_NAV_CLASSES.forEach(c => cursor.classList.remove(c));
@@ -1766,8 +2141,21 @@ function selectSize(el) {
 }
 
 function addToCart() {
-  // Coming soon — redirect to Nike for notification
-  window.open('https://www.nike.com/t/air-jordan-1-retro-high-og-womens-shoes-FO6hGtmD/FD2596-102', '_blank');
+  showToast();
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+let toastTimer = null;
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => dismissToast(), 5000);
+}
+function dismissToast() {
+  document.getElementById('toast').classList.remove('show');
 }
 
 // ══════════════════════════════════════════════
