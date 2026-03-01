@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wolfie.love — How It Works</title>
+    <title>wolfie.love/shop — How It Works</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -47,7 +47,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Grain — same texture as wolfie.love */
 body::after {
     content: "";
     position: fixed;
@@ -287,17 +286,17 @@ body::after {
 .mechanic-block p + p { margin-top: 10px; }
 
 /* ===================================
-   THEME CARDS
+   CHAPTER CARDS
    =================================== */
-.theme-grid {
+.chapter-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin: 24px 0;
 }
-@media (max-width: 560px) { .theme-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .chapter-grid { grid-template-columns: 1fr; } }
 
-.theme-card {
+.chapter-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -306,16 +305,19 @@ body::after {
     position: relative;
     overflow: hidden;
 }
-.theme-card:hover { border-color: rgba(201,169,110,0.3); }
+.chapter-card:hover { border-color: rgba(201,169,110,0.3); }
 
-.theme-card-swatch {
-    width: 32px;
-    height: 8px;
-    border-radius: 2px;
-    margin-bottom: 12px;
+.chapter-card-num {
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    opacity: 0.7;
 }
 
-.theme-card-name {
+.chapter-card-name {
     font-family: var(--ui-font);
     font-size: 9px;
     letter-spacing: 0.1em;
@@ -324,7 +326,7 @@ body::after {
     margin-bottom: 8px;
 }
 
-.theme-card p {
+.chapter-card p {
     font-size: 12px;
     color: var(--ink-3);
     line-height: 1.55;
@@ -333,9 +335,9 @@ body::after {
 }
 
 /* ===================================
-   KEY TABLE
+   SPEC TABLE
    =================================== */
-.key-table {
+.spec-table {
     width: 100%;
     border-collapse: collapse;
     margin: 24px 0;
@@ -343,7 +345,7 @@ body::after {
     font-size: 11px;
 }
 
-.key-table th {
+.spec-table th {
     font-size: 8px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -354,31 +356,21 @@ body::after {
     font-weight: 400;
 }
 
-.key-table td {
+.spec-table td {
     padding: 9px 12px;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
-}
-.key-table tr:last-child td { border-bottom: none; }
-.key-table td:first-child { white-space: nowrap; }
-
-.key-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border-strong);
-    border-radius: 3px;
-    padding: 2px 7px;
-    font-size: 10px;
-    color: var(--ink);
-    letter-spacing: 0.04em;
-    margin-right: 4px;
-    line-height: 1.6;
-}
-
-.key-action {
     color: var(--ink-2);
-    font-size: 11px;
     line-height: 1.5;
+}
+.spec-table tr:last-child td { border-bottom: none; }
+.spec-table td:first-child {
+    color: var(--ink-3);
+    white-space: nowrap;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    width: 30%;
 }
 
 /* ===================================
@@ -501,7 +493,7 @@ code {
                 <span class="header-paw">🐾</span>
                 wolfie.love
             </a>
-            <span class="header-label">How It Works</span>
+            <span class="header-label">Shop — How It Works</span>
         </div>
     </header>
 
@@ -509,168 +501,167 @@ code {
 
         <!-- HERO -->
         <section class="hero">
-            <p class="hero-eyebrow">Platform documentation</p>
-            <h1>Every mechanic of<br><em>wolfie.love</em></h1>
-            <p class="hero-lead">A sentence-by-sentence literary memorial for Wolfgang — a rescue dog, a three-year companion, a good boy. This document covers the full reading model: navigation, flow mode, themes, image triggers, chapters, remarks, keyboard shortcuts, and the interstitial dark moment. Consider it the operator's manual for something that isn't quite a website.</p>
+            <p class="hero-eyebrow">Concept documentation · wolfie.love/shop</p>
+            <h1>A product page that<br><em>reads like a story.</em></h1>
+            <p class="hero-lead">wolfie.love/shop applies the sentence-by-sentence reading model to product discovery. The Air Jordan 1 Retro High OG in Pale Ivory × Psychic Blue is the subject. Five chapters, one pair of shoes, a complete reading experience before anything is added to a cart. This document covers every mechanic — the sentence engine, chapter themes, the HUD, the image layer, the commerce panel, scroll mode, and the end-of-journey moment.</p>
         </section>
 
         <!-- TOC -->
         <nav class="toc" aria-label="Table of contents">
             <p class="toc-label">Contents</p>
             <ul class="toc-list">
-                <li><span class="toc-num">01</span><a href="#navigation">Navigation</a></li>
-                <li><span class="toc-num">02</span><a href="#sentence-stream">Sentence Stream</a></li>
-                <li><span class="toc-num">03</span><a href="#flow-mode">Flow Mode</a></li>
-                <li><span class="toc-num">04</span><a href="#themes">Themes</a></li>
+                <li><span class="toc-num">01</span><a href="#philosophy">The Argument</a></li>
+                <li><span class="toc-num">02</span><a href="#chapters">Five Chapters</a></li>
+                <li><span class="toc-num">03</span><a href="#sentence-engine">Sentence Engine</a></li>
+                <li><span class="toc-num">04</span><a href="#chapter-themes">Chapter Themes</a></li>
                 <li><span class="toc-num">05</span><a href="#image-layer">Image Layer</a></li>
-                <li><span class="toc-num">06</span><a href="#interstitial">The Dark Moment</a></li>
-                <li><span class="toc-num">07</span><a href="#chapters">Chapters</a></li>
-                <li><span class="toc-num">08</span><a href="#remarks">Visitor Remarks</a></li>
-                <li><span class="toc-num">09</span><a href="#keyboard">Keyboard Shortcuts</a></li>
-                <li><span class="toc-num">10</span><a href="#modes">View Modes</a></li>
+                <li><span class="toc-num">06</span><a href="#hud">The HUD</a></li>
+                <li><span class="toc-num">07</span><a href="#chapter-widget">Chapter Widget</a></li>
+                <li><span class="toc-num">08</span><a href="#commerce-panel">Commerce Panel</a></li>
+                <li><span class="toc-num">09</span><a href="#scroll-mode">Scroll Mode</a></li>
+                <li><span class="toc-num">10</span><a href="#journey-end">End of Journey</a></li>
                 <li><span class="toc-num">11</span><a href="#mobile">Mobile</a></li>
-                <li><span class="toc-num">12</span><a href="#toasts">Narrative Toasts</a></li>
+                <li><span class="toc-num">12</span><a href="#technical">Technical Notes</a></li>
             </ul>
         </nav>
 
-        <!-- 01 NAVIGATION -->
-        <section class="section" id="navigation">
+        <!-- 01 THE ARGUMENT -->
+        <section class="section" id="philosophy">
             <div class="section-header">
                 <span class="section-num">01</span>
-                <h2>Navigation</h2>
+                <h2>The Argument</h2>
             </div>
 
-            <p>wolfie.love does not scroll. There is no continuous feed. Every move through the piece is a deliberate step — one sentence at a time, forward or backward, at whatever pace the reader chooses. The reading is a series of discrete moments because the grief it describes is too.</p>
+            <p>Most product pages assume the reader already wants to buy. They skip directly to the decision — size grid, add to cart, proceed. The page is a transaction form with photographs attached.</p>
 
-            <p>Every input method is supported simultaneously. You never have to learn a specific gesture to proceed.</p>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Desktop</p>
-                <p>Scroll wheel or trackpad advances one sentence per gesture. Arrow keys (↑↓), <code>j</code>/<code>k</code>, and <code>Space</code> also navigate. Clicking any sentence in the stream jumps directly to it. Arrow keys (←→) jump between chapters.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Mobile</p>
-                <p>Swipe up/down advances or retreats one sentence. Tap anywhere in the stream activates the tapped sentence. The floating HUD (bottom-center) provides prev/next buttons at all times, including in stripped-down reading modes.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Scroll Cooldown</p>
-                <p>A cooldown prevents accidental double-advances on fast trackpad gestures. The threshold distinguishes intentional swipes from scroll momentum. The active sentence is always scrolled into view automatically — centered in the viewport — regardless of how navigation was triggered.</p>
-            </div>
+            <p>wolfie.love/shop makes the opposite bet. <strong>The product earns the purchase.</strong> Five chapters, read sentence by sentence, move from cultural origin to material craft to technical specification to the urgency of the drop. Commerce is the destination, not the premise.</p>
 
             <div class="callout">
-                <p>You don't choose what to skip. You move through the piece at the pace the piece demands. The format is the argument.</p>
+                <p>The format is the argument. Slowing the reader down is not a friction problem — it is the product's best case, made at the pace it deserves.</p>
             </div>
+
+            <p>Every interaction decision follows from this. Sentences advance one at a time. The panel stays visible but passive. The HUD tells you where you are. The background shifts with each chapter. You finish the piece, and then you decide.</p>
         </section>
 
-        <!-- 02 SENTENCE STREAM -->
-        <section class="section" id="sentence-stream">
+        <!-- 02 FIVE CHAPTERS -->
+        <section class="section" id="chapters">
             <div class="section-header">
                 <span class="section-num">02</span>
-                <h2>Sentence Stream</h2>
+                <h2>Five Chapters</h2>
             </div>
 
-            <p>The narrative is parsed at load time from structured source text into discrete units — sentences, chapter breaks, image triggers, theme markers, and interstitial blocks. Each unit becomes a DOM element with its own state, its own role, its own moment.</p>
+            <p>The narrative is divided into five chapters, each a distinct emotional register for the same object. Not a product description split into sections — five different lenses on one shoe.</p>
 
-            <div class="mechanic-block">
-                <p class="mechanic-title">Active State</p>
-                <p>The current sentence reads at full opacity with a subtle warm glow. All others dim to 50%. Peripheral sentences remain legible but subordinate — present context, not active focus. Revealed past sentences (already read) maintain a slightly higher opacity than future ones.</p>
+            <div class="chapter-grid">
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Chapter 01</div>
+                    <div class="chapter-card-name">Entry</div>
+                    <p>The name. The colorway. Pure cinema dark. The shoe arrives before the story does.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Chapter 02</div>
+                    <div class="chapter-card-name">The Origin</div>
+                    <p>1985. The $5,000 fine. The rule the NBA wrote and Jordan ignored. Cultural context as product context.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Chapter 03</div>
+                    <div class="chapter-card-name">The Craft</div>
+                    <p>Textured Psychic Blue suede. Visible seams. Six lace jewels as a personality test. The details you can see in the images.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Chapter 04</div>
+                    <div class="chapter-card-name">The Details</div>
+                    <p>Style number, colorway, materials, lining, retail. The spec sheet, made to breathe.</p>
+                </div>
+                <div class="chapter-card" style="grid-column: 1 / -1">
+                    <div class="chapter-card-num">Chapter 05</div>
+                    <div class="chapter-card-name">The Moment</div>
+                    <p>The drop. The window measured in minutes, not days. Nike Members first. The piece ends at the decision.</p>
+                </div>
             </div>
 
-            <div class="mechanic-block">
-                <p class="mechanic-title">Hover (Desktop)</p>
-                <p>Hovering any non-active sentence raises it — all others dim further to 25%. This lets a reader preview a sentence and surface its associated image without committing to it. Hovering an image trigger shows the photograph without activating the sentence.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Chapter Breaks</p>
-                <p>Full-width separators with a chapter number and title rendered inline in the stream at the exact sentence where each chapter begins. Clicking a chapter break opens the chapter dropdown. Subchapter titles appear at reduced opacity with a fine accent rule — structural markers, not navigable elements.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Inline Syntax (Author Markers)</p>
-                <p><code>@theme:name</code> sets the active theme at a specific point in the narrative. <code>@@dark</code> / <code>@@/dark</code> opens and closes an interstitial darkness block. <code>####:</code> fires a narrative toast. <code>##:</code> creates a chapter. <code>#:</code> creates a subchapter. These markers are invisible to the reader — they are instructions to the platform, written in prose.</p>
-            </div>
+            <p>Each chapter has its own centered header — number, title, subhead — that fades in when the reader reaches it. Chapter headers are not navigational. They are structural markers that appear at the right moment, not on demand.</p>
         </section>
 
-        <!-- 03 FLOW MODE -->
-        <section class="section" id="flow-mode">
+        <!-- 03 SENTENCE ENGINE -->
+        <section class="section" id="sentence-engine">
             <div class="section-header">
                 <span class="section-num">03</span>
-                <h2>Flow Mode</h2>
+                <h2>Sentence Engine</h2>
             </div>
 
-            <p>Flow Mode advances through sentences automatically at a controlled speed. It turns a reading experience into something closer to being read to — the reader surrenders navigation and lets the text arrive. A progress bar across the bottom of the screen shows position through the piece.</p>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Activation</p>
-                <p>Flow Mode is started via the Flow button in the navigation cluster or the chapter dropdown. Once active, playback controls appear: a play/stop toggle, and slower/faster speed buttons. Any manual navigation gesture — scroll, swipe, keypress — stops Flow Mode immediately and returns control to the reader.</p>
-            </div>
+            <p>Every element in the narrative stream — poster type, body copy, spec rows, labels, breaks — is a discrete DOM node with its own state. The engine advances through these nodes one at a time and manages three visibility states across the full stream.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Speed Control</p>
-                <p>Three speeds are available via the Slower / Faster buttons. The speed label updates live. Slower is meditative — one sentence every several seconds, long enough to re-read. Faster approaches the pace of being read to by someone who reads well. The default is somewhere between.</p>
+                <p class="mechanic-title">Active</p>
+                <p>Full opacity. The current sentence. Poster sentences display a thin left-edge accent rule in the chapter's accent color. Body sentences read at full ink weight. Spec rows illuminate their value text.</p>
+            </div>
+            <div class="mechanic-block">
+                <p class="mechanic-title">Revealed</p>
+                <p>Already read. Dimmed to approximately 38% opacity — present as context, not demanding attention. The reader knows where they've been without being pulled backward.</p>
+            </div>
+            <div class="mechanic-block">
+                <p class="mechanic-title">Unrevealed</p>
+                <p>Not yet reached. Dimmed to 12% — present but nearly invisible. The structure of what's ahead is legible; the content isn't. There is always more.</p>
+            </div>
+
+            <p>Navigation is triggered by scroll wheel, trackpad, arrow keys, <code>j</code> / <code>k</code>, <code>Space</code>, swipe (mobile), or the HUD prev/next buttons. All input methods work simultaneously. The active sentence is always scrolled into the center of the viewport automatically.</p>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Sentence Types</p>
+                <p><strong>Poster</strong> — giant display type. Product name, colorway. The emotional arrival. <strong>Body</strong> — narrative prose at reading size. The story. <strong>Spec</strong> — monospace key/value pairs. The facts. <strong>Label</strong> — section markers in accent color. <strong>Break</strong> — visual breath between sections.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Theme Persistence</p>
-                <p>Flow Mode respects the active theme across all sentence transitions. If you've switched to Memory or Nightfall, the platform holds that theme through every advance — it does not reset. Content-authored <code>@theme:</code> markers still trigger when their sentence is reached, overriding the active theme within their scope. When you navigate back out of a themed section, the previously active theme is restored.</p>
+                <p class="mechanic-title">Details Auto-Flow</p>
+                <p>The Details chapter (Chapter 04) uses an <code>auto-flow</code> flag on each spec row. Once the reader reaches the first spec, the engine advances automatically through the remaining rows at 950ms intervals — the spec sheet scans itself. A thin accent-color scan line animates across each active spec row as the timer counts down. Any manual navigation cancels the timer and returns control immediately.</p>
             </div>
 
-            <div class="mechanic-block">
-                <p class="mechanic-title">Image Triggers in Flow</p>
-                <p>When Flow Mode reaches a sentence that contains an image trigger, the associated photograph appears automatically and fades out when the sentence changes. You don't have to hover. The images arrive with the sentences, as if the piece is showing you what it wants you to see.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">The Interstitial Dark in Flow</p>
-                <p>Flow Mode does not skip or accelerate through the interstitial dark block. When the piece goes dark, Flow Mode pauses. The platform waits in the dark for the reader to press forward. This is not a timeout. It holds until you're ready. Then it continues.</p>
-            </div>
+            <p>Clicking any sentence in the stream jumps directly to it. The engine re-evaluates all revealed/active/unrevealed states from the new position.</p>
         </section>
 
-        <!-- 04 THEMES -->
-        <section class="section" id="themes">
+        <!-- 04 CHAPTER THEMES -->
+        <section class="section" id="chapter-themes">
             <div class="section-header">
                 <span class="section-num">04</span>
-                <h2>Themes</h2>
+                <h2>Chapter Themes</h2>
             </div>
 
-            <p>Four themes, each a complete visual identity — typeface pairings, color systems, texture character, and ambient mood. They are not skins. Reading the same sentence in Newspaper vs. Memory is a different experience of that sentence. Context is meaning.</p>
+            <p>Each chapter carries a complete visual identity — a different palette, a different mood, a different color relationship with the shoe. The theme shifts automatically as the reader advances into each chapter. Transitions take 1.2 seconds and affect every themed element simultaneously.</p>
 
-            <p>Cycle manually via <code>T</code> or the mode cluster. Content can trigger themes automatically via <code>@theme:</code> markers embedded in the narrative, shifting the palette as the emotional register shifts.</p>
+            <div class="chapter-grid">
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Ch. 01 · Entry</div>
+                    <div class="chapter-card-name" style="color: #efefef">Cinema Dark</div>
+                    <p style="color: #4a7fd4">Accent: Psychic Blue<br>Pure darkness. The shoe enters.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Ch. 02 · The Origin</div>
+                    <div class="chapter-card-name" style="color: #f5f0e8">Cream Warm</div>
+                    <p style="color: #b89a6a">Accent: Gold Ochre<br>Archival. Historical. Warm paper.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Ch. 03 · The Craft</div>
+                    <div class="chapter-card-name" style="color: #d0dcf8">Psychic Blue</div>
+                    <p style="color: #4a7fd4">Accent: Electric Blue<br>Cool precision. Material intelligence.</p>
+                </div>
+                <div class="chapter-card">
+                    <div class="chapter-card-num">Ch. 04 · The Details</div>
+                    <div class="chapter-card-name" style="color: #e8e4d8">Ivory Mono</div>
+                    <p style="color: #c8c0a8">Accent: Warm Ivory<br>Quiet luxury. The spec sheet.</p>
+                </div>
+            </div>
 
-            <div class="theme-grid">
-                <div class="theme-card">
-                    <div class="theme-card-swatch" style="background: linear-gradient(90deg, #faf8f3, #e8e0d0);"></div>
-                    <div class="theme-card-name">📖 Newspaper</div>
-                    <p>Warm off-white. Near-black ink. Saddle brown accent. Reads like something printed and kept. The default of the piece.</p>
-                </div>
-                <div class="theme-card">
-                    <div class="theme-card-swatch" style="background: linear-gradient(90deg, #0a0a12, #12121e);"></div>
-                    <div class="theme-card-name">🌙 Nightfall</div>
-                    <p>Deep indigo-black. Softer blue-white text. The most interior, most quiet of the four. The reading-alone-at-2am theme.</p>
-                </div>
-                <div class="theme-card">
-                    <div class="theme-card-swatch" style="background: linear-gradient(90deg, #fa3c00, #c42d00);"></div>
-                    <div class="theme-card-name">⚡ Sport</div>
-                    <p>Deep charcoal. Fire orange accent. High contrast, urgent. The piece reads like a brief or a dispatch.</p>
-                </div>
-                <div class="theme-card">
-                    <div class="theme-card-swatch" style="background: linear-gradient(90deg, #1a1209, #2a1e0e);"></div>
-                    <div class="theme-card-name">▓ Memory</div>
-                    <p>Warm dark brown. Amber tones. Soft grain. The most personal and tactile of the four — like a wallet photograph.</p>
-                </div>
+            <p>Chapter 05 (The Moment) returns to an electric blue — darker than Ch. 03, more urgent. The palette signals arrival at the decision point before the copy does.</p>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">HUD Inversion</p>
+                <p>The navigation HUD uses an inverted color scheme — light surface, dark text — that is independent of the chapter theme. Each chapter defines its own <code>--hud-*</code> variable set: warm cream for Ch. 02, cool periwinkle for Ch. 03, pale ivory for Ch. 04. The HUD always reads cleanly against the dark editorial background regardless of which chapter theme is active.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Transitions</p>
-                <p>Theme changes include a brief cross-fade with a <code>theme-transitioning</code> class that prevents harsh palette flashes. The transition is fast enough to feel immediate but smooth enough not to jar. The grain and texture overlays transition with the palette.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Content-Driven Themes</p>
-                <p>The narrative can trigger theme changes automatically using <code>@theme:name</code> markers. When a sentence with a theme marker is reached during reading or Flow Mode, the theme shifts. Navigating backward past a theme marker restores the theme that preceded it — the platform scans back to find the nearest active marker for any given position.</p>
+                <p class="mechanic-title">Transition Scope</p>
+                <p>Theme transitions apply to: the background color, the image overlay gradient, the accent color throughout the stream, the HUD shell and values, the panel background on hover, the chapter header accent rule, and all spec/label elements. The transition is choreographed — everything moves together at 1.2s ease.</p>
             </div>
         </section>
 
@@ -681,225 +672,181 @@ code {
                 <h2>Image Layer</h2>
             </div>
 
-            <p>Photographs of Wolfie are bound to specific words and phrases in the text. They exist in a separate layer behind the prose, surfaced associatively through trigger words rather than dropped into the reading flow as blocks. The images are evidence. They make the dog real.</p>
+            <p>Six product photographs occupy a fixed layer behind the entire page — not inline in the content flow, not thumbnails, not a carousel. Full viewport. Behind the prose. Surfaced by which sentence is active.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Image Triggers</p>
-                <p>Phrases bound to photographs are rendered as <strong>underlined trigger spans</strong> within the sentence text. Hovering (desktop) or tapping (mobile) a trigger surfaces the associated photograph. The image appears behind the text as a full-viewport presence. When the sentence changes, the image fades.</p>
+                <p class="mechanic-title">Sentence-Bound Images</p>
+                <p>Each sentence carries a <code>data-img</code> attribute pointing to one of the six images. When a sentence becomes active, its bound image cross-fades into view behind the content. The image changes with the sentence — the photographs advance with the reading.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Auto-Surface on Active Sentence</p>
-                <p>When a sentence containing an image trigger becomes active, the first image in that sentence is shown automatically — no hover required. The photograph arrives with the sentence, as if the prose and the image are arriving together.</p>
+                <p class="mechanic-title">The Six Views</p>
+                <p>Top-down pair (entry). Alternate top angle (the story). Heel and outsole detail (the craft). Insoles with heritage print (the details). Lace jewels frontal (the craft). Full pair (the moment). Each image is matched to the chapter content it supports.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Split Layout — Right Rail</p>
-                <p>In Split View, the image layer is pinned to the right half of the screen at a fixed position rather than flooding the viewport. Text occupies the left. Reading and looking happen side by side without overlap.</p>
+                <p class="mechanic-title">Opacity and Overlay</p>
+                <p>Images display at 55% opacity — bright enough to read, dark enough to read through. A directional gradient darkens the left side (where text lives) from 82% to 45%, leaving the right edge of the viewport nearly full exposure. The overlay transitions with chapter themes, shifting warmth and depth as the palette changes.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Mobile Image Behavior</p>
-                <p>On mobile, images appear as a floating panel above the text rather than as a full-viewport background — preserving readability while keeping the photograph present. Tapping an image trigger surfaces it; navigating away fades it.</p>
+                <p class="mechanic-title">Ken Burns</p>
+                <p>Each newly active image begins at <code>scale(1.03)</code> and eases to <code>scale(1.0)</code> over 6 seconds — a slow, imperceptible drift. The photographs breathe. They are not static assets.</p>
             </div>
         </section>
 
-        <!-- 06 INTERSTITIAL DARK -->
-        <section class="section" id="interstitial">
+        <!-- 06 THE HUD -->
+        <section class="section" id="hud">
             <div class="section-header">
                 <span class="section-num">06</span>
-                <h2>The Dark Moment</h2>
+                <h2>The HUD</h2>
             </div>
 
-            <p>At a specific point in the narrative — <em>now we go sleepy</em> — the interface disappears entirely. Not dimmed. Dark. The keyboard legend, chapter bar, mode cluster, nav buttons, progress indicators — all of it is gone. There is only the sentence, and then nothing.</p>
+            <p>The navigation HUD is a fixed vertical pill on desktop — light surface, dark ink, independent of the chapter theme. It sits at the right edge of the content column, 400px from the right viewport edge (just outside the commerce panel). It never changes size or shape. It is always in the same place.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">How It Works</p>
-                <p>The author marks an <code>@@dark</code> block in the source text. When the reader reaches the first sentence inside that block, the platform snapshots the current theme, applies <code>interstitial-dark</code> to the body, and hides every navigational element via CSS. A full-screen overlay takes the viewport.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">The Wait</p>
-                <p>The platform does not auto-advance. There is no timeout. It holds in the dark until the reader presses forward. This is intentional. The platform has an opinion about how long this moment takes, and the opinion is: however long it takes.</p>
+                <p class="mechanic-title">Controls</p>
+                <p>Top to bottom: a drag handle (three dots), a divider, three action buttons (Views, Panel, Notify), a divider, then the navigation cluster. The navigation cluster is: ↑ previous, a progress pip (vertical bar filling top-to-bottom as the reader advances), ↓ next. The pip also shows the sentence counter below it.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Theme Restore</p>
-                <p>When the reader navigates out of the dark block — forward past the <code>@@/dark</code> marker, or backward out of it — the snapshotted theme is restored. The world reassembles. Navigation controls return. The piece continues.</p>
+                <p class="mechanic-title">Action Buttons</p>
+                <p><strong>Views</strong> — opens the full image grid overlay. All six product photographs on a black canvas, zoomable, pannable. <strong>Panel</strong> — scrolls the commerce panel into view and pulses its border briefly. <strong>Notify</strong> — appears near the end of the journey when the reader is close to finishing. Triggers the notification toast.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Per-Theme Styling</p>
-                <p>Each theme defines its own interstitial-dark palette — the darkness is theme-aware. Newspaper's dark is warmer; Nightfall's is deeper; Sport's is higher contrast. The darkness is not generic. It fits the world the reader was already in.</p>
+                <p class="mechanic-title">Draggable</p>
+                <p>The HUD can be repositioned anywhere on screen by dragging the handle. On first drag it converts from CSS <code>right</code>/<code>top</code> anchoring to absolute <code>left</code>/<code>top</code> positioning, preserving its visual location. Position holds for the session.</p>
             </div>
 
-            <div class="callout">
-                <p>The interface earns its own disappearance. You are not losing the controls — you are losing the need for them. That is the design.</p>
+            <div class="mechanic-block">
+                <p class="mechanic-title">Panel Hover Fade</p>
+                <p>On desktop, hovering the commerce panel fades both the HUD and the chapter widget to opacity 0 with pointer-events disabled. The panel is the only thing that matters in that moment. Mousing away restores both at 0.4s ease.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Scroll Mode Fade</p>
+                <p>When scroll mode is active, the HUD fades to 18% opacity and becomes non-interactive. It signals that navigation has been handed off to native scroll, and waits.</p>
             </div>
         </section>
 
-        <!-- 07 CHAPTERS -->
-        <section class="section" id="chapters">
+        <!-- 07 CHAPTER WIDGET -->
+        <section class="section" id="chapter-widget">
             <div class="section-header">
                 <span class="section-num">07</span>
-                <h2>Chapters</h2>
+                <h2>Chapter Widget</h2>
             </div>
 
-            <p>The narrative is divided into chapters, each beginning at a defined sentence. Chapters provide structure and jump targets. Subchapters title sections within chapters — they are editorial, not navigational.</p>
+            <p>The chapter widget is a separate element from the HUD — a dark pill centered at the top of the content column, always visible, always dark regardless of chapter theme. It shows the current chapter name and opens a dropdown of all five chapters.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Chapter Dropdown</p>
-                <p>Opened via the brand logo (top-left), the <code>C</code> key, or clicking any chapter break in the stream. Lists all chapters. The active chapter is highlighted. Clicking any item jumps immediately to that chapter's first sentence. The dropdown is <strong>draggable</strong> — drag by the header to reposition it anywhere on screen. Position persists across open/close cycles for the session.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Chapter Progress Bar</p>
-                <p>A thin bar above the content shows progress within the current chapter — not the piece overall. The chapter name updates as you navigate. Chapter-level progress is more meaningful than piece-level progress in a work structured as discrete emotional sections.</p>
+                <p class="mechanic-title">The Pill</p>
+                <p><code>Chapter · {name} ▾</code> — a horizontal row in <code>rgba(10,10,12,0.88)</code> with a thin white border at 10% opacity. Click opens the dropdown downward with a spring scale animation. The arrow rotates 180° when open.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Chapter Tracking</p>
-                <p>The platform tracks which chapters have been entered. This state is used by the toast system and by the stats widget's chapter counter. A chapter is considered visited when its first sentence is activated.</p>
+                <p class="mechanic-title">The Dropdown</p>
+                <p>Lists all five chapters with their number and name. The current chapter shows full-brightness text and an accent dot on the right. Clicking any item jumps to the first sentence of that chapter — the engine calculates the correct sentence index at load time and stores it for instant lookup. The dropdown closes on item selection, outside click, or Escape.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Positioning</p>
+                <p>On desktop: <code>position: fixed</code>, spanning <code>left: 0</code> to <code>right: 380px</code> (the content column width), with <code>display: flex; justify-content: center</code> — the pill floats at true center of the content column, 68px below the header. On mobile: spans full width below the header. Always dark. Always readable.</p>
             </div>
         </section>
 
-        <!-- 08 VISITOR REMARKS -->
-        <section class="section" id="remarks">
+        <!-- 08 COMMERCE PANEL -->
+        <section class="section" id="commerce-panel">
             <div class="section-header">
                 <span class="section-num">08</span>
-                <h2>Visitor Remarks</h2>
+                <h2>Commerce Panel</h2>
             </div>
 
-            <p>Visitor Remarks are short annotations — up to 80 characters — that readers can leave anchored to specific sentences in the piece. They are the platform's only social layer: shared, persistent, and attached to the text itself rather than floating in a comment section beneath it.</p>
+            <p>The commerce panel is a sticky right column — 380px wide on desktop, full-width below the narrative stream on mobile. It is always accessible. It holds everything needed to act on the piece: the product image, thumbnails, colorway picker, availability status, and the CTA.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Leaving a Remark</p>
-                <p>When a sentence is active, a remark input appears anchored below it. Type a response to that sentence — what it made you think of, a memory it surfaced, a word that fits. Submit and the remark is saved to the sentence, visible to all subsequent readers at that position.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Surfacing Remarks</p>
-                <p>When a reader reaches a sentence that has remarks attached, the remarks surface as a subtle notification. Remarks from other visitors appear inline below the sentence text — not in a sidebar, not at the bottom of the page. They are part of the reading, anchored exactly where they belong.</p>
+                <p class="mechanic-title">Reading Progress</p>
+                <p>A thin horizontal bar at the top of the panel shows how far through the narrative the reader has progressed — not how far they've scrolled, but how many sentences they've activated. The label reads <em>Read</em>. Commerce is downstream of reading.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Storage</p>
-                <p>Remarks are stored via <code>window.storage</code> with <code>shared: true</code> — they are globally shared across all readers. The remark is stored with its anchored sentence index and text, and loaded on each visit. Once per session, the platform checks whether new remarks have appeared at the reader's current position.</p>
+                <p class="mechanic-title">Product Image</p>
+                <p>A square image area synced with the active sentence. When the narrative moves to a new image, the panel image updates to match — the panel and the background layer show the same photograph simultaneously. Four thumbnail buttons below the image allow manual selection, decoupled from the narrative if the reader wants to look ahead.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Character Limit</p>
-                <p>80 characters. This is enforced at the input. The limit is not punitive — it is editorial. A remark at this length is a reaction, not an essay. It is the size of a thought you'd write in the margin of a book you loved.</p>
+                <p class="mechanic-title">Colorway Picker</p>
+                <p>Two circular swatches — Pale Ivory / Psychic Blue and Pale Ivory / Pro Green. Gradient-filled circles rendered in CSS. Active swatch scales up slightly and receives an accent border. Selecting a colorway updates the displayed name below.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Coming Soon State</p>
+                <p>The shoe is not yet available. The size grid is replaced by an availability block explaining that Nike Members get first access. The primary CTA is <strong>Notify Me on Nike.com</strong> — which triggers the toast rather than opening a new tab. The panel signals the commercial reality without pretending the shoe is available.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Panel Hover Theme</p>
+                <p>Hovering the panel flips it to a near-white surface with dark ink — a deliberate inversion from the editorial darkness of the left column. The panel becomes a bright, commercial object when approached. It knows what it is.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Image Grid — Views</p>
+                <p>The Views button opens a full-screen overlay containing all six product images rendered on a canvas. The images are pannable and zoomable. The grid is titled and labeled. Close via the close button or Escape key.</p>
             </div>
         </section>
 
-        <!-- 09 KEYBOARD -->
-        <section class="section" id="keyboard">
+        <!-- 09 SCROLL MODE -->
+        <section class="section" id="scroll-mode">
             <div class="section-header">
                 <span class="section-num">09</span>
-                <h2>Keyboard Shortcuts</h2>
+                <h2>Scroll Mode</h2>
             </div>
 
-            <p>The full keyboard map. All shortcuts are single-key unless noted. Case-insensitive.</p>
+            <p>Scroll Mode is an escape hatch. It releases the sentence-by-sentence constraint and lets the page behave like a normal document — all sentences fully visible, native scrolling restored. It is not the intended reading experience. It exists for readers who won't make the trade.</p>
 
-            <table class="key-table" aria-label="Keyboard shortcuts">
-                <thead>
-                    <tr>
-                        <th style="width:180px">Key</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="key-badge">Space</span></td>
-                        <td class="key-action">Next sentence</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">↓</span> <span class="key-badge">j</span></td>
-                        <td class="key-action">Next sentence</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">↑</span> <span class="key-badge">k</span></td>
-                        <td class="key-action">Previous sentence</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">Backspace</span></td>
-                        <td class="key-action">Previous sentence</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">→</span></td>
-                        <td class="key-action">Next chapter</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">←</span></td>
-                        <td class="key-action">Previous chapter</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">C</span></td>
-                        <td class="key-action">Toggle chapter dropdown</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">T</span></td>
-                        <td class="key-action">Cycle theme (Newspaper → Sport → Memory → Nightfall)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">H</span></td>
-                        <td class="key-action">Toggle Read Mode (hide / show UI chrome)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">F</span></td>
-                        <td class="key-action">Toggle Focus Mode</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">L</span></td>
-                        <td class="key-action">Toggle Split View (Layered ↔ Split)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">Home</span></td>
-                        <td class="key-action">Reset to first sentence</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-badge">Esc</span></td>
-                        <td class="key-action">Close overlay / exit mode / close dropdown</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="mechanic-block">
+                <p class="mechanic-title">The Toggle</p>
+                <p>A small circle in the top-right of the content column (desktop) or top-right below the header (mobile). Ghost treatment: <code>rgba(255,255,255,0.04)</code> fill, thin white border at 18% opacity. When active, it glows with the accent color and pulses gently — a reminder that you made a choice and can unmake it.</p>
+            </div>
 
-            <p>Escape follows a priority order: Focus Mode → Read Mode → Chapter Dropdown → any open overlay. Any manual keypress while Flow Mode is active stops playback and returns navigation control to the reader.</p>
+            <div class="mechanic-block">
+                <p class="mechanic-title">Entering Scroll Mode</p>
+                <p>All sentences reveal at full opacity. A lockout overlay sits over the stream content at z-490, absorbing pointer events so the sentence engine does not activate on click. The panel remains fully interactive — commerce is never locked. The HUD fades to 18% opacity.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Exiting Scroll Mode</p>
+                <p>Tapping or clicking the toggle exits. The reader stays exactly where they are in the document — the engine restores sentence states around the current scroll position without moving the viewport. <code>goTo(current, &#123; noScroll: true &#125;)</code> re-applies active/revealed classes without triggering <code>scrollIntoView</code>.</p>
+            </div>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Mobile Tappability</p>
+                <p>The toggle carries <code>pointer-events: auto !important</code> unconditionally — it cannot be blocked by the lockout overlay regardless of z-index behavior on any platform. The toggle is always tappable. There is always a way out.</p>
+            </div>
         </section>
 
-        <!-- 10 VIEW MODES -->
-        <section class="section" id="modes">
+        <!-- 10 END OF JOURNEY -->
+        <section class="section" id="journey-end">
             <div class="section-header">
                 <span class="section-num">10</span>
-                <h2>View Modes</h2>
+                <h2>End of Journey</h2>
             </div>
 
-            <p>Each mode is a different reading contract. Not settings — states of attention.</p>
+            <p>When the reader reaches the final navigable sentence, two things happen. The Notify button appears in the HUD. And the commerce panel pulses.</p>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Default (Layered)</p>
-                <p>Full experience. All chrome visible. Images appear behind the text as full-viewport presences triggered by sentence activation or hover. The intended reading state for a first encounter with the piece.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Split View — <code>L</code></p>
-                <p>Text occupies the left half. Imagery is pinned to the right at a fixed position. Reading and looking happen side by side without overlap. Requires landscape orientation on mobile — a rotate prompt appears if needed.</p>
+                <p class="mechanic-title">Panel Beckon</p>
+                <p>The panel fires a <code>journey-end</code> CSS animation — a glowing inset border in the chapter's accent color, with a soft halo, pulsing twice over 1.8 seconds. The animation runs once and removes itself cleanly. The panel is saying: <em>now</em>. The piece is finished. The decision is yours.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Read Mode — <code>H</code></p>
-                <p>All chrome hidden. The piece takes the full viewport. Navigation buttons ghost to very low opacity but remain interactive. Background images still surface. On mobile: longpress (300ms) on the stream triggers this. A top-right hotspot restores the UI when touched.</p>
+                <p class="mechanic-title">Notify CTA</p>
+                <p>Both the panel button and the HUD Notify button trigger the same toast. Not a redirect to Nike.com — a toast. The demo context makes the commitment. In production, this would hand off to the Nike notification flow.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Focus Mode — <code>F</code></p>
-                <p>Chrome hidden. Background image layer suppressed. Only the text and the active sentence. The purest reading state — nothing between the reader and the words. Combine with any theme for a different character of quiet.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Mode Persistence</p>
-                <p>Modes are not mutually exclusive with themes — Focus Mode in Nightfall is different from Focus Mode in Newspaper. The mode cluster widget reflects active state. In Read Mode and Focus Mode, a top-right viewport hotspot reveals a close cursor on hover — clicking restores full UI without requiring a keyboard.</p>
+                <p class="mechanic-title">The Toast</p>
+                <p>A spring-animated panel rising from the bottom of the viewport: 🐾 icon, <em>You're on the list</em> headline, <em>Nike will notify you the moment it drops · wolfie.love</em> subline, a dismiss button. Auto-dismisses after 5 seconds. The wolfie.love credit is in the subline because this is still wolfie.love, even here.</p>
             </div>
         </section>
 
@@ -910,67 +857,106 @@ code {
                 <h2>Mobile</h2>
             </div>
 
-            <p>Mobile is a fully supported first-class reading experience with its own interaction model — not a degraded desktop view. The gesture vocabulary is native, and the emotional mechanics are fully preserved at pocket scale.</p>
+            <p>Mobile is a first-class reading experience with its own layout and interaction model. The two-column desktop layout collapses to a single column — narrative stream above, commerce panel below. The HUD becomes a bottom bar. The chapter widget stays at top center.</p>
+
+            <div class="mechanic-block">
+                <p class="mechanic-title">Bottom HUD Bar</p>
+                <p>On mobile, the HUD is a full-width horizontal bar pinned to the bottom of the viewport. Four equal-flex slots: Views, Panel, ↑, ↓. No pip, no drag handle, no extra cells — only what a mobile reader actually reaches for. Rounded top corners (20px). Safe-area padded for iOS home indicator and Android gesture bar.</p>
+            </div>
 
             <div class="mechanic-block">
                 <p class="mechanic-title">Swipe Navigation</p>
-                <p>Swipe up to advance, swipe down to retreat. The gesture maps to turning through something — not pages exactly, but moments. The threshold distinguishes a swipe from a scroll, and a tap from a gesture. A cooldown prevents accidental double-advances.</p>
+                <p>Swipe up to advance, swipe down to retreat. A 40px threshold distinguishes swipe from tap. A cooldown prevents double-advances on gesture momentum. All sentence navigation works normally via swipe.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">HUD Widget</p>
-                <p>A floating bar centered above the bottom safe area. Contains prev/next navigation buttons flanking a sentence counter. In Read Mode the widget ghosts low but the nav buttons remain fully interactive at full opacity. The HUD is the one piece of chrome that never fully disappears.</p>
+                <p class="mechanic-title">Chapter Widget on Mobile</p>
+                <p>The chapter widget spans the full viewport width on mobile (no panel to account for), centered at 10px below the 52px header. Same dark pill, same dropdown behavior, same dark treatment. The dropdown opens downward from the pill.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Longpress → Read Mode</p>
-                <p>A 300ms longpress anywhere on the stream hides all UI chrome. This is close enough to a normal tap to feel natural but deliberate enough not to fire accidentally. A subtle vibration confirms the gesture on supported devices. All swipe navigation works normally while in Read Mode.</p>
+                <p class="mechanic-title">Scroll Toggle on Mobile</p>
+                <p>Fixed at top-right below the header (<code>top: 64px; right: 16px</code>). Ghost treatment: near-transparent fill, thin white border at 18% opacity. Slightly smaller than desktop (44px vs 52px). When active, glows accent and stays in place rather than floating to a fixed corner.</p>
             </div>
 
             <div class="mechanic-block">
-                <p class="mechanic-title">Image Display</p>
-                <p>On mobile, images appear as a floating panel above the text layer rather than as full-viewport backgrounds — preserving readability while keeping the photograph present and large enough to land. Image triggers in the text are tap targets.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Mobile Mode Cluster</p>
-                <p>The mode cluster is visible on mobile but reduced — Focus Mode is desktop-only (cursor-dependent), Read Mode is handled by longpress. Theme, Layout, and Chapter remain accessible. No drag handle on mobile.</p>
+                <p class="mechanic-title">Commerce Panel</p>
+                <p>Below the stream, full width, static position. All panel interactions — thumbnail selection, colorway picker, CTA — work identically to desktop. The reading progress bar remains at the top of the panel on mobile.</p>
             </div>
         </section>
 
-        <!-- 12 NARRATIVE TOASTS -->
-        <section class="section" id="toasts">
+        <!-- 12 TECHNICAL NOTES -->
+        <section class="section" id="technical">
             <div class="section-header">
                 <span class="section-num">12</span>
-                <h2>Narrative Toasts</h2>
+                <h2>Technical Notes</h2>
             </div>
 
-            <p>Toasts are the platform's passive voice — messages that appear contextually during reading, attached to specific moments or behaviors. Two kinds: <strong>system toasts</strong> that orient the reader to the platform's mechanics, and <strong>narrative toasts</strong> authored directly into the piece.</p>
+            <p>Built from scratch. No frameworks. No build step. No dependencies beyond Google Fonts.</p>
 
-            <div class="mechanic-block">
-                <p class="mechanic-title">Narrative Toasts (<code>####:</code>)</p>
-                <p>The author can embed a toast message directly into any sentence using the <code>####: message text</code> marker. When the reader reaches that sentence, the toast appears as a banner above the stream. These fire every time that sentence is reached — they are part of the piece, not a one-time onboarding notice. They are the piece speaking alongside itself.</p>
-            </div>
+            <table class="spec-table">
+                <thead>
+                    <tr>
+                        <th>System</th>
+                        <th>Implementation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sentence Engine</td>
+                        <td>Custom state machine over DOM nodes with <code>data-idx</code>, <code>data-ch</code>, <code>data-img</code> attributes. Three states: unrevealed / revealed / active. <code>goTo(n)</code> accepts an optional <code>{ noScroll }</code> flag.</td>
+                    </tr>
+                    <tr>
+                        <td>Chapter Themes</td>
+                        <td>CSS custom properties on <code>:root</code>, overridden by <code>body.ch-N</code> classes. Separate <code>--hud-*</code> variable set for the inverted HUD palette. Transitions at 1.2s ease across all themed elements simultaneously.</td>
+                    </tr>
+                    <tr>
+                        <td>Image Layer</td>
+                        <td>Fixed-position element, z-index 0, behind everything. Six <code>&lt;img&gt;</code> elements, opacity toggled via <code>.visible</code> class at 0.55 opacity. Ken Burns via <code>scale(1.03) → scale(1.0)</code> over 6s. Overlay gradient in <code>::after</code> pseudo-element.</td>
+                    </tr>
+                    <tr>
+                        <td>HUD</td>
+                        <td>Fixed vertical pill at <code>right: 400px; top: 50%; transform: translateY(-50%)</code>. Drag converts to absolute positioning on first move. Progress pip is a vertical bar using <code>height: pct%</code> transitions.</td>
+                    </tr>
+                    <tr>
+                        <td>Chapter Widget</td>
+                        <td>Fixed container spanning content column (<code>left:0; right:380px</code>), flexbox centered. Dropdown uses CSS <code>scaleY</code> transform from <code>transform-origin: top center</code>. Chapter-first-sentence index map built at load time from the navigable array.</td>
+                    </tr>
+                    <tr>
+                        <td>Auto-Flow</td>
+                        <td><code>setTimeout</code> chain at 950ms for <code>.auto-flow</code> spec rows. Cleared on any manual navigation input. Scan-line animation via <code>::after</code> pseudo-element with a <code>@keyframes</code> width sweep.</td>
+                    </tr>
+                    <tr>
+                        <td>Panel Beckon</td>
+                        <td><code>journey-end</code> CSS animation class added on last sentence activation. Force-reflow via <code>void panel.offsetWidth</code> to restart if triggered twice. <code>animationend</code> listener removes the class once.</td>
+                    </tr>
+                    <tr>
+                        <td>Scroll Lockout</td>
+                        <td>Fixed overlay at z-490 absorbing pointer events over the stream. Toggle at z-501 with <code>pointer-events: auto !important</code> unconditionally — cannot be blocked. Exit calls <code>goTo(current, &#123; noScroll: true &#125;)</code>.</td>
+                    </tr>
+                    <tr>
+                        <td>Grain Texture</td>
+                        <td>Inline SVG <code>feTurbulence</code> filter on a fixed <code>body::after</code> pseudo-element at 6% opacity, z-index 999, pointer-events none.</td>
+                    </tr>
+                    <tr>
+                        <td>Image Grid</td>
+                        <td>Full-screen canvas overlay. Six images rendered via the Canvas 2D API, pannable and zoomable via mouse drag and wheel events. Opens at z-400.</td>
+                    </tr>
+                    <tr>
+                        <td>Fonts</td>
+                        <td>Barlow Condensed (display, poster type) · Space Mono (UI, specs, labels). Google Fonts via preconnect.</td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <div class="mechanic-block">
-                <p class="mechanic-title">Welcome Banners</p>
-                <p>A pool of welcome banners surfaces on first load, after a short delay. Each highlights a different mechanic: navigation, flow mode, themes, image triggers, keyboard shortcuts. They orient without interrupting — they arrive once, and do not repeat in the same session.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Idle Detection</p>
-                <p>If no navigation occurs for 15 seconds, a gentle prompt appears. Different wording for mobile (swipe hint) and desktop (spacebar hint). It asks without demanding. It disappears the moment you move.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Toast Stack</p>
-                <p>Up to two standard toasts stack at the bottom-left. Banner toasts (narrative and welcome) appear centered below the header, one at a time, and supersede the stack. The <code>aria-live="polite"</code> toast container ensures screen readers receive toast content without interrupting active reading.</p>
+            <div class="callout">
+                <p>The panel hover fade uses <code>body:has(#panel:hover) #nav-widget</code> — a single CSS rule that reaches across the DOM to fade the HUD whenever the commerce panel is in use, regardless of where the user dragged it.</p>
             </div>
         </section>
 
         <span class="ornament">· · ·</span>
 
-    </div><!-- /page-wrap -->
+    </div>
 
     <!-- FOOTER -->
     <footer class="site-footer">
@@ -983,7 +969,6 @@ code {
     </footer>
 
     <script>
-        // Scroll reveal for sections
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -992,7 +977,6 @@ code {
                 }
             });
         }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
-
         document.querySelectorAll('.section').forEach(s => observer.observe(s));
     </script>
 
