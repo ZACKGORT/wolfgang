@@ -311,6 +311,40 @@ header {
   background: rgba(8,8,8,0.85);
   backdrop-filter: blur(14px);
   position: sticky; top: 0; z-index: 100;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+/* ── HEADER LIGHT HOVER ── */
+header:hover {
+  background: rgba(248,247,244,0.97);
+  border-bottom-color: rgba(0,0,0,0.08);
+}
+header:hover .mall-crumb { color: #888; }
+header:hover .mall-crumb .node { color: #333; }
+header:hover .mall-crumb .node.store { color: #555; }
+header:hover .mall-crumb .sep { color: #bbb; }
+header:hover .h-product-name { color: #111; }
+header:hover .h-product-price { color: #4a7fd4; }
+header:hover .h-btn {
+  border-color: rgba(0,0,0,0.15);
+  color: #555;
+  background: none;
+}
+header:hover .h-btn:hover {
+  border-color: #4a7fd4;
+  color: #4a7fd4;
+}
+header:hover .h-btn.cta {
+  background: #4a7fd4;
+  border-color: #4a7fd4;
+  color: #fff;
+}
+
+.mall-crumb,
+.h-product-name,
+.h-product-price,
+.h-btn {
+  transition: color 0.35s ease, background 0.35s ease, border-color 0.35s ease;
 }
 
 .h-brand {
@@ -642,6 +676,54 @@ body.scroll-free #panel {
   backdrop-filter: blur(20px);
   overflow-y: auto;
   padding: 32px 28px 48px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+/* ── PANEL LIGHT HOVER ── */
+#panel:hover {
+  background: rgba(250,249,246,0.98);
+  border-left-color: rgba(0,0,0,0.07);
+}
+#panel:hover .panel-progress { color: #aaa; }
+#panel:hover .panel-progress-bar { background: rgba(0,0,0,0.08); }
+#panel:hover .panel-section-label { color: #aaa; }
+#panel:hover .panel-img-area {
+  background: #f0ede8;
+  border-color: rgba(0,0,0,0.08);
+}
+#panel:hover .thumb { border-color: transparent; opacity: 0.55; }
+#panel:hover .thumb.active { opacity: 1; border-color: #4a7fd4; }
+#panel:hover .cw-swatch:hover:not(.active) { border-color: rgba(0,0,0,0.2); }
+#panel:hover .cw-swatch.active { border-color: #4a7fd4; }
+#panel:hover #cw-name { color: #888; }
+#panel:hover .sz {
+  border-color: rgba(0,0,0,0.1);
+  color: #555;
+  background: none;
+}
+#panel:hover .sz:hover { border-color: #4a7fd4; color: #4a7fd4; }
+#panel:hover .sz.sel { background: #4a7fd4; border-color: #4a7fd4; color: #fff; }
+#panel:hover .btn-add { background: #4a7fd4; }
+#panel:hover .btn-add:hover { background: #3a6fc4; }
+#panel:hover .btn-fav {
+  border-color: rgba(0,0,0,0.12);
+  color: #888;
+  background: none;
+}
+#panel:hover .btn-fav:hover { border-color: rgba(0,0,0,0.25); color: #444; }
+#panel:hover p[style] { color: #aaa !important; }
+#panel:hover #coming-soon-block > div {
+  background: rgba(74,127,212,0.06);
+  border-color: rgba(74,127,212,0.25);
+  color: #666;
+}
+
+.panel-img-area,
+.panel-section-label,
+.panel-progress,
+.btn-fav,
+#cw-name {
+  transition: color 0.4s ease, background 0.4s ease, border-color 0.4s ease;
 }
 
 /* product image area */
@@ -801,8 +883,10 @@ body.scroll-free #panel {
 ═══════════════════════════════════════════════ */
 #nav-widget {
   position: fixed;
-  bottom: 24px;
-  left: clamp(28px, 5vw, 72px);
+  top: calc(52px + clamp(20px, 4vh, 36px) + 52px + 10px);
+  right: clamp(20px, 3vw, 40px);
+  bottom: auto;
+  left: auto;
   z-index: 300;
   user-select: none;
   touch-action: none;
@@ -813,7 +897,7 @@ body.scroll-free #panel {
   box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px var(--accent);
 }
 #nav-widget.nw-free {
-  bottom: auto;
+  top: auto;
   right: auto;
 }
 
@@ -1121,7 +1205,13 @@ body.scroll-free #panel {
     <span class="sentence label"   data-idx="4" data-img="1" data-ch="2">The Story</span>
     <span class="sentence body"    data-idx="5" data-img="1" data-ch="2">1985. A rookie walks onto a court that wasn't ready for him. The shoe on his foot wasn't ready for the rules, either. They banned it. He wore it anyway. That's not a detail — that's the whole story.</span>
 
-
+    <!-- inline video: court atmosphere -->
+    <span class="sentence media" data-idx="6" data-ch="2">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/5319955/5319955-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">The court that refused to contain him</span>
+    </span>
 
     <span class="sentence body"    data-idx="7" data-img="2" data-ch="2">Pale Ivory is not a color that shouts. It holds. It carries. It lets the Psychic Blue trim do the talking — and when blue that specific finds ivory that quiet, the contrast isn't loud. It's inevitable.</span>
     <span class="sentence body"    data-idx="8" data-img="3" data-ch="2">Forty years later, this silhouette still reads as an argument. For originality. For the conviction to wear something before anyone else decides it's acceptable. The AJ1 has always been about that permission — the kind you give yourself.</span>
@@ -1141,6 +1231,14 @@ body.scroll-free #panel {
 
     <span class="sentence label"   data-idx="10" data-img="4" data-ch="3">Craft</span>
     <span class="sentence body"    data-idx="11" data-img="4" data-ch="3">Premium construction is a phrase the industry has worn smooth from overuse. Here it means something specific: materials chosen for how they age, not just how they photograph. The leather on this shoe will tell time differently than you expect.</span>
+
+    <!-- inline video: craft detail -->
+    <span class="sentence media" data-idx="12" data-ch="3">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/4065461/4065461-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">Premium materials · built to accumulate meaning</span>
+    </span>
 
     <span class="sentence body"    data-idx="13" data-img="5" data-ch="3">The encapsulated Air-Sole unit in the heel is the part you won't see and will never stop feeling. Cushioning that doesn't announce itself. That's the craft — the invisible work that makes everything else possible.</span>
     <span class="sentence break"   data-idx="14"></span>
@@ -1181,6 +1279,13 @@ body.scroll-free #panel {
     <span class="sentence label"   data-idx="23" data-img="0" data-ch="5">The Moment</span>
     <span class="sentence poster"  data-idx="24" data-img="0" data-ch="5">Don't<br>miss<br><span class="ac">it.</span></span>
 
+    <!-- inline video: city movement -->
+    <span class="sentence media" data-idx="25" data-ch="5">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">Notify me · be ready</span>
+    </span>
 
     <span class="sentence body"    data-idx="26" data-img="0" data-ch="5">This one doesn't wait. Sign in to your Nike Member account and get notified the moment it drops. The window is short. It always is.</span>
     <span class="sentence cta-sentence" data-idx="27">
@@ -1547,6 +1652,7 @@ goTo(0);
       widget.classList.add('nw-free');
       widget.style.left   = r.left + 'px';
       widget.style.top    = r.top  + 'px';
+      widget.style.right  = 'auto';
       widget.style.bottom = 'auto';
     }
     dragging = true;
