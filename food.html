@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copperline Brewing — Tap Room & Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════════
+   ROOT — warm brewery palette
+═══════════════════════════════════════════════ */
+:root {
+  --bg:       #08070a;
+  --ink:      #f0ece4;
+  --ink-2:    #8a8070;
+  --ink-3:    #3a3028;
+  --accent:   #c8902a;
+  --accent-d: rgba(200,144,42,0.12);
+  --border:   rgba(255,255,255,0.06);
+  --ui:       'Space Mono', monospace;
+  --disp:     'Barlow Condensed', sans-serif;
+}
+
+body { transition: background-color 1.2s ease; }
+
+/* Ch 1 · The House — deep dark, ember glow */
+/* Ch 2 · On Tap — warm amber, the beer itself */
+body.ch-2 { --bg: #0c0800; --ink: #f8f0d8; --ink-2: #b09060; --ink-3: #4a3818; --accent: #e8a830; --border: rgba(248,240,216,0.07); }
+/* Ch 3 · The Kitchen — slate green, earthy */
+body.ch-3 { --bg: #060a08; --ink: #e0ece4; --ink-2: #607860; --ink-3: #182418; --accent: #88b878; --border: rgba(224,236,228,0.07); }
+/* Ch 4 · The Cellar — copper brown, depth */
+body.ch-4 { --bg: #0a0806; --ink: #ecdcc8; --ink-2: #907860; --ink-3: #302018; --accent: #c07840; --border: rgba(236,220,200,0.07); }
+/* Ch 5 · Come In — warm concrete, late evening */
+body.ch-5 { --bg: #0a0a0c; --ink: #e8e4e0; --ink-2: #787470; --ink-3: #282420; --accent: #c8902a; --border: rgba(232,228,224,0.07); }
+
+/* ── theme-reactive elements ── */
+#image-layer::after, header, #panel,
+#nav-widget .nw-shell, #nav-widget .nw-cell-value, #nav-widget .nw-nav-pip-fill,
+#progress, .panel-progress-fill, .sentence.label, .sentence.break::before,
+.sentence.poster.active::before, .btn-reserve, .h-tagline,
+.cw-swatch.active, .ch-header-label, .ch-header-title {
+  transition-property: background-color, border-color, color, background;
+  transition-duration: 1.2s;
+  transition-timing-function: ease;
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER OVERLAY — fast-action info, hover to reveal
+   Lives entirely outside the node-to-node engine.
+═══════════════════════════════════════════════ */
+#header-overlay {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: rgba(248,246,240,0.98);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  backdrop-filter: blur(20px);
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 99;
+}
+header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.ho-cell { padding: 16px 24px; border-right: 1px solid rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px; }
+.ho-cell:last-child { border-right: none; }
+.ho-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: #aaa; }
+.ho-value { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; color: #222; line-height: 1.6; }
+.ho-value a { color: inherit; text-decoration: none; }
+.ho-value a:hover { color: #c8902a; }
+.ho-status-open { color: #4a8a4a; font-weight: 700; }
+.ho-btn { font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; background: #c8902a; border: none; color: #fff; padding: 8px 16px; border-radius: 2px; cursor: pointer; transition: background 0.15s; display: inline-block; text-decoration: none; width: fit-content; }
+.ho-btn:hover { background: #a87020; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--ui); font-size: 12px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; cursor: none; min-height: 100vh; }
+
+/* grain */
+body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9000; opacity: 0.055; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px; }
+
+/* ═══════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════ */
+#cursor { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width .14s, height .14s, border-radius .14s, background .14s; mix-blend-mode: difference; display: flex; align-items: center; justify-content: center; font-family: var(--ui); font-size: 20px; font-weight: 700; }
+#cursor::after { content: ''; opacity: 0; transition: opacity 0.14s; color: #000; }
+#cursor.big { width: 40px; height: 40px; }
+#cursor.nav-prev, #cursor.nav-next, #cursor.nav-top, #cursor.nav-bottom { width: 64px; height: 64px; }
+#cursor.nav-prev { background: var(--ink); }
+#cursor.nav-prev::after { content: '↑'; opacity: 1; }
+#cursor.nav-next { background: var(--accent); }
+#cursor.nav-next::after { content: '↓'; opacity: 1; }
+#cursor.nav-top { background: var(--ink); }
+#cursor.nav-top::after { content: '⤒'; opacity: 1; font-size: 18px; }
+#cursor.nav-bottom { background: var(--accent); }
+#cursor.nav-bottom::after { content: '⤓'; opacity: 1; font-size: 18px; }
+body.scroll-free #cursor { width: 6px; height: 6px; background: rgba(255,255,255,0.3); mix-blend-mode: normal; border: 1px solid rgba(255,255,255,0.15); }
+a, button, [data-idx], .cw-trigger, .cw-item { cursor: none; }
+
+/* ═══════════════════════════════════════════════
+   IMAGE LAYER
+═══════════════════════════════════════════════ */
+#image-layer { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+#image-layer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; opacity: 0; transform: scale(1.03); transition: opacity 0.55s ease, transform 6s ease; }
+#image-layer img.visible { opacity: 0.48; transform: scale(1); }
+#image-layer::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(8,7,4,0.88) 0%, rgba(8,7,4,0.50) 55%, rgba(8,7,4,0.12) 100%), linear-gradient(to top, rgba(8,7,4,0.70) 0%, transparent 45%); z-index: 1; }
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════ */
+#shell { position: relative; z-index: 10; display: grid; grid-template-columns: 1fr 340px; grid-template-rows: 52px 1fr; min-height: 100vh; }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+header { grid-column: 1 / -1; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid var(--border); background: rgba(8,7,4,0.85); backdrop-filter: blur(14px); position: sticky; top: 0; z-index: 100; transition: background 0.35s ease, border-color 0.35s ease; }
+header:hover { background: rgba(248,246,240,0.97); border-bottom-color: rgba(0,0,0,0.08); }
+header:hover .h-brand { color: #555; }
+header:hover .h-name { color: #111; }
+header:hover .h-tagline { color: #c8902a; }
+header:hover .h-hint { color: #bbb; opacity: 1; }
+
+.h-brand { font-family: var(--ui); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; transition: color .35s; }
+.h-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.h-name { font-family: var(--disp); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); transition: color .35s; }
+.h-tagline { font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em; color: var(--accent); transition: color .35s; }
+.h-hint { font-family: var(--ui); font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.18); opacity: 0.7; transition: color .35s, opacity .35s; }
+
+#progress { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--accent); z-index: 200; width: 0%; transition: width 0.25s ease; }
+
+/* ═══════════════════════════════════════════════
+   STREAM
+═══════════════════════════════════════════════ */
+#stream-col { grid-column: 1; grid-row: 2; padding: clamp(48px, 7vh, 80px) clamp(28px, 5vw, 72px); display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 52px); position: relative; }
+
+.sentence { display: block; position: relative; padding: 5px 0; transition: opacity 0.3s ease, color 0.3s ease; opacity: 0.12; }
+.sentence.poster { font-family: var(--disp); font-weight: 900; font-size: clamp(52px, 7.5vw, 100px); line-height: 0.88; letter-spacing: -0.03em; text-transform: uppercase; padding: 4px 0; }
+.sentence.poster .ac { color: var(--accent); }
+.sentence.poster .dim { color: var(--ink-2); font-weight: 300; font-style: italic; }
+.sentence.body { font-family: var(--disp); font-weight: 300; font-size: clamp(17px, 2.2vw, 24px); line-height: 1.45; letter-spacing: 0.005em; color: var(--ink-2); max-width: 560px; }
+.sentence.spec { font-family: var(--ui); font-size: 10px; letter-spacing: 0.06em; color: var(--ink-3); display: flex; align-items: baseline; gap: 12px; padding: 3px 0; }
+.sentence.spec .spec-key { text-transform: uppercase; letter-spacing: 0.12em; font-size: 8px; color: var(--ink-3); min-width: 96px; flex-shrink: 0; }
+.sentence.spec .spec-val { color: var(--ink-2); }
+.sentence.label { font-family: var(--ui); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); padding: 12px 0 4px; }
+.sentence.break { padding: 8px 0; }
+.sentence.break::before { content: ''; display: block; width: 28px; height: 2px; background: var(--accent); }
+.sentence.cta-sentence { padding: 24px 0 8px; }
+.sentence.active { opacity: 1; }
+.sentence.active.body { color: var(--ink); }
+.sentence.active.spec .spec-val { color: var(--ink); }
+.sentence.revealed { opacity: 0.38; }
+.sentence.revealed.body { color: var(--ink-2); }
+.sentence:hover:not(.active):not(.break):not(.label) { opacity: 0.65; }
+.sentence.poster.active::before { content: ''; position: absolute; left: -28px; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 2px; }
+
+/* chapter headers */
+.ch-header { display: block; text-align: center; padding: 64px 0 20px; opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+.ch-header.revealed { opacity: 1; }
+.ch-header-rule { width: 48px; height: 1px; background: linear-gradient(to right, transparent, var(--accent), transparent); margin: 0 auto 16px; transition: background 1.2s ease; }
+.ch-header-inner { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.ch-header-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); transition: color 1.2s ease; }
+.ch-header-num { font-family: var(--disp); font-weight: 900; font-size: clamp(52px, 8vw, 96px); line-height: 0.82; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.06); user-select: none; }
+.ch-header-title { font-family: var(--disp); font-weight: 900; font-size: clamp(22px, 3vw, 38px); letter-spacing: -0.02em; text-transform: uppercase; line-height: 1; color: var(--ink); transition: color 1.2s ease; }
+.ch-header-sub { font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; transition: color 1.2s ease; }
+
+/* ═══════════════════════════════════════════════
+   SCROLL TOGGLE
+═══════════════════════════════════════════════ */
+#scroll-toggle { position: absolute; top: clamp(20px, 4vh, 36px); right: clamp(20px, 3vw, 40px); z-index: 501; width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.28); backdrop-filter: blur(14px); font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.72); display: flex; align-items: center; justify-content: center; transition: color 0.2s, border-color 0.2s, background 0.25s, box-shadow 0.25s, top 0.4s cubic-bezier(0.4,0,0.2,1), right 0.4s cubic-bezier(0.4,0,0.2,1); line-height: 1.2; text-align: center; cursor: none; padding: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+#scroll-toggle:hover { color: #fff; border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.2); }
+#scroll-toggle.on { position: fixed; top: 20px; right: 20px; background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 0 1px var(--accent), 0 0 28px rgba(200,144,42,0.5); animation: scroll-pulse 3s ease-in-out infinite; }
+@keyframes scroll-pulse { 0%, 100% { box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(200,144,42,0.4); } 50% { box-shadow: 0 0 0 1px var(--accent), 0 0 36px rgba(200,144,42,0.7); } }
+@media (max-width: 760px) {
+  #scroll-toggle { position: fixed; top: calc(52px + 12px); right: 16px; left: auto; width: 44px; height: 44px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.5); font-size: 6px; cursor: auto; backdrop-filter: blur(8px); z-index: 501; }
+  #scroll-toggle.on { position: fixed; top: calc(52px + 12px); right: 16px; cursor: auto; }
+}
+
+/* scroll mode */
+body.scroll-free { overflow-y: auto !important; min-height: 100vh; }
+body.scroll-free #stream-col { justify-content: flex-start; min-height: auto; padding-top: 64px; padding-bottom: 80px; }
+body.scroll-free .sentence { opacity: 1 !important; pointer-events: none; }
+body.scroll-free .sentence.body { color: var(--ink-2) !important; }
+body.scroll-free .sentence.spec .spec-val { color: var(--ink-2) !important; }
+body.scroll-free .sentence.label { color: var(--accent) !important; }
+body.scroll-free .ch-header { opacity: 1 !important; }
+#scroll-lockout { display: none; position: fixed; top: 0; left: 0; bottom: 0; right: 340px; z-index: 490; cursor: none; }
+body.scroll-free #scroll-lockout { display: block; }
+@media (max-width: 760px) { #scroll-lockout { right: 0; cursor: auto; } }
+#scroll-toggle { pointer-events: auto !important; }
+body.scroll-free #nav-widget { opacity: 0.18; pointer-events: none; filter: grayscale(0.5); transition: opacity 0.4s ease, filter 0.4s ease; }
+@media (min-width: 761px) { #nav-widget { transition: opacity 0.4s ease, box-shadow 0.15s ease, right 0.3s ease; } #chapter-widget { transition: opacity 0.4s ease; } #panel:hover ~ #nav-widget, body:has(#panel:hover) #nav-widget, body:has(#panel:hover) #chapter-widget { opacity: 0; pointer-events: none; } }
+body.scroll-free #panel { pointer-events: auto; }
+
+/* ═══════════════════════════════════════════════
+   THE COUNTER — right panel
+═══════════════════════════════════════════════ */
+#panel { grid-column: 2; grid-row: 2; position: sticky; top: 52px; height: calc(100vh - 52px); display: flex; flex-direction: column; border-left: 1px solid var(--border); background: rgba(8,7,4,0.6); backdrop-filter: blur(20px); overflow-y: auto; padding: 28px 22px 48px; transition: background 0.4s ease, border-color 0.4s ease; }
+#panel:hover { background: rgba(248,246,238,0.98); border-left-color: rgba(0,0,0,0.07); }
+#panel:hover .panel-section-label { color: #aaa; }
+#panel:hover .panel-progress { color: #aaa; }
+#panel:hover .panel-progress-bar { background: rgba(0,0,0,0.08); }
+#panel:hover .panel-img-area { background: #ede8e0; border-color: rgba(0,0,0,0.08); }
+#panel:hover .tap-name { color: #222; }
+#panel:hover .tap-style { color: #888; }
+#panel:hover .tap-abv { color: #aaa; }
+#panel:hover .tap-row { border-color: rgba(0,0,0,0.07); }
+#panel:hover .tap-row.tap-active { background: rgba(200,144,42,0.08); border-color: rgba(200,144,42,0.25); }
+#panel:hover .btn-reserve { background: #c8902a; }
+#panel:hover .btn-reserve:hover { background: #a87020; }
+#panel:hover .btn-secondary { border-color: rgba(0,0,0,0.12); color: #666; }
+
+.panel-section-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; transition: color 0.4s ease; }
+.panel-progress { font-family: var(--ui); font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: center; gap: 8px; margin-bottom: 20px; transition: color 0.4s ease; }
+.panel-progress-bar { flex: 1; height: 1px; background: var(--border); position: relative; transition: background 0.4s ease; }
+.panel-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 0.3s ease; width: 0%; }
+
+.panel-img-area { position: relative; aspect-ratio: 4/3; background: #0f0d0a; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; flex-shrink: 0; transition: background 0.4s ease, border-color 0.4s ease; }
+.panel-img-area img { width: 100%; height: 100%; object-fit: cover; opacity: 0; position: absolute; inset: 0; transition: opacity 0.4s ease; }
+.panel-img-area img.vis { opacity: 0.9; }
+
+/* tap list */
+.tap-list { display: flex; flex-direction: column; margin-bottom: 20px; }
+.tap-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); transition: border-color 0.4s ease; }
+.tap-row:last-child { border-bottom: none; }
+.tap-row.tap-active { background: rgba(200,144,42,0.06); border-radius: 3px; padding: 7px 8px; margin: 0 -8px; border-bottom: 1px solid rgba(200,144,42,0.12); }
+.tap-left { display: flex; flex-direction: column; gap: 2px; }
+.tap-name { font-family: var(--ui); font-size: 9px; letter-spacing: 0.04em; color: var(--ink-2); transition: color 0.4s ease; }
+.tap-style { font-family: var(--ui); font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); transition: color 0.4s ease; }
+.tap-abv { font-family: var(--ui); font-size: 8px; color: var(--ink-3); transition: color 0.4s ease; }
+
+.btn-reserve { width: 100%; font-family: var(--disp); font-weight: 700; font-size: 16px; letter-spacing: 0.1em; text-transform: uppercase; background: var(--accent); color: #fff; border: none; padding: 16px; margin-bottom: 8px; position: relative; overflow: hidden; transition: background .15s; }
+.btn-reserve::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); transform: scaleX(0); transform-origin: left; transition: transform .3s ease; }
+.btn-reserve:hover { background: #a87020; }
+.btn-reserve:hover::after { transform: scaleX(1); }
+.btn-secondary { width: 100%; font-family: var(--ui); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; background: none; border: 1px solid var(--border); color: var(--ink-3); padding: 12px; margin-bottom: 20px; transition: all .15s; }
+.btn-secondary:hover { border-color: rgba(255,255,255,0.15); color: var(--ink-2); }
+
+/* ═══════════════════════════════════════════════
+   HUD
+═══════════════════════════════════════════════ */
+:root { --hud-bg: rgba(240,236,228,0.96); --hud-ink: #111; --hud-ink-2: #555; --hud-ink-3: #999; --hud-border: rgba(0,0,0,0.10); --hud-accent: #c8902a; }
+body.ch-2 { --hud-bg: rgba(248,240,216,0.97); --hud-ink: #2a1a00; --hud-ink-2: #7a5a20; --hud-ink-3: #c0a060; --hud-border: rgba(42,26,0,0.10); --hud-accent: #e8a830; }
+body.ch-3 { --hud-bg: rgba(224,240,228,0.96); --hud-ink: #0a180a; --hud-ink-2: #306030; --hud-ink-3: #80a880; --hud-border: rgba(10,24,10,0.10); --hud-accent: #4a8a4a; }
+body.ch-4 { --hud-bg: rgba(244,236,224,0.97); --hud-ink: #1a1008; --hud-ink-2: #604030; --hud-ink-3: #a08060; --hud-border: rgba(26,16,8,0.10); --hud-accent: #c07840; }
+body.ch-5 { --hud-bg: rgba(240,238,234,0.97); --hud-ink: #0c0a08; --hud-ink-2: #484440; --hud-ink-3: #909090; --hud-border: rgba(12,10,8,0.10); --hud-accent: #c8902a; }
+
+#nav-widget { position: fixed; top: 50%; right: 360px; bottom: auto; left: auto; transform: translateY(-50%); z-index: 300; user-select: none; touch-action: none; transition: opacity 0.4s ease, box-shadow 0.15s ease, right 0.3s ease; }
+#nav-widget.dragging { transition: none; box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--hud-accent); }
+#nav-widget.nw-free { top: auto; right: auto; transform: none; }
+.nw-shell { display: flex; flex-direction: column; align-items: center; background: var(--hud-bg); border: 1px solid var(--hud-border); backdrop-filter: blur(20px); border-radius: 12px; padding: 6px 4px; gap: 0; transition: background 1.2s ease, border-color 1.2s ease; box-shadow: 0 4px 32px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.12); min-width: 62px; }
+.nw-handle { display: flex; align-items: center; justify-content: center; width: 100%; padding: 6px 0 5px; border-bottom: 1px solid var(--hud-border); cursor: grab; flex-shrink: 0; }
+.nw-handle:active { cursor: grabbing; }
+.nw-drag-dots { display: flex; flex-direction: row; gap: 3px; opacity: 0.3; pointer-events: none; font-size: 10px; color: var(--hud-ink-2); line-height: 1; letter-spacing: 1px; }
+.nw-cell { display: flex; flex-direction: column; align-items: center; padding: 8px 10px; gap: 3px; border-bottom: 1px solid var(--hud-border); width: 100%; flex-shrink: 0; }
+.nw-cell-value { font-family: var(--ui); font-size: 14px; font-weight: 700; color: var(--hud-accent); line-height: 1; font-variant-numeric: tabular-nums; transition: color 1.2s ease; white-space: nowrap; }
+.nw-cell-label { font-family: var(--ui); font-size: 7px; color: var(--hud-ink-3); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1; white-space: nowrap; }
+.nw-divider { height: 1px; width: 70%; background: var(--hud-border); margin: 3px auto; flex-shrink: 0; }
+.nw-action-btn { display: flex; flex-direction: column; align-items: center; padding: 8px 10px; gap: 3px; border-bottom: 1px solid var(--hud-border); width: 100%; flex-shrink: 0; font-family: var(--ui); font-size: 12px; color: var(--hud-ink-2); background: none; border-top: none; border-left: none; border-right: none; transition: color 0.12s, background 0.12s; cursor: none; white-space: nowrap; border-radius: 0; }
+.nw-action-btn .nw-action-label { font-size: 7px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hud-ink-3); transition: color 0.12s; }
+.nw-action-btn:hover { color: var(--hud-accent); background: rgba(0,0,0,0.04); }
+.nw-action-btn:hover .nw-action-label { color: var(--hud-accent); }
+.nw-action-btn:last-of-type { border-bottom: none; }
+.nw-reserve-btn { display: none; }
+.nw-reserve-btn.visible { display: flex; }
+.nw-reserve-btn .nw-cell-value, .nw-reserve-btn .nw-action-label { color: var(--hud-accent); }
+.nw-reserve-btn:hover { background: var(--hud-accent) !important; }
+.nw-reserve-btn:hover .nw-cell-value, .nw-reserve-btn:hover .nw-action-label { color: #fff !important; }
+.nw-nav { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 4px; flex-shrink: 0; width: 100%; }
+.nw-btn-prev, .nw-btn-next { height: 42px; border-radius: 8px; background: rgba(0,0,0,0.05); border: 1px solid var(--hud-border); display: flex; align-items: center; justify-content: center; color: var(--hud-ink-2); font-family: var(--ui); font-size: 18px; transition: background 0.12s, transform 0.08s, color 0.12s; cursor: none; flex-shrink: 0; width: 100%; }
+.nw-btn-prev { border-radius: 8px 8px 4px 4px; }
+.nw-btn-next { border-radius: 4px 4px 8px 8px; }
+.nw-btn-prev:hover { background: rgba(0,0,0,0.08); color: var(--hud-ink); }
+.nw-btn-next:hover { background: var(--hud-accent); color: #fff; border-color: var(--hud-accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.92); }
+.nw-nav-pip { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; width: 100%; }
+.nw-nav-pip-bar { width: 2px; height: 40px; background: var(--hud-border); position: relative; overflow: hidden; border-radius: 1px; align-self: center; }
+.nw-nav-pip-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--hud-accent); height: 0%; width: 100%; transition: height 0.3s ease, background 1.2s ease; }
+.nw-nav-pip-pct { font-family: var(--ui); font-size: 7px; color: var(--hud-ink-3); letter-spacing: 0.06em; }
+
+/* toast */
+#toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--hud-bg); border: 1px solid var(--hud-border); box-shadow: 0 8px 40px rgba(0,0,0,0.3); backdrop-filter: blur(20px); border-radius: 10px; padding: 14px 24px 14px 18px; display: flex; align-items: center; gap: 14px; font-family: var(--ui); font-size: 10px; letter-spacing: 0.06em; color: var(--hud-ink); opacity: 0; pointer-events: none; z-index: 9000; transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; max-width: 90vw; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+#toast .toast-icon { font-size: 18px; flex-shrink: 0; }
+#toast .toast-body { display: flex; flex-direction: column; gap: 2px; }
+#toast .toast-title { font-weight: 700; color: var(--hud-ink); letter-spacing: 0.08em; text-transform: uppercase; font-size: 9px; }
+#toast .toast-sub { color: var(--hud-ink-2); font-size: 8px; letter-spacing: 0.05em; }
+#toast .toast-dismiss { margin-left: 8px; background: none; border: none; color: var(--hud-ink-3); font-family: var(--ui); font-size: 13px; cursor: pointer; padding: 2px 6px; flex-shrink: 0; transition: color 0.15s; }
+#toast .toast-dismiss:hover { color: var(--hud-ink); }
+
+/* credit */
+#wolfie-credit { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); font-family: var(--ui); font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.12); z-index: 50; pointer-events: none; white-space: nowrap; }
+
+/* mobile */
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
+  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 100px; }
+  .h-center { display: none; }
+  .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
+  .sentence.poster.active::before { left: -18px; }
+  #header-overlay { grid-template-columns: 1fr 1fr; }
+  .ho-cell:nth-child(2) { border-right: none; }
+  .ho-cell:nth-child(3) { border-top: 1px solid rgba(0,0,0,0.06); }
+  #nav-widget { position: fixed; bottom: 0; left: 0; right: 0; top: auto; transform: none; z-index: 300; }
+  #nav-widget.nw-free { top: auto; left: 0; right: 0; transform: none; }
+  .nw-shell { flex-direction: row; align-items: stretch; border-radius: 20px 20px 0 0; border-left: none; border-right: none; border-bottom: none; border-top: 1px solid var(--hud-border); min-width: unset; width: 100%; padding: 0; padding-bottom: env(safe-area-inset-bottom); gap: 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.18); }
+  .nw-handle, .nw-divider, .nw-nav-pip, .nw-nav-pip-pct { display: none !important; }
+  .nw-action-btn { flex: 1; border: none; border-right: 1px solid var(--hud-border); border-radius: 0; padding: 12px 8px 10px; font-size: 16px; gap: 4px; }
+  .nw-action-btn:last-of-type { border-right: none; }
+  .nw-nav { flex: 2; flex-direction: row; padding: 0; gap: 0; width: auto; align-items: stretch; }
+  .nw-btn-prev, .nw-btn-next { flex: 1; height: auto; min-height: 52px; font-size: 18px; border-radius: 0; border: none; border-left: 1px solid var(--hud-border); background: none; }
+  .nw-btn-next { border-radius: 0 20px 0 0; }
+  #toast { bottom: calc(60px + env(safe-area-inset-bottom)); }
+  #wolfie-credit { bottom: calc(68px + env(safe-area-inset-bottom)); }
+}
+
+/* chapter widget */
+#chapter-widget { position: fixed; top: calc(52px + 16px); left: 0; right: 340px; z-index: 301; display: flex; justify-content: center; pointer-events: none; user-select: none; }
+.cw-trigger { pointer-events: auto; display: flex; flex-direction: row; align-items: center; gap: 8px; padding: 7px 14px; background: rgba(10,9,6,0.88); border: 1px solid rgba(255,255,255,0.10); border-radius: 20px; backdrop-filter: blur(20px); box-shadow: 0 2px 16px rgba(0,0,0,0.45); cursor: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+.cw-trigger:hover { border-color: rgba(255,255,255,0.22); box-shadow: 0 4px 24px rgba(0,0,0,0.55); }
+.cw-trigger-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); line-height: 1; }
+.cw-trigger-sep { color: rgba(255,255,255,0.12); font-size: 10px; line-height: 1; }
+.cw-trigger-name { font-family: var(--ui); font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.82); line-height: 1; white-space: nowrap; letter-spacing: 0.06em; text-transform: uppercase; }
+.cw-trigger-arrow { font-size: 7px; color: rgba(255,255,255,0.28); transition: transform 0.2s ease; line-height: 1; margin-left: 2px; }
+#chapter-widget.open .cw-trigger-arrow { transform: rotate(180deg); }
+.cw-dropdown { pointer-events: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) scaleY(0.88); transform-origin: top center; background: rgba(10,9,6,0.96); border: 1px solid rgba(255,255,255,0.10); border-radius: 12px; backdrop-filter: blur(24px); box-shadow: 0 12px 40px rgba(0,0,0,0.6); padding: 6px; min-width: 200px; opacity: 0; transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.34,1.4,0.64,1); }
+#chapter-widget.open .cw-dropdown { opacity: 1; pointer-events: auto; transform: translateX(-50%) scaleY(1); }
+.cw-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: none; transition: background 0.1s ease; border: none; background: none; width: 100%; text-align: left; }
+.cw-item:hover { background: rgba(255,255,255,0.06); }
+.cw-item.active { background: rgba(255,255,255,0.04); }
+.cw-item-num { font-family: var(--ui); font-size: 8px; font-weight: 700; color: var(--accent); min-width: 18px; }
+.cw-item-name { font-family: var(--ui); font-size: 9px; color: rgba(255,255,255,0.65); letter-spacing: 0.04em; text-transform: uppercase; }
+.cw-item.active .cw-item-name { font-weight: 700; color: rgba(255,255,255,0.92); }
+.cw-item-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); margin-left: auto; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; }
+.cw-item.active .cw-item-dot { opacity: 1; }
+@media (max-width: 760px) { #chapter-widget { right: 0; top: calc(52px + 10px); } }
+
+/* auto-flow scan */
+.sentence.spec.auto-flow.active::after { content: ''; position: absolute; bottom: 2px; left: 0; height: 1px; background: var(--accent); animation: spec-scan 0.9s linear forwards; }
+@keyframes spec-scan { from { width: 0; } to { width: 100%; } }
+
+/* panel beckon */
+#panel.journey-end { animation: panel-beckon 1.8s ease-in-out 2; }
+@keyframes panel-beckon { 0% { box-shadow: none; } 30% { box-shadow: inset 0 0 0 1px var(--accent), 0 0 40px rgba(200,144,42,0.25); } 70% { box-shadow: inset 0 0 0 1px var(--accent), 0 0 40px rgba(200,144,42,0.25); } 100% { box-shadow: none; } }
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<div id="image-layer">
+  <img id="img-0" src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1600&q=80" alt="Copperline tap room">
+  <img id="img-1" src="https://images.unsplash.com/photo-1619229666372-3c26c399a4c8?w=1600&q=80" alt="Fresh pour">
+  <img id="img-2" src="https://images.unsplash.com/photo-1565608438257-fac3c27bdbad?w=1600&q=80" alt="Tap handles">
+  <img id="img-3" src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1600&q=80" alt="Kitchen — plated">
+  <img id="img-4" src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1600&q=80" alt="Kitchen — bread">
+  <img id="img-5" src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=1600&q=80" alt="Cellar — barrels">
+</div>
+
+<div id="shell">
+
+  <header>
+    <a href="/" class="h-brand">Copperline</a>
+    <div class="h-center">
+      <span class="h-name">Copperline Brewing</span>
+      <span class="h-tagline">Tap Room & Kitchen · Est. 2019</span>
+    </div>
+    <span class="h-hint">hover for hours & reservations</span>
+
+    <!-- Fast-action overlay — outside the node-to-node engine -->
+    <div id="header-overlay">
+      <div class="ho-cell">
+        <span class="ho-label">Hours Today</span>
+        <span class="ho-value">
+          <span class="ho-status-open">Open Now</span><br>
+          Tap Room until 11pm<br>
+          Kitchen until 9:30pm
+        </span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Find Us</span>
+        <span class="ho-value">
+          <a href="#">418 Furnace Street<br>Ground floor, west entrance</a>
+        </span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Contact</span>
+        <span class="ho-value">
+          <a href="tel:+15551234567">(555) 123-4567</a><br>
+          <a href="mailto:hello@copperline.com">hello@copperline.com</a>
+        </span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Reserve a Table</span>
+        <span class="ho-value">Walk-ins welcome.<br>Parties of 6 or more:</span>
+        <a href="#" class="ho-btn">Reserve Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="stream-col">
+
+    <button id="scroll-toggle" aria-label="Toggle free scroll" title="Toggle free scroll">scroll</button>
+
+    <!-- Ch 1 · The House -->
+    <span class="sentence label"  data-idx="0"  data-img="0" data-ch="1">Copperline Brewing · 418 Furnace Street</span>
+    <span class="sentence poster" data-idx="1"  data-img="0" data-ch="1">Come<br>as you <span class="ac">are.</span></span>
+    <span class="sentence body"   data-idx="2"  data-img="0" data-ch="1">We opened in 2019 in a converted foundry on Furnace Street. The copper vats were already here. We built around them. The bar is long and the light is warm and nobody is going to make you feel like you don't belong.</span>
+    <span class="sentence break"  data-idx="3"></span>
+
+    <!-- Ch 2 header -->
+    <div class="ch-header" data-ch="2">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">On Tap</span>
+        <span class="ch-header-num">02</span>
+        <span class="ch-header-title">What We Brewed</span>
+        <span class="ch-header-sub">Twelve handles · brewed in-house · rotates weekly</span>
+      </div>
+    </div>
+
+    <!-- Ch 2 · On Tap -->
+    <span class="sentence label"  data-idx="4"  data-img="1" data-ch="2">On Tap Now</span>
+    <span class="sentence poster" data-idx="5"  data-img="1" data-ch="2">Furnace<br><span class="dim">Street</span><br><span class="ac">Gold.</span></span>
+    <span class="sentence body"   data-idx="6"  data-img="1" data-ch="2">Our flagship. A golden ale brewed with Cascade and Centennial hops, dry-hopped for four days before it touches the tap. Honey and stone fruit on the nose. Finishes clean and fast. This is the one you order when you don't know what to order.</span>
+    <span class="sentence body"   data-idx="7"  data-img="2" data-ch="2">The Dark Foundry Stout has been on tap every winter since we opened. Roasted barley, oat adjunct, a long cold conditioning in the cellar. It pours black with a tan head and tastes like coffee you'd actually pay for. 6.8% ABV. Not a meal, but close.</span>
+    <span class="sentence body"   data-idx="8"  data-img="2" data-ch="2">We rotate eight seasonal handles. Right now: a tart cherry wheat from last summer's harvest, a hazy IPA we're calling Copperhead that got out of hand in the best way, and a pilsner so clean it makes you suspicious. The board above the bar is always current.</span>
+    <span class="sentence break"  data-idx="9"></span>
+
+    <!-- Ch 3 header -->
+    <div class="ch-header" data-ch="3">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">The Kitchen</span>
+        <span class="ch-header-num">03</span>
+        <span class="ch-header-title">What We Cook</span>
+        <span class="ch-header-sub">Honest food · sourced close · made here</span>
+      </div>
+    </div>
+
+    <!-- Ch 3 · The Kitchen -->
+    <span class="sentence label"  data-idx="10" data-img="3" data-ch="3">The Kitchen</span>
+    <span class="sentence body"   data-idx="11" data-img="3" data-ch="3">The pretzel is the thing. Two feet long, baked in the wood-fired oven out back, served with a whole-grain mustard we make in-house and a beer cheese that uses whatever's on tap that week. It sounds simple. People order a second one.</span>
+    <span class="sentence body"   data-idx="12" data-img="4" data-ch="3">The smash burger is beef from Halcyon Farm, twenty miles east. Two patties, smashed on the flat top, American cheese, house pickles, a sauce we've never written down. It comes with fries that are thicker than they should be and better for it. We serve it until the kitchen closes.</span>
+    <span class="sentence body"   data-idx="13" data-img="3" data-ch="3">There's a rotating board of small plates. Tonight: roasted bone marrow with toasted sourdough, a charcuterie of house-cured meats, blistered shishitos with smoked aioli. The board changes when the sourcing changes. What's on it is what's right.</span>
+    <span class="sentence break"  data-idx="14"></span>
+
+    <!-- Ch 4 header -->
+    <div class="ch-header" data-ch="4">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">The Cellar</span>
+        <span class="ch-header-num">04</span>
+        <span class="ch-header-title">Aged & Reserved</span>
+        <span class="ch-header-sub">Barrel program · limited bottles · cellar releases</span>
+      </div>
+    </div>
+
+    <!-- Ch 4 · The Cellar -->
+    <span class="sentence label"  data-idx="15" data-img="5" data-ch="4">The Barrel Program</span>
+    <span class="sentence body"   data-idx="16" data-img="5" data-ch="4">We have forty-eight barrels in the cellar. Bourbon barrels from a distillery in Kentucky, wine barrels from the valley, a handful of rye whiskey casks we got from a friend. Everything down there is patient. Nothing comes up until it's ready.</span>
+    <span class="sentence spec auto-flow" data-idx="17" data-ch="4"><span class="spec-key">Current Release</span><span class="spec-val">Foundry Reserve Barrel Stout · 2022 vintage · bourbon oak · 11.4% ABV</span></span>
+    <span class="sentence spec auto-flow" data-idx="18" data-ch="4"><span class="spec-key">Availability</span><span class="spec-val">On tap · 10oz pours only · limited bottles at the bar</span></span>
+    <span class="sentence spec auto-flow" data-idx="19" data-ch="4"><span class="spec-key">Next Release</span><span class="spec-val">Cherry Lambic · spring 2025 · estate sour cherries · 24 months</span></span>
+    <span class="sentence spec auto-flow" data-idx="20" data-ch="4"><span class="spec-key">Mailing List</span><span class="spec-val">Barrel releases go to the list first — sign up at the bar</span></span>
+    <span class="sentence break"  data-idx="21"></span>
+
+    <!-- Ch 5 header -->
+    <div class="ch-header" data-ch="5">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">The Place</span>
+        <span class="ch-header-num">05</span>
+        <span class="ch-header-title">Come In</span>
+        <span class="ch-header-sub">418 Furnace St · open daily · kitchen closes at 9:30</span>
+      </div>
+    </div>
+
+    <!-- Ch 5 · Come In -->
+    <span class="sentence label"  data-idx="22" data-img="0" data-ch="5">Tonight</span>
+    <span class="sentence poster" data-idx="23" data-img="0" data-ch="5">Tonight<br>is a good<br><span class="ac">night.</span></span>
+    <span class="sentence body"   data-idx="24" data-img="0" data-ch="5">Walk-ins always welcome at the bar and the tap room tables. For groups of six or more, a reservation helps us take care of you properly. Call, email, or hover the header. We'll sort it out.</span>
+    <span class="sentence cta-sentence" data-idx="25"></span>
+
+  </main>
+
+  <aside id="panel">
+
+    <div class="panel-progress">
+      <span id="panel-pct">0%</span>
+      <div class="panel-progress-bar">
+        <div class="panel-progress-fill" id="panel-fill"></div>
+      </div>
+      <span>Read</span>
+    </div>
+
+    <div class="panel-img-area">
+      <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&q=80" alt="Copperline" class="vis" id="panel-img-main">
+    </div>
+
+    <p class="panel-section-label">On Tap Tonight</p>
+    <div class="tap-list">
+      <div class="tap-row tap-active">
+        <div class="tap-left">
+          <span class="tap-name">Furnace Street Gold</span>
+          <span class="tap-style">Golden Ale</span>
+        </div>
+        <span class="tap-abv">4.8%</span>
+      </div>
+      <div class="tap-row">
+        <div class="tap-left">
+          <span class="tap-name">Dark Foundry Stout</span>
+          <span class="tap-style">Oat Stout</span>
+        </div>
+        <span class="tap-abv">6.8%</span>
+      </div>
+      <div class="tap-row">
+        <div class="tap-left">
+          <span class="tap-name">Copperhead Hazy</span>
+          <span class="tap-style">Hazy IPA</span>
+        </div>
+        <span class="tap-abv">7.2%</span>
+      </div>
+      <div class="tap-row">
+        <div class="tap-left">
+          <span class="tap-name">Tart Cherry Wheat</span>
+          <span class="tap-style">Wheat Ale · Limited</span>
+        </div>
+        <span class="tap-abv">5.1%</span>
+      </div>
+      <div class="tap-row">
+        <div class="tap-left">
+          <span class="tap-name">Foundry Reserve</span>
+          <span class="tap-style">Barrel Stout · 10oz only</span>
+        </div>
+        <span class="tap-abv">11.4%</span>
+      </div>
+    </div>
+
+    <button class="btn-reserve" onclick="showToast()">Reserve a Table →</button>
+    <button class="btn-secondary">Join the Barrel List</button>
+
+    <p style="font-family:var(--ui);font-size:8px;letter-spacing:.06em;color:var(--ink-3);line-height:1.9;border-top:1px solid var(--border);padding-top:16px">
+      418 Furnace St · Ground floor, west entrance<br>
+      Open daily 3pm – 11pm · Kitchen until 9:30pm<br>
+      <span style="color:var(--accent)">Walk-ins welcome at the bar.</span>
+    </p>
+
+  </aside>
+
+</div>
+
+<div id="scroll-lockout"></div>
+
+<!-- ══ CHAPTER WIDGET ══ -->
+<div id="chapter-widget">
+  <button class="cw-trigger" id="cw-trigger" aria-haspopup="true" aria-expanded="false">
+    <span class="cw-trigger-label">Chapter</span>
+    <span class="cw-trigger-sep">·</span>
+    <span class="cw-trigger-name" id="cw-current-name">The House</span>
+    <span class="cw-trigger-arrow">▾</span>
+  </button>
+  <div class="cw-dropdown" role="menu" id="cw-dropdown">
+    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">The House</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">On Tap</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">The Kitchen</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">The Cellar</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">Come In</span><span class="cw-item-dot"></span></button>
+  </div>
+</div>
+
+<!-- ══ NAV WIDGET ══ -->
+<div id="nav-widget">
+  <div class="nw-shell">
+    <div class="nw-handle" id="nw-handle"><div class="nw-drag-dots">· · ·</div></div>
+    <div class="nw-divider"></div>
+    <button class="nw-action-btn" onclick="focusPanel()" title="The counter">
+      <span class="nw-cell-value">⊡</span>
+      <span class="nw-action-label">Counter</span>
+    </button>
+    <button class="nw-action-btn nw-reserve-btn" id="nw-reserve-btn" onclick="showToast()" title="Reserve a table">
+      <span class="nw-cell-value">⊕</span>
+      <span class="nw-action-label">Reserve</span>
+    </button>
+    <div class="nw-divider"></div>
+    <div class="nw-nav">
+      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous">↑</button>
+      <div class="nw-nav-pip">
+        <div class="nw-nav-pip-bar"><div class="nw-nav-pip-fill" id="nw-nav-pip"></div></div>
+        <span class="nw-nav-pip-pct" id="nw-counter">01 / 10</span>
+      </div>
+      <button class="nw-btn-next" id="nw-next" aria-label="Next">↓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast">
+  <span class="toast-icon">🍺</span>
+  <div class="toast-body">
+    <span class="toast-title">We'll hold a table</span>
+    <span class="toast-sub">Call (555) 123-4567 or email hello@copperline.com · parties of 6+</span>
+  </div>
+  <button class="toast-dismiss" onclick="dismissToast()">✕</button>
+</div>
+
+<div id="wolfie-credit">copperline brewing · 418 furnace st · open nightly</div>
+
+<script>
+// ══ CURSOR ══
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+document.querySelectorAll('a,button,[data-idx]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// ══ IMAGE LAYER ══
+const imgs = document.querySelectorAll('#image-layer img');
+let currentImg = 0;
+function setImage(n) {
+  if (n === currentImg) return;
+  imgs[currentImg]?.classList.remove('visible');
+  imgs[n]?.classList.add('visible');
+  currentImg = n;
+  const panelImg = document.getElementById('panel-img-main');
+  if (imgs[n]) panelImg.src = imgs[n].src;
+}
+imgs[0].classList.add('visible');
+
+// ══ SENTENCE ENGINE ══
+const all = Array.from(document.querySelectorAll('[data-idx]'));
+const navigable = all.filter(el =>
+  !el.classList.contains('break') &&
+  !el.classList.contains('label') &&
+  !el.classList.contains('cta-sentence')
+);
+let current = 0;
+
+function goTo(n, opts) {
+  const noScroll = opts && opts.noScroll;
+  n = Math.max(0, Math.min(navigable.length - 1, n));
+
+  navigable.forEach((el, i) => {
+    el.classList.remove('active', 'revealed');
+    if (i < n) el.classList.add('revealed');
+    else if (i === n) el.classList.add('active');
+  });
+
+  all.forEach(el => {
+    if (el.classList.contains('break') || el.classList.contains('label') || el.classList.contains('cta-sentence')) {
+      const idx = parseInt(el.dataset.idx);
+      const navBefore = navigable.filter(m => parseInt(m.dataset.idx) < idx);
+      if (navBefore.length > 0 && navBefore[navBefore.length-1].classList.contains('revealed')) {
+        el.classList.add('revealed');
+      } else if (navigable[n] && parseInt(navigable[n].dataset.idx) >= idx - 1) {
+        el.classList.add('revealed');
+      }
+      el.classList.remove('active');
+    }
+  });
+
+  const activeEl = navigable[n];
+  if (activeEl && activeEl.dataset.img !== undefined) setImage(parseInt(activeEl.dataset.img));
+  current = n;
+  if (!noScroll) activeEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  document.getElementById('nw-counter').textContent =
+    String(n + 1).padStart(2,'0') + ' / ' + String(navigable.length).padStart(2,'0');
+
+  const pct = Math.round((n / (navigable.length - 1)) * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('panel-fill').style.width = pct + '%';
+  document.getElementById('panel-pct').textContent = pct + '%';
+  document.getElementById('nw-nav-pip').style.height = pct + '%';
+
+  const nearEnd = n >= navigable.length - 3;
+  const nwReserve = document.getElementById('nw-reserve-btn');
+  if (nearEnd) nwReserve.classList.add('visible'); else nwReserve.classList.remove('visible');
+
+  scheduleAutoFlow(n);
+  if (n === navigable.length - 1) triggerPanelBeckon();
+
+  const ch = parseInt(activeEl?.dataset.ch || 1);
+  document.body.className = document.body.className.replace(/\bch-\d\b/g, '').trim();
+  if (ch > 1) document.body.classList.add('ch-' + ch);
+  document.querySelectorAll('.ch-header').forEach(g => {
+    g.classList.toggle('revealed', parseInt(g.dataset.ch) <= ch);
+  });
+  updateChapterWidget(ch);
+}
+
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+
+// ── auto-flow ──
+let autoFlowTimer = null;
+function clearAutoFlow() { if (autoFlowTimer) { clearTimeout(autoFlowTimer); autoFlowTimer = null; } }
+function scheduleAutoFlow(n) {
+  clearAutoFlow();
+  const el = navigable[n];
+  if (!el || !el.classList.contains('auto-flow')) return;
+  if (navigable[n + 1]) autoFlowTimer = setTimeout(() => goTo(n + 1), 950);
+}
+
+// ── panel beckon ──
+function triggerPanelBeckon() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('journey-end');
+  void panel.offsetWidth;
+  panel.classList.add('journey-end');
+  panel.addEventListener('animationend', () => panel.classList.remove('journey-end'), { once: true });
+}
+
+// ══ CHAPTER WIDGET ══
+const CH_NAMES = ['','The House','On Tap','The Kitchen','The Cellar','Come In'];
+const CH_FIRST = {};
+navigable.forEach((el, i) => { const ch = parseInt(el.dataset.ch || 1); if (!(ch in CH_FIRST)) CH_FIRST[ch] = i; });
+
+function updateChapterWidget(ch) {
+  document.getElementById('cw-current-name').textContent = CH_NAMES[ch] || 'Ch.' + ch;
+  document.querySelectorAll('.cw-item').forEach(item => item.classList.toggle('active', parseInt(item.dataset.ch) === ch));
+}
+
+(function initChapterWidget() {
+  const widget = document.getElementById('chapter-widget');
+  const trigger = document.getElementById('cw-trigger');
+  let open = false;
+  function closeDropdown() { open = false; widget.classList.remove('open'); trigger.setAttribute('aria-expanded','false'); }
+  trigger.addEventListener('click', e => { e.stopPropagation(); if (open) { closeDropdown(); } else { open = true; widget.classList.add('open'); trigger.setAttribute('aria-expanded','true'); } });
+  document.getElementById('cw-dropdown').querySelectorAll('.cw-item').forEach(item => {
+    item.addEventListener('click', e => { e.stopPropagation(); closeDropdown(); goTo(CH_FIRST[parseInt(item.dataset.ch)] ?? 0); });
+  });
+  document.addEventListener('click', () => { if (open) closeDropdown(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && open) closeDropdown(); });
+  updateChapterWidget(1);
+})();
+
+document.getElementById('nw-next').addEventListener('click', next);
+document.getElementById('nw-prev').addEventListener('click', () => { clearAutoFlow(); prev(); });
+navigable.forEach((el, i) => { el.addEventListener('click', () => goTo(i)); });
+
+// ── keyboard ──
+document.addEventListener('keydown', e => {
+  if (document.body.classList.contains('scroll-free')) return;
+  if (e.key === 'ArrowDown' || e.key === 'j' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
+});
+
+// ── scroll wheel ──
+let lastWheel = 0;
+document.getElementById('stream-col').addEventListener('wheel', e => {
+  if (document.body.classList.contains('scroll-free')) return;
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastWheel < 550) return;
+  lastWheel = now;
+  e.deltaY > 0 ? next() : prev();
+}, { passive: false });
+
+// ── swipe ──
+let touchY = 0;
+document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  if (document.body.classList.contains('scroll-free')) return;
+  const dy = touchY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) { dy > 0 ? next() : prev(); }
+}, { passive: true });
+
+goTo(0);
+
+// ══ SCROLL TOGGLE ══
+(function initScrollToggle() {
+  const btn = document.getElementById('scroll-toggle');
+  const lockout = document.getElementById('scroll-lockout');
+  let scrollFree = false;
+
+  function enterScrollFree() {
+    scrollFree = true; btn.classList.add('on');
+    document.body.classList.add('scroll-free'); document.body.style.overflow = 'auto';
+    all.forEach(el => { el.classList.add('revealed'); el.classList.remove('active'); });
+    document.querySelectorAll('.ch-header').forEach(g => g.classList.add('revealed'));
+    ALL_NAV_CLASSES.forEach(c => cursor.classList.remove(c));
+  }
+  function exitScrollFree() {
+    scrollFree = false; btn.classList.remove('on');
+    document.body.classList.remove('scroll-free'); document.body.style.overflow = '';
+    goTo(current, { noScroll: true });
+  }
+  btn.addEventListener('click', () => { if (scrollFree) exitScrollFree(); else enterScrollFree(); });
+  lockout.addEventListener('click', () => { if (scrollFree) exitScrollFree(); });
+})();
+
+// ══ WIDGET DRAG ══
+(function initWidgetDrag() {
+  const widget = document.getElementById('nav-widget');
+  const handle = document.getElementById('nw-handle');
+  let dragging = false, sx, sy, wl, wt;
+  function startDrag(cx, cy) {
+    if (!widget.classList.contains('nw-free')) {
+      const r = widget.getBoundingClientRect();
+      widget.classList.add('nw-free');
+      widget.style.left = r.left + 'px'; widget.style.top = r.top + 'px';
+      widget.style.right = 'auto'; widget.style.bottom = 'auto';
+    }
+    dragging = true; sx = cx; sy = cy;
+    wl = parseFloat(widget.style.left) || 0; wt = parseFloat(widget.style.top) || 0;
+    widget.classList.add('dragging');
+  }
+  function moveDrag(cx, cy) {
+    if (!dragging) return;
+    const maxL = window.innerWidth - widget.offsetWidth - 8;
+    const maxT = window.innerHeight - widget.offsetHeight - 8;
+    widget.style.left = Math.max(8, Math.min(maxL, wl + cx - sx)) + 'px';
+    widget.style.top  = Math.max(8, Math.min(maxT, wt + cy - sy)) + 'px';
+  }
+  function endDrag() { if (!dragging) return; dragging = false; widget.classList.remove('dragging'); }
+  handle.addEventListener('mousedown', e => { if (e.button !== 0) return; e.preventDefault(); startDrag(e.clientX, e.clientY); });
+  document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', endDrag);
+  handle.addEventListener('touchstart', e => { const t = e.touches[0]; startDrag(t.clientX, t.clientY); }, { passive: true });
+  document.addEventListener('touchmove', e => { if (!dragging) return; e.preventDefault(); const t = e.touches[0]; moveDrag(t.clientX, t.clientY); }, { passive: false });
+  document.addEventListener('touchend', endDrag, { passive: true });
+})();
+
+// ══ HOTSPOT ZONES ══
+const streamCol = document.getElementById('stream-col');
+const ALL_NAV_CLASSES = ['nav-prev', 'nav-next', 'nav-top', 'nav-bottom'];
+function getHotspotZone(clientY) {
+  const pct = clientY / window.innerHeight;
+  if (pct < 0.10) return 'top';
+  if (pct < 0.33) return 'prev';
+  if (pct < 0.67) return null;
+  if (pct < 0.90) return 'next';
+  return 'bottom';
+}
+function clearNavCursor() { ALL_NAV_CLASSES.forEach(c => cursor.classList.remove(c)); }
+streamCol.addEventListener('mousemove', e => {
+  if (document.body.classList.contains('scroll-free')) return;
+  if (e.target.closest('.sentence')) { clearNavCursor(); return; }
+  const zone = getHotspotZone(e.clientY);
+  clearNavCursor();
+  if (zone === 'top')    cursor.classList.add('nav-top');
+  if (zone === 'prev')   cursor.classList.add('nav-prev');
+  if (zone === 'next')   cursor.classList.add('nav-next');
+  if (zone === 'bottom') cursor.classList.add('nav-bottom');
+});
+streamCol.addEventListener('mouseleave', clearNavCursor);
+streamCol.addEventListener('click', e => {
+  if (document.body.classList.contains('scroll-free')) return;
+  if (e.target.closest('.sentence')) return;
+  const zone = getHotspotZone(e.clientY);
+  if (zone === 'top')    goTo(0);
+  if (zone === 'prev')   prev();
+  if (zone === 'next')   next();
+  if (zone === 'bottom') goTo(navigable.length - 1);
+});
+
+// ══ PANEL FOCUS ══
+function focusPanel() {
+  const panel = document.getElementById('panel');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  panel.style.borderColor = 'var(--accent)';
+  setTimeout(() => { panel.style.borderColor = ''; }, 700);
+}
+
+// ══ TOAST ══
+let toastTimer = null;
+function showToast() {
+  document.getElementById('toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(dismissToast, 6000);
+}
+function dismissToast() { document.getElementById('toast').classList.remove('show'); }
+</script>
+
+</body>
+</html>
