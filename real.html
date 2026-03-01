@@ -604,6 +604,44 @@ body.ch-5 { --hud-accent: #386028; }
   .cw-dropdown { min-width: 160px; }
   .panel-gallery-grid { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ── GRID OVERLAY ── */
+#grid-overlay {
+  position: fixed; inset: 0;
+  z-index: 4000;
+  background: #000;
+  display: none; opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#grid-overlay.open { display: block; opacity: 1; }
+#grid-canvas {
+  position: absolute; inset: 0;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+#grid-canvas.grabbing { cursor: grabbing; }
+#grid-hud {
+  position: absolute; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(6,6,6,0.96);
+  z-index: 10; pointer-events: auto;
+}
+#grid-label {
+  font-family: var(--ui);
+  font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent); opacity: 0.8;
+}
+#grid-close {
+  font-family: var(--ui); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; background: none;
+  border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4);
+  padding: 5px 14px; border-radius: 2px; transition: all .15s;
+  cursor: pointer;
+}
+#grid-close:hover { color: var(--accent); border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -754,6 +792,7 @@ body.ch-5 { --hud-accent: #386028; }
       <img class="thumb" src="https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=200&q=75" alt="Pool" onclick="setThumb(5,this)">
       <img class="thumb" src="https://images.unsplash.com/photo-1571055107559-3e67626fa8be?w=200&q=75" alt="View" onclick="setThumb(6,this)">
       <img class="thumb" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=75" alt="Detail" onclick="setThumb(7,this)">
+      <img class="thumb" src="" alt="All photos" onclick="openGrid()" style="background:rgba(200,169,106,0.08);border:1px solid rgba(200,169,106,0.2);display:flex;align-items:center;justify-content:center;" onerror="this.style.background='rgba(200,169,106,0.08)'">
     </div>
 
     <div id="inquiry-block">
@@ -798,6 +837,7 @@ body.ch-5 { --hud-accent: #386028; }
   <div class="nw-shell">
     <div class="nw-handle" id="nw-handle"><div class="nw-drag-dots">· · ·</div></div>
     <div class="nw-divider"></div>
+    <button class="nw-action-btn" onclick="openGrid()" title="All photos"><span class="nw-cell-value">▦</span><span class="nw-action-label">Photos</span></button>
     <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Property details"><span class="nw-cell-value">⊡</span><span class="nw-action-label">Details</span></button>
     <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Request showing"><span class="nw-cell-value">⊕</span><span class="nw-action-label">Showing</span></button>
     <div class="nw-divider"></div>
@@ -970,6 +1010,7 @@ navigable.forEach((el, i) => { el.addEventListener('click', () => goTo(i)); });
 
 // KEYBOARD
 document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('open')) { if(e.key==='Escape') closeGrid(); return; }
   if (document.body.classList.contains('scroll-free')) return;
   if (e.key === 'ArrowDown' || e.key === 'j' || e.key === ' ') { e.preventDefault(); next(); }
   if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
@@ -978,6 +1019,7 @@ document.addEventListener('keydown', e => {
 // WHEEL
 let lastWheel = 0;
 document.getElementById('stream-col').addEventListener('wheel', e => {
+  if (document.getElementById('grid-overlay').classList.contains('open')) return;
   if (document.body.classList.contains('scroll-free')) return;
   e.preventDefault();
   const now = Date.now();
@@ -1182,6 +1224,256 @@ function showToast() {
   toastTimer = setTimeout(() => dismissToast(), 5000);
 }
 function dismissToast() { document.getElementById('toast').classList.remove('show'); }
+
+
+// ── GRID OVERLAY — canvas photo wall ──
+const GRID_IMGS = [
+  { src:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80', label:'Facade · Dusk' },
+  { src:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80', label:'Rear Elevation' },
+  { src:'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80', label:'Living Room' },
+  { src:'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80', label:'Kitchen' },
+  { src:'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80', label:'Primary Suite' },
+  { src:'https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800&q=80', label:'Pool · Grounds' },
+  { src:'https://images.unsplash.com/photo-1571055107559-3e67626fa8be?w=800&q=80', label:'Ridge View' },
+  { src:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', label:'Material Detail' },
+  { src:'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80', label:'Exterior · Morning' },
+  { src:'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800&q=80', label:'Entry Court' },
+  { src:'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80', label:'Kitchen · Island' },
+  { src:'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=800&q=80', label:'Dining' },
+  { src:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80', label:'Bath · Primary' },
+  { src:'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=800&q=80', label:'Bath · Detail' },
+  { src:'https://images.unsplash.com/photo-1558882224-dda166733046?w=800&q=80', label:'Pool · Evening' },
+  { src:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80', label:'Facade · Aerial' },
+  { src:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80', label:'Terrace' },
+  { src:'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=800&q=80', label:'Bedroom · Guest' },
+  { src:'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=800&q=80', label:'Canyon View · Night' },
+  { src:'https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80', label:'Hallway' },
+  { src:'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=800&q=80', label:'Study' },
+  { src:'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800&q=80', label:'Garden · Path' },
+  { src:'https://images.unsplash.com/photo-1464146072230-91cabc968266?w=800&q=80', label:'Sunrise · Deck' },
+  { src:'https://images.unsplash.com/photo-1504615755583-2916b52192a3?w=800&q=80', label:'Detail · Concrete' },
+];
+
+const GCOLS = 4, GTILE = 280, GGAP = 4, GLBAR = 36;
+let gC, gCtx, gLoaded = new Map();
+let gOx=0, gOy=0, gVx=0, gVy=0, gSc=1;
+let gDrag=false, gMoved=false, gX0, gY0, gOx0, gOy0;
+let gPinch=null, gSc0=1, gHov=-1, gRaf=null, gBound=false;
+
+function gW(){ return GCOLS*(GTILE+GGAP)-GGAP; }
+function gH(){ return Math.ceil(GRID_IMGS.length/GCOLS)*(GTILE+GGAP)-GGAP; }
+
+function gClamp(){
+  const cw=gC.width, ch=gC.height, tw=gW()*gSc, th=gH()*gSc, p=48;
+  gOx = tw<=cw ? (cw-tw)/2 : Math.min(p, Math.max(cw-tw-p, gOx));
+  gOy = th<=ch ? (ch-th)/2 : Math.min(p, Math.max(ch-th-p, gOy));
+}
+
+function gLoad(src){
+  if (gLoaded.has(src)) return;
+  gLoaded.set(src, null);
+  const img = new Image(); img.crossOrigin='anonymous';
+  img.onload  = () => gLoaded.set(src, img);
+  img.onerror = () => gLoaded.set(src, false);
+  img.src = src;
+}
+
+function gDraw(){
+  const cw=gC.width, ch=gC.height;
+  gCtx.fillStyle='#050505'; gCtx.fillRect(0,0,cw,ch);
+  gCtx.save();
+  gCtx.translate(gOx, gOy);
+  gCtx.scale(gSc, gSc);
+
+  const s=GTILE+GGAP;
+  const vx0=-gOx/gSc, vy0=-gOy/gSc;
+  const vx1=vx0+cw/gSc, vy1=vy0+ch/gSc;
+  const c0=Math.max(0,Math.floor(vx0/s)), c1=Math.min(GCOLS-1,Math.floor(vx1/s));
+  const r0=Math.max(0,Math.floor(vy0/s)), r1=Math.min(Math.ceil(GRID_IMGS.length/GCOLS),Math.floor(vy1/s));
+
+  for (let r=r0; r<=r1; r++) {
+    for (let c=c0; c<=c1; c++) {
+      const idx=r*GCOLS+c;
+      if (idx>=GRID_IMGS.length) break;
+      const item=GRID_IMGS[idx];
+      const tx=c*s, ty=r*s;
+      gLoad(item.src);
+
+      const imgH=GTILE-GLBAR;
+      const hover=idx===gHov;
+      gCtx.save();
+      gCtx.beginPath(); gCtx.rect(tx,ty,GTILE,GTILE); gCtx.clip();
+      gCtx.fillStyle=hover?'#1a1714':'#0d0c0a'; gCtx.fillRect(tx,ty,GTILE,GTILE);
+
+      const img=gLoaded.get(item.src);
+      if (img && img.complete) {
+        const iw=img.naturalWidth, ih=img.naturalHeight;
+        const ir=iw/ih, ar=GTILE/imgH;
+        let dw,dh,dx,dy;
+        if(ir>ar){dh=imgH;dw=ir*imgH;dx=tx+(GTILE-dw)/2;dy=ty;}
+        else{dw=GTILE;dh=GTILE/ir;dx=tx;dy=ty+(imgH-dh)/2;}
+        gCtx.globalAlpha=hover?0.55:0.85;
+        gCtx.drawImage(img,dx,dy,dw,dh);
+        gCtx.globalAlpha=1;
+      } else {
+        const t=Date.now()/1000;
+        gCtx.fillStyle=`rgba(200,169,106,${0.03+0.02*Math.sin(t*1.2+idx)})`;
+        gCtx.fillRect(tx,ty,GTILE,imgH);
+      }
+
+      // label bar
+      gCtx.fillStyle='#080806'; gCtx.fillRect(tx,ty+imgH,GTILE,GLBAR);
+      gCtx.fillStyle='rgba(200,169,106,0.12)'; gCtx.fillRect(tx,ty+imgH,GTILE,1);
+      gCtx.restore();
+
+      // label text
+      gCtx.save();
+      gCtx.beginPath(); gCtx.rect(tx+8,ty+imgH,GTILE-16,GLBAR); gCtx.clip();
+      gCtx.font=`400 8px 'Space Mono', monospace`;
+      gCtx.textBaseline='middle'; gCtx.textAlign='left';
+      gCtx.fillStyle=hover?'rgba(200,169,106,0.95)':'rgba(255,255,255,0.22)';
+      gCtx.fillText(item.label.toUpperCase(), tx+8, ty+imgH+GLBAR/2);
+      if (hover) {
+        gCtx.textAlign='right';
+        gCtx.fillText('VIEW →', tx+GTILE-8, ty+imgH+GLBAR/2);
+      }
+      gCtx.restore();
+    }
+  }
+  gCtx.restore();
+}
+
+function gTick(){
+  gRaf=requestAnimationFrame(gTick);
+  if (!gDrag) {
+    gOx+=gVx; gOy+=gVy;
+    gVx*=0.87; gVy*=0.87;
+    if(Math.abs(gVx)<0.1)gVx=0;
+    if(Math.abs(gVy)<0.1)gVy=0;
+    gClamp();
+  }
+  gDraw();
+}
+
+function gHit(sx,sy){
+  const s=GTILE+GGAP;
+  const wx=(sx-gOx)/gSc, wy=(sy-gOy)/gSc;
+  const c=Math.floor(wx/s), r=Math.floor(wy/s);
+  if(c<0||c>=GCOLS||r<0) return -1;
+  const idx=r*GCOLS+c;
+  if(idx>=GRID_IMGS.length) return -1;
+  const tx=c*s, ty=r*s;
+  if(wx<tx||wx>tx+GTILE||wy<ty||wy>ty+GTILE) return -1;
+  return idx;
+}
+
+function gOnDown(e){
+  e.preventDefault();
+  if(!e.isPrimary) return;
+  gDrag=true; gMoved=false;
+  gX0=e.clientX; gY0=e.clientY;
+  gOx0=gOx; gOy0=gOy;
+  gVx=0; gVy=0;
+  gC.setPointerCapture(e.pointerId);
+  gC.classList.add('grabbing');
+}
+function gOnMove(e){
+  if(!gDrag){
+    gHov=gHit(e.clientX,e.clientY);
+    return;
+  }
+  const dx=e.clientX-gX0, dy=e.clientY-gY0;
+  if(Math.abs(dx)+Math.abs(dy)>8) gMoved=true;
+  const nx=gOx0+dx, ny=gOy0+dy;
+  gVx=nx-gOx; gVy=ny-gOy;
+  gOx=nx; gOy=ny;
+  gClamp();
+}
+function gOnUp(e){
+  if(!e.isPrimary) return;
+  gC.classList.remove('grabbing');
+  const was=gMoved; gDrag=false;
+  if(!was){
+    const idx=gHit(gX0,gY0);
+    if(idx>=0){
+      setImage(idx < imgs.length ? idx : 0);
+      setThumb(idx < PANEL_SRCS.length ? idx : 0, document.querySelectorAll('.thumb')[idx < document.querySelectorAll('.thumb').length ? idx : 0]);
+      closeGrid();
+    }
+  }
+}
+function gOnWheel(e){
+  e.preventDefault();
+  const f=e.deltaY<0?1.09:0.92;
+  const wx=(e.clientX-gOx)/gSc, wy=(e.clientY-gOy)/gSc;
+  gSc=Math.min(3,Math.max(0.3,gSc*f));
+  gOx=e.clientX-wx*gSc; gOy=e.clientY-wy*gSc;
+  gClamp();
+}
+function gOnTouchStart(e){
+  if(e.touches.length===2){
+    gPinch=Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+    gSc0=gSc;
+  }
+}
+function gOnTouchMove(e){
+  if(e.touches.length===2&&gPinch){
+    e.preventDefault();
+    const d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX, e.touches[1].clientY-e.touches[0].clientY);
+    const cx=(e.touches[0].clientX+e.touches[1].clientX)/2, cy=(e.touches[0].clientY+e.touches[1].clientY)/2;
+    const wx=(cx-gOx)/gSc, wy=(cy-gOy)/gSc;
+    gSc=Math.min(3,Math.max(0.3,gSc0*(d/gPinch)));
+    gOx=cx-wx*gSc; gOy=cy-wy*gSc;
+    gClamp();
+  }
+}
+
+function openGrid(){
+  const ov=document.getElementById('grid-overlay');
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+
+  gC=document.getElementById('grid-canvas');
+  gCtx=gC.getContext('2d');
+  gC.width=window.innerWidth;
+  gC.height=window.innerHeight;
+  gHov=-1; gSc=1; gVx=0; gVy=0;
+  gOx=(gC.width-gW())/2; gOy=60;
+  gClamp();
+
+  if(!gBound){
+    gBound=true;
+    gC.addEventListener('pointerdown',  gOnDown,       {passive:false});
+    gC.addEventListener('pointermove',  gOnMove,       {passive:false});
+    gC.addEventListener('pointerup',    gOnUp,         {passive:false});
+    gC.addEventListener('wheel',        gOnWheel,      {passive:false});
+    gC.addEventListener('touchstart',   gOnTouchStart, {passive:true});
+    gC.addEventListener('touchmove',    gOnTouchMove,  {passive:false});
+    gC.addEventListener('touchend',     ()=>{gPinch=null;}, {passive:true});
+    window.addEventListener('resize',()=>{
+      if(!gC) return;
+      gC.width=window.innerWidth; gC.height=window.innerHeight; gClamp();
+    });
+  }
+  if(gRaf) cancelAnimationFrame(gRaf);
+  gTick();
+}
+
+function closeGrid(){
+  document.getElementById('grid-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  if(gRaf){cancelAnimationFrame(gRaf); gRaf=null;}
+}
+
 </script>
+
+<div id="grid-overlay">
+  <canvas id="grid-canvas"></canvas>
+  <div id="grid-hud">
+    <span id="grid-label">All Photos · 2847 Ridgeline Drive, Los Angeles</span>
+    <button id="grid-close" onclick="closeGrid()">✕ Close</button>
+  </div>
+</div>
+
 </body>
 </html>
