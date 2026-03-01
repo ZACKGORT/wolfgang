@@ -252,7 +252,7 @@ body.scroll-free #cursor {
   border: 1px solid rgba(255,255,255,0.15);
 }
 
-a, button, [data-idx] { cursor: none; }
+a, button, [data-idx], .cw-trigger, .cw-item { cursor: none; }
 
 /* ═══════════════════════════════════════════════
    IMAGE LAYER — full viewport, behind everything
@@ -573,7 +573,7 @@ header:hover .h-btn.cta {
   position: absolute;
   top: clamp(20px, 4vh, 36px);
   right: clamp(20px, 3vw, 40px);
-  z-index: 500;
+  z-index: 501;
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -595,6 +595,8 @@ header:hover .h-btn.cta {
   text-align: center;
   cursor: none;
   padding: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 #scroll-toggle:hover {
   color: #fff;
@@ -610,12 +612,36 @@ header:hover .h-btn.cta {
   border-color: var(--accent);
   color: #fff;
   box-shadow: 0 0 0 1px var(--accent), 0 0 28px rgba(250,60,0,0.5);
-  /* subtle pulse — reminder of your decision */
   animation: scroll-pulse 3s ease-in-out infinite;
 }
 @keyframes scroll-pulse {
   0%, 100% { box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(250,60,0,0.4); }
   50%       { box-shadow: 0 0 0 1px var(--accent), 0 0 36px rgba(250,60,0,0.7); }
+}
+
+/* mobile overrides for scroll toggle */
+@media (max-width: 760px) {
+  #scroll-toggle {
+    position: fixed;
+    top: calc(52px + 12px); /* just below header */
+    right: 16px;
+    left: auto;
+    width: 44px;
+    height: 44px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.5);
+    font-size: 6px;
+    cursor: auto;
+    backdrop-filter: blur(8px);
+    z-index: 501;
+  }
+  #scroll-toggle.on {
+    position: fixed;
+    top: calc(52px + 12px);
+    right: 16px;
+    cursor: auto;
+  }
 }
 
 /* ── SCROLL MODE ── */
@@ -640,7 +666,8 @@ body.scroll-free .sentence.label { color: var(--accent) !important; }
 body.scroll-free .ch-header { opacity: 1 !important; }
 
 /* lockout overlay — covers the stream content area only.
-   Panel stays interactive — commerce must always be reachable. */
+   Panel stays interactive — commerce must always be reachable.
+   Toggle is z-501, above lockout z-490, so it always receives events. */
 #scroll-lockout {
   display: none;
   position: fixed;
@@ -650,6 +677,12 @@ body.scroll-free .ch-header { opacity: 1 !important; }
   cursor: none;
 }
 body.scroll-free #scroll-lockout { display: block; }
+/* on mobile lockout covers full width — toggle punches through purely via z-index + pointer-events */
+@media (max-width: 760px) {
+  #scroll-lockout { right: 0; cursor: auto; }
+}
+/* toggle always tappable — belt & suspenders */
+#scroll-toggle { pointer-events: auto !important; }
 
 /* nav widget — dead in scroll mode */
 body.scroll-free #nav-widget {
@@ -664,8 +697,12 @@ body.scroll-free #nav-widget {
   #nav-widget {
     transition: opacity 0.4s ease, box-shadow 0.15s ease, right 0.3s ease;
   }
+  #chapter-widget {
+    transition: opacity 0.4s ease;
+  }
   #panel:hover ~ #nav-widget,
-  body:has(#panel:hover) #nav-widget {
+  body:has(#panel:hover) #nav-widget,
+  body:has(#panel:hover) #chapter-widget {
     opacity: 0;
     pointer-events: none;
   }
@@ -1350,128 +1387,249 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
 @media (max-width: 760px) {
   #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
   #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
-  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 120px; }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 100px; }
   .h-center { display: none; }
   .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
   .sentence.poster.active::before { left: -18px; }
-  #stream-col { padding-left: 24px; }
 
-  /* widget becomes a bottom bar */
+  /* HUD → full-width horizontal bar pinned to bottom */
   #nav-widget {
     position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
+    bottom: 0; left: 0; right: 0;
     top: auto;
     transform: none;
     z-index: 300;
   }
-  #nav-widget.nw-free {
-    top: auto;
-    left: 0; right: 0;
-    transform: none;
-  }
+  #nav-widget.nw-free { top: auto; left: 0; right: 0; transform: none; }
+
   .nw-shell {
     flex-direction: row;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
+    align-items: stretch;
+    border-radius: 20px 20px 0 0;
+    border-left: none; border-right: none; border-bottom: none;
+    border-top: 1px solid var(--hud-border);
     min-width: unset;
     width: 100%;
-    padding: 8px 12px;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
-    border-top: 1px solid var(--hud-border);
-    justify-content: space-between;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
     gap: 0;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
   }
-  /* hide drag handle on mobile */
-  .nw-handle { display: none; }
-  /* chapter cell */
-  .nw-cell { 
-    border-bottom: none; 
-    border-right: 1px solid var(--hud-border);
-    padding: 4px 12px;
-    min-width: unset;
-  }
-  .nw-cell:last-of-type { border-right: none; }
-  .nw-cell.nw-chapter-cell .nw-cell-value { max-width: 90px; }
-  /* pip cell */
-  .nw-pip-cell {
-    border-bottom: none;
-    border-right: 1px solid var(--hud-border);
-    padding: 4px 12px;
-    flex-direction: row;
-    gap: 8px;
-    align-items: center;
-  }
-  .nw-pip {
-    width: 48px;
-    height: 2px;
-  }
-  .nw-pip-fill {
-    top: 0; bottom: 0; left: 0;
-    width: 0%;
-    height: 100%;
-    transition: width 0.3s ease, background 1.2s ease;
-  }
-  /* divider */
-  .nw-divider {
-    height: 100%;
-    width: 1px;
-    margin: 4px 0;
-  }
-  /* action buttons */
+
+  /* hide everything except the 4 mobile buttons */
+  .nw-handle,
+  .nw-divider,
+  .nw-nav-pip,
+  .nw-nav-pip-pct { display: none !important; }
+
+  /* action buttons — equal flex slots */
   .nw-action-btn {
-    border-bottom: none;
+    flex: 1;
+    border: none;
     border-right: 1px solid var(--hud-border);
-    padding: 4px 10px;
-    min-width: unset;
-  }
-  /* nav becomes horizontal row */
-  .nw-nav {
-    flex-direction: row;
-    padding: 2px 4px;
+    border-radius: 0;
+    padding: 12px 8px 10px;
+    font-size: 16px;
     gap: 4px;
+  }
+  .nw-action-btn:last-of-type { border-right: none; }
+
+  /* nav section — becomes two equal slots */
+  .nw-nav {
+    flex: 2;
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
     width: auto;
-    align-items: center;
+    align-items: stretch;
   }
   .nw-btn-prev, .nw-btn-next {
-    width: 40px;
-    height: 36px;
-    font-size: 16px;
+    flex: 1;
+    height: auto;
+    min-height: 52px;
+    font-size: 18px;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--hud-border);
+    background: none;
   }
-  .nw-btn-prev { border-radius: 8px 4px 4px 8px; }
-  .nw-btn-next { border-radius: 4px 8px 8px 4px; }
-  /* pip between nav buttons on mobile — horizontal */
-  .nw-nav-pip {
-    flex-direction: row;
-    gap: 4px;
-    padding: 0 4px;
-    width: auto;
-    align-items: center;
+  .nw-btn-prev { border-radius: 0; }
+  .nw-btn-next { border-radius: 0 20px 0 0; }
+
+  /* toast and credit above bar */
+  #toast { bottom: calc(60px + env(safe-area-inset-bottom)); }
+  #wolfie-credit { bottom: calc(68px + env(safe-area-inset-bottom)); }
+}
+
+/* ═══════════════════════════════════════════════
+   CHAPTER WIDGET — top-center of content col, dark
+   Always dark regardless of chapter theme.
+═══════════════════════════════════════════════ */
+#chapter-widget {
+  position: fixed;
+  top: calc(52px + 16px); /* below header */
+  left: 0;
+  right: 380px; /* content column width */
+  z-index: 301;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* container is passthrough */
+  user-select: none;
+}
+
+/* pill trigger */
+.cw-trigger {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(10,10,12,0.88);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.45);
+  cursor: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.cw-trigger:hover {
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55);
+}
+.cw-trigger-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  line-height: 1;
+}
+.cw-trigger-sep {
+  color: rgba(255,255,255,0.12);
+  font-size: 10px;
+  line-height: 1;
+}
+.cw-trigger-name {
+  font-family: var(--ui);
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.82);
+  line-height: 1;
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cw-trigger-arrow {
+  font-size: 7px;
+  color: rgba(255,255,255,0.28);
+  transition: transform 0.2s ease;
+  line-height: 1;
+  margin-left: 2px;
+}
+#chapter-widget.open .cw-trigger-arrow { transform: rotate(180deg); }
+
+/* dropdown — opens downward */
+.cw-dropdown {
+  pointer-events: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scaleY(0.88);
+  transform-origin: top center;
+  background: rgba(10,10,12,0.96);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  padding: 6px;
+  min-width: 180px;
+  opacity: 0;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.34,1.4,0.64,1);
+}
+#chapter-widget.open .cw-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scaleY(1);
+}
+
+/* dropdown items */
+.cw-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: none;
+  transition: background 0.1s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.cw-item:hover { background: rgba(255,255,255,0.06); }
+.cw-item.active { background: rgba(255,255,255,0.04); }
+.cw-item-num {
+  font-family: var(--ui);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 18px;
+}
+.cw-item-name {
+  font-family: var(--ui);
+  font-size: 9px;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cw-item.active .cw-item-name {
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+}
+.cw-item-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.cw-item.active .cw-item-dot { opacity: 1; }
+
+/* mobile — top center of viewport below header, same dark treatment */
+@media (max-width: 760px) {
+  #chapter-widget {
+    right: 0; /* full width on mobile, no panel */
+    top: calc(52px + 10px);
   }
-  .nw-nav-pip-bar {
-    width: 36px;
-    height: 2px;
-  }
-  .nw-nav-pip-fill {
-    top: 0; left: 0; right: auto;
-    width: 0%;
-    height: 100%;
-    transition: width 0.3s ease, background 1.2s ease;
-  }
-  .nw-nav-pip-pct { display: none; }
-  /* toast above bottom bar */
-  #toast { bottom: calc(72px + env(safe-area-inset-bottom)); }
-  #wolfie-credit { bottom: calc(80px + env(safe-area-inset-bottom)); }
-  /* scroll toggle on mobile — top left to avoid HUD */
-  #scroll-toggle {
-    top: 68px;
-    right: auto;
-    left: 16px;
-  }
+  .cw-dropdown { min-width: 160px; }
+}
+
+
+.sentence.spec.auto-flow.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0;
+  height: 1px;
+  background: var(--accent);
+  animation: spec-scan 0.9s linear forwards;
+}
+@keyframes spec-scan {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+
+/* panel end-of-journey pulse */
+#panel.journey-end {
+  animation: panel-beckon 1.8s ease-in-out 2;
+}
+@keyframes panel-beckon {
+  0%   { box-shadow: none; }
+  30%  { box-shadow: inset 0 0 0 1px var(--accent), 0 0 40px rgba(74,127,212,0.25); }
+  70%  { box-shadow: inset 0 0 0 1px var(--accent), 0 0 40px rgba(74,127,212,0.25); }
+  100% { box-shadow: none; }
 }
 
 /* grid overlay */
@@ -1604,13 +1762,13 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
     </div>
 
     <span class="sentence label"   data-idx="15" data-img="3" data-ch="4">Details</span>
-    <span class="sentence spec"    data-idx="16" data-ch="4"><span class="spec-key">Style</span><span class="spec-val">FD2596-102</span></span>
-    <span class="sentence spec"    data-idx="17" data-ch="4"><span class="spec-key">Colorway</span><span class="spec-val">Pale Ivory / Coconut Milk / Psychic Blue</span></span>
-    <span class="sentence spec"    data-idx="18" data-ch="4"><span class="spec-key">Status</span><span class="spec-val">Coming Soon — Nike Members get first access</span></span>
-    <span class="sentence spec"    data-idx="19" data-ch="4"><span class="spec-key">Upper</span><span class="spec-val">Premium leather + Psychic Blue terry cloth collar & suede overlays</span></span>
-    <span class="sentence spec"    data-idx="20" data-ch="4"><span class="spec-key">Lining</span><span class="spec-val">Heritage insole print — Jumpman, Wings, 23, bow</span></span>
-    <span class="sentence spec"    data-idx="20b" data-ch="4"><span class="spec-key">Extras</span><span class="spec-val">6 collectible lace jewels included</span></span>
-    <span class="sentence spec"    data-idx="21" data-ch="4"><span class="spec-key">Retail</span><span class="spec-val">$185</span></span>
+    <span class="sentence spec auto-flow" data-idx="16" data-ch="4"><span class="spec-key">Style</span><span class="spec-val">FD2596-102</span></span>
+    <span class="sentence spec auto-flow" data-idx="17" data-ch="4"><span class="spec-key">Colorway</span><span class="spec-val">Pale Ivory / Coconut Milk / Psychic Blue</span></span>
+    <span class="sentence spec auto-flow" data-idx="18" data-ch="4"><span class="spec-key">Status</span><span class="spec-val">Coming Soon — Nike Members get first access</span></span>
+    <span class="sentence spec auto-flow" data-idx="19" data-ch="4"><span class="spec-key">Upper</span><span class="spec-val">Premium leather + Psychic Blue terry cloth collar & suede overlays</span></span>
+    <span class="sentence spec auto-flow" data-idx="20" data-ch="4"><span class="spec-key">Lining</span><span class="spec-val">Heritage insole print — Jumpman, Wings, 23, bow</span></span>
+    <span class="sentence spec auto-flow" data-idx="20b" data-ch="4"><span class="spec-key">Extras</span><span class="spec-val">6 collectible lace jewels included</span></span>
+    <span class="sentence spec auto-flow" data-idx="21" data-ch="4"><span class="spec-key">Retail</span><span class="spec-val">$185</span></span>
     <span class="sentence break"   data-idx="22"></span>
 
     <!-- Ch 5 header — centered -->
@@ -1686,6 +1844,43 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
 <!-- scroll lockout overlay — active when scroll-free; only toggle can escape -->
 <div id="scroll-lockout"></div>
 
+<!-- ══ CHAPTER WIDGET — standalone dropdown ══ -->
+<div id="chapter-widget">
+  <button class="cw-trigger" id="cw-trigger" aria-haspopup="true" aria-expanded="false">
+    <span class="cw-trigger-label">Chapter</span>
+    <span class="cw-trigger-sep">·</span>
+    <span class="cw-trigger-name" id="cw-current-name">Entry</span>
+    <span class="cw-trigger-arrow">▾</span>
+  </button>
+  <div class="cw-dropdown" role="menu" id="cw-dropdown">
+    <button class="cw-item active" data-ch="1" role="menuitem">
+      <span class="cw-item-num">01</span>
+      <span class="cw-item-name">Entry</span>
+      <span class="cw-item-dot"></span>
+    </button>
+    <button class="cw-item" data-ch="2" role="menuitem">
+      <span class="cw-item-num">02</span>
+      <span class="cw-item-name">The Origin</span>
+      <span class="cw-item-dot"></span>
+    </button>
+    <button class="cw-item" data-ch="3" role="menuitem">
+      <span class="cw-item-num">03</span>
+      <span class="cw-item-name">The Craft</span>
+      <span class="cw-item-dot"></span>
+    </button>
+    <button class="cw-item" data-ch="4" role="menuitem">
+      <span class="cw-item-num">04</span>
+      <span class="cw-item-name">The Details</span>
+      <span class="cw-item-dot"></span>
+    </button>
+    <button class="cw-item" data-ch="5" role="menuitem">
+      <span class="cw-item-num">05</span>
+      <span class="cw-item-name">The Moment</span>
+      <span class="cw-item-dot"></span>
+    </button>
+  </div>
+</div>
+
 <!-- ══ NAV WIDGET — vertical pill on desktop, bottom bar on mobile ══ -->
 <div id="nav-widget">
   <div class="nw-shell">
@@ -1693,12 +1888,6 @@ body.ch-4 #wolfie-credit { color: rgba(255,255,255,0.15); }
     <!-- drag handle — top dots (desktop only) -->
     <div class="nw-handle" id="nw-handle">
       <div class="nw-drag-dots">· · ·</div>
-    </div>
-
-    <!-- chapter cell -->
-    <div class="nw-cell nw-chapter-cell">
-      <span class="nw-cell-value" id="nw-chapter">Entry</span>
-      <span class="nw-cell-label" id="nw-chapter-num">Ch. 1</span>
     </div>
 
     <div class="nw-divider"></div>
@@ -1796,7 +1985,8 @@ const navigable = all.filter(el =>
 );
 let current = 0;
 
-function goTo(n) {
+function goTo(n, opts) {
+  const noScroll = opts && opts.noScroll;
   n = Math.max(0, Math.min(navigable.length - 1, n));
 
   navigable.forEach((el, i) => {
@@ -1828,7 +2018,7 @@ function goTo(n) {
   current = n;
 
   // scroll into view
-  activeEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!noScroll) activeEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   // counter
   document.getElementById('nw-counter').textContent =
@@ -1848,29 +2038,122 @@ function goTo(n) {
   const nwCart = document.getElementById('nw-cart-btn');
   if (nearEnd) nwCart.classList.add('visible'); else nwCart.classList.remove('visible');
 
+  // auto-flow for Details specs
+  scheduleAutoFlow(n);
+
+  // last sentence — beckon the panel
+  if (n === navigable.length - 1) triggerPanelBeckon();
+
   // ── CHAPTER SYSTEM ──────────────────────────────────
-  // derive active chapter from current sentence's data-ch
   const ch = parseInt(activeEl?.dataset.ch || 1);
-  // swap body class
   document.body.className = document.body.className.replace(/\bch-\d\b/g, '').trim();
   if (ch > 1) document.body.classList.add('ch-' + ch);
-  // reveal ch-headers up to and including current chapter
   document.querySelectorAll('.ch-header').forEach(g => {
     const gch = parseInt(g.dataset.ch);
     if (gch <= ch) g.classList.add('revealed');
     else g.classList.remove('revealed');
   });
-  // update widget chapter label
-  const CH_NAMES = ['','Entry','The Origin','The Craft','The Details','The Moment'];
-  document.getElementById('nw-chapter').textContent = CH_NAMES[ch] || ('Ch.' + ch);
-  document.getElementById('nw-chapter-num').textContent = 'Ch. ' + ch;
+  // update standalone chapter widget
+  updateChapterWidget(ch);
 }
 
 function next() { goTo(current + 1); }
 function prev() { goTo(current - 1); }
 
+// ── AUTO-FLOW for Details specs ──────────────────
+let autoFlowTimer = null;
+function clearAutoFlow() {
+  if (autoFlowTimer) { clearTimeout(autoFlowTimer); autoFlowTimer = null; }
+}
+function scheduleAutoFlow(n) {
+  clearAutoFlow();
+  const el = navigable[n];
+  if (!el || !el.classList.contains('auto-flow')) return;
+  // next sentence exists and is also auto-flow? advance after 0.95s
+  const nextEl = navigable[n + 1];
+  if (nextEl) {
+    autoFlowTimer = setTimeout(() => goTo(n + 1), 950);
+  }
+}
+
+// ── PANEL END-OF-JOURNEY PULSE ──────────────────
+function triggerPanelBeckon() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('journey-end');
+  void panel.offsetWidth;
+  panel.classList.add('journey-end');
+  panel.addEventListener('animationend', () => panel.classList.remove('journey-end'), { once: true });
+}
+
+// ══════════════════════════════════════════════
+//  CHAPTER WIDGET — standalone dropdown
+// ══════════════════════════════════════════════
+const CH_NAMES = ['','Entry','The Origin','The Craft','The Details','The Moment'];
+// First navigable index of each chapter (for jump-to)
+const CH_FIRST = {};
+navigable.forEach((el, i) => {
+  const ch = parseInt(el.dataset.ch || 1);
+  if (!(ch in CH_FIRST)) CH_FIRST[ch] = i;
+});
+
+function updateChapterWidget(ch) {
+  document.getElementById('cw-current-name').textContent = CH_NAMES[ch] || 'Ch.' + ch;
+  document.querySelectorAll('.cw-item').forEach(item => {
+    const itemCh = parseInt(item.dataset.ch);
+    item.classList.toggle('active', itemCh === ch);
+  });
+}
+
+(function initChapterWidget() {
+  const widget = document.getElementById('chapter-widget');
+  const trigger = document.getElementById('cw-trigger');
+  const dropdown = document.getElementById('cw-dropdown');
+  let open = false;
+
+  function openDropdown() {
+    open = true;
+    widget.classList.add('open');
+    trigger.setAttribute('aria-expanded', 'true');
+  }
+  function closeDropdown() {
+    open = false;
+    widget.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+  function toggleDropdown() {
+    open ? closeDropdown() : openDropdown();
+  }
+
+  trigger.addEventListener('click', e => { e.stopPropagation(); toggleDropdown(); });
+
+  // chapter items — jump to first sentence of that chapter
+  dropdown.querySelectorAll('.cw-item').forEach(item => {
+    item.addEventListener('click', e => {
+      e.stopPropagation();
+      const ch = parseInt(item.dataset.ch);
+      const idx = CH_FIRST[ch] ?? 0;
+      closeDropdown();
+      goTo(idx);
+    });
+  });
+
+  // close on outside click/tap
+  document.addEventListener('click', () => { if (open) closeDropdown(); });
+  document.addEventListener('touchstart', e => {
+    if (open && !widget.contains(e.target)) closeDropdown();
+  }, { passive: true });
+
+  // close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && open) closeDropdown();
+  });
+
+  // also fade widget when panel is hovered (same as HUD)
+  updateChapterWidget(1);
+})();
+
 document.getElementById('nw-next').addEventListener('click', next);
-document.getElementById('nw-prev').addEventListener('click', prev);
+document.getElementById('nw-prev').addEventListener('click', () => { clearAutoFlow(); prev(); });
 
 // click any sentence to jump
 navigable.forEach((el, i) => {
@@ -1972,8 +2255,10 @@ goTo(0);
     document.body.classList.remove('scroll-free');
     document.body.style.overflow = '';
 
-    // Snap back to nearest sentence — no jarring reset
-    goTo(nearestIdx);
+    // Restore sentence engine state at wherever the reader is —
+    // re-run goTo(current) to re-apply active/revealed classes without scrolling
+    const savedCurrent = current;
+    goTo(savedCurrent, { noScroll: true });
   }
 
   btn.addEventListener('click', () => {
