@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Air Jordan 11 Retro · Cool Grey — wolfie.love</title>
+<title>Air Jordan 11 Retro · Cool Grey — wolfie's mall</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 
 /* ═══════════════════════════════════════════════
-   ROOT
+   ROOT — base sport theme (chapter: Entry)
 ═══════════════════════════════════════════════ */
 :root {
   --bg:       #080808;
@@ -21,8 +21,75 @@
   --accent-d: rgba(250,60,0,0.12);
   --gold:     #c8a96e;
   --border:   rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.1);
   --ui:       'Space Mono', monospace;
   --disp:     'Barlow Condensed', sans-serif;
+
+  /* transition all theme vars */
+  transition:
+    background-color 1.2s ease,
+    color 0.8s ease;
+}
+
+/* ── CHAPTER THEMES ──────────────────────────────
+   Each chapter shifts the atmosphere.
+   Like walking from room to room in a store.
+   body gets .ch-N class; CSS does the rest.
+───────────────────────────────────────────────── */
+
+/* Chapter 1 — Entry. Pure dark. Cinematic. */
+body.ch-1 {
+  --bg:     #080808;
+  --ink:    #efefef;
+  --ink-2:  #777;
+  --ink-3:  #333;
+  --accent: #fa3c00;
+  --border: rgba(255,255,255,0.06);
+  --border-strong: rgba(255,255,255,0.1);
+}
+
+/* Chapter 2 — The Story. Warmer dark. Amber undertone. */
+body.ch-2 {
+  --bg:     #0d0a07;
+  --ink:    #f0e8d8;
+  --ink-2:  #8a7a65;
+  --ink-3:  #3d3328;
+  --accent: #e8602a;
+  --border: rgba(240,232,216,0.07);
+  --border-strong: rgba(240,232,216,0.12);
+}
+
+/* Chapter 3 — The Craft. Cool technical. Near-neutral. */
+body.ch-3 {
+  --bg:     #08090c;
+  --ink:    #d8dde8;
+  --ink-2:  #6a7280;
+  --ink-3:  #2a2e38;
+  --accent: #4a90d9;
+  --border: rgba(216,221,232,0.07);
+  --border-strong: rgba(216,221,232,0.12);
+}
+
+/* Chapter 4 — Details. Terminal green. Pure spec. */
+body.ch-4 {
+  --bg:     #060808;
+  --ink:    #a8c8a0;
+  --ink-2:  #587058;
+  --ink-3:  #243024;
+  --accent: #50c050;
+  --border: rgba(168,200,160,0.07);
+  --border-strong: rgba(168,200,160,0.12);
+}
+
+/* Chapter 5 — The Moment. Full accent. Back to fire. */
+body.ch-5 {
+  --bg:     #0a0500;
+  --ink:    #fff5ee;
+  --ink-2:  #a06040;
+  --ink-3:  #3a1e0a;
+  --accent: #ff4400;
+  --border: rgba(255,245,238,0.07);
+  --border-strong: rgba(255,245,238,0.12);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,6 +104,7 @@ body {
   overflow-x: hidden;
   cursor: none;
   min-height: 100vh;
+  transition: background-color 1.4s ease, color 0.8s ease;
 }
 
 /* grain */
@@ -197,6 +265,7 @@ header {
   grid-column: 1;
   grid-row: 2;
   padding: clamp(48px, 7vh, 80px) clamp(28px, 5vw, 72px);
+  padding-top: calc(28px + clamp(48px, 7vh, 80px)); /* address bar clearance */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -574,6 +643,152 @@ header {
   #stream-col { padding-left: 24px; }
 }
 
+/* ═══════════════════════════════════════════════
+   STORE ADDRESS BAR — the mall metaphor
+═══════════════════════════════════════════════ */
+#store-address {
+  position: fixed;
+  top: 52px; left: 0; right: 380px;
+  height: 28px;
+  display: flex; align-items: center;
+  padding: 0 clamp(28px,5vw,72px);
+  gap: 8px;
+  background: rgba(8,8,8,0.7);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  z-index: 90;
+  transition: background-color 1.4s ease, border-color 0.8s ease;
+}
+.addr-crumb {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.8s ease;
+}
+.addr-crumb.store { color: var(--accent); opacity: 0.7; }
+.addr-sep {
+  font-family: var(--ui);
+  font-size: 7px;
+  color: var(--ink-3);
+  opacity: 0.4;
+}
+.addr-chapter {
+  margin-left: auto;
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.8s ease;
+}
+@media (max-width: 760px) { #store-address { right: 0; } }
+
+/* ═══════════════════════════════════════════════
+   CHAPTER INTERSTITIAL — threshold moments
+═══════════════════════════════════════════════ */
+.chapter-gate {
+  display: block;
+  position: relative;
+  padding: 48px 0 20px;
+  opacity: 0.08;
+  transition: opacity 0.4s ease;
+  overflow: hidden;
+  pointer-events: none; /* gates don't navigate, they mark */
+}
+.chapter-gate.revealed, .chapter-gate.active { opacity: 1; pointer-events: none; }
+.chapter-gate-rule {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, var(--accent), transparent);
+  margin-bottom: 16px;
+  transition: background 0.8s ease;
+}
+.chapter-gate-num {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: clamp(80px, 14vw, 160px);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.06);
+  position: absolute;
+  right: -0.04em;
+  top: 0;
+  user-select: none;
+  transition: -webkit-text-stroke-color 0.8s ease;
+}
+.chapter-gate-label {
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+  transition: color 0.8s ease;
+}
+.chapter-gate-title {
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 48px);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--ink);
+  transition: color 0.8s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   PANEL — theme-aware
+═══════════════════════════════════════════════ */
+/* The panel border and bg transition with theme */
+#panel {
+  transition: background-color 1.4s ease, border-color 0.8s ease;
+}
+/* dressing room label */
+.panel-room-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color 0.8s ease, border-color 0.8s ease;
+}
+.panel-room-label span { color: var(--accent); transition: color 0.8s ease; }
+
+/* theme-reactive borders, buttons, text */
+.h-btn         { transition: border-color .15s, color .15s, background .8s ease; }
+.sz            { transition: all .15s, border-color 0.8s ease; }
+.sz:hover      { border-color: var(--ink-2); color: var(--ink); }
+.sz.sel        { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cw-swatch.active { border-color: var(--accent); }
+.btn-add       { transition: background .15s, transform .1s; }
+.btn-fav       { transition: all .15s; }
+.panel-section-label { transition: color 0.8s ease; }
+#cw-name       { transition: color 0.8s ease; }
+#progress      { transition: width 0.25s ease, background 0.8s ease; }
+#progress      { background: var(--accent); }
+.panel-progress-fill { background: var(--accent); transition: width 0.3s ease, background 0.8s ease; }
+.sentence.break::before { background: var(--accent); transition: background 0.8s ease; }
+.sentence.label { color: var(--accent); transition: color 0.8s ease, opacity 0.3s ease; }
+.sentence.poster.active::before { background: var(--accent); transition: background 0.8s ease; }
+.hud-btn.on, .hud-btn:hover { color: var(--accent); }
+#hud { transition: background-color 1.4s ease, border-color 0.8s ease; }
+header { transition: background-color 1.4s ease, border-color 0.8s ease; }
+
+/* grid overlay also theme-aware */
+#grid-overlay { transition: background-color 1.4s ease, opacity 0.3s ease; }
+#grid-hud { transition: background-color 1.4s ease, border-color 0.8s ease; }
+#grid-label { transition: color 0.8s ease; }
+
+
 </style>
 </head>
 <body>
@@ -595,10 +810,10 @@ header {
 
   <!-- HEADER -->
   <header>
-    <a href="/" class="h-brand">🐾 wolfie.love <span class="h-brand-sep">/</span> Shop</a>
+    <a href="/" class="h-brand">🐾 wolfie's mall</a>
     <div class="h-center">
       <span class="h-product-name">Air Jordan 11 Retro</span>
-      <span class="h-product-price">$225</span>
+      <span class="h-product-price">$225 · Cool Grey</span>
     </div>
     <div class="h-actions">
       <button class="h-btn" onclick="openGrid()">▦ Views</button>
@@ -606,52 +821,96 @@ header {
     </div>
   </header>
 
+  <!-- STORE ADDRESS BAR -->
+  <div id="store-address">
+    <span class="addr-crumb store">wolfie's mall</span>
+    <span class="addr-sep">/</span>
+    <span class="addr-crumb">Nike</span>
+    <span class="addr-sep">/</span>
+    <span class="addr-crumb">Jordan</span>
+    <span class="addr-sep">/</span>
+    <span class="addr-crumb">AJ11 Cool Grey</span>
+    <span class="addr-chapter" id="addr-chapter">Chapter I · Entry</span>
+  </div>
+
   <!-- LEFT: STREAM -->
   <main id="stream-col">
 
-    <!-- ACT I: THE NAME -->
-    <span class="sentence label"   data-idx="0" data-img="0">Nike · Air Jordan · Retro</span>
-    <span class="sentence poster"  data-idx="1" data-img="0">Air<br>Jordan <span class="ac">11</span></span>
-    <span class="sentence poster"  data-idx="2" data-img="0"><span class="dim">Cool</span><br>Grey.</span>
-    <span class="sentence break"   data-idx="3"></span>
+    <!-- CHAPTER I — ENTRY -->
+    <div class="chapter-gate" data-chapter="1">
+      <div class="chapter-gate-num">I</div>
+      <div class="chapter-gate-rule"></div>
+      <p class="chapter-gate-label">Chapter I</p>
+      <h2 class="chapter-gate-title">Entry</h2>
+    </div>
+    <span class="sentence label"   data-idx="0"  data-img="0" data-chapter="1">Nike · Air Jordan · Retro</span>
+    <span class="sentence poster"  data-idx="1"  data-img="0" data-chapter="1">Air<br>Jordan <span class="ac">11</span></span>
+    <span class="sentence poster"  data-idx="2"  data-img="0" data-chapter="1"><span class="dim">Cool</span><br>Grey.</span>
+    <span class="sentence break"   data-idx="3"  data-chapter="1"></span>
 
-    <!-- ACT II: THE STORY -->
-    <span class="sentence label"   data-idx="4" data-img="1">The Story</span>
-    <span class="sentence body"    data-idx="5" data-img="1">Michael wore them when the game changed. Not for the cameras. Not for the contract. For the same reason anyone laces up — because the floor demands it and you answered.</span>
-    <span class="sentence body"    data-idx="6" data-img="2">The Cool Grey is the absence of noise. It's what's left when you strip everything that's trying to say something. Patent leather shell. Woven upper. The Jumpman where it belongs.</span>
-    <span class="sentence body"    data-idx="7" data-img="3">These aren't shoes you explain. You put them on and something shifts. The floor feels different. You stand differently. You know something you didn't before.</span>
-    <span class="sentence break"   data-idx="8"></span>
+    <!-- CHAPTER II — THE STORY -->
+    <div class="chapter-gate" data-chapter="2">
+      <div class="chapter-gate-num">II</div>
+      <div class="chapter-gate-rule"></div>
+      <p class="chapter-gate-label">Chapter II</p>
+      <h2 class="chapter-gate-title">The Story</h2>
+    </div>
+    <span class="sentence label"   data-idx="4"  data-img="1" data-chapter="2">Heritage</span>
+    <span class="sentence body"    data-idx="5"  data-img="1" data-chapter="2">Michael wore them when the game changed. Not for the cameras. Not for the contract. For the same reason anyone laces up — because the floor demands it and you answered.</span>
+    <span class="sentence body"    data-idx="6"  data-img="2" data-chapter="2">The Cool Grey is the absence of noise. It’s what’s left when you strip everything that’s trying to say something. Patent leather shell. Woven upper. The Jumpman where it belongs.</span>
+    <span class="sentence body"    data-idx="7"  data-img="3" data-chapter="2">These aren’t shoes you explain. You put them on and something shifts. The floor feels different. You stand differently. You know something you didn’t before.</span>
+    <span class="sentence break"   data-idx="8"  data-chapter="2"></span>
 
-    <!-- ACT III: THE CRAFT -->
-    <span class="sentence label"   data-idx="9"  data-img="4">Craft</span>
-    <span class="sentence body"    data-idx="10" data-img="4">The <span class="trigger">patent leather shell</span> catches light differently than anything else in the room. That's intentional. That's not an accident of material. That's thirty years of knowing exactly what you're building.</span>
-    <span class="sentence body"    data-idx="11" data-img="5">The carbon fiber shank doesn't flex. It responds. There's a difference. Flex is passive. Response is a conversation between your foot and the floor — and this sole has been having that conversation since 1995.</span>
-    <span class="sentence break"   data-idx="12"></span>
+    <!-- CHAPTER III — THE CRAFT -->
+    <div class="chapter-gate" data-chapter="3">
+      <div class="chapter-gate-num">III</div>
+      <div class="chapter-gate-rule"></div>
+      <p class="chapter-gate-label">Chapter III</p>
+      <h2 class="chapter-gate-title">The Craft</h2>
+    </div>
+    <span class="sentence label"   data-idx="9"  data-img="4" data-chapter="3">Materials</span>
+    <span class="sentence body"    data-idx="10" data-img="4" data-chapter="3">The <span class="trigger">patent leather shell</span> catches light differently than anything else in the room. That’s intentional. That’s not an accident of material. That’s thirty years of knowing exactly what you’re building.</span>
+    <span class="sentence body"    data-idx="11" data-img="5" data-chapter="3">The carbon fiber shank doesn’t flex. It responds. There’s a difference. Flex is passive. Response is a conversation between your foot and the floor — and this sole has been having that conversation since 1995.</span>
+    <span class="sentence break"   data-idx="12" data-chapter="3"></span>
 
-    <!-- ACT IV: SPECS -->
-    <span class="sentence label"   data-idx="13" data-img="5">Details</span>
-    <span class="sentence spec"    data-idx="14"><span class="spec-key">Style</span><span class="spec-val">CT8012-005</span></span>
-    <span class="sentence spec"    data-idx="15"><span class="spec-key">Colorway</span><span class="spec-val">Black / White / Cool Grey</span></span>
-    <span class="sentence spec"    data-idx="16"><span class="spec-key">Release</span><span class="spec-val">December 2024</span></span>
-    <span class="sentence spec"    data-idx="17"><span class="spec-key">Upper</span><span class="spec-val">Leather / Patent Leather</span></span>
-    <span class="sentence spec"    data-idx="18"><span class="spec-key">Midsole</span><span class="spec-val">Air-Sole unit / Carbon fiber shank</span></span>
-    <span class="sentence spec"    data-idx="19"><span class="spec-key">Retail</span><span class="spec-val">$225</span></span>
-    <span class="sentence break"   data-idx="20"></span>
+    <!-- CHAPTER IV — THE DETAILS -->
+    <div class="chapter-gate" data-chapter="4">
+      <div class="chapter-gate-num">IV</div>
+      <div class="chapter-gate-rule"></div>
+      <p class="chapter-gate-label">Chapter IV</p>
+      <h2 class="chapter-gate-title">The Details</h2>
+    </div>
+    <span class="sentence label"   data-idx="13" data-img="5" data-chapter="4">Specifications</span>
+    <span class="sentence spec"    data-idx="14" data-chapter="4"><span class="spec-key">Style</span><span class="spec-val">CT8012-005</span></span>
+    <span class="sentence spec"    data-idx="15" data-chapter="4"><span class="spec-key">Colorway</span><span class="spec-val">Black / White / Cool Grey</span></span>
+    <span class="sentence spec"    data-idx="16" data-chapter="4"><span class="spec-key">Release</span><span class="spec-val">December 2024</span></span>
+    <span class="sentence spec"    data-idx="17" data-chapter="4"><span class="spec-key">Upper</span><span class="spec-val">Leather / Patent Leather</span></span>
+    <span class="sentence spec"    data-idx="18" data-chapter="4"><span class="spec-key">Midsole</span><span class="spec-val">Air-Sole unit / Carbon fiber shank</span></span>
+    <span class="sentence spec"    data-idx="19" data-chapter="4"><span class="spec-key">Retail</span><span class="spec-val">$225</span></span>
+    <span class="sentence break"   data-idx="20" data-chapter="4"></span>
 
-    <!-- ACT V: THE CLOSE -->
-    <span class="sentence label"   data-idx="21" data-img="0">The Moment</span>
-    <span class="sentence poster"  data-idx="22" data-img="0">You<br>already<br><span class="ac">know.</span></span>
-    <span class="sentence body"    data-idx="23" data-img="0">You've known since sentence one. Select your size. That's all that's left.</span>
-    <span class="sentence cta-sentence" data-idx="24">
-      <!-- size picker inline in stream -->
-    </span>
+    <!-- CHAPTER V — THE MOMENT -->
+    <div class="chapter-gate" data-chapter="5">
+      <div class="chapter-gate-num">V</div>
+      <div class="chapter-gate-rule"></div>
+      <p class="chapter-gate-label">Chapter V</p>
+      <h2 class="chapter-gate-title">The Moment</h2>
+    </div>
+    <span class="sentence label"   data-idx="21" data-img="0" data-chapter="5">Decide</span>
+    <span class="sentence poster"  data-idx="22" data-img="0" data-chapter="5">You<br>already<br><span class="ac">know.</span></span>
+    <span class="sentence body"    data-idx="23" data-img="0" data-chapter="5">You’ve known since sentence one. Select your size. That’s all that’s left.</span>
+    <span class="sentence cta-sentence" data-idx="24" data-chapter="5"></span>
 
   </main>
 
-  <!-- RIGHT: PANEL -->
+    <!-- RIGHT: PANEL -->
   <aside id="panel">
 
     <!-- reading progress -->
+    <div class="panel-room-label">
+      <span>Dressing Room</span>
+      <span>Nike · AJ11</span>
+    </div>
     <div class="panel-progress">
       <span id="panel-pct">0%</span>
       <div class="panel-progress-bar">
@@ -768,6 +1027,54 @@ function setImage(n) {
 imgs[0].classList.add('visible');
 
 // ══════════════════════════════════════════════
+//  CHAPTER SYSTEM
+// ══════════════════════════════════════════════
+const CHAPTER_NAMES = {
+  1: 'Chapter I · Entry',
+  2: 'Chapter II · The Story',
+  3: 'Chapter III · The Craft',
+  4: 'Chapter IV · The Details',
+  5: 'Chapter V · The Moment',
+};
+
+let currentChapter = 1;
+
+function setChapter(n) {
+  if (n === currentChapter) return;
+  currentChapter = n;
+  // swap body class
+  for (let i = 1; i <= 5; i++) document.body.classList.remove('ch-' + i);
+  document.body.classList.add('ch-' + n);
+  // update address bar
+  const addrChap = document.getElementById('addr-chapter');
+  if (addrChap) addrChap.textContent = CHAPTER_NAMES[n] || '';
+}
+
+// init
+document.body.classList.add('ch-1');
+
+// reveal chapter gates as reader progresses
+function revealChapterGates(currentNavIdx) {
+  const navEls = document.querySelectorAll('[data-idx]');
+  const navArr = Array.from(navEls).filter(el =>
+    !el.classList.contains('break') &&
+    !el.classList.contains('label') &&
+    !el.classList.contains('cta-sentence')
+  );
+  const activeEl = navArr[currentNavIdx];
+  const activeChapter = activeEl ? parseInt(activeEl.dataset.chapter || 1) : 1;
+
+  document.querySelectorAll('.chapter-gate').forEach(gate => {
+    const ch = parseInt(gate.dataset.chapter);
+    if (ch < activeChapter) gate.classList.add('revealed');
+    else if (ch === activeChapter) gate.classList.add('revealed');
+    else gate.classList.remove('revealed');
+  });
+
+  setChapter(activeChapter);
+}
+
+// ══════════════════════════════════════════════
 //  SENTENCE ENGINE
 // ══════════════════════════════════════════════
 const all = Array.from(document.querySelectorAll('[data-idx]'));
@@ -825,6 +1132,9 @@ function goTo(n) {
   // reveal cart button at end
   const nearEnd = n >= navigable.length - 4;
   document.getElementById('h-cart-btn').style.display = nearEnd ? 'block' : 'none';
+
+  // chapter system
+  revealChapterGates(n);
 }
 
 function next() { goTo(current + 1); }
