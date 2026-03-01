@@ -78,14 +78,15 @@ body.ch-5 {
 #image-layer::after,
 header,
 #panel,
-#hud,
+#nav-widget .nw-shell,
+#nav-widget .nw-chapter-label,
+#nav-widget .nw-pip-fill,
 #progress,
 .panel-progress-fill,
 .sentence.label,
 .sentence.break::before,
 .sentence.poster.active::before,
 .btn-add,
-.hud-btn,
 .h-product-price,
 .h-btn.cta,
 #grid-label,
@@ -224,7 +225,8 @@ body::after {
 #cursor.big { width: 40px; height: 40px; }
 
 /* Hotspot cursor states */
-#cursor.nav-prev, #cursor.nav-next {
+#cursor.nav-prev, #cursor.nav-next,
+#cursor.nav-top, #cursor.nav-bottom {
   width: 64px; height: 64px;
 }
 
@@ -233,6 +235,20 @@ body::after {
 
 #cursor.nav-next { background: var(--accent); }
 #cursor.nav-next::after { content: '↓'; opacity: 1; }
+
+#cursor.nav-top { background: var(--ink); }
+#cursor.nav-top::after { content: '⤒'; opacity: 1; font-size: 18px; }
+
+#cursor.nav-bottom { background: var(--accent); }
+#cursor.nav-bottom::after { content: '⤓'; opacity: 1; font-size: 18px; }
+
+/* scroll-free cursor — plain, no affordances */
+body.scroll-free #cursor {
+  width: 6px; height: 6px;
+  background: rgba(255,255,255,0.3);
+  mix-blend-mode: normal;
+  border: 1px solid rgba(255,255,255,0.15);
+}
 
 a, button, [data-idx] { cursor: none; }
 
@@ -484,6 +500,132 @@ header {
 }
 .trigger:hover { text-decoration-color: var(--accent); }
 
+/* ── INLINE MEDIA ── video/image blocks in the stream */
+.sentence.media {
+  padding: 20px 0;
+  opacity: 0.12;
+  overflow: hidden;
+}
+.sentence.media.active,
+.sentence.media.revealed { opacity: 1; }
+.sentence.media video,
+.sentence.media img.media-img {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  border-radius: 2px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background: #0a0a0a;
+}
+.sentence.media video { opacity: 0.88; }
+.media-caption {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 8px;
+  transition: color 1.2s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   SCROLL TOGGLE — circle, sits top-right of stream,
+   goes fixed when ON so it follows you everywhere.
+═══════════════════════════════════════════════ */
+#scroll-toggle {
+  position: absolute;
+  top: clamp(20px, 4vh, 36px);
+  right: clamp(20px, 3vw, 40px);
+  z-index: 500;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(8,8,8,0.72);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s, background 0.25s, box-shadow 0.25s,
+              top 0.4s cubic-bezier(0.4,0,0.2,1),
+              right 0.4s cubic-bezier(0.4,0,0.2,1);
+  line-height: 1.2;
+  text-align: center;
+  cursor: none;
+  padding: 0;
+}
+#scroll-toggle:hover {
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.22);
+}
+/* ON state — glowing accent, now fixed, follows you */
+#scroll-toggle.on {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 1px var(--accent), 0 0 28px rgba(250,60,0,0.5);
+  /* subtle pulse — reminder of your decision */
+  animation: scroll-pulse 3s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { box-shadow: 0 0 0 1px var(--accent), 0 0 20px rgba(250,60,0,0.4); }
+  50%       { box-shadow: 0 0 0 1px var(--accent), 0 0 36px rgba(250,60,0,0.7); }
+}
+
+/* ── SCROLL MODE ── */
+body.scroll-free {
+  overflow-y: auto !important;
+  min-height: 100vh;
+}
+body.scroll-free #stream-col {
+  justify-content: flex-start;
+  min-height: auto;
+  padding-top: 64px;
+  padding-bottom: 80px;
+}
+/* all sentences fully visible */
+body.scroll-free .sentence {
+  opacity: 1 !important;
+  pointer-events: none; /* no sentence clicking — you're scrolling */
+}
+body.scroll-free .sentence.body { color: var(--ink-2) !important; }
+body.scroll-free .sentence.spec .spec-val { color: var(--ink-2) !important; }
+body.scroll-free .sentence.label { color: var(--accent) !important; }
+body.scroll-free .ch-gate { opacity: 1 !important; }
+
+/* lockout overlay — covers the stream content area only.
+   Panel stays interactive — commerce must always be reachable. */
+#scroll-lockout {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  right: 380px; /* matches panel width */
+  z-index: 490;
+  cursor: none;
+}
+body.scroll-free #scroll-lockout { display: block; }
+
+/* nav widget — dead in scroll mode */
+body.scroll-free #nav-widget {
+  opacity: 0.18;
+  pointer-events: none;
+  filter: grayscale(0.5);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+/* panel stays fully alive */
+body.scroll-free #panel {
+  pointer-events: auto;
+}
+
 /* ═══════════════════════════════════════════════
    RIGHT COLUMN — sticky commerce panel
 ═══════════════════════════════════════════════ */
@@ -652,50 +794,175 @@ header {
 }
 
 /* ═══════════════════════════════════════════════
-   NAV HUD
+   NAV WIDGET — positionable command pod
 ═══════════════════════════════════════════════ */
-#hud {
+#nav-widget {
   position: fixed;
   bottom: 28px;
   left: clamp(28px, 5vw, 72px);
   z-index: 300;
+  user-select: none;
+  touch-action: none;
+  transition: box-shadow 0.15s ease;
+}
+#nav-widget.dragging {
+  transition: none;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px var(--accent);
+}
+.nw-shell {
+  display: flex;
+  flex-direction: column;
+  background: rgba(6,6,6,0.94);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 172px;
+  transition: border-color 1.2s ease;
+}
+/* drag handle */
+.nw-handle {
   display: flex;
   align-items: center;
-  gap: 0;
-  background: rgba(8,8,8,0.9);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  border-radius: 3px;
-  overflow: hidden;
+  justify-content: space-between;
+  padding: 6px 10px 6px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: grab;
+  gap: 8px;
 }
-.hud-btn {
+.nw-handle:active { cursor: grabbing; }
+.nw-chapter-label {
   font-family: var(--ui);
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
+  font-size: 7px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 1.2s ease;
+}
+.nw-drag-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 3px);
+  grid-template-rows: repeat(2, 3px);
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.nw-drag-dots span {
+  display: block;
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+/* prev/next core — the dominant element */
+.nw-nav {
+  display: flex;
+}
+.nw-btn-prev,
+.nw-btn-next {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 20px 12px;
   background: none;
   border: none;
-  padding: 9px 14px;
-  border-right: 1px solid var(--border);
-  transition: color .15s, background .15s;
+  font-family: var(--disp);
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--ink-3);
+  transition: color 0.12s ease, background 0.12s ease, transform 0.08s ease;
 }
-.hud-btn:last-child { border-right: none; }
-.hud-btn:hover, .hud-btn.on { color: var(--accent); }
-#hud-counter {
+.nw-btn-prev { border-right: 1px solid var(--border); }
+.nw-btn-prev:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
+.nw-btn-next:hover { color: #fff; background: var(--accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.94); }
+.nw-btn-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  font-weight: 400;
+  transition: opacity 0.12s;
+}
+.nw-btn-next:hover .nw-btn-label,
+.nw-btn-prev:hover .nw-btn-label { opacity: 0.75; }
+/* counter + progress pip */
+.nw-counter {
+  display: flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   font-family: var(--ui);
   font-size: 8px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--ink-3);
-  padding: 9px 12px;
-  border-right: 1px solid var(--border);
-  min-width: 56px;
-  text-align: center;
   font-variant-numeric: tabular-nums;
+  gap: 8px;
+}
+.nw-counter-text { flex-shrink: 0; }
+.nw-pip {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.nw-pip-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: var(--accent);
+  width: 0%;
+  transition: width 0.3s ease, background 1.2s ease;
+}
+/* quick-access row */
+.nw-actions {
+  display: flex;
+}
+.nw-action-btn {
+  flex: 1;
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--ink-3);
+  padding: 9px 6px;
+  transition: color 0.12s, background 0.12s;
+  white-space: nowrap;
+}
+.nw-action-btn:last-child { border-right: none; }
+.nw-action-btn:hover { color: var(--accent); background: rgba(250,60,0,0.06); }
+.nw-cart-btn {
+  display: none;
+  color: var(--accent);
+  font-weight: 700;
+}
+.nw-cart-btn.visible { display: block; }
+.nw-cart-btn:hover { background: var(--accent) !important; color: #fff !important; }
+
+#nav-widget.nw-free {
+  bottom: auto;
+  right: auto;
 }
 
-/* ═══════════════════════════════════════════════
-   GRID OVERLAY — colorway / angle browser
-═══════════════════════════════════════════════ */
+/* also update cursor on nav widget buttons */
+#nav-widget .nw-btn-prev,
+#nav-widget .nw-btn-next,
+#nav-widget .nw-action-btn {
+  cursor: none;
+}
 #grid-overlay {
   position: fixed; inset: 0;
   z-index: 400;
@@ -785,35 +1052,113 @@ header {
 
   <main id="stream-col">
 
-    <span class="sentence label"   data-idx="0" data-img="0">Nike · Air Jordan · Retro</span>
-    <span class="sentence poster"  data-idx="1" data-img="0">Air<br>Jordan <span class="ac">11</span></span>
-    <span class="sentence poster"  data-idx="2" data-img="0"><span class="dim">Cool</span><br>Grey.</span>
+    <!-- scroll mode toggle -->
+    <button id="scroll-toggle" aria-label="Toggle free scroll" title="Toggle free scroll">scroll</button>
+
+    <span class="sentence label"   data-idx="0" data-img="0" data-ch="1">Nike · Air Jordan · Retro</span>
+    <span class="sentence poster"  data-idx="1" data-img="0" data-ch="1">Air<br>Jordan <span class="ac">11</span></span>
+    <span class="sentence poster"  data-idx="2" data-img="0" data-ch="1"><span class="dim">Cool</span><br>Grey.</span>
     <span class="sentence break"   data-idx="3"></span>
 
-    <span class="sentence label"   data-idx="4" data-img="1">The Story</span>
-    <span class="sentence body"    data-idx="5" data-img="1">Michael wore them when the game changed. Not for the cameras. Not for the contract. For the same reason anyone laces up — because the floor demands it and you answered.</span>
-    <span class="sentence body"    data-idx="6" data-img="2">The Cool Grey is the absence of noise. It's what's left when you strip everything that's trying to say something. Patent leather shell. Woven upper. The Jumpman where it belongs.</span>
-    <span class="sentence body"    data-idx="7" data-img="3">These aren't shoes you explain. You put them on and something shifts. The floor feels different. You stand differently. You know something you didn't before.</span>
-    <span class="sentence break"   data-idx="8"></span>
+    <!-- Ch 2 gate -->
+    <div class="ch-gate" data-ch="2">
+      <div class="ch-gate-rule"></div>
+      <div class="ch-gate-inner">
+        <span class="ch-gate-num">02</span>
+        <div class="ch-gate-text">
+          <span class="ch-gate-label">Chapter</span>
+          <span class="ch-gate-title">The Story</span>
+        </div>
+      </div>
+    </div>
 
-    <span class="sentence label"   data-idx="9"  data-img="4">Craft</span>
-    <span class="sentence body"    data-idx="10" data-img="4">The <span class="trigger">patent leather shell</span> catches light differently than anything else in the room. That's intentional. That's not an accident of material. That's thirty years of knowing exactly what you're building.</span>
-    <span class="sentence body"    data-idx="11" data-img="5">The carbon fiber shank doesn't flex. It responds. There's a difference. Flex is passive. Response is a conversation between your foot and the floor — and this sole has been having that conversation since 1995.</span>
-    <span class="sentence break"   data-idx="12"></span>
+    <span class="sentence label"   data-idx="4" data-img="1" data-ch="2">The Story</span>
+    <span class="sentence body"    data-idx="5" data-img="1" data-ch="2">Michael wore them when the game changed. Not for the cameras. Not for the contract. For the same reason anyone laces up — because the floor demands it and you answered.</span>
 
-    <span class="sentence label"   data-idx="13" data-img="5">Details</span>
-    <span class="sentence spec"    data-idx="14"><span class="spec-key">Style</span><span class="spec-val">CT8012-005</span></span>
-    <span class="sentence spec"    data-idx="15"><span class="spec-key">Colorway</span><span class="spec-val">Black / White / Cool Grey</span></span>
-    <span class="sentence spec"    data-idx="16"><span class="spec-key">Release</span><span class="spec-val">December 2024</span></span>
-    <span class="sentence spec"    data-idx="17"><span class="spec-key">Upper</span><span class="spec-val">Leather / Patent Leather</span></span>
-    <span class="sentence spec"    data-idx="18"><span class="spec-key">Midsole</span><span class="spec-val">Air-Sole unit / Carbon fiber shank</span></span>
-    <span class="sentence spec"    data-idx="19"><span class="spec-key">Retail</span><span class="spec-val">$225</span></span>
-    <span class="sentence break"   data-idx="20"></span>
+    <!-- inline video: basketball court atmosphere -->
+    <span class="sentence media" data-idx="6" data-ch="2">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/5319955/5319955-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">The floor that started everything</span>
+    </span>
 
-    <span class="sentence label"   data-idx="21" data-img="0">The Moment</span>
-    <span class="sentence poster"  data-idx="22" data-img="0">You<br>already<br><span class="ac">know.</span></span>
-    <span class="sentence body"    data-idx="23" data-img="0">You've known since sentence one. Select your size. That's all that's left.</span>
-    <span class="sentence cta-sentence" data-idx="24">
+    <span class="sentence body"    data-idx="7" data-img="2" data-ch="2">The Cool Grey is the absence of noise. It's what's left when you strip everything that's trying to say something. Patent leather shell. Woven upper. The Jumpman where it belongs.</span>
+    <span class="sentence body"    data-idx="8" data-img="3" data-ch="2">These aren't shoes you explain. You put them on and something shifts. The floor feels different. You stand differently. You know something you didn't before.</span>
+    <span class="sentence break"   data-idx="9"></span>
+
+    <!-- Ch 3 gate -->
+    <div class="ch-gate" data-ch="3">
+      <div class="ch-gate-rule"></div>
+      <div class="ch-gate-inner">
+        <span class="ch-gate-num">03</span>
+        <div class="ch-gate-text">
+          <span class="ch-gate-label">Chapter</span>
+          <span class="ch-gate-title">The Craft</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="sentence label"   data-idx="10" data-img="4" data-ch="3">Craft</span>
+    <span class="sentence body"    data-idx="11" data-img="4" data-ch="3">The <span class="trigger">patent leather shell</span> catches light differently than anything else in the room. That's intentional. That's not an accident of material. That's thirty years of knowing exactly what you're building.</span>
+
+    <!-- inline video: sneaker craft / detail -->
+    <span class="sentence media" data-idx="12" data-ch="3">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/4065461/4065461-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">Patent leather · 30 years of intention</span>
+    </span>
+
+    <span class="sentence body"    data-idx="13" data-img="5" data-ch="3">The carbon fiber shank doesn't flex. It responds. There's a difference. Flex is passive. Response is a conversation between your foot and the floor — and this sole has been having that conversation since 1995.</span>
+    <span class="sentence break"   data-idx="14"></span>
+
+    <!-- Ch 4 gate -->
+    <div class="ch-gate" data-ch="4">
+      <div class="ch-gate-rule"></div>
+      <div class="ch-gate-inner">
+        <span class="ch-gate-num">04</span>
+        <div class="ch-gate-text">
+          <span class="ch-gate-label">Chapter</span>
+          <span class="ch-gate-title">The Details</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="sentence label"   data-idx="15" data-img="5" data-ch="4">Details</span>
+    <span class="sentence spec"    data-idx="16" data-ch="4"><span class="spec-key">Style</span><span class="spec-val">CT8012-005</span></span>
+    <span class="sentence spec"    data-idx="17" data-ch="4"><span class="spec-key">Colorway</span><span class="spec-val">Black / White / Cool Grey</span></span>
+    <span class="sentence spec"    data-idx="18" data-ch="4"><span class="spec-key">Release</span><span class="spec-val">December 2024</span></span>
+    <span class="sentence spec"    data-idx="19" data-ch="4"><span class="spec-key">Upper</span><span class="spec-val">Leather / Patent Leather</span></span>
+    <span class="sentence spec"    data-idx="20" data-ch="4"><span class="spec-key">Midsole</span><span class="spec-val">Air-Sole unit / Carbon fiber shank</span></span>
+    <span class="sentence spec"    data-idx="21" data-ch="4"><span class="spec-key">Retail</span><span class="spec-val">$225</span></span>
+    <span class="sentence break"   data-idx="22"></span>
+
+    <!-- Ch 5 gate -->
+    <div class="ch-gate" data-ch="5">
+      <div class="ch-gate-rule"></div>
+      <div class="ch-gate-inner">
+        <span class="ch-gate-num">05</span>
+        <div class="ch-gate-text">
+          <span class="ch-gate-label">Chapter</span>
+          <span class="ch-gate-title">The Moment</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="sentence label"   data-idx="23" data-img="0" data-ch="5">The Moment</span>
+    <span class="sentence poster"  data-idx="24" data-img="0" data-ch="5">You<br>already<br><span class="ac">know.</span></span>
+
+    <!-- inline video: city / movement — the feeling -->
+    <span class="sentence media" data-idx="25" data-ch="5">
+      <video autoplay muted loop playsinline>
+        <source src="https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <span class="media-caption">Wherever you're going next</span>
+    </span>
+
+    <span class="sentence body"    data-idx="26" data-img="0" data-ch="5">You've known since sentence one. Select your size. That's all that's left.</span>
+    <span class="sentence cta-sentence" data-idx="27">
       </span>
 
   </main>
@@ -878,11 +1223,50 @@ header {
 
   </aside>
 
-</div><div id="hud">
-  <button class="hud-btn" id="hud-prev">↑</button>
-  <span id="hud-counter">01 / 24</span>
-  <button class="hud-btn" id="hud-next">↓</button>
-  <button class="hud-btn on" onclick="openGrid()">▦</button>
+</div>
+
+<!-- scroll lockout overlay — active when scroll-free; only toggle can escape -->
+<div id="scroll-lockout"></div>
+
+<!-- ══ NAV WIDGET — positionable command pod ══ -->
+<div id="nav-widget">
+  <div class="nw-shell">
+
+    <!-- drag handle / chapter label -->
+    <div class="nw-handle" id="nw-handle">
+      <span class="nw-chapter-label" id="nw-chapter">Ch.1 — Entry</span>
+      <div class="nw-drag-dots">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- dominant prev / next -->
+    <div class="nw-nav">
+      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous sentence">
+        ↑
+        <span class="nw-btn-label">Prev</span>
+      </button>
+      <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">
+        ↓
+        <span class="nw-btn-label">Next</span>
+      </button>
+    </div>
+
+    <!-- counter + progress pip -->
+    <div class="nw-counter">
+      <span class="nw-counter-text" id="nw-counter">01 / 13</span>
+      <div class="nw-pip"><div class="nw-pip-fill" id="nw-pip"></div></div>
+    </div>
+
+    <!-- quick-access actions -->
+    <div class="nw-actions">
+      <button class="nw-action-btn" onclick="openGrid()" title="All product views">▦ Views</button>
+      <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Go to product details">⊡ Panel</button>
+      <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Add to cart">⊕ Cart</button>
+    </div>
+
+  </div>
 </div>
 
 <div id="grid-overlay">
@@ -971,7 +1355,7 @@ function goTo(n) {
   activeEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   // counter
-  document.getElementById('hud-counter').textContent =
+  document.getElementById('nw-counter').textContent =
     String(n + 1).padStart(2,'0') + ' / ' + String(navigable.length).padStart(2,'0');
 
   // progress
@@ -979,10 +1363,13 @@ function goTo(n) {
   document.getElementById('progress').style.width = pct + '%';
   document.getElementById('panel-fill').style.width = pct + '%';
   document.getElementById('panel-pct').textContent = pct + '%';
+  document.getElementById('nw-pip').style.width = pct + '%';
 
   // reveal cart button at end
   const nearEnd = n >= navigable.length - 4;
   document.getElementById('h-cart-btn').style.display = nearEnd ? 'block' : 'none';
+  const nwCart = document.getElementById('nw-cart-btn');
+  if (nearEnd) nwCart.classList.add('visible'); else nwCart.classList.remove('visible');
 
   // ── CHAPTER SYSTEM ──────────────────────────────────
   // derive active chapter from current sentence's data-ch
@@ -996,17 +1383,16 @@ function goTo(n) {
     if (gch <= ch) g.classList.add('revealed');
     else g.classList.remove('revealed');
   });
-  // update HUD with chapter name
+  // update widget chapter label
   const CH_NAMES = ['','Entry','The Story','The Craft','The Details','The Moment'];
-  document.getElementById('hud-counter').textContent =
-    'Ch.' + ch + ' — ' + String(n + 1).padStart(2,'0') + '/' + String(navigable.length).padStart(2,'0');
+  document.getElementById('nw-chapter').textContent = 'Ch.' + ch + ' — ' + (CH_NAMES[ch] || '');
 }
 
 function next() { goTo(current + 1); }
 function prev() { goTo(current - 1); }
 
-document.getElementById('hud-next').addEventListener('click', next);
-document.getElementById('hud-prev').addEventListener('click', prev);
+document.getElementById('nw-next').addEventListener('click', next);
+document.getElementById('nw-prev').addEventListener('click', prev);
 
 // click any sentence to jump
 navigable.forEach((el, i) => {
@@ -1019,6 +1405,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeGrid();
     return;
   }
+  if (document.body.classList.contains('scroll-free')) return;
   if (e.key === 'ArrowDown' || e.key === 'j' || e.key === ' ') { e.preventDefault(); next(); }
   if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
   if (e.key === 'g' || e.key === 'G') { e.preventDefault(); openGrid(); }
@@ -1026,18 +1413,25 @@ document.addEventListener('keydown', e => {
 
 // scroll
 let lastWheel = 0;
-document.getElementById('stream-col').addEventListener('wheel', e => {
-  e.preventDefault();
-  const now = Date.now();
-  if (now - lastWheel < 550) return;
-  lastWheel = now;
-  e.deltaY > 0 ? next() : prev();
-}, { passive: false });
+let scrollWheelHandler = null;
+function attachWheelHandler() {
+  scrollWheelHandler = e => {
+    if (document.body.classList.contains('scroll-free')) return;
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastWheel < 550) return;
+    lastWheel = now;
+    e.deltaY > 0 ? next() : prev();
+  };
+  document.getElementById('stream-col').addEventListener('wheel', scrollWheelHandler, { passive: false });
+}
+attachWheelHandler();
 
 // swipe
 let touchY = 0;
 document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
 document.addEventListener('touchend', e => {
+  if (document.body.classList.contains('scroll-free')) return;
   if (document.getElementById('grid-overlay').classList.contains('open')) return;
   const dy = touchY - e.changedTouches[0].clientY;
   if (Math.abs(dy) > 40) { dy > 0 ? next() : prev(); }
@@ -1046,43 +1440,199 @@ document.addEventListener('touchend', e => {
 goTo(0);
 
 // ══════════════════════════════════════════════
-//  BACKGROUND HOTSPOTS (Rapid Navigation)
+//  SCROLL TOGGLE
+//  The button is a declaration. When ON it goes
+//  fixed — follows you, reminds you of your choice.
+//  Everything except the panel locks out. The only
+//  exit is toggling it off yourself.
+// ══════════════════════════════════════════════
+(function initScrollToggle() {
+  const btn = document.getElementById('scroll-toggle');
+  const lockout = document.getElementById('scroll-lockout');
+  let scrollFree = false;
+
+  // Track nearest navigable sentence via IntersectionObserver
+  // so we can snap back intelligently when exiting scroll mode
+  let nearestIdx = 0;
+  let bestRatio = 0;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.intersectionRatio > bestRatio) {
+        const i = navigable.indexOf(entry.target);
+        if (i >= 0) { nearestIdx = i; bestRatio = entry.intersectionRatio; }
+      }
+    });
+    // reset for next frame
+    setTimeout(() => { bestRatio = 0; }, 100);
+  }, { threshold: [0, 0.25, 0.5, 0.75, 1.0] });
+  navigable.forEach(el => io.observe(el));
+
+  function enterScrollFree() {
+    scrollFree = true;
+    btn.classList.add('on');
+    document.body.classList.add('scroll-free');
+    document.body.style.overflow = 'auto';
+
+    // Reveal everything — the page becomes a normal document
+    all.forEach(el => {
+      el.classList.add('revealed');
+      el.classList.remove('active');
+    });
+    document.querySelectorAll('.ch-gate').forEach(g => g.classList.add('revealed'));
+
+    // Clear nav cursor states
+    ALL_NAV_CLASSES.forEach(c => cursor.classList.remove(c));
+
+    // Lockout sits over everything at z-490; toggle is z-500 so still clickable
+    // It absorbs all pointer events except what punches through to the panel (right column)
+    // The lockout div doesn't cover the panel (it's a separate grid column)
+  }
+
+  function exitScrollFree() {
+    scrollFree = false;
+    btn.classList.remove('on');
+    document.body.classList.remove('scroll-free');
+    document.body.style.overflow = '';
+
+    // Snap back to nearest sentence — no jarring reset
+    goTo(nearestIdx);
+  }
+
+  btn.addEventListener('click', () => {
+    if (scrollFree) exitScrollFree();
+    else enterScrollFree();
+  });
+
+  // Lockout absorbs clicks/interactions over the stream content
+  // The panel remains interactive (it's outside #stream-col in the grid)
+  // Keyboard nav also disabled in scroll-free (handled in keydown listener)
+})();
+
+// ══════════════════════════════════════════════
+//  WIDGET DRAG — free-position after first move
+// ══════════════════════════════════════════════
+(function initWidgetDrag() {
+  const widget = document.getElementById('nav-widget');
+  const handle = document.getElementById('nw-handle');
+  let dragging = false, sx, sy, wl, wt;
+
+  function startDrag(cx, cy) {
+    // First drag: convert from CSS bottom/left anchoring to absolute top/left
+    if (!widget.classList.contains('nw-free')) {
+      const r = widget.getBoundingClientRect();
+      widget.classList.add('nw-free');
+      widget.style.left   = r.left + 'px';
+      widget.style.top    = r.top  + 'px';
+      widget.style.bottom = 'auto';
+    }
+    dragging = true;
+    sx = cx; sy = cy;
+    wl = parseFloat(widget.style.left) || 0;
+    wt = parseFloat(widget.style.top)  || 0;
+    widget.classList.add('dragging');
+  }
+
+  function moveDrag(cx, cy) {
+    if (!dragging) return;
+    const maxL = window.innerWidth  - widget.offsetWidth  - 8;
+    const maxT = window.innerHeight - widget.offsetHeight - 8;
+    widget.style.left = Math.max(8, Math.min(maxL, wl + cx - sx)) + 'px';
+    widget.style.top  = Math.max(8, Math.min(maxT, wt + cy - sy)) + 'px';
+  }
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    widget.classList.remove('dragging');
+  }
+
+  // mouse
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', endDrag);
+
+  // touch
+  handle.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: false });
+  document.addEventListener('touchend', endDrag, { passive: true });
+})();
+
+// ══════════════════════════════════════════════
+//  PANEL FOCUS — quick-access from widget
+// ══════════════════════════════════════════════
+function focusPanel() {
+  const panel = document.getElementById('panel');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // pulse the panel border briefly
+  panel.style.borderColor = 'var(--accent)';
+  setTimeout(() => { panel.style.borderColor = ''; }, 700);
+}
+
+// ══════════════════════════════════════════════
+//  BACKGROUND HOTSPOTS — four zones
+//  top 10%      → jump to first
+//  10–33%       → prev
+//  67–90%       → next
+//  bottom 10%   → jump to last
 // ══════════════════════════════════════════════
 const streamCol = document.getElementById('stream-col');
+const ALL_NAV_CLASSES = ['nav-prev', 'nav-next', 'nav-top', 'nav-bottom'];
+
+function getHotspotZone(clientY) {
+  const vh = window.innerHeight;
+  const pct = clientY / vh;
+  if (pct < 0.10) return 'top';
+  if (pct < 0.33) return 'prev';
+  if (pct < 0.67) return null; // dead center — no hotspot
+  if (pct < 0.90) return 'next';
+  return 'bottom';
+}
+
+function clearNavCursor() {
+  ALL_NAV_CLASSES.forEach(c => cursor.classList.remove(c));
+}
 
 streamCol.addEventListener('mousemove', e => {
+  if (document.body.classList.contains('scroll-free')) return;
   if (document.getElementById('grid-overlay').classList.contains('open')) return;
 
   const isText = e.target.closest('.sentence');
-  
-  if (!isText) {
-    if (e.clientY < window.innerHeight / 2) {
-      cursor.classList.add('nav-prev');
-      cursor.classList.remove('nav-next', 'big');
-    } else {
-      cursor.classList.add('nav-next');
-      cursor.classList.remove('nav-prev', 'big');
-    }
-  } else {
-    cursor.classList.remove('nav-prev', 'nav-next');
-  }
+  if (isText) { clearNavCursor(); return; }
+
+  const zone = getHotspotZone(e.clientY);
+  clearNavCursor();
+  if (zone === 'top')    cursor.classList.add('nav-top');
+  if (zone === 'prev')   cursor.classList.add('nav-prev');
+  if (zone === 'next')   cursor.classList.add('nav-next');
+  if (zone === 'bottom') cursor.classList.add('nav-bottom');
 });
 
-streamCol.addEventListener('mouseleave', () => {
-  cursor.classList.remove('nav-prev', 'nav-next');
-});
+streamCol.addEventListener('mouseleave', clearNavCursor);
 
 streamCol.addEventListener('click', e => {
+  if (document.body.classList.contains('scroll-free')) return;
   if (document.getElementById('grid-overlay').classList.contains('open')) return;
 
   const isText = e.target.closest('.sentence');
-  if (!isText) {
-    if (e.clientY < window.innerHeight / 2) {
-      prev();
-    } else {
-      next();
-    }
-  }
+  if (isText) return;
+
+  const zone = getHotspotZone(e.clientY);
+  if (zone === 'top')    goTo(0);
+  if (zone === 'prev')   prev();
+  if (zone === 'next')   next();
+  if (zone === 'bottom') goTo(navigable.length - 1);
 });
 
 // ══════════════════════════════════════════════
