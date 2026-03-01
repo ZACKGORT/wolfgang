@@ -1585,6 +1585,17 @@ body.compose-mode .pullquote-break .sentence-drag-handle { display: flex; align-
     line-height: inherit;
 }
 .image-trigger:hover { color: var(--accent); border-bottom-style: solid; opacity: 1; }
+/* Mobile: expand touch target without affecting layout */
+@media (pointer: coarse) {
+    .image-trigger {
+        position: relative;
+    }
+    .image-trigger::before {
+        content: '';
+        position: absolute;
+        inset: -10px -6px;
+    }
+}
 .hover-image { 
     position: absolute; z-index: 1; pointer-events: none; opacity: 0; 
     transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.1s linear; 
@@ -6481,7 +6492,44 @@ function render() {
             span.innerHTML = wrapImageTriggers(part.text) + ' ';
             span.addEventListener('mouseenter', () => { if (state.isTouch) return; const index = parseInt(span.dataset.sentenceIndex); state.allSentenceElements.forEach((s, i) => { s.style.opacity = i === index ? '0.7' : '0.25'; }); }, { passive: true });
             span.addEventListener('mouseleave', () => { if (state.isTouch) return; state.allSentenceElements.forEach(s => s.style.opacity = ''); }, { passive: true });
-            span.addEventListener('click', () => { state.currentSentenceIndex = parseInt(span.dataset.sentenceIndex); highlightSentence(state.currentSentenceIndex); });
+            span.addEventListener('click', (e) => {
+                // On touch devices, touchend handles this with better precision; skip ghost click
+                if (state.lastInteractionWasTouch) return;
+                state.currentSentenceIndex = parseInt(span.dataset.sentenceIndex); highlightSentence(state.currentSentenceIndex);
+            });
+            span.addEventListener('touchend', (e) => {
+                if (state.touchMoved) {
+                    // Allow small drift (finger not perfectly still) — only bail if it was a real swipe
+                    const touch = e.changedTouches[0];
+                    const dx = touch.clientX - state.touchStartX;
+                    const dy = touch.clientY - state.touchStartY;
+                    if (Math.sqrt(dx * dx + dy * dy) > CONFIG.FLICK_THRESHOLD) return;
+                }
+                e.preventDefault(); // suppress ghost click
+                // Use the exact touch-release coordinate to find the real element under finger
+                const touch = e.changedTouches[0];
+                const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                // Check if finger landed on an image-trigger
+                const imgTrigger = el && el.closest('.image-trigger');
+                if (imgTrigger) {
+                    const imageUrl = imgTrigger.getAttribute('data-image');
+                    if (imageUrl) {
+                        // Navigate to the sentence that owns this trigger first
+                        const parentSentence = imgTrigger.closest('.sentence[data-sentence-index]');
+                        if (parentSentence) {
+                            state.currentSentenceIndex = parseInt(parentSentence.dataset.sentenceIndex);
+                            highlightSentence(state.currentSentenceIndex);
+                        }
+                        showImage(imageUrl, imgTrigger);
+                    }
+                    return;
+                }
+                // Otherwise navigate to the sentence under the finger
+                const targetSentence = el && el.closest('.sentence[data-sentence-index]');
+                const idx = targetSentence ? parseInt(targetSentence.dataset.sentenceIndex) : parseInt(span.dataset.sentenceIndex);
+                state.currentSentenceIndex = idx;
+                highlightSentence(state.currentSentenceIndex);
+            }, { passive: false });
             span.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') { e.preventDefault(); state.currentSentenceIndex = parseInt(span.dataset.sentenceIndex); highlightSentence(state.currentSentenceIndex); }
             });
@@ -6646,6 +6694,21 @@ function render() {
         }
         if (e.key === 'Escape' && state.imageActive) { e.preventDefault(); hideImage(); }
     });
+
+    // Mobile: tap on image-trigger directly shows the image (delegated, catches all cases)
+    streamEl.addEventListener('touchend', (e) => {
+        if (state.touchMoved) {
+            const touch = e.changedTouches[0];
+            const dx = touch.clientX - state.touchStartX;
+            const dy = touch.clientY - state.touchStartY;
+            if (Math.sqrt(dx * dx + dy * dy) > CONFIG.FLICK_THRESHOLD) return;
+        }
+        const trigger = e.target.closest('.image-trigger');
+        if (!trigger) return;
+        e.preventDefault();
+        const imageUrl = trigger.getAttribute('data-image');
+        if (imageUrl) showImage(imageUrl, trigger);
+    }, { passive: false });
 }
 
 // ===================================
