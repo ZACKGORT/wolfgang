@@ -516,13 +516,12 @@ code {
                 <li><span class="toc-num">04</span><a href="#chapter-themes">Chapter Themes</a></li>
                 <li><span class="toc-num">05</span><a href="#image-layer">Image Layer</a></li>
                 <li><span class="toc-num">06</span><a href="#hud">The HUD</a></li>
-                <li><span class="toc-num">07</span><a href="#hotspot-zones">Hotspot Zones</a></li>
-                <li><span class="toc-num">08</span><a href="#chapter-widget">Chapter Widget</a></li>
-                <li><span class="toc-num">09</span><a href="#commerce-panel">Commerce Panel</a></li>
-                <li><span class="toc-num">10</span><a href="#scroll-mode">Scroll Mode</a></li>
-                <li><span class="toc-num">11</span><a href="#journey-end">End of Journey</a></li>
-                <li><span class="toc-num">12</span><a href="#mobile">Mobile</a></li>
-                <li><span class="toc-num">13</span><a href="#technical">Technical Notes</a></li>
+                <li><span class="toc-num">07</span><a href="#chapter-widget">Chapter Widget</a></li>
+                <li><span class="toc-num">08</span><a href="#commerce-panel">Commerce Panel</a></li>
+                <li><span class="toc-num">09</span><a href="#scroll-mode">Scroll Mode</a></li>
+                <li><span class="toc-num">10</span><a href="#journey-end">End of Journey</a></li>
+                <li><span class="toc-num">11</span><a href="#mobile">Mobile</a></li>
+                <li><span class="toc-num">12</span><a href="#technical">Technical Notes</a></li>
             </ul>
         </nav>
 
@@ -731,44 +730,10 @@ code {
             </div>
         </section>
 
-        <!-- 07 HOTSPOT ZONES -->
-        <section class="section" id="hotspot-zones">
-            <div class="section-header">
-                <span class="section-num">07</span>
-                <h2>Hotspot Zones</h2>
-            </div>
-
-            <p>Every navigation paradigm on the web requires you to find a control and aim at it. Buttons, arrows, scroll bars — all demand precision targeting. The hotspot zone system inverts this entirely. The content column itself is the control surface. Where your cursor is on screen <em>is</em> your intent.</p>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">The Five Zones</p>
-                <p>The content column is divided vertically by cursor position: top 10% jumps to the first sentence, 10–33% navigates to the previous sentence, 33–67% is a dead zone with no action, 67–90% navigates to the next sentence, and the bottom 10% jumps to the last sentence. No buttons. No labels. Just where you are.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">The Dead Zone Is the Point</p>
-                <p>The middle third doing nothing is what makes the whole system work. If the entire column were active, every mouse movement through the reading area would feel loaded and anxious. The dead zone lets you rest — you can read, hover over sentences, exist in the space without triggering anything. The hotspots only fire when you reach toward the edges, when your body is already expressing directional intent through movement. Stillness is safe. Reaching means something.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">The Cursor as Feedback</p>
-                <p>The custom cursor changes shape and label in each zone — ↑ for previous, ↓ for next, ⤒ for jump to first, ⤓ for jump to last. You never have to guess whether a zone registered. The cursor tells you immediately what the page thinks you're about to do. When you hover a sentence directly, all hotspot states clear — the sentence itself is the target, not the zone. The system yields to precision when precision is offered.</p>
-            </div>
-
-            <div class="mechanic-block">
-                <p class="mechanic-title">Spatial Intention Reading</p>
-                <p>The zones map to a spatial metaphor the body already knows: near the top means further back, near the bottom means further forward. This isn't learned behavior — it's borrowed from how people physically relate to vertical space. The interface catches up to an intuition that already exists. No instruction needed.</p>
-            </div>
-
-            <div class="callout">
-                <p>The hotspot zones make the entire content column navigational without making it feel like a navigation element. The reading space and the control surface are the same thing.</p>
-            </div>
-        </section>
-
-        <!-- 08 CHAPTER WIDGET -->
+        <!-- 07 CHAPTER WIDGET -->
         <section class="section" id="chapter-widget">
             <div class="section-header">
-                <span class="section-num">08</span>
+                <span class="section-num">07</span>
                 <h2>Chapter Widget</h2>
             </div>
 
@@ -790,10 +755,10 @@ code {
             </div>
         </section>
 
-        <!-- 09 COMMERCE PANEL -->
+        <!-- 08 COMMERCE PANEL -->
         <section class="section" id="commerce-panel">
             <div class="section-header">
-                <span class="section-num">09</span>
+                <span class="section-num">08</span>
                 <h2>Commerce Panel</h2>
             </div>
 
@@ -830,10 +795,10 @@ code {
             </div>
         </section>
 
-        <!-- 10 SCROLL MODE -->
+        <!-- 09 SCROLL MODE -->
         <section class="section" id="scroll-mode">
             <div class="section-header">
-                <span class="section-num">10</span>
+                <span class="section-num">09</span>
                 <h2>Scroll Mode</h2>
             </div>
 
@@ -860,10 +825,10 @@ code {
             </div>
         </section>
 
-        <!-- 11 END OF JOURNEY -->
+        <!-- 10 END OF JOURNEY -->
         <section class="section" id="journey-end">
             <div class="section-header">
-                <span class="section-num">11</span>
+                <span class="section-num">10</span>
                 <h2>End of Journey</h2>
             </div>
 
@@ -885,14 +850,16 @@ code {
             </div>
         </section>
 
-        <!-- 12 MOBILE -->
+        <!-- 11 MOBILE -->
         <section class="section" id="mobile">
             <div class="section-header">
-                <span class="section-num">12</span>
+                <span class="section-num">11</span>
                 <h2>Mobile</h2>
             </div>
 
-            <p>Mobile is a first-class reading experience with its own layout and interaction model. The two-column desktop layout collapses to a single column — narrative stream above, commerce panel below. The HUD becomes a bottom bar. The chapter widget stays at top center.</p>
+            <p>Every platform gets exactly what its input device makes possible — and nothing it doesn't. Desktop has a mouse, so it gets hotspot zones: cursor position as intent, the entire content column as a navigation surface. Mobile has fingers, so it gets swipe. There's no cursor position to read on a phone, so there are no hotspot zones. There's no mouse precision, so the HUD moves to where thumbs live. The interaction primitive matches the body.</p>
+
+            <p>This isn't mobile as a reduced desktop experience. It's the same philosophy — sentence engine, three states, chapters, image layer, commerce always accessible — expressed through a completely different set of physical affordances. The underlying model is identical. Only the control surfaces change, and they change to match the input device.</p>
 
             <div class="mechanic-block">
                 <p class="mechanic-title">Bottom HUD Bar</p>
@@ -920,10 +887,10 @@ code {
             </div>
         </section>
 
-        <!-- 13 TECHNICAL NOTES -->
+        <!-- 12 TECHNICAL NOTES -->
         <section class="section" id="technical">
             <div class="section-header">
-                <span class="section-num">13</span>
+                <span class="section-num">12</span>
                 <h2>Technical Notes</h2>
             </div>
 
