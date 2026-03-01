@@ -79,7 +79,7 @@ body.ch-5 {
 header,
 #panel,
 #nav-widget .nw-shell,
-#nav-widget .nw-chapter-label,
+#nav-widget .nw-cell-value,
 #nav-widget .nw-pip-fill,
 #progress,
 .panel-progress-fill,
@@ -384,7 +384,6 @@ header {
   grid-column: 1;
   grid-row: 2;
   padding: clamp(48px, 7vh, 80px) clamp(28px, 5vw, 72px);
-  padding-bottom: calc(clamp(48px, 7vh, 80px) + 64px); /* HUD clearance */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -616,102 +615,302 @@ body.scroll-free .ch-gate { opacity: 1 !important; }
 body.scroll-free #scroll-lockout { display: block; }
 
 /* nav widget — dead in scroll mode */
-body.scroll-free /* ═══════════════════════════════════════════════
-   HUD — horizontal bar, sits in stream-col on desktop
-═══════════════════════════════════════════════ */
+body.scroll-free #nav-widget {
+  opacity: 0.18;
+  pointer-events: none;
+  filter: grayscale(0.5);
+  transition: opacity 0.4s ease, filter 0.4s ease;
+}
+/* panel stays fully alive */
+body.scroll-free #panel {
+  pointer-events: auto;
+}
 
-/* Desktop: absolute inside stream-col so it respects the content column */
-#nav-widget {
+/* ═══════════════════════════════════════════════
+   RIGHT COLUMN — sticky commerce panel
+═══════════════════════════════════════════════ */
+#panel {
+  grid-column: 2;
+  grid-row: 2;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: rgba(8,8,8,0.6);
+  backdrop-filter: blur(20px);
+  overflow-y: auto;
+  padding: 32px 28px 48px;
+}
+
+/* product image area */
+.panel-img-area {
+  position: relative;
+  aspect-ratio: 1;
+  background: #0f0f0f;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+}
+.panel-img-area img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  position: absolute; inset: 0;
+  transition: opacity 0.4s ease;
+}
+.panel-img-area img.vis { opacity: 0.9; }
+.panel-img-thumb-row {
+  display: flex; gap: 4px; margin-bottom: 20px; flex-shrink: 0;
+}
+.thumb {
+  width: 52px; height: 52px;
+  object-fit: cover;
+  opacity: 0.4;
+  border: 1px solid transparent;
+  transition: opacity .2s, border-color .2s;
+  flex-shrink: 0;
+}
+.thumb.active { opacity: 1; border-color: var(--accent); }
+
+/* colorway picker */
+.panel-section-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.colorway-row {
+  display: flex; gap: 6px; margin-bottom: 24px;
+}
+.cw-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+}
+.cw-swatch.active { border-color: var(--accent); transform: scale(1.12); }
+.cw-swatch:hover:not(.active) { border-color: rgba(255,255,255,0.2); }
+
+/* size grid */
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-bottom: 24px;
+}
+.sz {
+  aspect-ratio: unset;
+  padding: 9px 4px;
+  font-family: var(--ui);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--ink-2);
+  transition: all .15s;
+}
+.sz:hover { border-color: rgba(255,255,255,0.2); color: var(--ink); }
+.sz.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sz.out {
+  opacity: 0.2;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+
+/* CTA buttons */
+.btn-add {
+  width: 100%;
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 16px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: background .15s;
+}
+.btn-add::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.08);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s ease;
+}
+.btn-add:hover { background: #e03500; }
+.btn-add:hover::after { transform: scaleX(1); }
+.btn-add:active { transform: scale(0.99); }
+
+.btn-fav {
+  width: 100%;
+  font-family: var(--ui);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+  padding: 12px;
+  margin-bottom: 20px;
+  transition: all .15s;
+}
+.btn-fav:hover { border-color: rgba(255,255,255,0.15); color: var(--ink-2); }
+
+/* sentence counter in panel */
+.panel-progress {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.panel-progress-bar {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+}
+.panel-progress-fill {
   position: absolute;
-  bottom: clamp(24px, 4vh, 40px);
+  left: 0; top: 0; bottom: 0;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ═══════════════════════════════════════════════
+   NAV WIDGET — positionable command pod
+═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   NAV WIDGET — horizontal pill, wolfie.love style
+═══════════════════════════════════════════════ */
+#nav-widget {
+  position: fixed;
+  bottom: 24px;
   left: clamp(28px, 5vw, 72px);
-  right: 0;
   z-index: 300;
   user-select: none;
   touch-action: none;
-  /* no dragging on desktop — it's anchored */
+  transition: box-shadow 0.15s ease;
 }
+#nav-widget.dragging {
+  transition: none;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px var(--accent);
+}
+#nav-widget.nw-free {
+  bottom: auto;
+  right: auto;
+}
+
+/* ── pill shell — horizontal ── */
 .nw-shell {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
-  background: rgba(6,6,6,0.92);
+  align-items: center;
+  background: rgba(6,6,6,0.94);
   border: 1px solid var(--border);
   backdrop-filter: blur(18px);
-  border-radius: 3px;
-  overflow: hidden;
-  height: 36px;
-  width: fit-content;
-  max-width: calc(100% - clamp(28px, 5vw, 72px));
+  border-radius: 6px;
+  padding: 4px 2px 4px 4px;
+  gap: 0;
   transition: border-color 1.2s ease;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
 }
 
-/* hide drag handle — not needed on horizontal anchored bar */
-.nw-handle { display: none; }
-.nw-drag-dots { display: none; }
-
-/* prev / next — compact horizontal */
-.nw-nav {
+/* drag handle — vertical dots on far left */
+.nw-handle {
   display: flex;
-  flex-direction: row;
-}
-.nw-btn-prev,
-.nw-btn-next {
-  display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 0 14px;
-  background: none;
-  border: none;
-  font-family: var(--ui);
-  font-size: 11px;
+  align-self: stretch;
+  padding: 0 8px 0 4px;
+  border-right: 1px solid var(--border);
+  cursor: grab;
+  margin-right: 0;
+  flex-shrink: 0;
+}
+.nw-handle:active { cursor: grabbing; }
+.nw-drag-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  opacity: 0.25;
+  pointer-events: none;
+  letter-spacing: -3px;
+  font-size: 12px;
+  color: var(--ink-3);
   line-height: 1;
-  color: var(--ink-3);
-  transition: color 0.12s ease, background 0.12s ease;
-  cursor: none;
-  white-space: nowrap;
-  border-right: 1px solid var(--border);
 }
-.nw-btn-prev:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
-.nw-btn-next:hover { color: #fff; background: var(--accent); }
-.nw-btn-prev:active, .nw-btn-next:active { opacity: 0.7; }
-.nw-btn-label {
-  font-family: var(--ui);
-  font-size: 7px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.45;
-}
-.nw-btn-next:hover .nw-btn-label,
-.nw-btn-prev:hover .nw-btn-label { opacity: 0.8; }
 
-/* counter + pip — center of bar */
-.nw-counter {
+/* ── stat cells — value over label ── */
+.nw-cell {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 0 14px;
+  padding: 4px 10px;
+  gap: 2px;
   border-right: 1px solid var(--border);
-  font-family: var(--ui);
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-  gap: 10px;
-  white-space: nowrap;
+  min-width: 52px;
+  flex-shrink: 0;
 }
-.nw-chapter-label {
+.nw-cell:last-of-type { border-right: none; }
+.nw-cell-value {
   font-family: var(--ui);
-  font-size: 7px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
   transition: color 1.2s ease;
   white-space: nowrap;
 }
+.nw-cell-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
+  transition: color 1.2s ease;
+}
+
+/* chapter cell — label in accent, value is chapter name */
+.nw-cell.nw-chapter-cell .nw-cell-value {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* progress pip inside its own cell */
+.nw-pip-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 4px;
+  border-right: 1px solid var(--border);
+  min-width: 60px;
+  flex-shrink: 0;
+}
 .nw-pip {
-  width: 56px;
+  width: 100%;
   height: 1px;
   background: var(--border);
   position: relative;
@@ -724,63 +923,92 @@ body.scroll-free /* ════════════════════
   width: 0%;
   transition: width 0.3s ease, background 1.2s ease;
 }
-
-/* action buttons */
-.nw-actions {
-  display: flex;
-  flex-direction: row;
+.nw-pip-pct {
+  font-family: var(--ui);
+  font-size: 7px;
+  color: var(--ink-3);
+  letter-spacing: 0.08em;
+  line-height: 1;
 }
+
+/* ── divider ── */
+.nw-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: 4px 3px;
+  flex-shrink: 0;
+}
+
+/* ── action cells (views, panel, cart) ── */
 .nw-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 2px;
+  border-right: 1px solid var(--border);
+  min-width: 44px;
+  flex-shrink: 0;
+  font-family: var(--ui);
+  font-size: 11px;
+  color: var(--ink-3);
+  background: none;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+  transition: color 0.12s, background 0.12s;
+  cursor: none;
+  white-space: nowrap;
+}
+.nw-action-btn .nw-action-label {
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color 0.12s;
+}
+.nw-action-btn:hover { color: var(--accent); background: rgba(250,60,0,0.05); }
+.nw-action-btn:hover .nw-action-label { color: var(--accent); }
+.nw-action-btn:last-of-type { border-right: none; }
+
+/* cart — hidden until near end */
+.nw-cart-btn { display: none; }
+.nw-cart-btn.visible { display: flex; }
+.nw-cart-btn .nw-cell-value,
+.nw-cart-btn .nw-action-label { color: var(--accent); }
+.nw-cart-btn:hover { background: var(--accent) !important; }
+.nw-cart-btn:hover .nw-cell-value,
+.nw-cart-btn:hover .nw-action-label { color: #fff !important; }
+
+/* ── nav buttons — ← and → on far right ── */
+.nw-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 3px;
+  flex-shrink: 0;
+}
+.nw-btn-prev,
+.nw-btn-next {
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--accent);
   font-family: var(--ui);
-  font-size: 7px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  background: none;
-  border: none;
-  border-left: 1px solid var(--border);
-  color: var(--ink-3);
-  padding: 0 12px;
-  transition: color 0.12s, background 0.12s;
-  white-space: nowrap;
+  font-size: 16px;
+  transition: background 0.12s, transform 0.08s, color 0.12s;
   cursor: none;
+  flex-shrink: 0;
 }
-.nw-action-btn:hover { color: var(--accent); background: rgba(250,60,0,0.06); }
-.nw-cart-btn { display: none; }
-.nw-cart-btn.visible { display: flex; color: var(--accent); font-weight: 700; }
-.nw-cart-btn:hover { background: var(--accent) !important; color: #fff !important; }
-
-/* Mobile: fixed to bottom, full viewport width */
-@media (max-width: 760px) {
-  #nav-widget {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 300;
-  }
-  .nw-shell {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    height: 48px; /* larger touch targets */
-  }
-  .nw-btn-prev,
-  .nw-btn-next {
-    flex: 1;
-    padding: 0;
-    font-size: 14px;
-  }
-  .nw-btn-label { display: none; } /* save space on mobile */
-  .nw-counter { padding: 0 12px; }
-  .nw-pip { width: 40px; }
-  .nw-action-btn { padding: 0 14px; }
-}
+.nw-btn-prev:hover { background: rgba(255,255,255,0.08); color: var(--ink); }
+.nw-btn-next:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.88); }
 #grid-overlay {
   position: fixed; inset: 0;
   z-index: 400;
@@ -822,11 +1050,12 @@ body.scroll-free /* ════════════════════
 ═══════════════════════════════════════════════ */
 @media (max-width: 760px) {
   #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
-  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); margin-bottom: 48px; }
-  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 100px; } /* 100px = HUD + safe area */
+  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px; }
   .h-center { display: none; }
   .sentence.poster { font-size: clamp(40px, 11vw, 72px); }
   .sentence.poster.active::before { left: -18px; }
+  #stream-col { padding-left: 24px; }
 }
 
 </style>
@@ -1049,32 +1278,45 @@ body.scroll-free /* ════════════════════
 <div id="nav-widget">
   <div class="nw-shell">
 
-    <!-- prev -->
-    <div class="nw-nav">
-      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous sentence">
-        ↑ <span class="nw-btn-label">Prev</span>
-      </button>
+    <!-- drag handle — far left -->
+    <div class="nw-handle" id="nw-handle">
+      <div class="nw-drag-dots">⋮⋮</div>
     </div>
 
-    <!-- chapter label + counter + pip -->
-    <div class="nw-counter">
-      <span class="nw-chapter-label" id="nw-chapter">Ch.1 — Entry</span>
+    <!-- chapter cell -->
+    <div class="nw-cell nw-chapter-cell">
+      <span class="nw-cell-value" id="nw-chapter">Entry</span>
+      <span class="nw-cell-label" id="nw-chapter-num">Ch. 1</span>
+    </div>
+
+    <!-- progress pip cell -->
+    <div class="nw-pip-cell">
       <div class="nw-pip"><div class="nw-pip-fill" id="nw-pip"></div></div>
-      <span class="nw-counter-text" id="nw-counter">01 / 13</span>
+      <span class="nw-pip-pct" id="nw-counter">01 / 13</span>
     </div>
 
-    <!-- next -->
+    <div class="nw-divider"></div>
+
+    <!-- quick-access actions -->
+    <button class="nw-action-btn" onclick="openGrid()" title="All product views">
+      <span class="nw-cell-value">▦</span>
+      <span class="nw-action-label">Views</span>
+    </button>
+    <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Product panel">
+      <span class="nw-cell-value">⊡</span>
+      <span class="nw-action-label">Panel</span>
+    </button>
+    <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Add to cart">
+      <span class="nw-cell-value">⊕</span>
+      <span class="nw-action-label">Cart</span>
+    </button>
+
+    <div class="nw-divider"></div>
+
+    <!-- nav buttons — far right -->
     <div class="nw-nav">
-      <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">
-        <span class="nw-btn-label">Next</span> ↓
-      </button>
-    </div>
-
-    <!-- actions -->
-    <div class="nw-actions">
-      <button class="nw-action-btn" onclick="openGrid()" title="All product views">▦</button>
-      <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Product panel">⊡</button>
-      <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="Add to cart">⊕</button>
+      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous sentence">←</button>
+      <button class="nw-btn-next" id="nw-next" aria-label="Next sentence">→</button>
     </div>
 
   </div>
@@ -1196,7 +1438,8 @@ function goTo(n) {
   });
   // update widget chapter label
   const CH_NAMES = ['','Entry','The Story','The Craft','The Details','The Moment'];
-  document.getElementById('nw-chapter').textContent = 'Ch.' + ch + ' — ' + (CH_NAMES[ch] || '');
+  document.getElementById('nw-chapter').textContent = CH_NAMES[ch] || ('Ch.' + ch);
+  document.getElementById('nw-chapter-num').textContent = 'Ch. ' + ch;
 }
 
 function next() { goTo(current + 1); }
@@ -1320,8 +1563,67 @@ goTo(0);
 })();
 
 // ══════════════════════════════════════════════
-// HUD is anchored, drag removed
+//  WIDGET DRAG — free-position after first move
+// ══════════════════════════════════════════════
+(function initWidgetDrag() {
+  const widget = document.getElementById('nav-widget');
+  const handle = document.getElementById('nw-handle');
+  let dragging = false, sx, sy, wl, wt;
 
+  function startDrag(cx, cy) {
+    // First drag: convert from CSS bottom/left anchoring to absolute top/left
+    if (!widget.classList.contains('nw-free')) {
+      const r = widget.getBoundingClientRect();
+      widget.classList.add('nw-free');
+      widget.style.left   = r.left + 'px';
+      widget.style.top    = r.top  + 'px';
+      widget.style.bottom = 'auto';
+    }
+    dragging = true;
+    sx = cx; sy = cy;
+    wl = parseFloat(widget.style.left) || 0;
+    wt = parseFloat(widget.style.top)  || 0;
+    widget.classList.add('dragging');
+  }
+
+  function moveDrag(cx, cy) {
+    if (!dragging) return;
+    const maxL = window.innerWidth  - widget.offsetWidth  - 8;
+    const maxT = window.innerHeight - widget.offsetHeight - 8;
+    widget.style.left = Math.max(8, Math.min(maxL, wl + cx - sx)) + 'px';
+    widget.style.top  = Math.max(8, Math.min(maxT, wt + cy - sy)) + 'px';
+  }
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    widget.classList.remove('dragging');
+  }
+
+  // mouse
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', endDrag);
+
+  // touch
+  handle.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: false });
+  document.addEventListener('touchend', endDrag, { passive: true });
+})();
+
+// ══════════════════════════════════════════════
 //  PANEL FOCUS — quick-access from widget
 // ══════════════════════════════════════════════
 function focusPanel() {
