@@ -3005,7 +3005,6 @@ body.compose-mode { padding-bottom: 0; }
         touch-action: none;
         will-change: transform;
         isolation: isolate;
-        overflow: hidden;
         display: flex;
         flex-direction: column-reverse;
         /* height matches stats widget via padding — don't set explicit height */
@@ -3247,8 +3246,15 @@ body.compose-mode { padding-bottom: 0; }
             transform: translateX(-50%);
             width: calc(100vw - 32px);
             max-width: 300px;
+            overflow: visible; /* allow track list to expand upward */
+            flex-direction: column-reverse; /* drag handle at bottom, body grows up */
         }
         .music-player.dragged { transform: none; left: auto; bottom: auto; }
+        /* body renders above the drag handle via column-reverse */
+        .music-player.expanded .music-player-body {
+            border-bottom: 1px solid var(--border);
+            border-radius: 6px 6px 0 0;
+        }
     }
 
     
