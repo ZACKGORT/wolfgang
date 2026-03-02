@@ -3397,6 +3397,64 @@ body.compose-mode { padding-bottom: 0; }
 }
 .visitor-compose-sent.show { opacity: 1; }
 
+/* ═══════════════════════════════════════
+   DETAIL GHOST — magnetic cursor overlay
+   ═══════════════════════════════════════ */
+#detail-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: calc(var(--z-overlay) + 50);
+    opacity: 0;
+    will-change: left, top;
+    transition: opacity 0.18s ease;
+}
+#detail-ghost.visible { opacity: 1; }
+.dg-inner {
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 9px 14px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.15);
+    max-width: 320px;
+}
+.dg-label {
+    font-family: var(--ui-font);
+    font-size: 7.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+.dg-body {
+    font-family: var(--body-font);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.55;
+    letter-spacing: 0.005em;
+}
+.dg-voice {
+    display: block;
+    font-family: var(--ui-font);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 4px;
+    font-style: normal;
+}
+.bracket-trigger.ghost-active { opacity: 0.35 !important; }
+.pullquote-break.ghost-active  { opacity: 0.5  !important; }
+@media (pointer: coarse) {
+    #detail-ghost { display: none; }
+    .bracket-trigger.ghost-active,
+    .pullquote-break.ghost-active { opacity: 1 !important; }
+}
+
 </style>
 </head>
 <body class="theme-newspaper"><!-- default -->
@@ -3506,6 +3564,14 @@ body.compose-mode { padding-bottom: 0; }
     </div>
 
     <div id="cursor" aria-hidden="true"><img id="cursor-thumb" alt="" aria-hidden="true"></div>
+
+    <!-- Detail ghost — magnetic cursor overlay for brackets & pullquotes -->
+    <div id="detail-ghost" aria-hidden="true">
+        <div class="dg-inner">
+            <div class="dg-label" id="dg-label"></div>
+            <div class="dg-body"  id="dg-body"></div>
+        </div>
+    </div>
     
     <div class="left-rail">
         <div class="lens-control-container">
@@ -4560,7 +4626,20 @@ const toastBehaviors = (() => {
             banner: true,
             onDismiss: () => setRailDot(false)
         });
-        // Show time-spent thank-you toast after a short delay
+        // "Keep going" — infinite loop option
+        setTimeout(() => {
+            Toast.show({
+                id: 'end-loop',
+                icon: '∞',
+                message: 'Or let the story loop. It knows the way back.',
+                actionLabel: '↺  Keep going',
+                actionFn: () => { window._infiniteLoop = true; highlightSentence(0, 1); },
+                duration: 12000,
+                force: true,
+                onDismiss: () => {}
+            });
+        }, 800);
+        // Time-spent thank-you toast
         setTimeout(() => {
             const elapsed = formatElapsed(Date.now() - state.sessionStartTime);
             Toast.show({
@@ -4571,7 +4650,7 @@ const toastBehaviors = (() => {
                 force: true,
                 onDismiss: () => {}
             });
-        }, 1200);
+        }, 2400);
     }
 
     function onSentenceAdvance() {
@@ -5164,15 +5243,25 @@ function highlightSentence(index, dir = 1) {
         trackSentence(index);
         toastBehaviors.onSentenceAdvance();
         const isLast = sentence.dataset.lastSentence === 'true';
-        document.body.classList.toggle('has-last-sentence', isLast);
-        state.allSentenceElements.forEach(s => s.classList.remove('last-sentence'));
-        if (isLast) {
-            sentence.classList.add('last-sentence');
-            console.log('[@@last] Applied to:', sentence.textContent.trim().slice(0,30));
-            console.log('[@@last] --ink computed:', getComputedStyle(document.body).getPropertyValue('--ink'));
-            console.log('[@@last] --bg-color computed:', getComputedStyle(document.body).getPropertyValue('--bg-color'));
-            console.log('[@@last] sentence computed bg:', getComputedStyle(sentence).background);
-            toastBehaviors.onLastSentence();
+        // In infinite loop mode: suppress the finale styling and the end CTA re-fire
+        if (window._infiniteLoop && isLast) {
+            // Let it pass through silently — just advance on next navigation
+        } else {
+            document.body.classList.toggle('has-last-sentence', isLast);
+            state.allSentenceElements.forEach(s => s.classList.remove('last-sentence'));
+            if (isLast) {
+                sentence.classList.add('last-sentence');
+                console.log('[@@last] Applied to:', sentence.textContent.trim().slice(0,30));
+                console.log('[@@last] --ink computed:', getComputedStyle(document.body).getPropertyValue('--ink'));
+                console.log('[@@last] --bg-color computed:', getComputedStyle(document.body).getPropertyValue('--bg-color'));
+                console.log('[@@last] sentence computed bg:', getComputedStyle(sentence).background);
+                toastBehaviors.onLastSentence();
+            }
+        }
+        // Clear finale state when looping back to start
+        if (window._infiniteLoop && index === 0) {
+            document.body.classList.remove('has-last-sentence');
+            state.allSentenceElements.forEach(s => s.classList.remove('last-sentence'));
         }
         // @@dark / @@/dark — interstitial dark block
         if (sentence.dataset.darkStart === 'true') {
@@ -7092,6 +7181,220 @@ document.addEventListener('DOMContentLoaded', () => {
     detectTouch();
     initializeAccessibility();
     initializeContextMenu();
+
+    // ── DETAIL GHOST — magnetic overlay for brackets & pullquotes ────────────
+    (function initDetailGhost() {
+        const ghost    = document.getElementById('detail-ghost');
+        const dgLabel  = document.getElementById('dg-label');
+        const dgBody   = document.getElementById('dg-body');
+        if (!ghost) return;
+
+        let ghostVisible = false;
+        let isFollowing  = false;
+        let ghostX = 0, ghostY = 0;
+        let targetX = 0, targetY = 0;
+        let idleX = 0,   idleY = 0;
+        let rafId  = null;
+        let activeEl = null;
+        const LERP_FOLLOW = 0.11;
+        const LERP_IDLE   = 0.07;
+        const OFFSET_X    = 22;
+        const OFFSET_Y    = -16;
+        const PADDING     = 12;
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        // ── Exclusion zones: left-rail, header, stats widget, right edge ──
+        function exclusionRects() {
+            const zones = [];
+            // Header bar
+            zones.push({ left: 0, top: 0, right: window.innerWidth, bottom: 64 });
+            // Left rail
+            const lr = document.querySelector('.left-rail');
+            if (lr) { const r = lr.getBoundingClientRect(); zones.push({ left: r.left - PADDING, top: r.top - PADDING, right: r.right + PADDING, bottom: r.bottom + PADDING }); }
+            // Stats widget
+            const sw = document.getElementById('statsWidget');
+            if (sw && sw.offsetParent) { const r = sw.getBoundingClientRect(); zones.push({ left: r.left - PADDING, top: r.top - PADDING, right: r.right + PADDING, bottom: r.bottom + PADDING }); }
+            // Flow controller
+            const fc = document.querySelector('.flow-controller');
+            if (fc && fc.offsetParent) { const r = fc.getBoundingClientRect(); zones.push({ left: r.left - PADDING, top: r.top - PADDING, right: r.right + PADDING, bottom: r.bottom + PADDING }); }
+            return zones;
+        }
+
+        function intersectsUI(x, y, w, h) {
+            for (const z of exclusionRects()) {
+                if (x < z.right && x + w > z.left && y < z.bottom && y + h > z.top) return true;
+            }
+            return false;
+        }
+
+        // ── Stream midpoint — left=follow, right=idle ──
+        function streamMidX() {
+            const stream = document.getElementById('stream');
+            if (!stream) return window.innerWidth * 0.5;
+            const r = stream.getBoundingClientRect();
+            return r.left + r.width * 0.5;
+        }
+
+        // ── Magnetic idle position near the active element ──
+        function computeIdlePosition() {
+            if (!activeEl) return { x: ghostX, y: ghostY };
+            const rect = activeEl.getBoundingClientRect();
+            const gw   = ghost.offsetWidth  || 260;
+            const gh   = ghost.offsetHeight || 60;
+            const stream = document.getElementById('stream');
+            const sRect  = stream ? stream.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+
+            const candidates = [
+                { x: rect.left,                 y: rect.top  - gh - 10 },
+                { x: rect.left,                 y: rect.bottom + 10    },
+                { x: sRect.left + 8,            y: rect.top  - gh - 10 },
+                { x: sRect.left + 8,            y: rect.bottom + 10    },
+                { x: rect.right - gw,           y: rect.top  - gh - 10 },
+            ];
+
+            for (const c of candidates) {
+                const cx = Math.max(sRect.left + 4, Math.min(c.x, window.innerWidth - gw - 8));
+                const cy = Math.max(68, Math.min(c.y, window.innerHeight - gh - 8));
+                if (!intersectsUI(cx, cy, gw, gh)) return { x: cx, y: cy };
+            }
+            return { x: sRect.left + 8, y: 68 };
+        }
+
+        // ── Clamp follow position away from UI ──
+        function clampFollow(x, y) {
+            const gw = ghost.offsetWidth  || 260;
+            const gh = ghost.offsetHeight || 60;
+            x = Math.max(8, Math.min(x, window.innerWidth  - gw - 8));
+            y = Math.max(68, Math.min(y, window.innerHeight - gh - 8));
+            if (intersectsUI(x, y, gw, gh)) y = Math.max(68, y - gh - 16);
+            return { x, y };
+        }
+
+        // ── RAF tick ──
+        function tick() {
+            if (isFollowing) {
+                const c = clampFollow(targetX, targetY);
+                ghostX = lerp(ghostX, c.x, LERP_FOLLOW);
+                ghostY = lerp(ghostY, c.y, LERP_FOLLOW);
+            } else {
+                ghostX = lerp(ghostX, idleX, LERP_IDLE);
+                ghostY = lerp(ghostY, idleY, LERP_IDLE);
+            }
+            ghost.style.left = ghostX + 'px';
+            ghost.style.top  = ghostY + 'px';
+            if (ghostVisible) rafId = requestAnimationFrame(tick);
+            else rafId = null;
+        }
+
+        function enterFollowMode() {
+            if (isFollowing) return;
+            isFollowing = true;
+            ghost.style.transition = 'opacity 0.18s ease';
+            if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick);
+        }
+
+        function enterIdleMode() {
+            if (!isFollowing) return;
+            isFollowing = false;
+            const pos = computeIdlePosition();
+            idleX = pos.x; idleY = pos.y;
+            ghost.style.transition = 'opacity 0.18s ease';
+            if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick);
+        }
+
+        function applyZone(mx) {
+            mx < streamMidX() ? enterFollowMode() : enterIdleMode();
+        }
+
+        function showGhost(label, bodyHTML) {
+            dgLabel.textContent = label;
+            dgBody.innerHTML    = bodyHTML;
+            const pos = computeIdlePosition();
+            idleX = pos.x; idleY = pos.y;
+            if (!ghostVisible) {
+                ghostX = idleX; ghostY = idleY;
+                ghost.style.left = ghostX + 'px';
+                ghost.style.top  = ghostY + 'px';
+            }
+            ghost.classList.add('visible');
+            ghostVisible = true;
+            if (!rafId) rafId = requestAnimationFrame(tick);
+            applyZone(state.mouseX);
+        }
+
+        function hideGhost() {
+            ghost.classList.remove('visible');
+            ghostVisible = false;
+            if (activeEl) { activeEl.classList.remove('ghost-active'); activeEl = null; }
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        }
+
+        // Zone tracking on mousemove
+        document.addEventListener('mousemove', e => {
+            targetX = e.clientX + OFFSET_X;
+            targetY = e.clientY + OFFSET_Y;
+            if (ghostVisible) applyZone(e.clientX);
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            if (ghostVisible && !isFollowing) {
+                const pos = computeIdlePosition();
+                idleX = pos.x; idleY = pos.y;
+            }
+        });
+
+        // ── Bracket trigger hover ──
+        // Delegate from stream so it works for dynamically-built brackets
+        const streamEl = document.getElementById('stream');
+        if (streamEl) {
+            streamEl.addEventListener('mouseover', e => {
+                const trigger = e.target.closest('.bracket-trigger');
+                if (!trigger) return;
+                // Read sibling bracket-content
+                const content = trigger.nextElementSibling;
+                const text = (content && content.classList.contains('bracket-content'))
+                    ? content.textContent.trim()
+                    : trigger.getAttribute('aria-label') || 'Annotation';
+                if (activeEl && activeEl !== trigger) { activeEl.classList.remove('ghost-active'); }
+                activeEl = trigger;
+                trigger.classList.add('ghost-active');
+                showGhost('Annotation', text);
+            }, { passive: true });
+
+            streamEl.addEventListener('mouseout', e => {
+                const trigger = e.target.closest('.bracket-trigger');
+                if (!trigger) return;
+                const to = e.relatedTarget;
+                if (to && (to === ghost || ghost.contains(to))) return;
+                hideGhost();
+            }, { passive: true });
+
+            // ── Pullquote hover ──
+            streamEl.addEventListener('mouseover', e => {
+                const pq = e.target.closest('.pullquote-break');
+                if (!pq) return;
+                const voice = pq.querySelector('.pullquote-voice');
+                const text  = pq.querySelector('.pullquote-text');
+                if (!voice && !text) return;
+                if (activeEl && activeEl !== pq) { activeEl.classList.remove('ghost-active'); }
+                activeEl = pq;
+                pq.classList.add('ghost-active');
+                const voiceHTML = voice ? `<span class="dg-voice">${voice.textContent}</span>` : '';
+                const bodyHTML  = voiceHTML + (text ? text.innerHTML : '');
+                showGhost('Pull Quote', bodyHTML);
+            }, { passive: true });
+
+            streamEl.addEventListener('mouseout', e => {
+                const pq = e.target.closest('.pullquote-break');
+                if (!pq) return;
+                const to = e.relatedTarget;
+                if (to && pq.contains(to)) return;
+                hideGhost();
+            }, { passive: true });
+        }
+    })();
+    // ── END DETAIL GHOST ──────────────────────────────────────────────────────
     initializeCloseHotspots();
     initializeKeyboardControls();
 
