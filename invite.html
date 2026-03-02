@@ -754,7 +754,7 @@ body.scroll-free #panel { pointer-events: auto; }
     <span class="sentence spec auto-flow" data-idx="24" data-ch="5"><span class="spec-key">Address</span><span class="spec-val">48 Stonegate Road, Accord, NY 12404</span></span>
     <span class="sentence spec auto-flow" data-idx="25" data-ch="5"><span class="spec-key">Dress</span><span class="spec-val">Garden formal · comfortable shoes encouraged</span></span>
     <span class="sentence spec auto-flow" data-idx="26" data-ch="5"><span class="spec-key">Lodging</span><span class="spec-val">Block reserved at The Emerson · code ELEANOR25</span></span>
-    <span class="sentence spec auto-flow" data-idx="27" data-ch="5"><span class="spec-key">RSVP By</span><span class="spec-val">May 1, 2025 · eleanor.james.2025@wolfie.love</span></span>
+    <span class="sentence spec auto-flow" data-idx="27" data-ch="5"><span class="spec-key">RSVP By</span><span class="spec-val">May 1, 2025 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7c2cbc2c6c9c8d589cdc6cac2d48995979592e7d0c8cbc1cec289cbc8d1c2">[email&#160;protected]</a></span></span>
     <span class="sentence break"  data-idx="28"></span>
 
     <!-- Ch 6 · The Invitation -->
@@ -810,7 +810,7 @@ body.scroll-free #panel { pointer-events: auto; }
     <p style="font-family:var(--ui);font-weight:300;font-size:8px;letter-spacing:.07em;color:var(--ink-3);line-height:1.8;border-top:1px solid var(--border);padding-top:14px">
       Stonegate Farm · 48 Stonegate Road, Accord, NY<br>
       Block rate at The Emerson · code <span style="color:var(--accent)">ELEANOR25</span><br>
-      Questions? eleanor.james.2025@wolfie.love
+      Questions? <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="30555c55515e5f421e5a515d55431e0200020570475f5c5659551e5c5f4655">[email&#160;protected]</a>
     </p>
   </aside>
 </div>
@@ -1259,12 +1259,16 @@ function openGrid(){
     gC.addEventListener('touchstart',gOnTouchStart,{passive:true});
     gC.addEventListener('touchmove',gOnTouchMove,{passive:false});
     gC.addEventListener('touchend',()=>{gPinch=null;},{passive:true});
-    window.addEventListener('resize',()=>{ if(!gC)return; gC.width=window.innerWidth; gC.height=window.innerHeight; gClamp(); });
+        window.addEventListener('resize',()=>{ gC.width=window.innerWidth; gC.height=window.innerHeight; gClamp(); });
   }
-  if(gRaf) cancelAnimationFrame(gRaf);
-  gTick();
+  if(!gRaf) gTick();
 }
-function closeGrid(){ document.getElementById('grid-overlay').classList.remove('open'); document.body.style.overflow=''; if(gRaf){cancelAnimationFrame(gRaf);gRaf=null;} }
+
+function closeGrid(){
+  const ov=document.getElementById('grid-overlay');
+  ov.classList.remove('open'); document.body.style.overflow='';
+  if(gRaf){ cancelAnimationFrame(gRaf); gRaf=null; }
+}
 </script>
 </body>
 </html>
