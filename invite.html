@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Eleanor & James · June 14, 2025 — wolfie.love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Jost:ital,wght@0,200;0,300;0,400;1,200;1,300&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:     #f8f5f0;
+  --ink:    #1a1816;
+  --ink-2:  #8a8278;
+  --ink-3:  #c8c0b8;
+  --accent: #8a7a6a;
+  --accent-l: rgba(138,122,106,0.12);
+  --border: rgba(26,24,22,0.07);
+  --ui:     'Jost', sans-serif;
+  --disp:   'Italiana', serif;
+}
+
+/* chapter theme shifts — light base, subtle tonal */
+body { transition: background-color 1.6s ease; }
+body.ch-2 { --bg:#f6f3ee; --ink:#1c1a17; --ink-2:#867e74; --ink-3:#c4bcb4; --accent:#7a6e60; }
+body.ch-3 { --bg:#f4f1ec; --ink:#1e1c18; --ink-2:#827a70; --ink-3:#c0b8b0; --accent:#706458; }
+body.ch-4 { --bg:#f2efe9; --ink:#201e1a; --ink-2:#7e7668; --ink-3:#bcb4ac; --accent:#6c6050; }
+body.ch-5 { --bg:#f0ede7; --ink:#221f1b; --ink-2:#7a7268; --ink-3:#b8b0a8; --accent:#68604e; }
+body.ch-6 { --bg:#ede9e2; --ink:#241f1a; --ink-2:#766e60; --ink-3:#b4ac9e; --accent:#907060; }
+
+#image-layer::after, header, #panel,
+#nav-widget .nw-shell, #nav-widget .nw-cell-value,
+#nav-widget .nw-nav-pip-fill, #progress, .panel-progress-fill,
+.sentence.label, .sentence.break::before,
+.sentence.poster.active::before, .btn-add,
+.ch-header-label, .ch-header-title {
+  transition-property: background-color, border-color, color, background;
+  transition-duration: 1.6s; transition-timing-function: ease;
+}
+
+/* breadcrumb */
+.mall-crumb {
+  font-family: var(--ui); font-size: 9px; font-weight: 300;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 8px;
+  transition: color 1.6s ease;
+}
+.mall-crumb .sep { opacity: 0.5; }
+.mall-crumb .node { transition: color .15s; }
+.mall-crumb .node:hover { color: var(--accent); }
+
+/* chapter headers */
+.ch-header {
+  display: block; text-align: center;
+  padding: 72px 0 24px; opacity: 0;
+  transition: opacity 0.7s ease; pointer-events: none;
+}
+.ch-header.revealed { opacity: 1; }
+.ch-header-rule {
+  width: 32px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  margin: 0 auto 20px; transition: background 1.6s ease;
+}
+.ch-header-inner { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.ch-header-label {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--accent); transition: color 1.6s ease;
+}
+.ch-header-num {
+  font-family: var(--disp); font-size: clamp(48px,7vw,88px);
+  line-height: 0.85; letter-spacing: 0.02em;
+  color: transparent; -webkit-text-stroke: 1px var(--ink-3);
+  user-select: none;
+}
+.ch-header-title {
+  font-family: var(--disp); font-size: clamp(20px,2.8vw,34px);
+  letter-spacing: 0.04em; line-height: 1; color: var(--ink);
+  transition: color 1.6s ease;
+}
+.ch-header-sub {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.16em; color: var(--ink-3); text-transform: uppercase;
+  transition: color 1.6s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: light; overscroll-behavior: none; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--ui); font-weight: 300;
+  font-size: 12px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; cursor: none; min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+/* subtle paper texture */
+body::after {
+  content: ''; position: fixed; inset: 0;
+  pointer-events: none; z-index: 9000; opacity: 0.025;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px;
+}
+
+/* cursor */
+#cursor {
+  position: fixed; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--accent);
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .14s, height .14s, background .2s;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ui); font-size: 16px; font-weight: 300;
+}
+#cursor::after { content: ''; opacity: 0; transition: opacity .14s; color: var(--bg); }
+#cursor.big { width: 32px; height: 32px; }
+#cursor.nav-prev, #cursor.nav-next,
+#cursor.nav-top, #cursor.nav-bottom { width: 56px; height: 56px; background: var(--ink); }
+#cursor.nav-prev::after { content: '↑'; opacity: 1; }
+#cursor.nav-next::after { content: '↓'; opacity: 1; }
+#cursor.nav-top::after  { content: '⤒'; opacity: 1; font-size: 14px; }
+#cursor.nav-bottom::after { content: '⤓'; opacity: 1; font-size: 14px; }
+a, button, [data-idx], .cw-trigger, .cw-item { cursor: none; }
+
+/* image layer */
+#image-layer {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+}
+#image-layer img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 35%;
+  opacity: 0; transform: scale(1.04);
+  transition: opacity 1s ease, transform 12s ease;
+}
+#image-layer img.visible { opacity: 0.22; transform: scale(1); }
+#image-layer::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(to right, rgba(248,245,240,0.92) 0%, rgba(248,245,240,0.65) 50%, rgba(248,245,240,0.18) 100%),
+    linear-gradient(to top, rgba(248,245,240,0.80) 0%, transparent 55%);
+  z-index: 1;
+}
+
+/* layout */
+#shell {
+  position: relative; z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  grid-template-rows: 52px 1fr;
+  min-height: 100vh;
+}
+
+/* header */
+header {
+  grid-column: 1/-1; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; border-bottom: 1px solid var(--border);
+  background: rgba(248,245,240,0.90); backdrop-filter: blur(16px);
+  position: sticky; top: 0; z-index: 100;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+header:hover { background: rgba(248,245,240,0.99); }
+header:hover .mall-crumb { color: var(--ink-3); }
+.h-center {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.h-couple {
+  font-family: var(--disp); font-size: 15px; letter-spacing: 0.06em; color: var(--ink);
+  transition: color .35s;
+}
+.h-date {
+  font-family: var(--ui); font-weight: 300; font-size: 8px;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+  transition: color .35s;
+}
+.h-actions { display: flex; gap: 8px; align-items: center; }
+.h-btn {
+  font-family: var(--ui); font-weight: 300; font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: 1px solid var(--border);
+  color: var(--ink-3); padding: 5px 12px; border-radius: 1px;
+  transition: all .15s;
+}
+.h-btn:hover { border-color: var(--accent); color: var(--accent); }
+.h-btn.cta {
+  background: var(--ink); border-color: var(--ink); color: var(--bg);
+}
+.h-btn.cta:hover { background: var(--accent); border-color: var(--accent); }
+
+#progress {
+  position: fixed; bottom: 0; left: 0; height: 1px;
+  background: var(--accent); z-index: 200; width: 0%;
+  transition: width 0.25s ease;
+}
+
+/* stream */
+#stream-col {
+  grid-column: 1; grid-row: 2;
+  padding: clamp(52px,8vh,96px) clamp(28px,5vw,80px);
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: calc(100vh - 52px); position: relative;
+}
+
+/* sentences */
+.sentence {
+  display: block; position: relative;
+  padding: 5px 0;
+  transition: opacity 0.4s ease, color 0.4s ease;
+  opacity: 0.08;
+}
+
+/* POSTER — Italiana, generous, light */
+.sentence.poster {
+  font-family: var(--disp);
+  font-size: clamp(56px,8vw,120px);
+  line-height: 0.86; letter-spacing: 0.02em; padding: 4px 0;
+}
+.sentence.poster .ac { color: var(--accent); }
+.sentence.poster .amp {
+  font-family: var(--disp); font-style: italic;
+  color: var(--ink-3); font-size: 0.65em; vertical-align: 0.08em;
+}
+
+/* BODY — Jost light italic, generous */
+.sentence.body {
+  font-family: var(--ui); font-weight: 200; font-style: italic;
+  font-size: clamp(16px,2.1vw,22px); line-height: 1.65;
+  letter-spacing: 0.01em; color: var(--ink-2); max-width: 520px;
+}
+.sentence.body .em { font-style: normal; font-weight: 400; color: var(--ink); }
+
+/* PULL QUOTE */
+.sentence.pull {
+  font-family: var(--disp);
+  font-size: clamp(22px,3vw,38px);
+  line-height: 1.2; letter-spacing: 0.02em;
+  color: var(--ink-2); max-width: 480px; padding: 8px 0;
+  border-left: 1px solid var(--ink-3); padding-left: 20px;
+}
+.sentence.pull .ac { color: var(--accent); }
+
+/* SPEC (logistics) */
+.sentence.spec {
+  font-family: var(--ui); font-weight: 300; font-size: 10px;
+  letter-spacing: 0.08em; color: var(--ink-3);
+  display: flex; align-items: baseline; gap: 14px; padding: 3px 0;
+}
+.sentence.spec .spec-key {
+  text-transform: uppercase; letter-spacing: 0.14em; font-size: 8px;
+  color: var(--ink-3); min-width: 90px; flex-shrink: 0;
+}
+.sentence.spec .spec-val { color: var(--ink-2); }
+
+/* LABEL */
+.sentence.label {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--accent); padding: 12px 0 4px;
+}
+
+/* BREAK */
+.sentence.break { padding: 10px 0; }
+.sentence.break::before {
+  content: ''; display: block; width: 20px; height: 1px; background: var(--ink-3);
+}
+
+/* CTA */
+.sentence.cta-sentence { padding: 28px 0 8px; }
+
+/* states */
+.sentence.active { opacity: 1; }
+.sentence.active.body { color: var(--ink); font-style: italic; }
+.sentence.active.pull { color: var(--ink); }
+.sentence.active.spec .spec-val { color: var(--ink); }
+.sentence.revealed { opacity: 0.30; }
+.sentence.revealed.body { color: var(--ink-2); }
+.sentence:hover:not(.active):not(.break):not(.label) { opacity: 0.55; }
+.sentence.poster.active::before {
+  content: ''; position: absolute;
+  left: -24px; top: 0; bottom: 0; width: 1px;
+  background: var(--accent);
+}
+
+/* inline media */
+.sentence.media { padding: 24px 0; opacity: 0.08; overflow: hidden; }
+.sentence.media.active, .sentence.media.revealed { opacity: 1; }
+.sentence.media img.media-img {
+  display: block; width: 100%; max-width: 520px;
+  aspect-ratio: 3/2; object-fit: cover; background: #e8e4de;
+}
+.media-caption {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); margin-top: 8px; transition: color 1.6s ease;
+}
+
+/* scroll toggle */
+#scroll-toggle {
+  position: absolute;
+  top: clamp(20px,4vh,36px); right: clamp(20px,3vw,40px);
+  z-index: 501; width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(26,24,22,0.05); border: 1px solid rgba(26,24,22,0.14);
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; justify-content: center;
+  transition: color .2s, border-color .2s, background .2s;
+  line-height: 1.2; text-align: center; cursor: none; padding: 0;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  pointer-events: auto !important;
+}
+#scroll-toggle:hover { color: var(--ink); border-color: var(--accent); }
+#scroll-toggle.on {
+  position: fixed; top: 20px; right: 20px;
+  background: var(--ink); border-color: var(--ink); color: var(--bg);
+}
+
+body.scroll-free { overflow-y: auto !important; }
+body.scroll-free #stream-col { justify-content: flex-start; min-height: auto; padding-top: 64px; padding-bottom: 80px; }
+body.scroll-free .sentence { opacity: 1 !important; pointer-events: none; }
+body.scroll-free .sentence.body { color: var(--ink-2) !important; }
+body.scroll-free .sentence.spec .spec-val { color: var(--ink-2) !important; }
+body.scroll-free .sentence.label { color: var(--accent) !important; }
+body.scroll-free .ch-header { opacity: 1 !important; }
+#scroll-lockout {
+  display: none; position: fixed; top: 0; left: 0; bottom: 0; right: 360px;
+  z-index: 490;
+}
+body.scroll-free #scroll-lockout { display: block; }
+body.scroll-free #nav-widget { opacity: 0.15; pointer-events: none; }
+body.scroll-free #panel { pointer-events: auto; }
+
+/* HUD — dark for light page (inverted) */
+:root {
+  --hud-bg:     rgba(26,24,22,0.94);
+  --hud-ink:    #f0ece6;
+  --hud-ink-2:  #8a8278;
+  --hud-ink-3:  #4a4440;
+  --hud-border: rgba(240,236,230,0.10);
+  --hud-accent: #b89a78;
+}
+
+/* nav widget */
+#nav-widget {
+  position: fixed; top: 50%; right: 378px; bottom: auto; left: auto;
+  transform: translateY(-50%); z-index: 300;
+  user-select: none; touch-action: none;
+  transition: opacity 0.4s ease, right 0.3s ease;
+}
+#nav-widget.dragging { transition: none; }
+#nav-widget.nw-free { top: auto; right: auto; transform: none; }
+@media (min-width: 761px) {
+  #panel:hover ~ #nav-widget,
+  body:has(#panel:hover) #nav-widget,
+  body:has(#panel:hover) #chapter-widget { opacity: 0; pointer-events: none; }
+}
+.nw-shell {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  backdrop-filter: blur(20px); border-radius: 10px;
+  padding: 6px 4px; gap: 0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+  min-width: 60px;
+}
+.nw-handle { display: flex; align-items: center; justify-content: center; width: 100%; padding: 6px 0 5px; border-bottom: 1px solid var(--hud-border); cursor: grab; flex-shrink: 0; }
+.nw-handle:active { cursor: grabbing; }
+.nw-drag-dots { opacity: 0.25; font-size: 9px; color: var(--hud-ink-2); letter-spacing: 2px; pointer-events: none; }
+.nw-divider { height: 1px; width: 70%; background: var(--hud-border); margin: 3px auto; flex-shrink: 0; }
+.nw-action-btn { display: flex; flex-direction: column; align-items: center; padding: 8px 10px; gap: 3px; border-bottom: 1px solid var(--hud-border); width: 100%; flex-shrink: 0; font-family: var(--ui); font-size: 12px; color: var(--hud-ink-2); background: none; border-top: none; border-left: none; border-right: none; transition: color .12s, background .12s; cursor: none; border-radius: 0; }
+.nw-action-btn .nw-action-label { font-size: 7px; font-weight: 300; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hud-ink-3); transition: color .12s; }
+.nw-action-btn:hover { color: var(--hud-accent); background: rgba(255,255,255,0.04); }
+.nw-action-btn:hover .nw-action-label { color: var(--hud-accent); }
+.nw-action-btn:last-of-type { border-bottom: none; }
+.nw-cart-btn { display: none; }
+.nw-cart-btn.visible { display: flex; }
+.nw-cart-btn:hover { background: var(--hud-accent) !important; }
+.nw-cart-btn:hover .nw-cell-value, .nw-cart-btn:hover .nw-action-label { color: #000 !important; }
+.nw-nav { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 4px; flex-shrink: 0; width: 100%; }
+.nw-btn-prev, .nw-btn-next { height: 40px; border-radius: 7px; background: rgba(255,255,255,0.04); border: 1px solid var(--hud-border); display: flex; align-items: center; justify-content: center; color: var(--hud-ink-2); font-family: var(--ui); font-size: 16px; transition: background .12s, transform .08s, color .12s; cursor: none; flex-shrink: 0; width: 100%; }
+.nw-btn-prev { border-radius: 7px 7px 4px 4px; }
+.nw-btn-next { border-radius: 4px 4px 7px 7px; }
+.nw-btn-prev:hover { background: rgba(255,255,255,0.07); color: var(--hud-ink); }
+.nw-btn-next:hover { background: var(--hud-accent); color: #000; border-color: var(--hud-accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.92); }
+.nw-nav-pip { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; width: 100%; }
+.nw-nav-pip-bar { width: 1px; height: 40px; background: var(--hud-border); position: relative; overflow: hidden; border-radius: 1px; align-self: center; }
+.nw-nav-pip-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--hud-accent); height: 0%; width: 100%; transition: height 0.3s ease; }
+.nw-nav-pip-pct { font-family: var(--ui); font-weight: 300; font-size: 7px; color: var(--hud-ink-3); letter-spacing: 0.06em; }
+
+/* panel */
+#panel {
+  grid-column: 2; grid-row: 2;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+  display: flex; flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: rgba(248,245,240,0.70); backdrop-filter: blur(20px);
+  overflow-y: auto; padding: 28px 24px 48px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+#panel:hover { background: rgba(248,245,240,0.99); }
+#panel:hover .panel-section-label { color: var(--ink-3); }
+#panel:hover .panel-img-area { background: #ede8e0; }
+#panel:hover .thumb { opacity: 0.45; border-color: transparent; }
+#panel:hover .thumb.active { opacity: 1; border-color: var(--accent); }
+#panel:hover .btn-add { background: var(--ink); color: var(--bg); }
+#panel:hover .btn-fav { border-color: var(--border); color: var(--ink-3); }
+
+.panel-img-area {
+  position: relative; aspect-ratio: 3/4;
+  background: #e8e4de; overflow: hidden;
+  margin-bottom: 14px; flex-shrink: 0;
+}
+.panel-img-area img {
+  width: 100%; height: 100%; object-fit: cover; opacity: 0;
+  position: absolute; inset: 0; transition: opacity 0.6s ease;
+}
+.panel-img-area img.vis { opacity: 0.88; }
+
+/* 4-across gallery grid */
+.panel-gallery-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 2px; margin-bottom: 20px; flex-shrink: 0;
+}
+.thumb {
+  aspect-ratio: 1; object-fit: cover;
+  opacity: 0.32; border: 1px solid transparent;
+  transition: opacity .2s, border-color .2s; width: 100%;
+}
+.thumb.active { opacity: 1; border-color: var(--accent); }
+.thumb:hover { opacity: 0.65; }
+
+.panel-section-label {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.20em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 10px;
+  transition: color 0.4s ease;
+}
+
+/* logistics block */
+.logistics-block {
+  background: rgba(26,24,22,0.03);
+  border: 1px solid var(--border);
+  padding: 16px; margin-bottom: 18px;
+  font-family: var(--ui); font-weight: 300;
+  font-size: 8px; letter-spacing: 0.10em; line-height: 2.0;
+  color: var(--ink-2);
+}
+.logistics-block .l-couple {
+  font-family: var(--disp); font-size: 18px;
+  letter-spacing: 0.04em; color: var(--ink);
+  display: block; margin-bottom: 10px; line-height: 1.2;
+}
+.logistics-block .l-label { color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.18em; font-size: 7px; }
+
+.btn-add {
+  width: 100%; font-family: var(--ui); font-weight: 300;
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  background: var(--ink); color: var(--bg); border: none;
+  padding: 15px; margin-bottom: 8px;
+  position: relative; overflow: hidden; transition: background .2s;
+}
+.btn-add::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,0.08); transform:scaleX(0); transform-origin:left; transition:transform .3s ease; }
+.btn-add:hover::after { transform:scaleX(1); }
+.btn-add:active { transform: scale(0.99); }
+
+.btn-fav {
+  width: 100%; font-family: var(--ui); font-weight: 300; font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: 1px solid var(--border);
+  color: var(--ink-3); padding: 11px; margin-bottom: 18px; transition: all .15s;
+}
+.btn-fav:hover { border-color: var(--accent); color: var(--accent); }
+
+.panel-progress {
+  font-family: var(--ui); font-weight: 300; font-size: 7px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+}
+.panel-progress-bar { flex: 1; height: 1px; background: var(--border); position: relative; }
+.panel-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); transition: width 0.3s ease; width: 0%; }
+
+/* toast */
+#toast {
+  position: fixed; bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18); backdrop-filter: blur(20px);
+  border-radius: 8px; padding: 14px 22px 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--ui); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--hud-ink); opacity: 0; pointer-events: none; z-index: 9000;
+  transition: opacity .35s ease, transform .35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; max-width: 90vw;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+#toast .toast-icon { font-size: 16px; flex-shrink: 0; }
+#toast .toast-body { display: flex; flex-direction: column; gap: 2px; }
+#toast .toast-title { font-weight: 400; color: var(--hud-ink); letter-spacing: 0.10em; text-transform: uppercase; font-size: 9px; }
+#toast .toast-sub { color: var(--hud-ink-2); font-size: 8px; font-weight: 300; letter-spacing: 0.06em; }
+#toast .toast-dismiss { margin-left: 8px; background: none; border: none; color: var(--hud-ink-3); font-family: var(--ui); font-size: 12px; cursor: pointer; padding: 2px 6px; flex-shrink: 0; transition: color .15s; }
+#toast .toast-dismiss:hover { color: var(--hud-ink); }
+
+/* wolfie credit */
+#wolfie-credit {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  font-family: var(--ui); font-weight: 300; font-size: 7px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(26,24,22,0.22); z-index: 50;
+  pointer-events: none; white-space: nowrap; transition: color 1.6s ease;
+}
+
+/* chapter widget */
+#chapter-widget {
+  position: fixed; top: calc(52px + 14px); left: 0; right: 360px;
+  z-index: 301; display: flex; justify-content: center;
+  pointer-events: none; user-select: none;
+}
+.cw-trigger {
+  pointer-events: auto; display: flex; flex-direction: row; align-items: center; gap: 8px;
+  padding: 7px 14px; background: var(--hud-bg);
+  border: 1px solid var(--hud-border); border-radius: 20px;
+  backdrop-filter: blur(20px); box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  cursor: none; transition: border-color .2s;
+}
+.cw-trigger:hover { border-color: var(--hud-accent); }
+.cw-trigger-label { font-family: var(--ui); font-weight: 300; font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hud-ink-3); line-height: 1; }
+.cw-trigger-sep { color: var(--hud-ink-3); font-size: 10px; line-height: 1; opacity: 0.4; }
+.cw-trigger-name { font-family: var(--ui); font-weight: 400; font-size: 9px; color: var(--hud-ink); line-height: 1; white-space: nowrap; letter-spacing: 0.08em; text-transform: uppercase; }
+.cw-trigger-arrow { font-size: 7px; color: var(--hud-ink-3); transition: transform .2s; line-height: 1; margin-left: 2px; }
+#chapter-widget.open .cw-trigger-arrow { transform: rotate(180deg); }
+.cw-dropdown {
+  pointer-events: none; position: absolute; top: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) scaleY(0.88); transform-origin: top center;
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  border-radius: 10px; backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12); padding: 6px; min-width: 180px;
+  opacity: 0; transition: opacity .16s ease, transform .16s cubic-bezier(0.34,1.4,0.64,1);
+}
+#chapter-widget.open .cw-dropdown { opacity: 1; pointer-events: auto; transform: translateX(-50%) scaleY(1); }
+.cw-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: none; transition: background .1s; border: none; background: none; width: 100%; text-align: left; }
+.cw-item:hover { background: rgba(255,255,255,0.06); }
+.cw-item.active { background: rgba(255,255,255,0.04); }
+.cw-item-num { font-family: var(--ui); font-weight: 400; font-size: 8px; color: var(--hud-accent); min-width: 18px; }
+.cw-item-name { font-family: var(--ui); font-weight: 300; font-size: 9px; color: var(--hud-ink-2); letter-spacing: 0.06em; text-transform: uppercase; }
+.cw-item.active .cw-item-name { color: var(--hud-ink); }
+.cw-item-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--hud-accent); margin-left: auto; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+.cw-item.active .cw-item-dot { opacity: 1; }
+
+/* spec hover */
+#spec-hover { position: fixed; z-index: 800; pointer-events: none; opacity: 0; transition: opacity .22s cubic-bezier(0.25,1,0.5,1), transform .22s cubic-bezier(0.25,1,0.5,1); transform: translateY(6px); }
+#spec-hover.visible { opacity: 1; transform: translateY(0); }
+.spec-hover-inner { background: var(--hud-bg); border: 1px solid var(--hud-border); border-radius: 8px; backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0,0,0,0.14); padding: 16px 22px 14px; min-width: 200px; max-width: 360px; }
+.spec-hover-key { font-family: var(--ui); font-weight: 300; font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--hud-ink-3); margin-bottom: 7px; display: block; }
+.spec-hover-val { font-family: var(--disp); font-size: clamp(20px,3vw,32px); line-height: 1.1; letter-spacing: 0.02em; color: var(--hud-ink); display: block; }
+@media (max-width: 760px) { #spec-hover { display: none !important; } }
+
+/* grid overlay */
+#grid-overlay {
+  position: fixed; inset: 0; z-index: 4000;
+  background: var(--bg); display: none; opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#grid-overlay.open { display: block; opacity: 1; }
+#grid-canvas { position: absolute; inset: 0; display: block; touch-action: none; cursor: grab; }
+#grid-canvas.grabbing { cursor: grabbing; }
+#grid-hud {
+  position: absolute; top: 0; left: 0; right: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; border-bottom: 1px solid var(--border);
+  background: rgba(248,245,240,0.96); backdrop-filter: blur(16px);
+  z-index: 10; pointer-events: auto;
+}
+#grid-label {
+  font-family: var(--ui); font-weight: 300; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+}
+#grid-close {
+  font-family: var(--ui); font-weight: 300; font-size: 8px; letter-spacing: 0.12em;
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--border); color: var(--ink-3);
+  padding: 5px 14px; transition: all .15s; cursor: pointer;
+}
+#grid-close:hover { color: var(--accent); border-color: var(--accent); }
+
+#panel.journey-end { animation: panel-beckon 2s ease-in-out 2; }
+@keyframes panel-beckon {
+  0%   { box-shadow: none; }
+  35%  { box-shadow: inset 0 0 0 1px var(--accent); }
+  70%  { box-shadow: inset 0 0 0 1px var(--accent); }
+  100% { box-shadow: none; }
+}
+
+/* mobile */
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
+  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 120px; }
+  .h-center { display: none; }
+  .sentence.poster { font-size: clamp(40px,11vw,72px); }
+  .sentence.poster.active::before { left: -16px; }
+  #scroll-toggle {
+    position: fixed !important; top: calc(52px + 12px) !important;
+    right: 16px !important; left: auto !important;
+    width: 42px; height: 42px; z-index: 9500 !important;
+    pointer-events: auto !important; touch-action: manipulation;
+  }
+  #scroll-lockout { right: 0; pointer-events: none; }
+  #nav-widget {
+    position: fixed; bottom: calc(20px + env(safe-area-inset-bottom));
+    left: 50%; right: auto; top: auto; transform: translateX(-50%); z-index: 300; width: auto;
+  }
+  .nw-shell { flex-direction: row; align-items: stretch; border-radius: 24px; min-width: unset; width: auto; padding: 0; gap: 0; box-shadow: 0 8px 40px rgba(0,0,0,0.12); }
+  .nw-handle, .nw-divider, .nw-nav-pip, .nw-nav-pip-pct { display: none !important; }
+  .nw-action-btn { flex: 1; border: none; border-right: 1px solid var(--hud-border); border-radius: 0; padding: 12px 14px 10px; font-size: 15px; gap: 3px; }
+  .nw-action-btn:first-of-type { border-radius: 24px 0 0 24px; }
+  .nw-action-btn:last-of-type { border-right: none; }
+  .nw-nav { flex: 2; flex-direction: row; padding: 0; gap: 0; width: auto; align-items: stretch; }
+  .nw-btn-prev, .nw-btn-next { flex: 1; height: auto; min-height: 52px; font-size: 18px; border-radius: 0; border: none; border-left: 1px solid var(--hud-border); background: none; padding: 0 16px; }
+  .nw-btn-next { border-radius: 0 24px 24px 0; }
+  #toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  #wolfie-credit { bottom: calc(88px + env(safe-area-inset-bottom)); }
+  #chapter-widget { right: 0; top: calc(52px + 10px); }
+  .panel-gallery-grid { grid-template-columns: repeat(5,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<div id="image-layer">
+  <img id="img-0" src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=80" alt="Ceremony moment">
+  <img id="img-1" src="https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=1800&q=80" alt="Where they met">
+  <img id="img-2" src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1800&q=80" alt="The proposal">
+  <img id="img-3" src="https://images.unsplash.com/photo-1504438190342-5951e134ffee?w=1800&q=80" alt="Together">
+  <img id="img-4" src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=1800&q=80" alt="The venue">
+  <img id="img-5" src="https://images.unsplash.com/photo-1510076857177-7470076d4098?w=1800&q=80" alt="Details">
+  <img id="img-6" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1800&q=80" alt="Couple">
+  <img id="img-7" src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1800&q=80" alt="Reception">
+</div>
+
+<div id="shell">
+  <header>
+    <nav class="mall-crumb">
+      <span class="node">◇ wolfie.love</span>
+      <span class="sep">/</span>
+      <span class="node">Invitations</span>
+      <span class="sep">/</span>
+      <span class="node">Eleanor & James</span>
+    </nav>
+    <div class="h-center">
+      <span class="h-couple">Eleanor & James</span>
+      <span class="h-date">June 14, 2025 · Hudson Valley, New York</span>
+    </div>
+    <div class="h-actions">
+      <button class="h-btn" onclick="openGrid()">▦ Gallery</button>
+      <button class="h-btn cta" id="h-rsvp-btn" style="display:none" onclick="addToCart()">RSVP</button>
+    </div>
+  </header>
+
+  <main id="stream-col">
+    <button id="scroll-toggle" aria-label="Toggle free scroll">scroll</button>
+
+    <!-- Ch 1 · The Two of Them -->
+    <span class="sentence label"  data-idx="0" data-img="0" data-ch="1">Eleanor Voss & James Calloway · June 14, 2025</span>
+    <span class="sentence poster" data-idx="1" data-img="0" data-ch="1">Eleanor<br><span class="amp">&</span><br><span class="ac">James.</span></span>
+    <span class="sentence body"   data-idx="2" data-img="0" data-ch="1">You are invited — not just to a wedding, but to the end of a story you didn't know you were already part of. This is how it began. This is how it arrives at June.</span>
+    <span class="sentence break"  data-idx="3"></span>
+
+    <!-- Ch 2 · How They Met -->
+    <div class="ch-header" data-ch="2">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Part Two</span>
+        <span class="ch-header-num">02</span>
+        <span class="ch-header-title">How They Met</span>
+        <span class="ch-header-sub">Portland, Oregon · September 2019</span>
+      </div>
+    </div>
+    <span class="sentence label"  data-idx="4"  data-img="1" data-ch="2">Portland, Oregon · September 2019</span>
+    <span class="sentence body"   data-idx="5"  data-img="1" data-ch="2">It was a bookshop. Not a metaphor — an actual bookshop on NW 23rd, a Tuesday afternoon in September when it was raining the way Portland rains in September, which is without apology. Eleanor was looking for something she'd read half of on a flight and abandoned. James was working the register.</span>
+    <span class="sentence body"   data-idx="6"  data-img="1" data-ch="2">She couldn't remember the title. She remembered the cover — blue, she thought, or maybe grey. James spent twenty minutes with her. They found it. It was neither blue nor grey. <span class="em">It was the wrong book entirely, and she bought it anyway.</span></span>
+    <span class="sentence pull"   data-idx="7"  data-img="3" data-ch="2">"I read the whole thing on the bus home and it was terrible. I went back the next day to tell him."</span>
+    <span class="sentence body"   data-idx="8"  data-img="3" data-ch="2">He was working again. She told him it was terrible. He agreed — he'd read it — and showed her three better options. They talked for an hour. She bought all three. She has still only read one of them. It doesn't matter. <span class="em">That's not why she went back.</span></span>
+    <span class="sentence break"  data-idx="9"></span>
+
+    <!-- Ch 3 · The Proposal -->
+    <div class="ch-header" data-ch="3">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Part Three</span>
+        <span class="ch-header-num">03</span>
+        <span class="ch-header-title">The Proposal</span>
+        <span class="ch-header-sub">Montepulciano, Italy · August 2023</span>
+      </div>
+    </div>
+    <span class="sentence label"  data-idx="10" data-img="2" data-ch="3">Montepulciano, Italy · August 2023</span>
+    <span class="sentence body"   data-idx="11" data-img="2" data-ch="3">James had been carrying the ring for eleven days. Through Florence, Siena, two train delays, a lost reservation, and a dinner they'd have to remember forever. He had planned to ask at the vineyard. It rained. He had planned to ask at the piazza. There was a wedding already happening — some other couple's, noisy and perfect and entirely in the way.</span>
+    <span class="sentence body"   data-idx="12" data-img="2" data-ch="3">He asked on the walk back to the hotel. No view, no audience. <span class="em">A narrow street, eleven at night, a single lamp above a shuttered door.</span> She said yes before he finished asking. She still won't let him finish the question when he tries to tell the story.</span>
+    <span class="sentence pull"   data-idx="13" data-img="3" data-ch="3">"I knew what he was going to say. I'd known for a while. I just wanted him to know I already knew."</span>
+    <span class="sentence media"  data-idx="14" data-img="3" data-ch="3">
+      <img class="media-img" src="https://images.unsplash.com/photo-1504438190342-5951e134ffee?w=900&q=80" alt="Together after the proposal">
+      <span class="media-caption">The night after · still wearing yesterday's clothes</span>
+    </span>
+    <span class="sentence break"  data-idx="15"></span>
+
+    <!-- Ch 4 · The Venue -->
+    <div class="ch-header" data-ch="4">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Part Four</span>
+        <span class="ch-header-num">04</span>
+        <span class="ch-header-title">The Venue</span>
+        <span class="ch-header-sub">Stonegate Farm · Hudson Valley, NY</span>
+      </div>
+    </div>
+    <span class="sentence label"  data-idx="16" data-img="4" data-ch="4">Stonegate Farm · Hudson Valley, New York</span>
+    <span class="sentence body"   data-idx="17" data-img="4" data-ch="4">Stonegate Farm sits on 80 acres above the Hudson, two hours from the city and a complete other world from it. The ceremony is in the meadow — open sky, the Catskills in the background doing what mountains do when everything else is important. The reception is in the barn, restored and reimagined, lit by a thousand points of light and the logic of one very good party.</span>
+    <span class="sentence body"   data-idx="18" data-img="5" data-ch="4">Eleanor found it on a Tuesday in February, walking through the website at midnight, and called James at 12:08 to say she'd found it. He was asleep. He said yes without fully waking up. In the morning she asked if he remembered. He said yes. <span class="em">He had no idea what he'd agreed to, and it didn't matter at all.</span></span>
+    <span class="sentence break"  data-idx="19"></span>
+
+    <!-- Ch 5 · The Details -->
+    <div class="ch-header" data-ch="5">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Part Five</span>
+        <span class="ch-header-num">05</span>
+        <span class="ch-header-title">The Details</span>
+        <span class="ch-header-sub">Everything you need · June 14</span>
+      </div>
+    </div>
+    <span class="sentence label"  data-idx="20" data-img="5" data-ch="5">Logistics</span>
+    <span class="sentence spec auto-flow" data-idx="21" data-ch="5"><span class="spec-key">Date</span><span class="spec-val">Saturday, June 14, 2025</span></span>
+    <span class="sentence spec auto-flow" data-idx="22" data-ch="5"><span class="spec-key">Ceremony</span><span class="spec-val">4:00 PM · Stonegate Farm Meadow</span></span>
+    <span class="sentence spec auto-flow" data-idx="23" data-ch="5"><span class="spec-key">Reception</span><span class="spec-val">6:00 PM · The Barn at Stonegate · Dinner at 7</span></span>
+    <span class="sentence spec auto-flow" data-idx="24" data-ch="5"><span class="spec-key">Address</span><span class="spec-val">48 Stonegate Road, Accord, NY 12404</span></span>
+    <span class="sentence spec auto-flow" data-idx="25" data-ch="5"><span class="spec-key">Dress</span><span class="spec-val">Garden formal · comfortable shoes encouraged</span></span>
+    <span class="sentence spec auto-flow" data-idx="26" data-ch="5"><span class="spec-key">Lodging</span><span class="spec-val">Block reserved at The Emerson · code ELEANOR25</span></span>
+    <span class="sentence spec auto-flow" data-idx="27" data-ch="5"><span class="spec-key">RSVP By</span><span class="spec-val">May 1, 2025 · eleanor.james.2025@wolfie.love</span></span>
+    <span class="sentence break"  data-idx="28"></span>
+
+    <!-- Ch 6 · The Invitation -->
+    <div class="ch-header" data-ch="6">
+      <div class="ch-header-rule"></div>
+      <div class="ch-header-inner">
+        <span class="ch-header-label">Part Six</span>
+        <span class="ch-header-num">06</span>
+        <span class="ch-header-title">The Invitation</span>
+        <span class="ch-header-sub">We hope you'll come</span>
+      </div>
+    </div>
+    <span class="sentence label"  data-idx="29" data-img="6" data-ch="6">You are invited</span>
+    <span class="sentence poster" data-idx="30" data-img="6" data-ch="6">Please<br>say<br><span class="ac">yes.</span></span>
+    <span class="sentence body"   data-idx="31" data-img="7" data-ch="6">We are not asking you to witness something. We are asking you to be part of it. Come in your good clothes. Bring someone you love. Eat too much. Dance past when you meant to leave. <span class="em">This is what we want the day to be — all of you in the same place, one time, making the thing that can't be repeated.</span></span>
+    <span class="sentence cta-sentence" data-idx="32"></span>
+  </main>
+
+  <aside id="panel">
+    <div class="panel-progress">
+      <span id="panel-pct">0%</span>
+      <div class="panel-progress-bar"><div class="panel-progress-fill" id="panel-fill"></div></div>
+      <span>Read</span>
+    </div>
+
+    <div class="panel-img-area">
+      <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80" alt="Eleanor & James" class="vis" id="panel-img-main">
+    </div>
+
+    <div class="panel-gallery-grid" id="thumb-row">
+      <img class="thumb active" src="https://images.unsplash.com/photo-1519741497674-611481863552?w=160&q=75" alt="Ceremony" onclick="setThumb(0,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=160&q=75" alt="Where they met" onclick="setThumb(1,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=160&q=75" alt="Proposal" onclick="setThumb(2,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1504438190342-5951e134ffee?w=160&q=75" alt="Together" onclick="setThumb(3,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=160&q=75" alt="Venue" onclick="setThumb(4,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1510076857177-7470076d4098?w=160&q=75" alt="Details" onclick="setThumb(5,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=160&q=75" alt="Couple" onclick="setThumb(6,this)">
+      <img class="thumb" src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=160&q=75" alt="Reception" onclick="setThumb(7,this)">
+      <img class="thumb" src="" alt="All" onclick="openGrid()" style="background:rgba(138,122,106,0.10);border:1px solid rgba(138,122,106,0.18);display:grid;place-items:center;font-family:var(--ui);font-size:10px;color:var(--accent)">
+    </div>
+
+    <div class="logistics-block">
+      <span class="l-couple">Eleanor & James</span>
+      <span class="l-label">Date</span> Saturday, June 14, 2025<br>
+      <span class="l-label">Ceremony</span> 4:00 PM · Stonegate Farm<br>
+      <span class="l-label">Location</span> Hudson Valley, New York<br>
+      <span class="l-label">RSVP By</span> May 1, 2025
+    </div>
+
+    <button class="btn-add" id="add-btn" onclick="addToCart()">RSVP · Confirm Attendance</button>
+    <button class="btn-fav">♡ Add to Calendar</button>
+
+    <p style="font-family:var(--ui);font-weight:300;font-size:8px;letter-spacing:.07em;color:var(--ink-3);line-height:1.8;border-top:1px solid var(--border);padding-top:14px">
+      Stonegate Farm · 48 Stonegate Road, Accord, NY<br>
+      Block rate at The Emerson · code <span style="color:var(--accent)">ELEANOR25</span><br>
+      Questions? eleanor.james.2025@wolfie.love
+    </p>
+  </aside>
+</div>
+
+<div id="scroll-lockout"></div>
+
+<div id="chapter-widget">
+  <button class="cw-trigger" id="cw-trigger" aria-haspopup="true" aria-expanded="false">
+    <span class="cw-trigger-label">Chapter</span>
+    <span class="cw-trigger-sep">·</span>
+    <span class="cw-trigger-name" id="cw-current-name">The Two of Them</span>
+    <span class="cw-trigger-arrow">▾</span>
+  </button>
+  <div class="cw-dropdown" role="menu" id="cw-dropdown">
+    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">The Two of Them</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">How They Met</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">The Proposal</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">The Venue</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">The Details</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">The Invitation</span><span class="cw-item-dot"></span></button>
+  </div>
+</div>
+
+<div id="nav-widget">
+  <div class="nw-shell">
+    <div class="nw-handle" id="nw-handle"><div class="nw-drag-dots">· · ·</div></div>
+    <div class="nw-divider"></div>
+    <button class="nw-action-btn" onclick="openGrid()" title="Photo gallery"><span class="nw-cell-value">▦</span><span class="nw-action-label">Gallery</span></button>
+    <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Details"><span class="nw-cell-value">⊡</span><span class="nw-action-label">Details</span></button>
+    <button class="nw-action-btn nw-cart-btn" id="nw-cart-btn" onclick="addToCart()" title="RSVP"><span class="nw-cell-value">♡</span><span class="nw-action-label">RSVP</span></button>
+    <div class="nw-divider"></div>
+    <div class="nw-nav">
+      <button class="nw-btn-prev" id="nw-prev" aria-label="Previous">↑</button>
+      <div class="nw-nav-pip">
+        <div class="nw-nav-pip-bar"><div class="nw-nav-pip-fill" id="nw-nav-pip"></div></div>
+        <span class="nw-nav-pip-pct" id="nw-counter">01 / 10</span>
+      </div>
+      <button class="nw-btn-next" id="nw-next" aria-label="Next">↓</button>
+    </div>
+  </div>
+</div>
+
+<div id="spec-hover" role="tooltip" aria-hidden="true">
+  <div class="spec-hover-inner">
+    <span class="spec-hover-key" id="spec-hover-key"></span>
+    <span class="spec-hover-val" id="spec-hover-val"></span>
+  </div>
+</div>
+
+<div id="toast">
+  <span class="toast-icon">◇</span>
+  <div class="toast-body">
+    <span class="toast-title">RSVP received</span>
+    <span class="toast-sub">Eleanor & James can't wait to see you · June 14</span>
+  </div>
+  <button class="toast-dismiss" onclick="dismissToast()">✕</button>
+</div>
+
+<div id="wolfie-credit">made with wolfie · <a href="https://wolfie.love" target="_blank" style="color:inherit;text-decoration:none">wolfie.love</a></div>
+
+<div id="grid-overlay">
+  <canvas id="grid-canvas"></canvas>
+  <div id="grid-hud">
+    <span id="grid-label">Eleanor & James · June 14, 2025</span>
+    <button id="grid-close" onclick="closeGrid()">✕ Close</button>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+document.querySelectorAll('a,button,[data-idx]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+});
+
+// IMAGE LAYER
+const imgs = document.querySelectorAll('#image-layer img');
+let currentImg = 0;
+const PANEL_SRCS = [
+  'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
+  'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=600&q=80',
+  'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80',
+  'https://images.unsplash.com/photo-1504438190342-5951e134ffee?w=600&q=80',
+  'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&q=80',
+  'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=600&q=80',
+  'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&q=80',
+  'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&q=80',
+];
+function setImage(n) {
+  if (n===currentImg) return;
+  imgs[currentImg]?.classList.remove('visible');
+  imgs[n]?.classList.add('visible');
+  currentImg=n;
+  document.getElementById('panel-img-main').src = PANEL_SRCS[n]||PANEL_SRCS[0];
+  document.querySelectorAll('.thumb').forEach((t,i) => t.classList.toggle('active', i===n));
+}
+imgs[0].classList.add('visible');
+
+// SENTENCE ENGINE
+const all = Array.from(document.querySelectorAll('[data-idx]'));
+const navigable = all.filter(el =>
+  !el.classList.contains('break') &&
+  !el.classList.contains('label') &&
+  !el.classList.contains('cta-sentence')
+);
+let current = 0;
+
+function goTo(n, opts) {
+  const noScroll = opts && opts.noScroll;
+  n = Math.max(0, Math.min(navigable.length-1, n));
+  navigable.forEach((el, i) => {
+    el.classList.remove('active','revealed');
+    if (i < n) el.classList.add('revealed');
+    else if (i === n) el.classList.add('active');
+  });
+  all.forEach(el => {
+    if (el.classList.contains('break')||el.classList.contains('label')||el.classList.contains('cta-sentence')) {
+      const idx = parseInt(el.dataset.idx);
+      const navBefore = navigable.filter(nb => parseInt(nb.dataset.idx) < idx);
+      if (navBefore.length>0 && navBefore[navBefore.length-1].classList.contains('revealed')) el.classList.add('revealed');
+      else if (navigable[n] && parseInt(navigable[n].dataset.idx) >= idx-1) el.classList.add('revealed');
+      el.classList.remove('active');
+    }
+  });
+  const activeEl = navigable[n];
+  if (activeEl && activeEl.dataset.img !== undefined) setImage(parseInt(activeEl.dataset.img));
+  current = n;
+  if (!noScroll) activeEl?.scrollIntoView({ behavior:'smooth', block:'center' });
+  document.getElementById('nw-counter').textContent = String(n+1).padStart(2,'0')+' / '+String(navigable.length).padStart(2,'0');
+  const pct = Math.round((n/(navigable.length-1))*100);
+  document.getElementById('progress').style.width = pct+'%';
+  document.getElementById('panel-fill').style.width = pct+'%';
+  document.getElementById('panel-pct').textContent = pct+'%';
+  document.getElementById('nw-nav-pip').style.height = pct+'%';
+  const nearEnd = n >= navigable.length-5;
+  document.getElementById('h-rsvp-btn').style.display = nearEnd ? 'block' : 'none';
+  const nwCart = document.getElementById('nw-cart-btn');
+  if (nearEnd) nwCart.classList.add('visible'); else nwCart.classList.remove('visible');
+  scheduleAutoFlow(n);
+  if (n===navigable.length-1) triggerPanelBeckon();
+  const ch = parseInt(activeEl?.dataset.ch||1);
+  document.body.className = document.body.className.replace(/\bch-\d\b/g,'').trim();
+  if (ch>1) document.body.classList.add('ch-'+ch);
+  document.querySelectorAll('.ch-header').forEach(g => {
+    parseInt(g.dataset.ch)<=ch ? g.classList.add('revealed') : g.classList.remove('revealed');
+  });
+  updateChapterWidget(ch);
+}
+function next() { goTo(current+1); }
+function prev() { goTo(current-1); }
+
+let autoFlowTimer = null;
+function clearAutoFlow() { if (autoFlowTimer) { clearTimeout(autoFlowTimer); autoFlowTimer=null; } }
+function scheduleAutoFlow(n) {
+  clearAutoFlow();
+  const el = navigable[n];
+  if (!el||!el.classList.contains('auto-flow')) return;
+  let firstAF=n;
+  while (firstAF>0 && navigable[firstAF-1]?.classList.contains('auto-flow')) firstAF--;
+  let i=firstAF;
+  while (i<navigable.length && navigable[i]?.classList.contains('auto-flow')) {
+    if (i!==n) { navigable[i].classList.remove('active'); navigable[i].classList.add('revealed'); }
+    i++;
+  }
+}
+
+function triggerPanelBeckon() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('journey-end'); void panel.offsetWidth;
+  panel.classList.add('journey-end');
+  panel.addEventListener('animationend', () => panel.classList.remove('journey-end'), { once:true });
+}
+
+const CH_NAMES = ['','The Two of Them','How They Met','The Proposal','The Venue','The Details','The Invitation'];
+const CH_FIRST = {};
+navigable.forEach((el,i) => { const ch=parseInt(el.dataset.ch||1); if(!(ch in CH_FIRST)) CH_FIRST[ch]=i; });
+function updateChapterWidget(ch) {
+  document.getElementById('cw-current-name').textContent = CH_NAMES[ch]||'Ch.'+ch;
+  document.querySelectorAll('.cw-item').forEach(item => item.classList.toggle('active', parseInt(item.dataset.ch)===ch));
+}
+(function initChapterWidget() {
+  const widget=document.getElementById('chapter-widget');
+  const trigger=document.getElementById('cw-trigger');
+  const dropdown=document.getElementById('cw-dropdown');
+  let open=false;
+  const openDD=()=>{ open=true; widget.classList.add('open'); trigger.setAttribute('aria-expanded','true'); };
+  const closeDD=()=>{ open=false; widget.classList.remove('open'); trigger.setAttribute('aria-expanded','false'); };
+  trigger.addEventListener('click', e=>{ e.stopPropagation(); open?closeDD():openDD(); });
+  dropdown.querySelectorAll('.cw-item').forEach(item => {
+    item.addEventListener('click', e=>{ e.stopPropagation(); closeDD(); goTo(CH_FIRST[parseInt(item.dataset.ch)]??0); });
+  });
+  document.addEventListener('click', ()=>{ if(open) closeDD(); });
+  document.addEventListener('touchstart', e=>{ if(open&&!widget.contains(e.target)) closeDD(); },{passive:true});
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&open) closeDD(); });
+  updateChapterWidget(1);
+})();
+
+document.getElementById('nw-next').addEventListener('click', next);
+document.getElementById('nw-prev').addEventListener('click', ()=>{ clearAutoFlow(); prev(); });
+navigable.forEach((el,i) => { el.addEventListener('click', ()=>goTo(i)); });
+
+// KEYBOARD
+document.addEventListener('keydown', e => {
+  if (document.getElementById('grid-overlay').classList.contains('open')) { if(e.key==='Escape') closeGrid(); return; }
+  if (document.body.classList.contains('scroll-free')) return;
+  if (e.key==='ArrowDown'||e.key==='j'||e.key===' ') { e.preventDefault(); next(); }
+  if (e.key==='ArrowUp'  ||e.key==='k')               { e.preventDefault(); prev(); }
+});
+
+// WHEEL
+let lastWheel=0;
+document.getElementById('stream-col').addEventListener('wheel', e=>{
+  if (document.getElementById('grid-overlay').classList.contains('open')) return;
+  if (document.body.classList.contains('scroll-free')) return;
+  e.preventDefault();
+  const now=Date.now(); if(now-lastWheel<550) return; lastWheel=now;
+  e.deltaY>0?next():prev();
+},{passive:false});
+
+// SWIPE
+let touchStartY=0, touchStartX=0, touchMoved=false, swipeCooldown=false;
+window.addEventListener('touchstart', e=>{ touchStartY=e.touches[0].clientY; touchStartX=e.touches[0].clientX; touchMoved=false; },{passive:true});
+window.addEventListener('touchmove', e=>{ touchMoved=true; if(document.body.classList.contains('scroll-free')) return; if(e.cancelable) e.preventDefault(); },{passive:false});
+window.addEventListener('touchend', e=>{
+  if (!touchMoved||swipeCooldown) return;
+  if (document.body.classList.contains('scroll-free')) return;
+  const dy=touchStartY-e.changedTouches[0].clientY;
+  if (Math.abs(dy)>50) { swipeCooldown=true; clearAutoFlow(); dy>0?next():prev(); setTimeout(()=>{swipeCooldown=false;},100); }
+},{passive:true});
+
+goTo(0);
+
+// SCROLL TOGGLE
+(function initScrollToggle(){
+  const btn=document.getElementById('scroll-toggle');
+  let scrollFree=false;
+  function enterScrollFree(){
+    scrollFree=true; btn.classList.add('on');
+    document.body.classList.add('scroll-free'); document.body.style.overflow='auto';
+    all.forEach(el=>{ el.classList.add('revealed'); el.classList.remove('active'); });
+    document.querySelectorAll('.ch-header').forEach(g=>g.classList.add('revealed'));
+    ALL_NAV_CLASSES.forEach(c=>cursor.classList.remove(c));
+  }
+  function exitScrollFree(){
+    scrollFree=false; btn.classList.remove('on');
+    document.body.classList.remove('scroll-free'); document.body.style.overflow='';
+    goTo(current,{noScroll:true});
+  }
+  btn.addEventListener('click', ()=>{ if(scrollFree) exitScrollFree(); else enterScrollFree(); });
+  btn.addEventListener('touchend', e=>{ e.preventDefault(); e.stopPropagation(); if(scrollFree) exitScrollFree(); else enterScrollFree(); },{passive:false});
+})();
+
+// DRAG WIDGET
+(function initWidgetDrag(){
+  const widget=document.getElementById('nav-widget');
+  const handle=document.getElementById('nw-handle');
+  let dragging=false,sx,sy,wl,wt;
+  function startDrag(cx,cy){
+    if(!widget.classList.contains('nw-free')){
+      const r=widget.getBoundingClientRect();
+      widget.classList.add('nw-free');
+      widget.style.left=r.left+'px'; widget.style.top=r.top+'px';
+      widget.style.right='auto'; widget.style.bottom='auto';
+    }
+    dragging=true; sx=cx; sy=cy;
+    wl=parseFloat(widget.style.left)||0; wt=parseFloat(widget.style.top)||0;
+    widget.classList.add('dragging');
+  }
+  function moveDrag(cx,cy){
+    if(!dragging) return;
+    const maxL=window.innerWidth-widget.offsetWidth-8, maxT=window.innerHeight-widget.offsetHeight-8;
+    widget.style.left=Math.max(8,Math.min(maxL,wl+cx-sx))+'px';
+    widget.style.top=Math.max(8,Math.min(maxT,wt+cy-sy))+'px';
+  }
+  function endDrag(){ if(!dragging)return; dragging=false; widget.classList.remove('dragging'); }
+  handle.addEventListener('mousedown', e=>{ if(e.button!==0)return; e.preventDefault(); startDrag(e.clientX,e.clientY); });
+  document.addEventListener('mousemove', e=>moveDrag(e.clientX,e.clientY));
+  document.addEventListener('mouseup', endDrag);
+  handle.addEventListener('touchstart', e=>{ startDrag(e.touches[0].clientX,e.touches[0].clientY); },{passive:true});
+  document.addEventListener('touchmove', e=>{ if(!dragging)return; e.preventDefault(); moveDrag(e.touches[0].clientX,e.touches[0].clientY); },{passive:false});
+  document.addEventListener('touchend', endDrag,{passive:true});
+})();
+
+function focusPanel(){ const p=document.getElementById('panel'); p.scrollIntoView({behavior:'smooth',block:'start'}); p.style.borderColor='var(--accent)'; setTimeout(()=>{p.style.borderColor='';},700); }
+
+// HOTSPOTS
+const streamCol=document.getElementById('stream-col');
+const ALL_NAV_CLASSES=['nav-prev','nav-next','nav-top','nav-bottom'];
+function getHotspotZone(y){ const p=y/window.innerHeight; if(p<0.10)return'top'; if(p<0.33)return'prev'; if(p<0.67)return null; if(p<0.90)return'next'; return'bottom'; }
+function clearNavCursor(){ ALL_NAV_CLASSES.forEach(c=>cursor.classList.remove(c)); }
+streamCol.addEventListener('mousemove', e=>{ if(document.body.classList.contains('scroll-free'))return; if(e.target.closest('.sentence')){clearNavCursor();return;} const z=getHotspotZone(e.clientY); clearNavCursor(); if(z) cursor.classList.add('nav-'+z); });
+streamCol.addEventListener('mouseleave', clearNavCursor);
+streamCol.addEventListener('click', e=>{ if(document.body.classList.contains('scroll-free'))return; if(e.target.closest('.sentence'))return; const z=getHotspotZone(e.clientY); if(z==='top')goTo(0); if(z==='prev')prev(); if(z==='next')next(); if(z==='bottom')goTo(navigable.length-1); });
+
+// PANEL
+function setThumb(n,el){ document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active')); el.classList.add('active'); document.getElementById('panel-img-main').src=PANEL_SRCS[n]||PANEL_SRCS[0]; }
+function addToCart(){ showToast(); }
+
+// SPEC HOVER
+(function initSpecHover(){
+  const overlay=document.getElementById('spec-hover');
+  const keyEl=document.getElementById('spec-hover-key');
+  const valEl=document.getElementById('spec-hover-val');
+  const DELAY=80; let hoverTimer=null, activeSpec=null;
+  const isMobile=()=>window.innerWidth<=760;
+  function showSpec(specEl){ keyEl.textContent=specEl.querySelector('.spec-key')?.textContent.trim()||''; valEl.textContent=specEl.querySelector('.spec-val')?.textContent.trim()||''; const rect=specEl.getBoundingClientRect(),M=16,oW=300,oH=88; let top=rect.top-oH-12>M?rect.top-oH-12:rect.bottom+12; let left=Math.min(Math.max(rect.left,M),window.innerWidth-oW-M); overlay.style.top=top+'px'; overlay.style.left=left+'px'; overlay.classList.add('visible'); overlay.setAttribute('aria-hidden','false'); }
+  function hideSpec(){ overlay.classList.remove('visible'); overlay.setAttribute('aria-hidden','true'); }
+  document.querySelectorAll('.sentence.spec').forEach(specEl=>{
+    specEl.addEventListener('mouseenter',()=>{ if(isMobile())return; activeSpec=specEl; clearTimeout(hoverTimer); hoverTimer=setTimeout(()=>{ if(activeSpec===specEl) showSpec(specEl); },DELAY); });
+    specEl.addEventListener('mouseleave',()=>{ if(isMobile())return; clearTimeout(hoverTimer); if(activeSpec===specEl){activeSpec=null;hideSpec();} });
+    let tapY=0,tapX=0;
+    specEl.addEventListener('touchstart',e=>{tapY=e.touches[0].clientY;tapX=e.touches[0].clientX;},{passive:true});
+    specEl.addEventListener('touchend',e=>{
+      if(!isMobile())return;
+      if(Math.abs(e.changedTouches[0].clientY-tapY)>12||Math.abs(e.changedTouches[0].clientX-tapX)>12)return;
+      const key=specEl.querySelector('.spec-key')?.textContent.trim()||'';
+      const val=specEl.querySelector('.spec-val')?.textContent.trim()||'';
+      const t=document.getElementById('toast');
+      t.querySelector('.toast-icon').textContent='◇';
+      t.querySelector('.toast-title').textContent=key;
+      t.querySelector('.toast-sub').textContent=val;
+      showToast();
+      toastTimer=setTimeout(()=>{ dismissToast(); setTimeout(()=>{ t.querySelector('.toast-icon').textContent='◇'; t.querySelector('.toast-title').textContent='RSVP received'; t.querySelector('.toast-sub').textContent="Eleanor & James can't wait to see you · June 14"; },400); },3000);
+    },{passive:true});
+  });
+  document.getElementById('stream-col').addEventListener('wheel',hideSpec,{passive:true});
+})();
+
+// TOAST
+let toastTimer=null;
+function showToast(){ const t=document.getElementById('toast'); t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>dismissToast(),5000); }
+function dismissToast(){ document.getElementById('toast').classList.remove('show'); }
+
+// GRID OVERLAY — 28 images across couples, venues, details, invitations
+const GRID_IMGS = [
+  {src:'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80', label:'Ceremony · The Moment'},
+  {src:'https://images.unsplash.com/photo-1529636444744-adffc9135a5e?w=800&q=80', label:'The Bookshop · Portland'},
+  {src:'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80', label:'The Proposal · Italy'},
+  {src:'https://images.unsplash.com/photo-1504438190342-5951e134ffee?w=800&q=80', label:'Together · After'},
+  {src:'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=800&q=80', label:'Stonegate · The Meadow'},
+  {src:'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=800&q=80', label:'Details · Rings'},
+  {src:'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80', label:'Eleanor & James'},
+  {src:'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&q=80', label:'Reception · The Barn'},
+  {src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80', label:'Couple · Portrait'},
+  {src:'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80', label:'Florals · Table'},
+  {src:'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=800&q=80', label:'Ceremony · Aisle'},
+  {src:'https://images.unsplash.com/photo-1522413452208-996ff3f3e740?w=800&q=80', label:'Reception · Dancing'},
+  {src:'https://images.unsplash.com/photo-1570025384027-8a95a3b2547c?w=800&q=80', label:'Invitation · Design'},
+  {src:'https://images.unsplash.com/photo-1525772764200-be829a350797?w=800&q=80', label:'Details · Calligraphy'},
+  {src:'https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=800&q=80', label:'Venue · Exterior'},
+  {src:'https://images.unsplash.com/photo-1485043433441-f6e91cd88a04?w=800&q=80', label:'Couple · Candid'},
+  {src:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80', label:'Florals · Bouquet'},
+  {src:'https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&q=80', label:'Venue · Interior Light'},
+  {src:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&q=80', label:'Cake · Details'},
+  {src:'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80', label:'Couple · First Look'},
+  {src:'https://images.unsplash.com/photo-1548189655-3876d8afc9fe?w=800&q=80', label:'Reception · Tables'},
+  {src:'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&q=80', label:'Getting Ready'},
+  {src:'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80', label:'Portrait · Evening'},
+  {src:'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=800&q=80', label:'Details · Place Cards'},
+  {src:'https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&q=80', label:'Venue · Golden Hour'},
+  {src:'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80', label:'Ceremony · Vows'},
+  {src:'https://images.unsplash.com/photo-1548189655-3876d8afc9fe?w=800&q=80', label:'Reception · Toast'},
+  {src:'https://images.unsplash.com/photo-1522413452208-996ff3f3e740?w=800&q=80', label:'Night · Last Dance'},
+];
+
+const GCOLS=4, GTILE=280, GGAP=3, GLBAR=34;
+let gC,gCtx,gLoaded=new Map();
+let gOx=0,gOy=0,gVx=0,gVy=0,gSc=1;
+let gDrag=false,gMoved=false,gX0,gY0,gOx0,gOy0;
+let gPinch=null,gSc0=1,gHov=-1,gRaf=null,gBound=false;
+
+function gW(){ return GCOLS*(GTILE+GGAP)-GGAP; }
+function gH(){ return Math.ceil(GRID_IMGS.length/GCOLS)*(GTILE+GGAP)-GGAP; }
+function gClamp(){ const cw=gC.width,ch=gC.height,tw=gW()*gSc,th=gH()*gSc,p=48; gOx=tw<=cw?(cw-tw)/2:Math.min(p,Math.max(cw-tw-p,gOx)); gOy=th<=ch?(ch-th)/2:Math.min(p,Math.max(ch-th-p,gOy)); }
+function gLoad(src){ if(gLoaded.has(src))return; gLoaded.set(src,null); const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>gLoaded.set(src,img); img.onerror=()=>gLoaded.set(src,false); img.src=src; }
+
+function gDraw(){
+  const cw=gC.width,ch=gC.height;
+  gCtx.fillStyle='#f5f2ed'; gCtx.fillRect(0,0,cw,ch);
+  gCtx.save(); gCtx.translate(gOx,gOy); gCtx.scale(gSc,gSc);
+  const s=GTILE+GGAP;
+  const vx0=-gOx/gSc,vy0=-gOy/gSc,vx1=vx0+cw/gSc,vy1=vy0+ch/gSc;
+  const c0=Math.max(0,Math.floor(vx0/s)),c1=Math.min(GCOLS-1,Math.floor(vx1/s));
+  const r0=Math.max(0,Math.floor(vy0/s)),r1=Math.min(Math.ceil(GRID_IMGS.length/GCOLS),Math.floor(vy1/s));
+  for(let r=r0;r<=r1;r++){
+    for(let c=c0;c<=c1;c++){
+      const idx=r*GCOLS+c; if(idx>=GRID_IMGS.length) break;
+      const item=GRID_IMGS[idx];
+      const tx=c*s,ty=r*s;
+      gLoad(item.src);
+      const imgH=GTILE-GLBAR, hover=idx===gHov;
+      gCtx.save(); gCtx.beginPath(); gCtx.rect(tx,ty,GTILE,GTILE); gCtx.clip();
+      gCtx.fillStyle=hover?'#e8e4de':'#ede9e3'; gCtx.fillRect(tx,ty,GTILE,GTILE);
+      const img=gLoaded.get(item.src);
+      if(img&&img.complete){
+        const iw=img.naturalWidth,ih=img.naturalHeight,ir=iw/ih,ar=GTILE/imgH;
+        let dw,dh,dx,dy;
+        if(ir>ar){dh=imgH;dw=ir*imgH;dx=tx+(GTILE-dw)/2;dy=ty;}
+        else{dw=GTILE;dh=GTILE/ir;dx=tx;dy=ty+(imgH-dh)/2;}
+        gCtx.globalAlpha=hover?0.6:0.90; gCtx.drawImage(img,dx,dy,dw,dh); gCtx.globalAlpha=1;
+      } else {
+        const t=Date.now()/1000;
+        gCtx.fillStyle=`rgba(138,122,106,${0.04+0.02*Math.sin(t+idx)})`; gCtx.fillRect(tx,ty,GTILE,imgH);
+      }
+      // label bar
+      gCtx.fillStyle='#f0ece6'; gCtx.fillRect(tx,ty+imgH,GTILE,GLBAR);
+      gCtx.fillStyle='rgba(138,122,106,0.15)'; gCtx.fillRect(tx,ty+imgH,GTILE,1);
+      gCtx.restore();
+      // label text
+      gCtx.save(); gCtx.beginPath(); gCtx.rect(tx+8,ty+imgH,GTILE-16,GLBAR); gCtx.clip();
+      gCtx.font=`300 8px 'Jost', sans-serif`;
+      gCtx.textBaseline='middle'; gCtx.textAlign='left';
+      gCtx.fillStyle=hover?'rgba(138,122,106,0.95)':'rgba(26,24,22,0.30)';
+      gCtx.fillText(item.label, tx+8, ty+imgH+GLBAR/2);
+      if(hover){ gCtx.textAlign='right'; gCtx.fillText('VIEW →',tx+GTILE-8,ty+imgH+GLBAR/2); }
+      gCtx.restore();
+    }
+  }
+  gCtx.restore();
+}
+
+function gTick(){ gRaf=requestAnimationFrame(gTick); if(!gDrag){gOx+=gVx;gOy+=gVy;gVx*=0.87;gVy*=0.87;if(Math.abs(gVx)<0.1)gVx=0;if(Math.abs(gVy)<0.1)gVy=0;gClamp();} gDraw(); }
+function gHit(sx,sy){ const s=GTILE+GGAP,wx=(sx-gOx)/gSc,wy=(sy-gOy)/gSc,c=Math.floor(wx/s),r=Math.floor(wy/s); if(c<0||c>=GCOLS||r<0)return -1; const idx=r*GCOLS+c; if(idx>=GRID_IMGS.length)return -1; const tx=c*s,ty=r*s; if(wx<tx||wx>tx+GTILE||wy<ty||wy>ty+GTILE)return -1; return idx; }
+function gOnDown(e){ e.preventDefault(); if(!e.isPrimary)return; gDrag=true;gMoved=false;gX0=e.clientX;gY0=e.clientY;gOx0=gOx;gOy0=gOy;gVx=0;gVy=0;gC.setPointerCapture(e.pointerId);gC.classList.add('grabbing'); }
+function gOnMove(e){ if(!gDrag){gHov=gHit(e.clientX,e.clientY);return;} const dx=e.clientX-gX0,dy=e.clientY-gY0; if(Math.abs(dx)+Math.abs(dy)>8)gMoved=true; const nx=gOx0+dx,ny=gOy0+dy;gVx=nx-gOx;gVy=ny-gOy;gOx=nx;gOy=ny;gClamp(); }
+function gOnUp(e){ if(!e.isPrimary)return; gC.classList.remove('grabbing'); const was=gMoved;gDrag=false; if(!was){const idx=gHit(gX0,gY0);if(idx>=0){const n=Math.min(idx,imgs.length-1); setImage(n); closeGrid();}}}
+function gOnWheel(e){ e.preventDefault(); const f=e.deltaY<0?1.09:0.92; const wx=(e.clientX-gOx)/gSc,wy=(e.clientY-gOy)/gSc;gSc=Math.min(3,Math.max(0.3,gSc*f));gOx=e.clientX-wx*gSc;gOy=e.clientY-wy*gSc;gClamp(); }
+function gOnTouchStart(e){ if(e.touches.length===2){gPinch=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);gSc0=gSc;} }
+function gOnTouchMove(e){ if(e.touches.length===2&&gPinch){e.preventDefault();const d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);const cx=(e.touches[0].clientX+e.touches[1].clientX)/2,cy=(e.touches[0].clientY+e.touches[1].clientY)/2;const wx=(cx-gOx)/gSc,wy=(cy-gOy)/gSc;gSc=Math.min(3,Math.max(0.3,gSc0*(d/gPinch)));gOx=cx-wx*gSc;gOy=cy-wy*gSc;gClamp();} }
+
+function openGrid(){
+  const ov=document.getElementById('grid-overlay');
+  ov.classList.add('open'); document.body.style.overflow='hidden';
+  gC=document.getElementById('grid-canvas'); gCtx=gC.getContext('2d');
+  gC.width=window.innerWidth; gC.height=window.innerHeight;
+  gHov=-1; gSc=1; gVx=0; gVy=0;
+  gOx=(gC.width-gW())/2; gOy=60; gClamp();
+  if(!gBound){
+    gBound=true;
+    gC.addEventListener('pointerdown',gOnDown,{passive:false});
+    gC.addEventListener('pointermove',gOnMove,{passive:false});
+    gC.addEventListener('pointerup',gOnUp,{passive:false});
+    gC.addEventListener('wheel',gOnWheel,{passive:false});
+    gC.addEventListener('touchstart',gOnTouchStart,{passive:true});
+    gC.addEventListener('touchmove',gOnTouchMove,{passive:false});
+    gC.addEventListener('touchend',()=>{gPinch=null;},{passive:true});
+    window.addEventListener('resize',()=>{ if(!gC)return; gC.width=window.innerWidth; gC.height=window.innerHeight; gClamp(); });
+  }
+  if(gRaf) cancelAnimationFrame(gRaf);
+  gTick();
+}
+function closeGrid(){ document.getElementById('grid-overlay').classList.remove('open'); document.body.style.overflow=''; if(gRaf){cancelAnimationFrame(gRaf);gRaf=null;} }
+</script>
+</body>
+</html>
