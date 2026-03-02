@@ -608,9 +608,36 @@ body.scroll-free #panel { pointer-events: auto; }
 }
 
 /* mobile */
+/* mobile panel overlay backdrop */
+#panel-overlay-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,0); transition: background 0.32s ease;
+  touch-action: none;
+}
+#panel-overlay-backdrop.open { display: block; background: rgba(0,0,0,0.55); }
+
 @media (max-width: 760px) {
-  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto auto; }
-  #panel { grid-column: 1; grid-row: 3; position: static; height: auto; border-left: none; border-top: 1px solid var(--border); }
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto; }
+  /* panel becomes a bottom-sheet overlay — removed from grid flow */
+  #panel {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    height: 88vh; max-height: 88vh;
+    border-left: none; border-top: 1px solid var(--border);
+    border-radius: 18px 18px 0 0;
+    z-index: 1200;
+    transform: translateY(100%);
+    transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 0 24px 48px;
+  }
+  #panel.sheet-open { transform: translateY(0); }
+  #panel::before {
+    content: ''; display: block;
+    width: 36px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 14px auto 20px; flex-shrink: 0;
+  }
+  /* Details btn always visible on mobile */
+  #nw-panel-btn { display: flex; }
   #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 120px; }
   .h-center { display: none; }
   .sentence.poster { font-size: clamp(40px,11vw,72px); }
@@ -754,7 +781,7 @@ body.scroll-free #panel { pointer-events: auto; }
     <span class="sentence spec auto-flow" data-idx="24" data-ch="5"><span class="spec-key">Address</span><span class="spec-val">48 Stonegate Road, Accord, NY 12404</span></span>
     <span class="sentence spec auto-flow" data-idx="25" data-ch="5"><span class="spec-key">Dress</span><span class="spec-val">Garden formal · comfortable shoes encouraged</span></span>
     <span class="sentence spec auto-flow" data-idx="26" data-ch="5"><span class="spec-key">Lodging</span><span class="spec-val">Block reserved at The Emerson · code ELEANOR25</span></span>
-    <span class="sentence spec auto-flow" data-idx="27" data-ch="5"><span class="spec-key">RSVP By</span><span class="spec-val">May 1, 2025 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7c2cbc2c6c9c8d589cdc6cac2d48995979592e7d0c8cbc1cec289cbc8d1c2">[email&#160;protected]</a></span></span>
+    <span class="sentence spec auto-flow" data-idx="27" data-ch="5"><span class="spec-key">RSVP By</span><span class="spec-val">May 1, 2025 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bfef7fefaf5f4e9b5f1faf6fee8b5a9aba9aedbecf4f7fdf2feb5f7f4edfe">[email&#160;protected]</a></span></span>
     <span class="sentence break"  data-idx="28"></span>
 
     <!-- Ch 6 · The Invitation -->
@@ -810,7 +837,7 @@ body.scroll-free #panel { pointer-events: auto; }
     <p style="font-family:var(--ui);font-weight:300;font-size:8px;letter-spacing:.07em;color:var(--ink-3);line-height:1.8;border-top:1px solid var(--border);padding-top:14px">
       Stonegate Farm · 48 Stonegate Road, Accord, NY<br>
       Block rate at The Emerson · code <span style="color:var(--accent)">ELEANOR25</span><br>
-      Questions? <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="30555c55515e5f421e5a515d55431e0200020570475f5c5659551e5c5f4655">[email&#160;protected]</a>
+      Questions? <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b6e676e6a65647925616a666e7825393b393e4b7c64676d626e2567647d6e">[email&#160;protected]</a>
     </p>
   </aside>
 </div>
@@ -833,6 +860,8 @@ body.scroll-free #panel { pointer-events: auto; }
     <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">The Invitation</span><span class="cw-item-dot"></span></button>
   </div>
 </div>
+
+<div id="panel-overlay-backdrop"></div>
 
 <div id="nav-widget">
   <div class="nw-shell">
@@ -1096,7 +1125,54 @@ goTo(0);
   document.addEventListener('touchend', endDrag,{passive:true});
 })();
 
-function focusPanel(){ const p=document.getElementById('panel'); p.scrollIntoView({behavior:'smooth',block:'start'}); p.style.borderColor='var(--accent)'; setTimeout(()=>{p.style.borderColor='';},700); }
+function isMobileLayout(){ return window.innerWidth <= 760; }
+
+function openPanelSheet(){
+  const panel = document.getElementById('panel');
+  const backdrop = document.getElementById('panel-overlay-backdrop');
+  panel.classList.add('sheet-open');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePanelSheet(){
+  const panel = document.getElementById('panel');
+  const backdrop = document.getElementById('panel-overlay-backdrop');
+  panel.classList.remove('sheet-open');
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function focusPanel(){
+  if(isMobileLayout()){ openPanelSheet(); return; }
+  const p=document.getElementById('panel');
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+  p.style.borderColor='var(--accent)';
+  setTimeout(()=>{p.style.borderColor='';},700);
+}
+
+// Backdrop tap dismisses sheet
+document.getElementById('panel-overlay-backdrop').addEventListener('click', closePanelSheet);
+
+// Swipe-down on panel dismisses sheet
+(function initSheetSwipe(){
+  const panel = document.getElementById('panel');
+  let sy=0, scrollWasTop=false;
+  panel.addEventListener('touchstart', e=>{
+    sy = e.touches[0].clientY;
+    scrollWasTop = panel.scrollTop === 0;
+  },{passive:true});
+  panel.addEventListener('touchmove', e=>{
+    if(!panel.classList.contains('sheet-open')) return;
+    const dy = e.touches[0].clientY - sy;
+    if(scrollWasTop && dy > 0 && e.cancelable) e.preventDefault();
+  },{passive:false});
+  panel.addEventListener('touchend', e=>{
+    if(!panel.classList.contains('sheet-open')) return;
+    const dy = e.changedTouches[0].clientY - sy;
+    if(scrollWasTop && dy > 60) closePanelSheet();
+  },{passive:true});
+})();
+
+
 
 // HOTSPOTS
 const streamCol=document.getElementById('stream-col');
