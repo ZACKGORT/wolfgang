@@ -1971,6 +1971,19 @@ body.grid-open .grid-close-hotspot { display: block; }
 #cursor.pointer { width: 14px; height: 14px; background-color: var(--ink); }
 #cursor.has-image { opacity: 0; }
 
+/* Hotspot nav cursors */
+#cursor.nav-left,
+#cursor.nav-right {
+  width: 52px; height: 52px;
+  background: rgba(0,0,0,0.75) !important;
+  border: 1px solid var(--accent) !important;
+  border-color: var(--accent) !important;
+  mix-blend-mode: normal !important;
+  overflow: visible !important;
+}
+#cursor.nav-left::after  { content: '←'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 20px; color: var(--accent); line-height: 1; pointer-events: none; }
+#cursor.nav-right::after { content: '→'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 20px; color: var(--accent); line-height: 1; pointer-events: none; }
+
 /* Cursor thumbnail — letterbox, focus mode only */
 #cursor-thumb {
     position: absolute;
@@ -7181,6 +7194,45 @@ document.addEventListener('DOMContentLoaded', () => {
     detectTouch();
     initializeAccessibility();
     initializeContextMenu();
+
+    // ── LEFT / RIGHT HOTSPOT NAV ─────────────────────────────────────────────
+    // Hovering the left or right margin zones shows directional cursor arrows.
+    // Clicking navigates to prev/next sentence.
+    (function initHotspotNav() {
+        const isTouch = () => window.matchMedia('(pointer: coarse)').matches;
+        if (isTouch()) return;
+
+        const cursorEl = Utils.$('#cursor');
+        const MARGIN = 0.08; // matches text-layer 8vw padding
+
+        function getHotspot(x) {
+            const w = window.innerWidth;
+            if (x < w * MARGIN) return 'left';
+            if (x > w * (1 - MARGIN)) return 'right';
+            return null;
+        }
+
+        document.addEventListener('mousemove', e => {
+            if (document.body.classList.contains('scroll-free')) return;
+            const zone = getHotspot(e.clientX);
+            if (cursorEl) {
+                cursorEl.classList.toggle('nav-left',  zone === 'left');
+                cursorEl.classList.toggle('nav-right', zone === 'right');
+            }
+        }, { passive: true });
+
+        document.addEventListener('click', e => {
+            if (document.body.classList.contains('scroll-free')) return;
+            const zone = getHotspot(e.clientX);
+            if (zone === 'left')  { previousSentence(); }
+            if (zone === 'right') { nextSentence(); }
+        });
+
+        // Clear on leave
+        document.addEventListener('mouseleave', () => {
+            if (cursorEl) { cursorEl.classList.remove('nav-left', 'nav-right'); }
+        }, { passive: true });
+    })();
 
     // ── DETAIL GHOST — magnetic overlay for brackets & pullquotes ────────────
     (function initDetailGhost() {
