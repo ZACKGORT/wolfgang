@@ -519,8 +519,8 @@ header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: tran
 
 /* scroll toggle */
 #scroll-toggle {
-  position: absolute;
-  top: clamp(20px,4vh,36px); right: clamp(20px,3vw,40px);
+  position: fixed;
+  top: clamp(68px,10vh,88px); right: clamp(340px,calc(320px + 2vw),380px);
   z-index: 501; width: 48px; height: 48px; border-radius: 50%;
   background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.18);
   font-family: var(--ui); font-size: 7px;
@@ -533,7 +533,6 @@ header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: tran
 }
 #scroll-toggle:hover { color: #fff; border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.14); }
 #scroll-toggle.on {
-  position: fixed; top: 20px; right: 20px;
   background: var(--accent); border-color: var(--accent); color: #000;
   box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(200,144,42,0.40);
 }
@@ -920,7 +919,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   .ho-cell:nth-child(2) { border-right: none; }
   .ho-cell:nth-child(3) { border-top: 1px solid rgba(0,0,0,0.06); }
   #scroll-toggle {
-    position: fixed !important; top: calc(52px + 12px) !important;
+    top: calc(52px + 12px) !important;
     right: 16px !important; left: auto !important;
     width: 42px; height: 42px; z-index: 9500 !important;
     pointer-events: auto !important; touch-action: manipulation;
@@ -941,6 +940,9 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   #toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
   #wolfie-credit { bottom: calc(88px + env(safe-area-inset-bottom)); }
   #chapter-widget { right: 0; top: calc(52px + 10px); padding-right: 64px; }
+
+  /* CV button — surfaces resume panel on mobile */
+  #nw-cv-btn { display: flex; }
 
   /* mobile panel overlay */
   #panel {
@@ -965,8 +967,8 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   #panel .panel-wolfie { color: #aaa; border-color: rgba(0,0,0,0.08); }
   #panel::before {
     content: ''; display: block; width: 36px; height: 4px;
-    border-radius: 2px; 
-    background: rgba(0,0,0,0.18); /* Changed to dark so it's visible */
+    border-radius: 2px;
+    background: rgba(0,0,0,0.18);
     margin: 0 auto 20px; flex-shrink: 0;
   }
   #panel .service-dot { background: #c8902a; }
@@ -978,11 +980,6 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     transition: opacity 0.38s ease;
   }
   #panel-overlay-backdrop.show { opacity: 1; pointer-events: auto; }
-  #panel::before {
-    content: ''; display: block; width: 36px; height: 4px;
-    border-radius: 2px; background: rgba(255,255,255,0.18);
-    margin: 0 auto 20px; flex-shrink: 0;
-  }
   .nw-action-btn#nw-panel-btn { display: flex; }
   /* 2-up grid on mobile */
   #grid-tiles {
@@ -990,10 +987,26 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     padding: 16px;
     gap: 12px;
   }
+
+  /* ── Mobile ghost overlays — show as bottom sheet ── */
+  .sentence.spec.auto-flow.ghost-active { opacity: 1 !important; }
+
+  #detail-ghost {
+    display: block !important;
+    position: fixed !important;
+    left: 12px !important; right: 12px !important;
+    bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+    top: auto !important; width: auto !important;
+    max-width: none !important;
+  }
+  #detail-ghost.visible { opacity: 1; }
+  .dg-inner { min-width: unset; max-width: none; width: 100%; }
 }
 @media (min-width: 761px) {
   #panel-overlay-backdrop { display: none; }
   .nw-action-btn#nw-panel-btn { display: flex; }
+  #nw-cv-btn { display: none; }
+  #detail-ghost { display: block; }
 }
 
 
@@ -1213,7 +1226,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   transition: opacity 0.18s ease;
 }
 @media (max-width: 760px) {
-  #spec-cursor-ghost { display: none; }
+  #spec-cursor-ghost { pointer-events: none; } /* shown/hidden via JS on mobile */
   .sentence.spec.auto-flow.ghost-active { opacity: 1 !important; }
 }
 
@@ -1399,7 +1412,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 }
 
 @media (max-width: 760px) {
-  #detail-ghost { display: none; }
+  /* detail-ghost handled in main mobile block above */
 }
 </style>
 </head>
@@ -1592,7 +1605,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   </div>
 
   <div class="rp-contact">
-    <a href="mailto:hello@wolfie.life">hello@wolfie.life</a>
+    <a href="/cdn-cgi/l/email-protection#9ef6fbf2f2f1dee9f1f2f8f7fbb0f2f7f8fb"><span class="__cf_email__" data-cfemail="8be3eee7e7e4cbfce4e7ede2eea5e7e2edee">[email&#160;protected]</span></a>
     <span>&middot;</span>
     <a href="https://zackgort.com" target="_blank" rel="noopener">zackgort.com</a>
     <span>&middot;</span>
@@ -1783,7 +1796,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 
   <div class="rp-footer">
     Zack Gort &middot; zackgort.com<br>
-    <a href="mailto:hello@wolfie.life">hello@wolfie.life</a> &middot;
+    <a href="/cdn-cgi/l/email-protection#5139343d3d3e11263e3d3738347f3d383734"><span class="__cf_email__" data-cfemail="7d15181111123d0a12111b14185311141b18">[email&#160;protected]</span></a> &middot;
     <a href="https://www.linkedin.com/in/zackgort/" target="_blank" rel="noopener">LinkedIn</a>
   </div>
 
@@ -1830,6 +1843,9 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 
     <button class="nw-interest-btn" id="nw-interest-btn" title="I'm interested" onclick="toggleInterestPanel()">
       <span class="nw-cell-value">&#9671;</span><span class="nw-action-label">Interest</span>
+    </button>
+    <button class="nw-action-btn" id="nw-cv-btn" title="View CV / Resume" onclick="openPanelSheet ? openPanelSheet() : focusPanel()" style="display:none">
+      <span class="nw-cell-value">&#9776;</span><span class="nw-action-label">CV</span>
     </button>
     <div class="nw-divider"></div>
     <div class="nw-nav">
@@ -1880,7 +1896,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   <div id="grid-tiles"></div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── DETAIL GHOST ─────────────────────────────────────────────────────────────
 (function(){
   var ghost   = document.getElementById('detail-ghost');
@@ -1896,13 +1912,21 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 
   function lerp(a,b,t){ return a+(b-a)*t; }
 
+  function isMob(){ return window.innerWidth<=760; }
+  function rl(gw){ // right limit — keeps ghost left of panel on desktop, full-width on mobile
+    if(isMob()) return window.innerWidth-12;
+    var col=document.getElementById('stream-col');
+    return col ? col.getBoundingClientRect().right-8 : window.innerWidth-328;
+  }
   function exZones(){
     var z=[];
     z.push({l:0,t:0,r:window.innerWidth,b:62});
     var nw=document.getElementById('nav-widget');
     if(nw){var r=nw.getBoundingClientRect();z.push({l:r.left-PAD,t:r.top-PAD,r:r.right+PAD,b:r.bottom+PAD});}
-    var p=document.getElementById('panel');
-    if(p){var r2=p.getBoundingClientRect();z.push({l:r2.left,t:r2.top,r:r2.right,b:r2.bottom});}
+    if(!isMob()){
+      var p=document.getElementById('panel');
+      if(p){var r2=p.getBoundingClientRect();z.push({l:r2.left,t:r2.top,r:r2.right,b:r2.bottom});}
+    }
     var cw=document.querySelector('.cw-trigger');
     if(cw){var r3=cw.getBoundingClientRect();z.push({l:r3.left-PAD,t:r3.top-PAD,r:r3.right+PAD,b:r3.bottom+PAD});}
     return z;
@@ -1920,16 +1944,18 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     var rect=activeEl.getBoundingClientRect();
     var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
     var col=document.getElementById('stream-col');
-    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
+    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth};
+    var rLimit=rl(gw);
     var cands=[
-      {x:rect.left,y:rect.top-gh-12},
-      {x:rect.left,y:rect.bottom+12},
-      {x:sr.left+8,y:rect.top-gh-12},
-      {x:sr.left+8,y:rect.bottom+12}
+      {x:rect.left,       y:rect.top-gh-12},
+      {x:rect.left,       y:rect.bottom+12},
+      {x:sr.left+8,       y:rect.top-gh-12},
+      {x:sr.left+8,       y:rect.bottom+12},
+      {x:rLimit-gw,       y:rect.top-gh-12}
     ];
     for(var i=0;i<cands.length;i++){
       var c=cands[i];
-      var cx=Math.max(sr.left+4, Math.min(c.x, sr.right-gw-20));
+      var cx=Math.max(sr.left+4, Math.min(c.x, rLimit-gw));
       var cy=Math.max(68, Math.min(c.y, window.innerHeight-gh-8));
       if(!hits(cx,cy,gw,gh)) return {x:cx,y:cy};
     }
@@ -1938,8 +1964,9 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   function clampFollow(x,y){
     var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
     var col=document.getElementById('stream-col');
-    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
-    x=Math.max(sr.left+4, Math.min(x, sr.right-gw-20));
+    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth};
+    var rLimit=rl(gw);
+    x=Math.max(sr.left+4, Math.min(x, rLimit-gw));
     y=Math.max(68, Math.min(y, window.innerHeight-gh-8));
     if(hits(x,y,gw,gh)) y=Math.max(68,y-gh-16);
     return {x:x,y:y};
@@ -1964,11 +1991,14 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
       return '<div class="dg-row"><span class="dg-row-key">'+d.k+'</span><span class="dg-row-val">'+(d.v||'')+'</span></div>';
     }).join('');
     var p=idlePos(); ix=p.x; iy=p.y;
-    if(!visible){ gx=ix; gy=iy; ghost.style.left=gx+'px'; ghost.style.top=gy+'px'; }
+    // On mobile the ghost is CSS-positioned as a bottom bar; don't set left/top via JS
+    if(!isMob()){
+      if(!visible){ gx=ix; gy=iy; ghost.style.left=gx+'px'; ghost.style.top=gy+'px'; }
+    }
     ghost.classList.add('visible');
     visible=true;
-    if(!raf) raf=requestAnimationFrame(tick);
-    applyZone(mx);
+    if(!isMob() && !raf) raf=requestAnimationFrame(tick);
+    if(!isMob()) applyZone(mx);
   }
   function hideGhost(){
     ghost.classList.remove('visible');
@@ -1986,23 +2016,43 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   window.addEventListener('resize', function(){
     if(visible&&!following){ var p=idlePos(); ix=p.x; iy=p.y; }
   });
+  // Tap anywhere outside a hoverable-stat dismisses ghost on mobile
+  document.addEventListener('touchstart', function(e){
+    if(!visible) return;
+    if(activeEl && activeEl.contains(e.target)) return;
+    hideGhost();
+  }, {passive:true});
 
   function wireHoverables(){
     document.querySelectorAll('.hoverable-stat').forEach(function(el){
+      // Mouse (desktop)
       el.addEventListener('mouseenter', function(){
         var label=el.dataset.ghostLabel||'Detail', data;
         try{ data=JSON.parse(el.dataset.ghost||'[]'); }catch(e){ data=[]; }
         if(activeEl&&activeEl!==el) activeEl.classList.remove('ghost-active');
         activeEl=el; el.classList.add('ghost-active');
+        // Anchor idle to right side of stream
         var col=document.getElementById('stream-col');
-        var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
+        var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth};
         var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
-        ix=sr.right-gw-36;
+        var rLimit=rl(gw);
+        ix=rLimit-gw;
         iy=Math.max(68, window.innerHeight*0.38 - gh*0.5);
         following=false;
         showGhost(label, data);
       });
       el.addEventListener('mouseleave', function(){ hideGhost(); });
+
+      // Touch (mobile) — tap to toggle ghost
+      el.addEventListener('touchstart', function(e){
+        e.stopPropagation(); // prevent doc listener from closing immediately
+        var label=el.dataset.ghostLabel||'Detail', data;
+        try{ data=JSON.parse(el.dataset.ghost||'[]'); }catch(e){ data=[]; }
+        if(visible && activeEl===el){ hideGhost(); return; }
+        if(activeEl&&activeEl!==el) activeEl.classList.remove('ghost-active');
+        activeEl=el; el.classList.add('ghost-active');
+        showGhost(label, data);
+      }, {passive:true});
     });
   }
   wireHoverables();
@@ -2075,20 +2125,22 @@ document.addEventListener('touchstart', function() {
     var gw    = ghost.offsetWidth  || 220;
     var gh    = ghost.offsetHeight || 42;
     var col   = document.getElementById('stream-col');
-    var colR  = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
+    var colR  = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+    var mobile = window.innerWidth <= 760;
+    var rightLimit = mobile ? window.innerWidth - 12 : colR.right - 8;
 
     // Candidate positions in priority order: above, below, left-flush
     var candidates = [
-      { x: rect.left,                    y: rect.top  - gh - 10 },
-      { x: rect.left,                    y: rect.bottom + 10     },
-      { x: colR.left + 8,               y: rect.top  - gh - 10 },
-      { x: colR.left + 8,               y: rect.bottom + 10     },
-      { x: colR.right - gw - 8 - 340,  y: rect.top  - gh - 10 }, // clear of panel+hud
+      { x: rect.left,       y: rect.top  - gh - 10 },
+      { x: rect.left,       y: rect.bottom + 10     },
+      { x: colR.left + 8,  y: rect.top  - gh - 10 },
+      { x: colR.left + 8,  y: rect.bottom + 10     },
+      { x: rightLimit - gw, y: rect.top  - gh - 10 },
     ];
 
     for (var i = 0; i < candidates.length; i++) {
       var c = candidates[i];
-      var cx = Math.max(colR.left + 4, Math.min(c.x, colR.right - gw - 340)); // stay left of HUD
+      var cx = Math.max(colR.left + 4, Math.min(c.x, rightLimit - gw));
       var cy = Math.max(60, Math.min(c.y, window.innerHeight - gh - 8));
       if (!intersectsUI(cx, cy, gw, gh)) return { x: cx, y: cy };
     }
@@ -2109,8 +2161,9 @@ document.addEventListener('touchstart', function() {
     var gw = ghost.offsetWidth  || 220;
     var gh = ghost.offsetHeight || 42;
     var col = document.getElementById('stream-col');
-    var colR = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
-    var maxX = colR.right - gw - 340; // hard stop before HUD
+    var colR = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+    var mobile = window.innerWidth <= 760;
+    var maxX = mobile ? window.innerWidth - gw - 12 : colR.right - gw - 8;
     x = Math.max(colR.left + 4, Math.min(x, maxX));
     y = Math.max(60, Math.min(y, window.innerHeight - gh - 8));
     // If still in a UI zone, nudge up
@@ -2212,11 +2265,21 @@ document.addEventListener('touchstart', function() {
         activeSpecEl = el;
         ghostKey.textContent = keyEl.textContent;
         ghostVal.textContent = valEl.textContent;
-        showGhost();
+        // Mobile: show as fixed bottom bar
+        if (window.innerWidth <= 760) {
+          ghost.style.cssText = 'display:block;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));top:auto;width:auto;opacity:1;';
+          ghost.querySelector('.scg-inner').style.cssText = 'min-width:unset;max-width:none;width:100%;justify-content:space-between;';
+          ghost.classList.add('visible');
+          ghostVisible = true;
+        } else {
+          showGhost();
+        }
         return;
       }
     }
     hideGhost();
+    // Also clean up mobile inline style
+    if (window.innerWidth <= 760) ghost.style.cssText = '';
   };
 })();
 document.querySelectorAll('a,button,[data-idx]').forEach(function(el) {
