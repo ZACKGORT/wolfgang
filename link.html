@@ -2233,7 +2233,7 @@ function setImage(n) {
   imgs[n] && imgs[n].classList.add('visible');
   currentImg = n;
   var pi = document.getElementById('panel-img-main');
-  if (imgs[n]) pi.src = imgs[n].src;
+  if (pi && imgs[n]) pi.src = imgs[n].src;
 }
 imgs[0].classList.add('visible');
 
