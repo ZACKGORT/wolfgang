@@ -1216,6 +1216,191 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   #spec-cursor-ghost { display: none; }
   .sentence.spec.auto-flow.ghost-active { opacity: 1 !important; }
 }
+
+/* ── RESUME PANEL ──────────────────────────────────────────────────────────── */
+
+#panel {
+  padding: 20px 18px 48px;
+  overflow-y: auto;
+}
+
+#panel::-webkit-scrollbar { width: 3px; }
+#panel::-webkit-scrollbar-track { background: transparent; }
+#panel::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 2px; }
+
+.rp-section { margin-bottom: 22px; }
+
+.rp-label {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 8px;
+  transition: color 1.6s ease;
+}
+
+.rp-hero { margin-bottom: 18px; }
+.rp-hero-name {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(22px, 2.2vw, 28px);
+  line-height: 0.95; letter-spacing: -0.03em;
+  text-transform: uppercase; color: var(--ink);
+  transition: color 1.6s ease;
+}
+.rp-hero-role {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.12em; color: var(--accent);
+  margin-top: 5px; transition: color 1.6s ease;
+}
+.rp-hero-summary {
+  font-family: var(--disp); font-weight: 300;
+  font-size: 12px; line-height: 1.55; color: var(--ink-2);
+  margin-top: 8px; transition: color 1.6s ease;
+}
+
+.rp-contact {
+  display: flex; flex-wrap: wrap; gap: 5px 12px;
+  font-family: var(--ui); font-size: 7.5px;
+  letter-spacing: 0.06em; color: var(--ink-3);
+  margin-bottom: 16px; transition: color 1.6s ease;
+}
+.rp-contact a { color: var(--accent); text-decoration: none; }
+.rp-contact a:hover { text-decoration: underline; }
+
+.rp-job {
+  background: var(--bg-2, rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 11px 13px 10px;
+  margin-bottom: 7px;
+  position: relative; overflow: hidden;
+  transition: background .25s, border-color .25s;
+  cursor: none;
+}
+.rp-job:hover { border-color: var(--accent); }
+.rp-job.ghost-active { opacity: 0.18; }
+.rp-job-company {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 14px; line-height: 1; color: var(--accent);
+  transition: color 1.6s ease;
+}
+.rp-job-role {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.05em; font-style: italic;
+  color: var(--ink-2); margin-top: 2px;
+  transition: color 1.6s ease;
+}
+.rp-job-year {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.08em; color: var(--ink-3);
+  margin-top: 3px; transition: color 1.6s ease;
+}
+
+.rp-pills {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 3px;
+}
+.rp-pill {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  padding: 3px 8px; border: 1px solid var(--border);
+  border-radius: 2px; color: var(--ink-3);
+  transition: border-color .2s, color .2s;
+}
+.rp-job:hover .rp-pill { border-color: rgba(200,144,42,0.25); color: var(--ink-2); }
+
+.rp-comp-row {
+  display: flex; flex-direction: column;
+  gap: 4px; margin-bottom: 10px;
+}
+.rp-comp-cat {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); transition: color 1.6s ease;
+}
+
+.rp-ref {
+  background: var(--bg-2, rgba(255,255,255,0.03));
+  border-left: 2px solid var(--accent);
+  padding: 9px 12px;
+  margin-bottom: 7px;
+  border-radius: 0 4px 4px 0;
+  transition: background .25s, border-color 1.6s;
+}
+.rp-ref-quote {
+  font-family: var(--disp); font-style: italic;
+  font-weight: 300; font-size: 12px; line-height: 1.5;
+  color: var(--ink-2); transition: color 1.6s ease;
+}
+.rp-ref-name {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin-top: 5px;
+  transition: color 1.6s ease;
+}
+
+.rp-footer {
+  font-family: var(--ui); font-size: 7.5px;
+  letter-spacing: 0.06em; color: var(--ink-3); line-height: 1.9;
+  border-top: 1px solid var(--border); padding-top: 14px;
+  margin-top: auto;
+  transition: color 1.6s ease, border-color 1.6s ease;
+}
+.rp-footer a { color: var(--accent); text-decoration: none; }
+.rp-footer a:hover { text-decoration: underline; }
+
+#panel:hover .rp-label { color: #aaa; }
+#panel:hover .rp-hero-name { color: #111; }
+#panel:hover .rp-hero-role { color: #c8902a; }
+#panel:hover .rp-hero-summary { color: #555; }
+#panel:hover .rp-contact { color: #888; }
+#panel:hover .rp-job { background: #f0ece4; border-color: rgba(0,0,0,0.08); }
+#panel:hover .rp-job:hover { border-color: #c8902a; }
+#panel:hover .rp-job-company { color: #c8902a; }
+#panel:hover .rp-job-role { color: #444; }
+#panel:hover .rp-job-year { color: #999; }
+#panel:hover .rp-pill { color: #888; border-color: rgba(0,0,0,0.12); }
+#panel:hover .rp-job:hover .rp-pill { color: #444; border-color: rgba(200,144,42,0.3); }
+#panel:hover .rp-comp-cat { color: #c8902a; }
+#panel:hover .rp-ref { background: rgba(200,144,42,0.04); }
+#panel:hover .rp-ref-quote { color: #444; }
+#panel:hover .rp-ref-name { color: #999; }
+#panel:hover .rp-footer { color: #bbb; border-color: rgba(0,0,0,0.08); }
+
+#detail-ghost {
+  position: fixed; pointer-events: none; z-index: 9100;
+  opacity: 0; transition: opacity .18s ease; will-change: left,top;
+}
+#detail-ghost.visible { opacity: 1; }
+.dg-inner {
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  border-radius: 6px; padding: 11px 15px;
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 36px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15);
+  min-width: 210px; max-width: 290px;
+}
+.dg-label {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: .22em; text-transform: uppercase;
+  color: var(--hud-accent); margin-bottom: 9px;
+}
+.dg-row {
+  display: flex; justify-content: space-between;
+  align-items: baseline; gap: 16px;
+  padding: 4px 0; border-bottom: 1px solid var(--hud-border);
+}
+.dg-row:last-child { border-bottom: none; }
+.dg-row-key {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--hud-ink-3); flex-shrink: 0;
+}
+.dg-row-val {
+  font-family: var(--ui); font-size: 9px;
+  color: var(--hud-ink); text-align: right;
+}
+
+@media (max-width: 760px) {
+  #detail-ghost { display: none; }
+}
 </style>
 </head>
 <body class="no-transitions">
@@ -1292,226 +1477,325 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   <main id="stream-col">
     <button id="scroll-toggle" aria-label="Toggle free scroll">scroll</button>
 
-    <!-- ═══ CH 1 · INTRODUCTION ═══ -->
-    <span class="sentence label"     data-idx="0"  data-img="0"  data-ch="1">Zack Gort &middot; Thinker &amp; Maker</span>
-    <span class="sentence poster"    data-idx="1"  data-img="1"  data-ch="1">Built<br>with <span class="ac">conviction.</span></span>
-    <span class="sentence body"      data-idx="2"  data-img="1"  data-ch="1">This is not a LinkedIn profile. It is a <span class="em">reimagination</span> of one. A polished portfolio seems disingenuous. Facts are never facts. Capabilities become curbed.</span>
-    <span class="sentence pull"      data-idx="3"  data-img="1"  data-ch="1">"Conviction counters convention. Strong belief resists being carried by the current."</span>
-    <span class="sentence body"      data-idx="4"  data-img="2"  data-ch="1">I am Zack &mdash; a left-handed autodidact with an affinity for alliterative apropos. A self-taught designer who learned to code. An observer, a ponderer, and a dreamer. An artist &amp; craftsman.</span>
-    <span class="sentence body"      data-idx="5"  data-img="2"  data-ch="1">Specializing in visual design systems, digital branding, and information architecture for B2C &amp; B2B e-commerce and enterprise SaaS financial applications. I seek not to disrupt, but to discover.</span>
-    <span class="sentence break"     data-idx="6"></span>
+    <span class="sentence label"  data-idx="0"  data-img="9"  data-ch="1">Zack Gort &middot; Portfolio</span>
+    <span class="sentence poster" data-idx="1"  data-img="9"  data-ch="1">UX<br>is <span class="ac">not</span><br>dead.</span>
+    <span class="sentence body"   data-idx="2"  data-img="9"  data-ch="1">I&rsquo;m Zack Gort &mdash; Senior Product / UX Designer with 20 years building digital products at the intersection of systems thinking, data, and craft.</span>
+    <span class="sentence pull"   data-idx="3"  data-img="10" data-ch="1">&ldquo;I think. I make. I think about design and data as systems.&rdquo;</span>
+    <span class="sentence body"   data-idx="4"  data-img="10" data-ch="1">I&rsquo;m a Senior <span class="em">User Experience Designer</span> &mdash; and I&rsquo;m open to work. The right kind: a team with a real problem, and the conviction to solve it well.</span>
+    <span class="sentence break"  data-idx="5"></span>
 
-    <!-- ═══ CH 2 · EARLY DAYS ═══ -->
     <div class="ch-header" data-ch="2">
       <div class="ch-header-rule"></div>
       <div class="ch-header-inner">
-        <span class="ch-header-label">Origins</span>
+        <span class="ch-header-label">Case Study</span>
         <span class="ch-header-num">02</span>
-        <span class="ch-header-title">Early Days</span>
-        <span class="ch-header-sub">Bootstrap roots &middot; a Craigslist post that changed everything</span>
+        <span class="ch-header-title">BNY Mellon</span>
+        <span class="ch-header-sub">Pershing X &middot; Wove &middot; Advisor Experience</span>
       </div>
     </div>
-    <span class="sentence label"     data-idx="7"  data-img="3"  data-ch="2">The Autodidact</span>
-    <span class="sentence poster"    data-idx="8"  data-img="3"  data-ch="2">First<br><span class="ac">computer.</span></span>
-    <span class="sentence body"      data-idx="9"  data-img="3"  data-ch="2">I attended Pratt Institute of Art in Brooklyn, 2002&ndash;05. I couldn&rsquo;t afford to finish. Loans were out of reach. At nineteen, I worked construction, the bowling alley, the hardware store, the grocery store, and the gas station. Stop-out, not drop-out.</span>
-    <span class="sentence body"      data-idx="10" data-img="3"  data-ch="2">I built my first computer circa 2005. I immediately installed pirated copies of Adobe Photoshop and Illustrator. I studied typography, color theory, and whatever piqued my interest &mdash; intensely. I studied what I saw.</span>
-    <span class="sentence pull"      data-idx="11" data-img="4"  data-ch="2">"All this culminated in responding to a Craigslist post. A garage startup in the suburbs of Philadelphia that became my formal education."</span>
-    <span class="sentence body"      data-idx="12" data-img="5"  data-ch="2">Turn5 Inc. &mdash; the kind of place where you wear the hat you want. I was handed a brand new PC and a Canon Rebel DSLR. Graphic design for print, packaging, and catalogues. Product photography at scale. Email marketing. Feature development with UX rigor.</span>
-    <span class="sentence body"      data-idx="13" data-img="6"  data-ch="2">I owned email segmentation strategies, display ad campaigns, physical catalog operations, and in the latter half, served as web designer focused on user experience &mdash; applied to a then forty-million-per-year e-commerce giant born from a garage in southeastern Pennsylvania.</span>
-    <span class="sentence spec auto-flow" data-idx="14" data-ch="2"><span class="spec-key">Turn5 Inc.</span><span class="spec-val">Web &middot; packaging &middot; catalogue &middot; product photography &middot; 2008&ndash;11</span></span>
-    <span class="sentence spec auto-flow" data-idx="15" data-ch="2"><span class="spec-key">Growth</span><span class="spec-val">$10M &rarr; $40M+ per year during tenure</span></span>
-    <span class="sentence body"      data-idx="16" data-img="3"  data-ch="2">Leadnomics was paradigm shifty. Lead generation across multiple verticals. My job was to make it easy for people to make catastrophic financial decisions. I achieved a 95.8% conversion rate using responsive design and rigorous testing. Business bides by imperative, not by idealism.</span>
-    <span class="sentence body"      data-idx="17" data-img="3"  data-ch="2">Then: a completely comminuted clavicle on the Schuylkill River Trail. Karma? I think so. I spent my downtime learning to code &mdash; HTML, CSS, JavaScript. I built an interactive haiku to test my skills. It wasn&rsquo;t profound. It proved potential. Enter #agencylife.</span>
-    <span class="sentence spec auto-flow" data-idx="18" data-ch="2"><span class="spec-key">Leadnomics</span><span class="spec-val">Lead gen &middot; responsive design &middot; 95.8% conversion rate &middot; 2011&ndash;14</span></span>
-    <span class="sentence break"     data-idx="19"></span>
+    <span class="sentence label"  data-idx="6"  data-img="0"  data-ch="2">BNY Mellon &mdash; Pershing X</span>
+    <span class="sentence poster" data-idx="7"  data-img="0"  data-ch="2">No <span class="ac">AI</span><br>here.</span>
+    <span class="sentence body"   data-idx="8"  data-img="1"  data-ch="2">Wove is an industry-first platform that gives financial advisors their client&rsquo;s complete picture in one place &mdash; built at Publicis Sapient for BNY Mellon Pershing X.</span>
+    <span class="sentence body"   data-idx="9"  data-img="2"  data-ch="2">Advisors had been managing relationships across <span class="em">disconnected tools</span>. Context lost. Data re-entered. Constantly. I was brought in as Senior UX Designer and Product Design Lead.</span>
+    <span class="sentence spec auto-flow" data-idx="10" data-ch="2"><span class="spec-key">Client</span><span class="spec-val">BNY Mellon &mdash; Pershing X</span></span>
+    <span class="sentence spec auto-flow" data-idx="11" data-ch="2"><span class="spec-key">Agency</span><span class="spec-val">Publicis Sapient</span></span>
+    <span class="sentence spec auto-flow" data-idx="12" data-ch="2"><span class="spec-key">Role</span><span class="spec-val">Senior UX Designer &middot; Product Design Lead</span></span>
+    <span class="sentence spec auto-flow" data-idx="13" data-ch="2"><span class="spec-key">Scope</span><span class="spec-val">IA, cross-workflow navigation, component system</span></span>
+    <span class="sentence spec auto-flow" data-idx="14" data-ch="2"><span class="spec-key">Outcome</span><span class="spec-val">Launched at BNY Mellon scale &amp; security</span></span>
+    <span class="sentence pull"   data-idx="15" data-img="1"  data-ch="2">&ldquo;No Artificial Intelligence Here &mdash; every decision was human due diligence, 2023 into 2024.&rdquo;</span>
+    <span class="sentence break"  data-idx="16"></span>
 
-    <!-- ═══ CH 3 · AGENCY LIFE · PHILLY ═══ -->
     <div class="ch-header" data-ch="3">
       <div class="ch-header-rule"></div>
       <div class="ch-header-inner">
-        <span class="ch-header-label">Agency Life</span>
+        <span class="ch-header-label">Case Study</span>
         <span class="ch-header-num">03</span>
-        <span class="ch-header-title">Philly</span>
-        <span class="ch-header-sub">One Sixty Over Ninety &middot; O3 World &middot; Workarea</span>
+        <span class="ch-header-title">GNC</span>
+        <span class="ch-header-sub">Ecommerce rebuild &middot; $500M recovery</span>
       </div>
     </div>
-    <span class="sentence label"     data-idx="20" data-img="7"  data-ch="3">Enter #AgencyLife</span>
-    <span class="sentence poster"    data-idx="21" data-img="7"  data-ch="3">160<br>over <span class="ac">90.</span></span>
-    <span class="sentence body"      data-idx="22" data-img="7"  data-ch="3">One Sixty Over Ninety &mdash; my heartrate when offered the job. Interaction Designer, Center City Philadelphia. I took a $12K pay cut to join their newly minted Interactive Department. I was there to learn. Day. Night. Lots of nights. Weekends too.</span>
-    <span class="sentence body"      data-idx="23" data-img="8"  data-ch="3">Focus: Interactive &amp; UX, Information Architecture, Digital Consumer Branding. We made high-fidelity wireframes and skipped user research entirely. We were charged with being edgy and innovative, within budget, within WordPress&rsquo; capabilities.</span>
-    <span class="sentence pull"      data-idx="24" data-img="8"  data-ch="3">"The culture demanded we dare. The work wasn&rsquo;t scientific. It was expressive. It was novel. It was considered."</span>
-    <span class="sentence spec auto-flow" data-idx="25" data-ch="3"><span class="spec-key">160/90 Clients</span><span class="spec-val">Comcast &middot; Philadelphia Eagles &middot; Power Home Remodeling &middot; Kent State &middot; Texas A&amp;M &middot; UW-Madison</span></span>
-    <span class="sentence body"      data-idx="26" data-img="9"  data-ch="3">O3 World was an elevating experience. A bona-fide digital product shop in the heart of Fishtown. Agile in nature. Scrum led via a certified scrum master. Daily stand-ups. Weekly sprint schedules. Here it was less about impressing clients &mdash; it was all about <span class="em">working with</span> them.</span>
-    <span class="sentence body"      data-idx="27" data-img="9"  data-ch="3">Lean UX and Atomic Design methodologies. We workshopped with whiteboards. We wireframed with Balsamiq. We shipped. Focus: digital products &mdash; leveraging user interviews, testing, and Agile developer hand-off.</span>
-    <span class="sentence spec auto-flow" data-idx="28" data-ch="3"><span class="spec-key">O3 World Clients</span><span class="spec-val">WOVN App (iOS) &middot; Vertex SMB &middot; SEIC &middot; La Colombe &middot; 2016&ndash;17</span></span>
-    <span class="sentence body"      data-idx="29" data-img="9"  data-ch="3">Workarea &mdash; a proprietary SaaS e-commerce platform in Olde City. Senior Visual &amp; UX Designer. Napkin sketches. Direct developer partnership. No saved napkins, but A-list brands and measurable results. We built things better, faster, smarter. The company sold. I reframed my approach.</span>
-    <span class="sentence spec auto-flow" data-idx="30" data-ch="3"><span class="spec-key">Workarea Clients</span><span class="spec-val">Rachel Roy &middot; Century 21 Fashion &middot; WoodCraft &middot; Paragon Sports &middot; 2017&ndash;18</span></span>
-    <span class="sentence break"     data-idx="31"></span>
+    <span class="sentence label"  data-idx="17" data-img="3"  data-ch="3">General Nutrition Centers</span>
+    <span class="sentence poster" data-idx="18" data-img="3"  data-ch="3">This<br>is the <span class="ac">whey.</span></span>
+    <span class="sentence body"   data-idx="19" data-img="4"  data-ch="3">GNC was recovering from bankruptcy and needed a complete Shopify rebuild &mdash; platform overhaul, design system, and mobile-first navigation built from scratch in a 12-week engagement.</span>
+    <span class="sentence body"   data-idx="20" data-img="5"  data-ch="3">I led UX on taxonomy strategy, <span class="em">modular component systems</span>, wireframes for every edge case, and retail navigation that actually converted.</span>
+    <span class="sentence spec auto-flow" data-idx="21" data-ch="3"><span class="spec-key">Client</span><span class="spec-val">General Nutrition Centers (GNC)</span></span>
+    <span class="sentence spec auto-flow" data-idx="22" data-ch="3"><span class="spec-key">Agency</span><span class="spec-val">Elva Design Group</span></span>
+    <span class="sentence spec auto-flow" data-idx="23" data-ch="3"><span class="spec-key">Role</span><span class="spec-val">Senior UX Designer</span></span>
+    <span class="sentence spec auto-flow" data-idx="24" data-ch="3"><span class="spec-key">Scope</span><span class="spec-val">Shopify rebuild &middot; design system &middot; 12 weeks</span></span>
+    <span class="sentence spec auto-flow" data-idx="25" data-ch="3"><span class="spec-key">Outcome</span><span class="spec-val">~$500M annual revenue recovery</span></span>
+    <span class="sentence pull"   data-idx="26" data-img="4"  data-ch="3">&ldquo;If the bar ain&rsquo;t bending, you&rsquo;re just pretending.&rdquo;</span>
+    <span class="sentence break"  data-idx="27"></span>
 
-    <!-- ═══ CH 4 · AGENCY LIFE · NYC ═══ -->
     <div class="ch-header" data-ch="4">
       <div class="ch-header-rule"></div>
       <div class="ch-header-inner">
-        <span class="ch-header-label">Agency Life</span>
+        <span class="ch-header-label">Agency</span>
         <span class="ch-header-num">04</span>
-        <span class="ch-header-title">New York</span>
-        <span class="ch-header-sub">FlightPath &middot; LiveArea &middot; two skylines, three hours apart</span>
+        <span class="ch-header-title">TikTok &amp; Agency</span>
+        <span class="ch-header-sub">Big logos &middot; WOVN &middot; Cards Against Bad UX</span>
       </div>
     </div>
-    <span class="sentence label"     data-idx="32" data-img="11" data-ch="4">PHI &rarr; NYC</span>
-    <span class="sentence poster"    data-idx="33" data-img="11" data-ch="4">Hello,<br><span class="ac">New York.</span></span>
-    <span class="sentence body"      data-idx="34" data-img="11" data-ch="4">FlightPath &mdash; recently emerged from bankruptcy, drastically downsized, preserving vital pharma client relationships. The pay was passable at best. But this was my foot-in-the-door to the NYC agency scene, and I knew it. FlightPath was always only ever my runway.</span>
-    <span class="sentence body"      data-idx="35" data-img="12" data-ch="4">Commuting from Philly to Manhattan every business day for a full year. Up and out by five; home by ten, maybe. WCAG 2.0 AA and AAA compliance, legal and regulatory marketing scrutiny, pharmaceutical clients demanding precision in every pixel.</span>
-    <span class="sentence pull"      data-idx="36" data-img="13" data-ch="4">"Two skylines. Three hours apart. Saw both sunrise and sunset every day. Worth it? Totally."</span>
-    <span class="sentence spec auto-flow" data-idx="37" data-ch="4"><span class="spec-key">FlightPath Clients</span><span class="spec-val">Merck Animal Health &middot; Zoetis &middot; Charter &middot; Goya &middot; The Dana Foundation &middot; 2018&ndash;20</span></span>
-    <span class="sentence body"      data-idx="38" data-img="14" data-ch="4">LiveArea &mdash; from IC to Manager. I owned the UX process for a gamut of B2B &amp; B2C e-commerce brands via Salesforce Commerce Cloud. UX Manager on contracts exceeding $1.2M. Billable to the client at $235/hr. Everything I did had a direct impact on the deliverable.</span>
-    <span class="sentence body"      data-idx="39" data-img="14" data-ch="4">I ran discovery. I directed and delegated. I socialized my solutions. Then: several rounds of client frustration with unfamiliar process. So I built <span class="em">Cards Against Bad UX</span> &mdash; a card game played in workshops to humanize the user, depoliticize the design conversation, and shift the table from features to feelings.</span>
-    <span class="sentence pull"      data-idx="40" data-img="10" data-ch="4">"Clients don&rsquo;t always know what they want. They always know how something makes them feel."</span>
-    <span class="sentence spec auto-flow" data-idx="41" data-ch="4"><span class="spec-key">LiveArea Clients</span><span class="spec-val">YETI &middot; West Marine &middot; Aquasana &middot; Hardinge &middot; Simpson Strong-Tie &middot; 2020&ndash;21</span></span>
-    <span class="sentence break"     data-idx="42"></span>
+    <span class="sentence label"  data-idx="28" data-img="6"  data-ch="4">TikTok For Business</span>
+    <span class="sentence poster" data-idx="29" data-img="6"  data-ch="4">Big<br><span class="dim">logos.</span><br>Real<br>work.</span>
+    <span class="sentence body"   data-idx="30" data-img="6"  data-ch="4">TikTok For Business: a navigation prototype that went further than a proof of concept. WOVN: a multi-market CMS redesign that had to work in a dozen languages simultaneously.</span>
+    <span class="sentence body"   data-idx="31" data-img="7"  data-ch="4"><span class="em">Cards Against Bad UX</span> &mdash; an accessibility training tool I built because the problem deserved a clever answer. Two decades of agency work leaves you with a very specific kind of scar tissue.</span>
+    <span class="sentence spec auto-flow" data-idx="32" data-ch="4"><span class="spec-key">Specialties</span><span class="spec-val">UX Design &middot; Visual Interface &middot; Accessibility</span></span>
+    <span class="sentence spec auto-flow" data-idx="33" data-ch="4"><span class="spec-key">Tools</span><span class="spec-val">Figma &middot; Adobe &middot; HTML/CSS/JS &middot; Whiteboard</span></span>
+    <span class="sentence spec auto-flow" data-idx="34" data-ch="4"><span class="spec-key">Currently</span><span class="spec-val">AI + Creative Coding &middot; Design Systems</span></span>
+    <span class="sentence break"  data-idx="35"></span>
 
-    <!-- ═══ CH 5 · BIG LOGOS ═══ -->
     <div class="ch-header" data-ch="5">
       <div class="ch-header-rule"></div>
       <div class="ch-header-inner">
-        <span class="ch-header-label">Big Logos</span>
+        <span class="ch-header-label">Studio</span>
         <span class="ch-header-num">05</span>
-        <span class="ch-header-title">Remote &amp; Beyond</span>
-        <span class="ch-header-sub">Huge &middot; Code &amp; Theory &middot; Publicis Sapient</span>
+        <span class="ch-header-title">wolfie.life</span>
+        <span class="ch-header-sub">Products &middot; Design systems &middot; Commerce &middot; Identity</span>
       </div>
     </div>
-    <span class="sentence label"     data-idx="43" data-img="15" data-ch="5">The Logos Get Bigger</span>
-    <span class="sentence poster"    data-idx="44" data-img="15" data-ch="5">Sixty-two<br>floors <span class="ac">up.</span></span>
-    <span class="sentence body"      data-idx="45" data-img="15" data-ch="5">Huge (Sentral) &mdash; senior UX support, prototypes, and client workshops for the luxury lifestyle platform. First time I&rsquo;d seen 20+ people on just the agency side of a project. To say we were siloed would be a gross understatement. A small cog in a huge wheel.</span>
-    <span class="sentence spec auto-flow" data-idx="46" data-ch="5"><span class="spec-key">Huge</span><span class="spec-val">Sentral &middot; Brand Activation &middot; MVP &amp; Future-State Strategy &middot; User Testing &middot; 2021</span></span>
-    <span class="sentence body"      data-idx="47" data-img="15" data-ch="5">Code and Theory &mdash; from sixty-two floors up in One World Trade. I interviewed for ACD, Interactive and was hired as Senior Designer with ACD responsibilities. TikTok For Business. Headless content architecture. Mentoring junior designers. Knowledge-sharing on emerging UX technologies.</span>
-    <span class="sentence body"      data-idx="48" data-img="15" data-ch="5">Three months in, the Directly Responsible Individual accepted a Director-level position elsewhere. Several key strategists and technologists followed. Additional responsibilities landed on my shoulders &mdash; UX, Strategy, Development, people management. Despite submitting a post-mortem as requested, I was let go without explanation. Valuable lesson in large agency realities.</span>
-    <span class="sentence spec auto-flow" data-idx="49" data-ch="5"><span class="spec-key">Code &amp; Theory</span><span class="spec-val">TikTok For Business &middot; 1 World Trade Center, 62F &middot; Sr. Designer / ACD &middot; 2021&ndash;22</span></span>
-    <span class="sentence body"      data-idx="50" data-img="16" data-ch="5">Publicis Sapient &mdash; 375 Hudson Street, "Agency Row." A full year embedded in Financial Services, serving BNY Mellon&rsquo;s Pershing X Advisory Experience Platform. Exhaustive research. Client workshops. Design systems. Data refactorization for a suite of Financial Advisor applications.</span>
-    <span class="sentence body"      data-idx="51" data-img="16" data-ch="5">My contract stated full-time remote. I opted to be a consistent in-office presence anyway. I became the de facto Team Lead and Product Owner. I led research, discovery, prototype development, and testing &mdash; across multiple concurrent tracks. I mentored junior and associate designers. I set my team up for success daily. <span class="em">I was not hired as one. I became one.</span></span>
-    <span class="sentence spec auto-flow" data-idx="52" data-ch="5"><span class="spec-key">Publicis Sapient</span><span class="spec-val">BNY Mellon &middot; Pershing X Advisory Platform &middot; de facto Team Lead &amp; Product Owner &middot; 2022&ndash;23</span></span>
-    <span class="sentence pull"      data-idx="53" data-img="16" data-ch="5">"Zack brings fresh perspective when I felt in a rut &mdash; a great person to work with." &mdash; Christopher Bayle, ACD UX, Publicis Sapient</span>
-    <span class="sentence break"     data-idx="54"></span>
+    <span class="sentence label"  data-idx="36" data-img="8"  data-ch="5">wolfie.life &mdash; Studio</span>
+    <span class="sentence poster" data-idx="37" data-img="8"  data-ch="5">&#9671;<br>wolfie<br>.life</span>
+    <span class="sentence body"   data-idx="38" data-img="8"  data-ch="5">wolfie.life is a studio I&rsquo;m building because the work I want to do doesn&rsquo;t fit inside a job description. Products with actual soul: food, real estate, events, commerce, identity.</span>
+    <span class="sentence body"   data-idx="39" data-img="9"  data-ch="5">The platform you&rsquo;re reading this on is itself the product &mdash; a <span class="em">sentence-progressive engine</span> for presenting work the way it deserves to be read.</span>
+    <span class="sentence spec auto-flow" data-idx="40" data-ch="5"><span class="spec-key">dana</span><span class="spec-val">Mobile navigation &middot; knows where you&rsquo;re going</span></span>
+    <span class="sentence spec auto-flow" data-idx="41" data-ch="5"><span class="spec-key">Dispatch</span><span class="spec-val">Analytics as narrative &middot; not a spreadsheet</span></span>
+    <span class="sentence spec auto-flow" data-idx="42" data-ch="5"><span class="spec-key">Design System</span><span class="spec-val">Barlow Condensed &middot; Space Mono &middot; Conviction</span></span>
+    <span class="sentence pull"   data-idx="43" data-img="9"  data-ch="5">&ldquo;The digital should feel as considered as the physical.&rdquo;</span>
+    <span class="sentence break"  data-idx="44"></span>
 
-    <!-- ═══ CH 6 · BUILDING ═══ -->
     <div class="ch-header" data-ch="6">
       <div class="ch-header-rule"></div>
       <div class="ch-header-inner">
-        <span class="ch-header-label">Independent</span>
+        <span class="ch-header-label">Status</span>
         <span class="ch-header-num">06</span>
-        <span class="ch-header-title">Building</span>
-        <span class="ch-header-sub">intoview.pro &middot; emdash.click &middot; proof of concept</span>
+        <span class="ch-header-title">Open to Work</span>
+        <span class="ch-header-sub">Senior Product / UX &middot; The right kind of open</span>
       </div>
     </div>
-    <span class="sentence label"     data-idx="55" data-img="17" data-ch="6">Down But Not Out</span>
-    <span class="sentence poster"    data-idx="56" data-img="17" data-ch="6">I think.<br>I make. <span class="ac">I ship.</span></span>
-    <span class="sentence body"      data-idx="57" data-img="17" data-ch="6">I pivoted to low voltage contracting. I learned to terminate an RJ45 in 30&ndash;45 seconds. Cable runs. Security systems. Indoor/outdoor digital displays. It requires specific twist parity and a steady hand &mdash; the same hand that once wireframed enterprise banking platforms. Humility is a hell of a teacher.</span>
-    <span class="sentence body"      data-idx="58" data-img="17" data-ch="6">I repurposed intoview.pro as a platform for creative exploration &mdash; it started as an interview tool and became something more personal. First exploration: intoview/melody &mdash; guitar:piano notation via a bespoke UI. Then intoview/noted &mdash; a functioning MVP prototype. Then intoview/note. Then intoview/kanban &mdash; SMS-powered multi-user task management.</span>
-    <span class="sentence body"      data-idx="59" data-img="17" data-ch="6">Then I built emdash.click because the em dash is underused, undervalued, and the world needed a one-click solution. Spontaneous one-day project. Every em dash in this piece came from there.</span>
-    <span class="sentence spec auto-flow" data-idx="60" data-ch="6"><span class="spec-key">intoview.pro</span><span class="spec-val">note &middot; kanban &middot; melody &mdash; framework first, libraries optional</span></span>
-    <span class="sentence spec auto-flow" data-idx="61" data-ch="6"><span class="spec-key">emdash.click</span><span class="spec-val">Linguistic utility &middot; spontaneous one-day build &middot; in daily use</span></span>
-    <span class="sentence body"      data-idx="62" data-img="17" data-ch="6">My &ldquo;aha&rdquo; moment: my resume was fluff. So I rebuilt it in the intoview.pro ecosystem. Test, build, see what works, refactor, fall forward. Framework first; libraries optional; single-source content to support evolution. These aren&rsquo;t portfolio pieces &mdash; they are <span class="em">functioning products</span> that prove I can build, not just design.</span>
-    <span class="sentence break"     data-idx="63"></span>
-
-    <!-- ═══ CH 7 · NOW ═══ -->
-    <div class="ch-header" data-ch="7">
-      <div class="ch-header-rule"></div>
-      <div class="ch-header-inner">
-        <span class="ch-header-label">Seeking</span>
-        <span class="ch-header-num">07</span>
-        <span class="ch-header-title">Now</span>
-        <span class="ch-header-sub">Available &middot; full-time &middot; design-led, data-driven environments</span>
-      </div>
-    </div>
-    <span class="sentence label"     data-idx="64" data-img="18" data-ch="7">Seek &amp; Employ</span>
-    <span class="sentence poster"    data-idx="65" data-img="18" data-ch="7">Work to<br>eat. <span class="ac">Skate to work.</span></span>
-    <span class="sentence body"      data-idx="66" data-img="18" data-ch="7">I play guitar left-handed &mdash; started at fifteen, never stopped. Metallica, Arctic Monkeys, and whatever is in the rotation that week. I take photographs of New York the way a tourist never would: alleys, fire escapes, the underside of the Williamsburg Bridge at 6am.</span>
-    <span class="sentence body"      data-idx="67" data-img="19" data-ch="7">I have a dog named Wolfgang. He is a very good boy. I once chased and helped safely capture a wild zebra through the streets of West Philly. His name was Majesty. He was fine. I was adopted and shipped to the US in a pink onesie, which is a boy&rsquo;s color in Korea. It&rsquo;s become part of my personal brand &mdash; defying expectations from the get-go.</span>
-    <span class="sentence pull"      data-idx="68" data-img="18" data-ch="7">"I am not worried about AI taking our jobs. My talent is presenting ideas that uplift imagination &mdash; with capable hands, a curious mind, and twenty years of scar tissue."</span>
-    <span class="sentence body"      data-idx="69" data-img="0"  data-ch="7">Currently seeking my next full-time role. I want work that matters with people who care. I am not looking for a title. I am looking for a team. I offer systems thinking and hands-on prototyping &mdash; I bridge design and development because I have lived on both sides of the handoff.</span>
-    <span class="sentence pull"      data-idx="70" data-img="0"  data-ch="7">"Zack is one of the most talented, hard-working, and knowledgeable individuals I have had the pleasure of working with." &mdash; Andr&eacute;s Moros, Sr. UX Designer, Publicis Sapient</span>
-    <span class="sentence cta-sentence" data-idx="71"></span>
+    <span class="sentence label"  data-idx="45" data-img="9"  data-ch="6">Now</span>
+    <span class="sentence poster" data-idx="46" data-img="9"  data-ch="6">¡Viva<br>la <span class="ac">PX!</span></span>
+    <span class="sentence body"   data-idx="47" data-img="9"  data-ch="6">Open to work. Genuinely. Senior Product / UX Designer &mdash; twenty years of scar tissue and clear eyes. Not looking for a title. Looking for a <span class="em">problem worth solving</span>.</span>
+    <span class="sentence pull"   data-idx="48" data-img="10" data-ch="6">&ldquo;Yeah, so if any creative teams out there are hiring, hit me up on LinkedIn.&rdquo;</span>
+    <span class="sentence spec auto-flow" data-idx="49" data-ch="6"><span class="spec-key">Email</span><span class="spec-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c8a0ada4a4a788bfa7a4aea1ade6a4a1aead">[email&#160;protected]</a></span></span>
+    <span class="sentence spec auto-flow" data-idx="50" data-ch="6"><span class="spec-key">LinkedIn</span><span class="spec-val">linkedin.com/in/zackgort</span></span>
+    <span class="sentence spec auto-flow" data-idx="51" data-ch="6"><span class="spec-key">Resume</span><span class="spec-val">Available on request</span></span>
+    <span class="sentence cta-sentence" data-idx="52"></span>
   </main>
 
   <aside id="panel">
-    <div class="panel-img-area">
-      <img src="https://i.ibb.co/ym4M89VT/1-sq-USg-c1x-GQx-Zd-QS4-L7f-Sw.webp" alt="" class="vis" id="panel-img-main">
+
+  <!-- ── HERO ── -->
+  <div class="rp-hero">
+    <div class="rp-hero-name">Zack Gort</div>
+    <div class="rp-hero-role">Senior UX / Product Designer &middot; Open to Work</div>
+    <div class="rp-hero-summary">20+ years. Enterprise &amp; agency. Systems thinker who ships. Fintech, ecommerce, identity, platforms. Looking for the right problem.</div>
+  </div>
+
+  <div class="rp-contact">
+    <a href="mailto:hello@wolfie.life">hello@wolfie.life</a>
+    <span>&middot;</span>
+    <a href="https://zackgort.com" target="_blank" rel="noopener">zackgort.com</a>
+    <span>&middot;</span>
+    <a href="https://linkedin.com/in/zackgort" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+
+  <!-- ── EXPERIENCE ── -->
+  <div class="rp-section">
+    <div class="rp-label">Experience</div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Phenom &mdash; 2025"
+      data-ghost='[{"k":"Role","v":"UX Strategist"},{"k":"Dates","v":"Jan – Apr 2025"},{"k":"Focus","v":"Corporate site, product roadmap"},{"k":"Key","v":"Contentful, cross-dept alignment"},{"k":"Collab","v":"Marketing, Sales, Product"}]'>
+      <div class="rp-job-company">Phenom</div>
+      <div class="rp-job-role">User Experience Strategist</div>
+      <div class="rp-job-year">01/2025 – 04/2025</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Contentful</span>
+        <span class="rp-pill">Jira</span>
+        <span class="rp-pill">Digital Content</span>
+      </div>
     </div>
-    <p class="panel-section-label">Zack Gort &middot; Open to Work</p>
-    <div class="service-list">
-      <a href="https://zackgort.com" target="_blank" class="service-row current" data-service="7">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Independent &mdash; Building Now</span>
-          <span class="service-tag">intoview.pro &middot; emdash.click</span>
-        </div>
-        <span class="service-url">2024&mdash;</span>
-      </a>
-      <a href="#" class="service-row" data-service="5">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Publicis Sapient</span>
-          <span class="service-tag">Sr. UX II &middot; BNY Mellon / Pershing X</span>
-        </div>
-        <span class="service-url">2022&ndash;23</span>
-      </a>
-      <a href="#" class="service-row" data-service="5">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Code and Theory</span>
-          <span class="service-tag">Sr. Interaction Designer &middot; TikTok For Business</span>
-        </div>
-        <span class="service-url">2021&ndash;22</span>
-      </a>
-      <a href="#" class="service-row" data-service="5">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Huge &middot; Elva Design Group</span>
-          <span class="service-tag">Sr. UX Designer &middot; Sentral &middot; GNC</span>
-        </div>
-        <span class="service-url">2021</span>
-      </a>
-      <a href="#" class="service-row" data-service="4">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">LiveArea / PFSweb</span>
-          <span class="service-tag">UX Manager &middot; YETI &middot; West Marine &middot; Aquasana</span>
-        </div>
-        <span class="service-url">2020&ndash;21</span>
-      </a>
-      <a href="#" class="service-row" data-service="4">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">FlightPath &mdash; New York</span>
-          <span class="service-tag">Lead UX Designer &middot; Pharma &middot; WCAG</span>
-        </div>
-        <span class="service-url">2018&ndash;20</span>
-      </a>
-      <a href="#" class="service-row" data-service="3">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Workarea &middot; O3 World &middot; 160/90</span>
-          <span class="service-tag">Interaction Designer &middot; Sr. UX &middot; Philly</span>
-        </div>
-        <span class="service-url">2014&ndash;18</span>
-      </a>
-      <a href="#" class="service-row" data-service="2">
-        <div class="service-dot"></div>
-        <div class="service-left">
-          <span class="service-name">Turn5 Inc. &middot; Leadnomics</span>
-          <span class="service-tag">Web Design &middot; Suburbia bootstrap startup</span>
-        </div>
-        <span class="service-url">2008&ndash;14</span>
-      </a>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Publicis Sapient &mdash; BNY Mellon"
+      data-ghost='[{"k":"Role","v":"Sr. UX Designer"},{"k":"Dates","v":"Apr 2022 – Mar 2023"},{"k":"Client","v":"BNY Mellon Pershing X"},{"k":"Product","v":"Wove platform"},{"k":"Scope","v":"IA, design system, React/Tailwind"},{"k":"Key","v":"Modular canonical system, contract extension"}]'>
+      <div class="rp-job-company">Publicis Sapient</div>
+      <div class="rp-job-role">Senior User Experience Designer</div>
+      <div class="rp-job-year">04/2022 – 03/2023</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Financial Product</span>
+        <span class="rp-pill">Design Systems</span>
+        <span class="rp-pill">IA</span>
+      </div>
     </div>
-    <p class="panel-tagline">I think. I make. I ship. Twenty years of scar tissue &mdash; from design to code, from suburbs to One World Trade.</p>
-    <div class="panel-wolfie">
-      Philadelphia, PA &middot; Remote-ready<br>
-      <a href="/cdn-cgi/l/email-protection#deb6bbb2b2b19ea4bfbdb5b9b1acaaf0bdb1b3"><span class="__cf_email__" data-cfemail="442c2128282b043e25272f232b36306a272b29">[email&#160;protected]</span></a> &middot; <a href="https://zackgort.com" target="_blank">zackgort.com &rarr;</a><br>
-      Music: SoundCloud &middot; Photos: Instagram<br>
-      Dog: Wolfgang &mdash; very good boy
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Code &amp; Theory &mdash; TikTok"
+      data-ghost='[{"k":"Role","v":"Sr. Interaction Designer"},{"k":"Dates","v":"Aug 2021 – Apr 2022"},{"k":"Client","v":"TikTok For Business"},{"k":"Scope","v":"Nav prototype, competitive audit"},{"k":"Approach","v":"Headless CMS, content strategy"},{"k":"Collab","v":"Client-facing strategist"}]'>
+      <div class="rp-job-company">Code &amp; Theory</div>
+      <div class="rp-job-role">Senior Interaction Designer</div>
+      <div class="rp-job-year">08/2021 – 04/2022</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Headless CMS</span>
+        <span class="rp-pill">B2B</span>
+        <span class="rp-pill">Competitive Audit</span>
+      </div>
     </div>
-  </aside>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Elva Design Group &mdash; GNC"
+      data-ghost='[{"k":"Role","v":"Sr. UX Designer"},{"k":"Dates","v":"Apr 2021 – Aug 2021"},{"k":"Client","v":"General Nutrition Centers"},{"k":"Scope","v":"12-week Shopify rebuild"},{"k":"Outcome","v":"~$500M annual revenue recovery"},{"k":"Scope","v":"Mobile-first nav, design system"}]'>
+      <div class="rp-job-company">Elva Design Group</div>
+      <div class="rp-job-role">Senior User Experience Designer</div>
+      <div class="rp-job-year">04/2021 – 08/2021</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Shopify</span>
+        <span class="rp-pill">Ecommerce</span>
+        <span class="rp-pill">Mobile-First</span>
+      </div>
+    </div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Huge Inc. &mdash; Sentral"
+      data-ghost='[{"k":"Role","v":"Sr. UX Designer"},{"k":"Dates","v":"Mar 2021 – Apr 2021"},{"k":"Client","v":"Sentral Lifestyle Apartments"},{"k":"Scope","v":"Booking flows, onboarding UX"},{"k":"Context","v":"Brand + website overhaul"},{"k":"Note","v":"Work shipped at launch"}]'>
+      <div class="rp-job-company">Huge Inc.</div>
+      <div class="rp-job-role">Senior User Experience Designer</div>
+      <div class="rp-job-year">03/2021 – 04/2021</div>
+      <div class="rp-pills">
+        <span class="rp-pill">UX Research</span>
+        <span class="rp-pill">User Flow</span>
+        <span class="rp-pill">Luxury/Lifestyle</span>
+      </div>
+    </div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="PFSWeb LiveArea &mdash; Manager"
+      data-ghost='[{"k":"Role","v":"Manager, UX"},{"k":"Dates","v":"Jan 2020 – Feb 2021"},{"k":"Platform","v":"Salesforce Commerce Cloud"},{"k":"Clients","v":"YETI, West Marine, Aquasana +"},{"k":"Scope","v":"B2B + B2C ecommerce strategy"},{"k":"Scale","v":"Full-spectrum delivery lead"}]'>
+      <div class="rp-job-company">PFSWeb LiveArea</div>
+      <div class="rp-job-role">Manager, UX</div>
+      <div class="rp-job-year">01/2020 – 02/2021</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Salesforce</span>
+        <span class="rp-pill">B2C</span>
+        <span class="rp-pill">IA</span>
+      </div>
+    </div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Workarea &mdash; SaaS Platform"
+      data-ghost='[{"k":"Role","v":"Sr. UX Designer"},{"k":"Dates","v":"Jul 2017 – Sep 2018"},{"k":"Product","v":"Proprietary SaaS ecommerce"},{"k":"Scope","v":"Client collaboration, data-driven design"},{"k":"Impact","v":"Streamlined handoffs and scale workflows"}]'>
+      <div class="rp-job-company">Workarea</div>
+      <div class="rp-job-role">Senior User Experience Designer</div>
+      <div class="rp-job-year">07/2017 – 09/2018</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Proprietary SaaS</span>
+        <span class="rp-pill">Design Systems</span>
+      </div>
+    </div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="O3 World &mdash; FinTech"
+      data-ghost='[{"k":"Role","v":"UX Designer"},{"k":"Dates","v":"Jul 2016 – Jun 2017"},{"k":"Focus","v":"FinTech + iOS products"},{"k":"Method","v":"Lean UX, Scrum, MVPs"},{"k":"Process","v":"Whiteboard → wireframe → sprint"}]'>
+      <div class="rp-job-company">O3 World</div>
+      <div class="rp-job-role">User Experience Designer</div>
+      <div class="rp-job-year">07/2016 – 06/2017</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Lean UX</span>
+        <span class="rp-pill">Agile</span>
+        <span class="rp-pill">iOS</span>
+      </div>
+    </div>
+
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="ONE SIXTY OVER NINETY &mdash; .EDU"
+      data-ghost='[{"k":"Role","v":"Interaction Designer"},{"k":"Dates","v":"Sep 2014 – Jul 2016"},{"k":"Agency","v":"Preeminent .EDU agency"},{"k":"Scope","v":"Full-service interactive, IA, ADA"},{"k":"Clients","v":"Comcast, Philadelphia Eagles + EDU"}]'>
+      <div class="rp-job-company">ONE SIXTY OVER NINETY</div>
+      <div class="rp-job-role">Interaction Designer</div>
+      <div class="rp-job-year">09/2014 – 07/2016</div>
+      <div class="rp-pills">
+        <span class="rp-pill">IA</span>
+        <span class="rp-pill">ADA</span>
+        <span class="rp-pill">Brand &amp; Identity</span>
+      </div>
+    </div>
+
+  </div><!-- /experience -->
+
+  <!-- ── SKILLS ── -->
+  <div class="rp-section">
+    <div class="rp-label">Core Competencies</div>
+
+    <div class="rp-comp-row">
+      <div class="rp-comp-cat">Design &amp; Strategy</div>
+      <div class="rp-pills">
+        <span class="rp-pill">UX Design</span><span class="rp-pill">UI Design</span>
+        <span class="rp-pill">Interaction Design</span><span class="rp-pill">IA</span>
+        <span class="rp-pill">Design Systems</span><span class="rp-pill">Prototyping</span>
+        <span class="rp-pill">Wireframing</span><span class="rp-pill">User Research</span>
+        <span class="rp-pill">Content Strategy</span><span class="rp-pill">Service Design</span>
+      </div>
+    </div>
+    <div class="rp-comp-row">
+      <div class="rp-comp-cat">Process &amp; Collaboration</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Agile / Scrum</span><span class="rp-pill">Workshop Facilitation</span>
+        <span class="rp-pill">Stakeholder Mgmt</span><span class="rp-pill">Design Hand-offs</span>
+        <span class="rp-pill">Cross-functional Teams</span>
+      </div>
+    </div>
+    <div class="rp-comp-row">
+      <div class="rp-comp-cat">Tools</div>
+      <div class="rp-pills">
+        <span class="rp-pill">Figma</span><span class="rp-pill">Adobe CC</span>
+        <span class="rp-pill">HTML / CSS / JS</span><span class="rp-pill">Contentful</span>
+        <span class="rp-pill">Jira</span><span class="rp-pill">React</span>
+      </div>
+    </div>
+  </div><!-- /skills -->
+
+  <!-- ── REFERENCES ── -->
+  <div class="rp-section">
+    <div class="rp-label">Testimonials</div>
+
+    <div class="rp-ref">
+      <div class="rp-ref-quote">&ldquo;Zack demonstrated a deep commitment to excellence and a proactive approach that consistently elevated the quality of our work.&rdquo;</div>
+      <div class="rp-ref-name">Adam Nemeth &mdash; ACD UX, Publicis Sapient</div>
+    </div>
+
+    <div class="rp-ref">
+      <div class="rp-ref-quote">&ldquo;Zack is talented, hardworking, and highly communicative. He elevates team collaboration and consistently goes the extra mile.&rdquo;</div>
+      <div class="rp-ref-name">Andr&eacute;s Moros, MPS &mdash; Sr. UX Designer, Publicis Sapient</div>
+    </div>
+
+  </div><!-- /references -->
+
+  <!-- ── EDUCATION ── -->
+  <div class="rp-section">
+    <div class="rp-label">Education</div>
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Pratt Institute"
+      data-ghost='[{"k":"School","v":"Pratt Institute of Art"},{"k":"Program","v":"BFA, 3D Animation & Motion"},{"k":"Dates","v":"2002 – 2005"},{"k":"Focus","v":"Digital media, prototyping, storytelling"}]'>
+      <div class="rp-job-company">Pratt Institute</div>
+      <div class="rp-job-role">BFA, 3D Animation &amp; Motion Graphics</div>
+      <div class="rp-job-year">2002 – 2005</div>
+    </div>
+  </div><!-- /education -->
+
+  <div class="rp-footer">
+    Zack Gort &middot; zackgort.com<br>
+    <a href="mailto:hello@wolfie.life">hello@wolfie.life</a> &middot;
+    <a href="https://www.linkedin.com/in/zackgort/" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+
+</aside>
+</div>
+
+<!-- Detail ghost -->
+<div id="detail-ghost" aria-hidden="true">
+  <div class="dg-inner">
+    <div class="dg-label" id="dg-label">Detail</div>
+    <div id="dg-rows"></div>
+  </div>
 </div>
 
 <div id="scroll-lockout"></div>
@@ -1520,17 +1804,16 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   <button class="cw-trigger" id="cw-trigger" aria-haspopup="true" aria-expanded="false">
     <span class="cw-trigger-label">Chapter</span>
     <span class="cw-trigger-sep">&middot;</span>
-    <span class="cw-trigger-name" id="cw-current-name">Introduction</span>
+    <span class="cw-trigger-name" id="cw-current-name">Zack Gort</span>
     <span class="cw-trigger-arrow">&#9662;</span>
   </button>
   <div class="cw-dropdown" role="menu" id="cw-dropdown">
-    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">Introduction</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">Early Days</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">Agency Life · Philly</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">Agency Life · NYC</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">Big Logos</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">Building</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="7" role="menuitem"><span class="cw-item-num">07</span><span class="cw-item-name">Now</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">About</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">BNY Mellon</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">GNC</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">TikTok &amp; Agency</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">wolfie.life</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">Open to Work</span><span class="cw-item-dot"></span></button>
   </div>
 </div>
 
@@ -1598,6 +1881,134 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── DETAIL GHOST ─────────────────────────────────────────────────────────────
+(function(){
+  var ghost   = document.getElementById('detail-ghost');
+  var dgLabel = document.getElementById('dg-label');
+  var dgRows  = document.getElementById('dg-rows');
+  if (!ghost) return;
+
+  var visible=false, following=false;
+  var gx=0, gy=0, tx=0, ty=0, ix=0, iy=0;
+  var raf=null, activeEl=null;
+  var LF=0.11, LI=0.07, OX=22, OY=-16, PAD=12;
+  var mx = window.innerWidth/2;
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function exZones(){
+    var z=[];
+    z.push({l:0,t:0,r:window.innerWidth,b:62});
+    var nw=document.getElementById('nav-widget');
+    if(nw){var r=nw.getBoundingClientRect();z.push({l:r.left-PAD,t:r.top-PAD,r:r.right+PAD,b:r.bottom+PAD});}
+    var p=document.getElementById('panel');
+    if(p){var r2=p.getBoundingClientRect();z.push({l:r2.left,t:r2.top,r:r2.right,b:r2.bottom});}
+    var cw=document.querySelector('.cw-trigger');
+    if(cw){var r3=cw.getBoundingClientRect();z.push({l:r3.left-PAD,t:r3.top-PAD,r:r3.right+PAD,b:r3.bottom+PAD});}
+    return z;
+  }
+  function hits(x,y,w,h){
+    return exZones().some(function(z){ return x<z.r&&x+w>z.l&&y<z.b&&y+h>z.t; });
+  }
+  function midX(){
+    var col=document.getElementById('stream-col');
+    if(!col) return window.innerWidth*0.45;
+    var r=col.getBoundingClientRect(); return r.left+r.width*0.5;
+  }
+  function idlePos(){
+    if(!activeEl) return {x:gx,y:gy};
+    var rect=activeEl.getBoundingClientRect();
+    var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
+    var col=document.getElementById('stream-col');
+    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
+    var cands=[
+      {x:rect.left,y:rect.top-gh-12},
+      {x:rect.left,y:rect.bottom+12},
+      {x:sr.left+8,y:rect.top-gh-12},
+      {x:sr.left+8,y:rect.bottom+12}
+    ];
+    for(var i=0;i<cands.length;i++){
+      var c=cands[i];
+      var cx=Math.max(sr.left+4, Math.min(c.x, sr.right-gw-20));
+      var cy=Math.max(68, Math.min(c.y, window.innerHeight-gh-8));
+      if(!hits(cx,cy,gw,gh)) return {x:cx,y:cy};
+    }
+    return {x:sr.left+8, y:68};
+  }
+  function clampFollow(x,y){
+    var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
+    var col=document.getElementById('stream-col');
+    var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
+    x=Math.max(sr.left+4, Math.min(x, sr.right-gw-20));
+    y=Math.max(68, Math.min(y, window.innerHeight-gh-8));
+    if(hits(x,y,gw,gh)) y=Math.max(68,y-gh-16);
+    return {x:x,y:y};
+  }
+  function tick(){
+    if(following){ var c=clampFollow(tx,ty); gx=lerp(gx,c.x,LF); gy=lerp(gy,c.y,LF); }
+    else          {                           gx=lerp(gx,ix,LI);   gy=lerp(gy,iy,LI); }
+    ghost.style.left=gx+'px'; ghost.style.top=gy+'px';
+    raf = visible ? requestAnimationFrame(tick) : null;
+  }
+  function enterFollow(){ if(following)return; following=true; if(!raf&&visible) raf=requestAnimationFrame(tick); }
+  function enterIdle(){
+    if(!following)return; following=false;
+    var p=idlePos(); ix=p.x; iy=p.y;
+    if(!raf&&visible) raf=requestAnimationFrame(tick);
+  }
+  function applyZone(mx2){ mx2<midX()?enterFollow():enterIdle(); }
+
+  function showGhost(label, data){
+    dgLabel.textContent = label;
+    dgRows.innerHTML = data.map(function(d){
+      return '<div class="dg-row"><span class="dg-row-key">'+d.k+'</span><span class="dg-row-val">'+(d.v||'')+'</span></div>';
+    }).join('');
+    var p=idlePos(); ix=p.x; iy=p.y;
+    if(!visible){ gx=ix; gy=iy; ghost.style.left=gx+'px'; ghost.style.top=gy+'px'; }
+    ghost.classList.add('visible');
+    visible=true;
+    if(!raf) raf=requestAnimationFrame(tick);
+    applyZone(mx);
+  }
+  function hideGhost(){
+    ghost.classList.remove('visible');
+    visible=false; following=false;
+    if(activeEl){ activeEl.classList.remove('ghost-active'); activeEl=null; }
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+  }
+  window.hideGhost = hideGhost;
+
+  document.addEventListener('mousemove', function(e){
+    mx = e.clientX;
+    tx=e.clientX+OX; ty=e.clientY+OY;
+    if(visible) applyZone(e.clientX);
+  }, {passive:true});
+  window.addEventListener('resize', function(){
+    if(visible&&!following){ var p=idlePos(); ix=p.x; iy=p.y; }
+  });
+
+  function wireHoverables(){
+    document.querySelectorAll('.hoverable-stat').forEach(function(el){
+      el.addEventListener('mouseenter', function(){
+        var label=el.dataset.ghostLabel||'Detail', data;
+        try{ data=JSON.parse(el.dataset.ghost||'[]'); }catch(e){ data=[]; }
+        if(activeEl&&activeEl!==el) activeEl.classList.remove('ghost-active');
+        activeEl=el; el.classList.add('ghost-active');
+        var col=document.getElementById('stream-col');
+        var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth-320};
+        var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
+        ix=sr.right-gw-36;
+        iy=Math.max(68, window.innerHeight*0.38 - gh*0.5);
+        following=false;
+        showGhost(label, data);
+      });
+      el.addEventListener('mouseleave', function(){ hideGhost(); });
+    });
+  }
+  wireHoverables();
+})();
+
+</script><script>
 // ── CURSOR ────────────────────────────────────────────────────────────────
 var cursor = document.getElementById('cursor');
 var cursorVisible = false;
