@@ -212,13 +212,13 @@ body.scroll-free #scroll-lockout{display:block}
 .node{
   display:block;position:relative;padding:5px 0;
   transition:opacity .4s ease,color .4s ease;
-  opacity:0.08;
+  opacity:0.65;
   max-width:500px; /* narrower — creates hotspot margin */
 }
 .node.active{opacity:1}
-.node.revealed{opacity:.28}
-.node.past{opacity:.14}
-.node:hover:not(.active):not(.break):not(.label):not(.greeting){opacity:.52}
+.node.revealed{opacity:0.65}
+.node.past{opacity:0.38}
+.node:hover:not(.active):not(.break):not(.label):not(.greeting){opacity:.82}
 
 .node.greeting{
   font-family:var(--ui);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
@@ -609,6 +609,15 @@ body.scroll-free #scroll-lockout{display:block}
   #detail-ghost{display:none}
   #scroll-toggle{position:fixed!important;top:calc(52px + 12px)!important;right:16px!important;left:auto!important;width:42px;height:42px;z-index:9500!important;pointer-events:auto!important;touch-action:manipulation}
   #scroll-lockout{right:0;pointer-events:none}
+  /* mobile node visibility — all nodes fully visible by default */
+  .node{opacity:1!important}
+  .node.break{opacity:0.4!important}
+  /* scroll-free on mobile: fade non-active nodes to signal locked reading */
+  body.scroll-free .node{opacity:0.18!important}
+  body.scroll-free .node.active{opacity:1!important}
+  body.scroll-free .node.label{opacity:0.5!important}
+  body.scroll-free .node.break{opacity:0.2!important}
+
   #toast{bottom:calc(96px + env(safe-area-inset-bottom))}
   #wolfie-credit{bottom:calc(88px + env(safe-area-inset-bottom))}
 }
@@ -1084,23 +1093,55 @@ document.addEventListener('click', function(e){
   if (window.ResizeObserver) new ResizeObserver(update).observe(hdr);
 })();
 
-// ── SCROLL TOGGLE (verbatim from life.html) ──────────────────────────────────
+// ── SCROLL TOGGLE ────────────────────────────────────────────────────────────
 (function initScrollToggle(){
   var btn = document.getElementById('scroll-toggle');
   var scrollFree = false;
+
+  function getNearestNode(){
+    var mid = window.innerHeight / 2;
+    var best = 0, bestDist = Infinity;
+    navigable.forEach(function(el, i){
+      var r = el.getBoundingClientRect();
+      var center = r.top + r.height / 2;
+      var dist = Math.abs(center - mid);
+      if (dist < bestDist){ bestDist = dist; best = i; }
+    });
+    return best;
+  }
+
   function enter(){
     scrollFree = true; btn.classList.add('on');
     document.body.classList.add('scroll-free');
     document.body.style.overflow = 'auto';
     navigable.forEach(function(el){ el.classList.remove('active','past'); el.classList.add('revealed'); });
     clearNav();
+    // on mobile, wire tap-anywhere-to-exit
+    if (isMobile()){
+      setTimeout(function(){
+        document.addEventListener('touchend', tapToExit, {passive:true, capture:true});
+      }, 200); // small delay so the activating tap doesn't immediately exit
+    }
   }
-  function exit(){
+
+  function exit(focusNearest){
     scrollFree = false; btn.classList.remove('on');
     document.body.classList.remove('scroll-free');
     document.body.style.overflow = '';
-    goTo(current, {noScroll:true});
+    document.removeEventListener('touchend', tapToExit, {capture:true});
+    var target = (focusNearest !== undefined) ? focusNearest : current;
+    goTo(target, {noScroll:true});
   }
+
+  function tapToExit(e){
+    // ignore taps on the scroll-toggle button itself
+    if (e.target.closest && e.target.closest('#scroll-toggle')) return;
+    // ignore taps on the nav widget or panel
+    if (e.target.closest && (e.target.closest('#nav-widget') || e.target.closest('#panel') || e.target.closest('#panel-overlay-backdrop'))) return;
+    var nearest = getNearestNode();
+    exit(nearest);
+  }
+
   btn.addEventListener('click', function(){ scrollFree ? exit() : enter(); });
   btn.addEventListener('touchend', function(e){ e.preventDefault(); e.stopPropagation(); scrollFree ? exit() : enter(); }, {passive:false});
 })();
