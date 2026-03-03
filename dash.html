@@ -918,8 +918,8 @@ body.scroll-free #scroll-lockout{display:block}
       <span>&#9636;</span><span class="nw-action-label">Stats</span>
     </button>
     <div class="nw-divider"></div>
-    <button class="nw-action-btn" id="nw-top-btn" title="Back to top">
-      <span>&#9671;</span><span class="nw-action-label">Start</span>
+    <button class="nw-action-btn" id="nw-ch-btn" title="Sections">
+      <span>&#9661;</span><span class="nw-action-label">Sections</span>
     </button>
     <div class="nw-divider"></div>
     <div class="nw-nav">
@@ -1001,7 +1001,12 @@ function prev(){ goTo(current-1); }
 
 document.getElementById('nw-next').addEventListener('click', next);
 document.getElementById('nw-prev').addEventListener('click', prev);
-document.getElementById('nw-top-btn').addEventListener('click', function(){ goTo(0); });
+document.getElementById('nw-ch-btn').addEventListener('click', function(e){
+  e.stopPropagation();
+  cwOpen = !cwOpen;
+  document.getElementById('chapter-widget').classList.toggle('open', cwOpen);
+  document.getElementById('cw-trigger').setAttribute('aria-expanded', cwOpen);
+});
 
 document.addEventListener('keydown', function(e){
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -1078,7 +1083,7 @@ document.querySelectorAll('.cw-item').forEach(function(item){
   });
 });
 document.addEventListener('click', function(e){
-  if (!e.target.closest('#chapter-widget')) closeCW();
+  if (!e.target.closest('#chapter-widget') && !e.target.closest('#nw-ch-btn')) closeCW();
 });
 
 // header height → chapter widget top offset
