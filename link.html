@@ -39,6 +39,197 @@ body.ch-6 { --bg:#0c0800; --ink:#f8f0d8; --ink-2:#b09060; --ink-3:#4a3818; --acc
 /* ch-7: now — near-black with rose */
 body.ch-7 { --bg:#0a0608; --ink:#f0e4e8; --ink-2:#986070; --ink-3:#301820; --accent:#d46080; --border:rgba(240,228,232,0.07); }
 
+/* ── LINKEDIN THEME ──────────────────────────────────────────────────────── */
+body.li-theme {
+  --bg:      #f3f2ef;
+  --ink:     #191919;
+  --ink-2:   #666;
+  --ink-3:   #bbb;
+  --accent:  #0a66c2;
+  --accent-l:rgba(10,102,194,0.08);
+  --border:  rgba(0,0,0,0.10);
+  --ui:      'Space Mono', monospace;
+  --disp:    'Barlow Condensed', sans-serif;
+  --li-blue: #0a66c2;
+  --li-bg:   #f3f2ef;
+  transition: background-color 0.6s ease;
+}
+
+/* Chapter palette overrides when li-theme is active — all snap to LinkedIn */
+body.li-theme.ch-2,
+body.li-theme.ch-3,
+body.li-theme.ch-4,
+body.li-theme.ch-5,
+body.li-theme.ch-6,
+body.li-theme.ch-7 {
+  --bg:     #f3f2ef;
+  --ink:    #191919;
+  --ink-2:  #555;
+  --ink-3:  #bbb;
+  --accent: #0a66c2;
+  --border: rgba(0,0,0,0.10);
+}
+
+/* Kill the atmospheric grain in li-theme */
+body.li-theme::after { opacity: 0; }
+
+/* Kill the bg images — LinkedIn doesn't do mood */
+body.li-theme #image-layer { display: none; }
+
+/* Header — LinkedIn top nav */
+body.li-theme header {
+  background: #fff !important;
+  border-bottom: 1px solid rgba(0,0,0,0.12) !important;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+}
+body.li-theme header:hover { background: #fff !important; }
+body.li-theme header:hover .h-name { color: #0a66c2; }
+body.li-theme header:hover .h-tagline { color: #555; }
+body.li-theme header:hover .mall-crumb { color: #999; }
+body.li-theme header:hover .mall-crumb .node { color: #555; }
+body.li-theme header:hover .h-btn { border-color: rgba(0,0,0,0.20); color: #444; }
+body.li-theme header:hover .h-btn:hover { border-color: #0a66c2; color: #0a66c2; }
+body.li-theme .h-name { color: #0a66c2; font-family: var(--ui); font-size: 13px; letter-spacing: 0.01em; font-weight: 700; text-transform: none; }
+body.li-theme .h-tagline { color: #888; }
+body.li-theme .h-btn { border-color: #0a66c2; color: #0a66c2; border-radius: 16px; padding: 5px 14px; }
+body.li-theme .h-btn:hover { background: rgba(10,102,194,0.06); }
+body.li-theme .h-btn.cta { background: #0a66c2; border-color: #0a66c2; color: #fff; border-radius: 16px; }
+body.li-theme .h-btn.cta:hover { background: #004182; border-color: #004182; opacity: 1; }
+body.li-theme .mall-crumb { color: #999; }
+body.li-theme .mall-crumb .node { color: #555; }
+body.li-theme .mall-crumb .node:hover { color: #0a66c2; }
+
+/* Header overlay */
+body.li-theme #header-overlay { background: #fff; }
+body.li-theme .ho-label { color: #999; }
+body.li-theme .ho-value { color: #191919; }
+body.li-theme .ho-value a:hover { color: #0a66c2; }
+
+/* Panel */
+body.li-theme #panel {
+  background: #fff !important;
+  border-left: 1px solid rgba(0,0,0,0.12) !important;
+}
+body.li-theme #panel:hover { background: #fff !important; border-left-color: rgba(0,0,0,0.14) !important; }
+body.li-theme #panel:hover .panel-section-label { color: #999; }
+body.li-theme #panel:hover .panel-img-area { background: #e8e6e1; border-color: rgba(0,0,0,0.10); }
+body.li-theme #panel:hover .service-name { color: #191919; }
+body.li-theme #panel:hover .service-tag { color: #888; }
+body.li-theme #panel:hover .service-url { color: #bbb; }
+body.li-theme #panel:hover .service-dot { background: #0a66c2; }
+body.li-theme #panel:hover .panel-tagline { color: #555; }
+body.li-theme #panel:hover .service-row { border-color: rgba(0,0,0,0.08); }
+body.li-theme #panel:hover .service-row:hover { background: rgba(10,102,194,0.05); }
+body.li-theme .panel-img-area { background: #e8e6e1; border-color: rgba(0,0,0,0.10); }
+body.li-theme .panel-section-label { color: #999; }
+body.li-theme .service-name { color: #444; }
+body.li-theme .service-tag { color: #aaa; }
+body.li-theme .service-dot { background: #0a66c2; opacity: 0.6; }
+body.li-theme .service-row.current .service-dot { opacity: 1; }
+body.li-theme .panel-tagline { color: #666; }
+body.li-theme .panel-wolfie { color: #bbb; border-color: rgba(0,0,0,0.08); }
+body.li-theme .panel-wolfie a { color: #0a66c2; }
+
+/* Progress bar */
+body.li-theme #progress { background: #0a66c2; }
+
+/* Sentences */
+body.li-theme .sentence.poster { color: #191919; }
+body.li-theme .sentence.poster .ac { color: #0a66c2; }
+body.li-theme .sentence.poster.active::before { background: #0a66c2; }
+body.li-theme .sentence.pull { border-left-color: #0a66c2; }
+body.li-theme .sentence.pull .ac { color: #0a66c2; }
+body.li-theme .sentence.label { color: #0a66c2; }
+body.li-theme .sentence.break::before { background: rgba(0,0,0,0.14); }
+body.li-theme .sentence.body .em { color: #191919; }
+
+/* Chapter headers */
+body.li-theme .ch-header-rule { background: linear-gradient(to right, transparent, #0a66c2, transparent); }
+body.li-theme .ch-header-label { color: #0a66c2; }
+body.li-theme .ch-header-num { -webkit-text-stroke: 1px rgba(0,0,0,0.08); }
+body.li-theme .ch-header-title { color: #191919; }
+body.li-theme .ch-header-sub { color: #bbb; }
+
+/* Cursor */
+body.li-theme #cursor { background: #0a66c2; }
+body.li-theme #cursor.nav-prev,
+body.li-theme #cursor.nav-next,
+body.li-theme #cursor.nav-top,
+body.li-theme #cursor.nav-bottom { background: #191919; }
+
+/* Nav widget */
+body.li-theme #nav-widget .nw-shell { background: rgba(255,255,255,0.97); border-color: rgba(0,0,0,0.12); }
+body.li-theme #nav-widget .nw-cell-value { color: #191919; }
+
+/* Chapter widget */
+body.li-theme .cw-trigger { background: rgba(255,255,255,0.97); border-color: rgba(0,0,0,0.12); }
+body.li-theme .cw-dropdown { background: rgba(255,255,255,0.97); border-color: rgba(0,0,0,0.12); }
+body.li-theme .cw-item:hover { background: rgba(10,102,194,0.05); }
+body.li-theme .cw-item-num { color: #0a66c2; }
+body.li-theme .cw-item-dot { background: #0a66c2; }
+
+/* Toast */
+body.li-theme #toast { background: rgba(255,255,255,0.98); }
+
+/* Interest panel */
+body.li-theme #interest-panel { background: rgba(255,255,255,0.98); }
+body.li-theme .ip-pill:hover { background: rgba(10,102,194,0.08); border-color: #0a66c2; color: #0a66c2; }
+body.li-theme .ip-pill.selected { background: rgba(10,102,194,0.14); border-color: #0a66c2; color: #191919; }
+body.li-theme .ip-cta:not(:disabled):hover { background: #0a66c2; border-color: #0a66c2; }
+
+/* ── TOGGLE BUTTON ── */
+#li-toggle {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 10px 5px 8px;
+  border: 1px solid var(--border);
+  background: none;
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--ink-3);
+  cursor: none;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+#li-toggle:hover { border-color: #0a66c2; color: #0a66c2; }
+/* The LinkedIn "in" logo mark */
+#li-toggle .li-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px;
+  background: #0a66c2; border-radius: 2px;
+  font-family: var(--ui); font-weight: 700; font-size: 9px;
+  color: #fff; letter-spacing: 0; text-transform: none;
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+#li-toggle:hover .li-mark { transform: scale(1.12); }
+body.li-theme #li-toggle {
+  background: #0a66c2;
+  border-color: #0a66c2;
+  color: #fff;
+  border-radius: 16px;
+  padding: 5px 12px 5px 8px;
+}
+body.li-theme #li-toggle .li-mark {
+  background: #fff;
+  color: #0a66c2;
+}
+body.li-theme #li-toggle:hover { background: #004182; border-color: #004182; }
+
+/* Scan line easter egg in li-theme — very faint LinkedIn grid */
+body.li-theme::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1;
+  opacity: 0.018;
+  background-image:
+    linear-gradient(rgba(10,102,194,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10,102,194,1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
 /* color transitions */
 #image-layer::after, header, #panel,
 #nav-widget .nw-shell, #nav-widget .nw-cell-value,
@@ -1068,7 +1259,11 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
       <span class="h-tagline">Thinker &amp; Maker &middot; UX / Product &middot; 20 yrs</span>
     </div>
     <div class="h-actions">
-      <a href="mailto:hello@zackgort.com" class="h-btn">Message</a>
+      <button id="li-toggle" aria-label="Toggle LinkedIn theme">
+        <span class="li-mark">in</span>
+        <span id="li-toggle-label">LinkedIn</span>
+      </button>
+      <a href="/cdn-cgi/l/email-protection#48202d2424270832292b232f273a3c662b2725" class="h-btn">Message</a>
       <a href="https://zackgort.com" target="_blank" class="h-btn cta">Portfolio &rarr;</a>
     </div>
     <div id="header-overlay">
@@ -1312,7 +1507,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     <p class="panel-tagline">I think. I make. I ship. Twenty years of scar tissue &mdash; from design to code, from suburbs to One World Trade.</p>
     <div class="panel-wolfie">
       Philadelphia, PA &middot; Remote-ready<br>
-      <a href="mailto:hello@zackgort.com">hello@zackgort.com</a> &middot; <a href="https://zackgort.com" target="_blank">zackgort.com &rarr;</a><br>
+      <a href="/cdn-cgi/l/email-protection#deb6bbb2b2b19ea4bfbdb5b9b1acaaf0bdb1b3"><span class="__cf_email__" data-cfemail="442c2128282b043e25272f232b36306a272b29">[email&#160;protected]</span></a> &middot; <a href="https://zackgort.com" target="_blank">zackgort.com &rarr;</a><br>
       Music: SoundCloud &middot; Photos: Instagram<br>
       Dog: Wolfgang &mdash; very good boy
     </div>
@@ -1402,7 +1597,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   <div id="grid-tiles"></div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── CURSOR ────────────────────────────────────────────────────────────────
 var cursor = document.getElementById('cursor');
 var cursorVisible = false;
@@ -2334,7 +2529,7 @@ function closeGrid() {
             var chNames = ['', 'Introduction', 'Early Days', 'Agency Life · Philly', 'Agency Life · NYC', 'Big Logos', 'Building', 'Now'];
             var anchor = document.getElementById('ip-anchor');
             if (anchor) anchor.textContent = (chNames[newCh] || 'Introduction').toUpperCase() + '  ·  Currently reading';
-            buildPills(newCh);
+                        buildPills(newCh);
           }
           anchoredSentence = getCurrentSentenceText();
           var sentEl = document.getElementById('ip-sentence');
@@ -2344,6 +2539,62 @@ function closeGrid() {
     }
   });
 })();
+
+// ── LINKEDIN THEME TOGGLE ─────────────────────────────────────────────────
+(function initLiTheme() {
+  var active = false;
+  var toastTimer = null;
+
+  function showLiToast(icon, title, sub, actionLabel, actionFn, duration) {
+    var ti = document.getElementById('toast-icon');
+    var tt = document.getElementById('toast-title');
+    var ts = document.getElementById('toast-sub');
+    var ta = document.getElementById('toast-actions');
+    if (ti) ti.textContent = icon;
+    if (tt) tt.textContent = title;
+    if (ts) ts.textContent = sub;
+    if (ta) {
+      ta.innerHTML = '';
+      if (actionLabel) {
+        var btn = document.createElement('button');
+        btn.className = 'toast-act-btn';
+        btn.textContent = actionLabel;
+        btn.onclick = function() {
+          var t = document.getElementById('toast');
+          if (t) t.classList.remove('show');
+          if (actionFn) actionFn();
+        };
+        ta.appendChild(btn);
+      }
+    }
+    var t = document.getElementById('toast');
+    if (t) t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      var t2 = document.getElementById('toast');
+      if (t2) t2.classList.remove('show');
+    }, duration || 4000);
+  }
+
+  function toggle() {
+    active = !active;
+    var label = document.getElementById('li-toggle-label');
+    if (active) {
+      document.body.classList.add('li-theme', 'no-transitions');
+      if (label) label.textContent = 'Exit LinkedIn';
+      showLiToast('🔵', 'LinkedIn Mode', 'Congratulations. You are open to work.', 'Escape →', toggle, 6000);
+      setTimeout(function() { document.body.classList.remove('no-transitions'); }, 50);
+    } else {
+      document.body.classList.remove('li-theme');
+      if (label) label.textContent = 'LinkedIn';
+      showLiToast('✦', 'Back to Normal', 'Conviction restored.', null, null, 2800);
+    }
+  }
+
+  var btn = document.getElementById('li-toggle');
+  if (btn) btn.addEventListener('click', toggle);
+})();
+
 </script>
 </body>
 </html>
