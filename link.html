@@ -76,6 +76,38 @@ body.li-theme::after { opacity: 0; }
 /* Kill the bg images — LinkedIn doesn't do mood */
 body.li-theme #image-layer { display: none; }
 
+/* ── LinkedIn image layer — center-zone atmospheric image ── */
+#li-img-layer {
+  display: none;
+  position: fixed;
+  /* sits in the center zone: right of text column, left of right panel */
+  left: 38%; right: 320px;
+  top: 52px; bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+body.li-theme #li-img-layer { display: block; }
+#li-img-layer img {
+  position: absolute;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 30%;
+  opacity: 0;
+  transform: scale(1.04) translate(0px, 0px);
+  transition: opacity 0.6s ease;
+  will-change: transform, opacity;
+}
+#li-img-layer img.li-img-visible { opacity: 0.22; }
+/* fade edges so image blends into the clean LinkedIn layout */
+#li-img-layer::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 2;
+  background:
+    linear-gradient(to right,  rgba(243,242,239,0.92) 0%,  rgba(243,242,239,0.30) 22%, rgba(243,242,239,0.0)  55%, rgba(243,242,239,0.55) 85%, rgba(243,242,239,0.98) 100%),
+    linear-gradient(to bottom, rgba(243,242,239,0.85) 0%,  rgba(243,242,239,0.0)  20%, rgba(243,242,239,0.0)  80%, rgba(243,242,239,0.85) 100%);
+  pointer-events: none;
+}
+
 /* Header — LinkedIn top nav */
 body.li-theme header {
   background: #fff !important;
@@ -1445,6 +1477,11 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   <img id="img-19" src="https://i.ibb.co/tTTgw7Md/1-q-zg-Zh-Kn-Cs6ab-K8-CIp-E00-Q.webp" alt="">
 </div>
 
+<!-- LinkedIn mode image layer — lerps into center zone behind text -->
+<div id="li-img-layer" aria-hidden="true">
+  <img id="li-img-el" src="" alt="">
+</div>
+
 <div id="shell">
   <header>
     <nav class="mall-crumb">
@@ -1844,7 +1881,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     <button class="nw-interest-btn" id="nw-interest-btn" title="I'm interested" onclick="toggleInterestPanel()">
       <span class="nw-cell-value">&#9671;</span><span class="nw-action-label">Interest</span>
     </button>
-    <button class="nw-action-btn" id="nw-cv-btn" title="View CV / Resume" onclick="openPanelSheet ? openPanelSheet() : focusPanel()" style="display:none">
+    <button class="nw-action-btn" id="nw-cv-btn" title="View CV / Resume" onclick="openPanelSheet ? openPanelSheet() : focusPanel()">
       <span class="nw-cell-value">&#9776;</span><span class="nw-action-label">CV</span>
     </button>
     <div class="nw-divider"></div>
@@ -1923,10 +1960,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
     z.push({l:0,t:0,r:window.innerWidth,b:62});
     var nw=document.getElementById('nav-widget');
     if(nw){var r=nw.getBoundingClientRect();z.push({l:r.left-PAD,t:r.top-PAD,r:r.right+PAD,b:r.bottom+PAD});}
-    if(!isMob()){
-      var p=document.getElementById('panel');
-      if(p){var r2=p.getBoundingClientRect();z.push({l:r2.left,t:r2.top,r:r2.right,b:r2.bottom});}
-    }
+    // Note: panel is NOT an exclusion zone for the detail ghost — it originates from the panel
     var cw=document.querySelector('.cw-trigger');
     if(cw){var r3=cw.getBoundingClientRect();z.push({l:r3.left-PAD,t:r3.top-PAD,r:r3.right+PAD,b:r3.bottom+PAD});}
     return z;
@@ -1941,25 +1975,15 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   }
   function idlePos(){
     if(!activeEl) return {x:gx,y:gy};
-    var rect=activeEl.getBoundingClientRect();
     var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
     var col=document.getElementById('stream-col');
     var sr=col?col.getBoundingClientRect():{left:0,right:window.innerWidth};
     var rLimit=rl(gw);
-    var cands=[
-      {x:rect.left,       y:rect.top-gh-12},
-      {x:rect.left,       y:rect.bottom+12},
-      {x:sr.left+8,       y:rect.top-gh-12},
-      {x:sr.left+8,       y:rect.bottom+12},
-      {x:rLimit-gw,       y:rect.top-gh-12}
-    ];
-    for(var i=0;i<cands.length;i++){
-      var c=cands[i];
-      var cx=Math.max(sr.left+4, Math.min(c.x, rLimit-gw));
-      var cy=Math.max(68, Math.min(c.y, window.innerHeight-gh-8));
-      if(!hits(cx,cy,gw,gh)) return {x:cx,y:cy};
-    }
-    return {x:sr.left+8, y:68};
+    // Always anchor x to right edge of stream
+    var x = rLimit - gw;
+    // For y: use stream vertical center since activeEl lives in the panel, not stream
+    var y = Math.max(68, Math.min(window.innerHeight*0.4 - gh*0.5, window.innerHeight-gh-8));
+    return {x:x, y:y};
   }
   function clampFollow(x,y){
     var gw=ghost.offsetWidth||240, gh=ghost.offsetHeight||80;
@@ -1991,7 +2015,6 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
       return '<div class="dg-row"><span class="dg-row-key">'+d.k+'</span><span class="dg-row-val">'+(d.v||'')+'</span></div>';
     }).join('');
     var p=idlePos(); ix=p.x; iy=p.y;
-    // On mobile the ghost is CSS-positioned as a bottom bar; don't set left/top via JS
     if(!isMob()){
       if(!visible){ gx=ix; gy=iy; ghost.style.left=gx+'px'; ghost.style.top=gy+'px'; }
     }
@@ -2011,7 +2034,7 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   document.addEventListener('mousemove', function(e){
     mx = e.clientX;
     tx=e.clientX+OX; ty=e.clientY+OY;
-    if(visible) applyZone(e.clientX);
+    if(visible && !isMob()) applyZone(e.clientX);
   }, {passive:true});
   window.addEventListener('resize', function(){
     if(visible&&!following){ var p=idlePos(); ix=p.x; iy=p.y; }
@@ -2125,17 +2148,16 @@ document.addEventListener('touchstart', function() {
     var gw    = ghost.offsetWidth  || 220;
     var gh    = ghost.offsetHeight || 42;
     var col   = document.getElementById('stream-col');
-    var colR  = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth };
-    var mobile = window.innerWidth <= 760;
-    var rightLimit = mobile ? window.innerWidth - 12 : colR.right - 8;
+    var colR  = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
+    var rightLimit = colR.right - 8;
 
-    // Candidate positions in priority order: above, below, left-flush
+    // Candidate positions in priority order: above-right, below-right, above-left, below-left, above-far-right
     var candidates = [
-      { x: rect.left,       y: rect.top  - gh - 10 },
-      { x: rect.left,       y: rect.bottom + 10     },
-      { x: colR.left + 8,  y: rect.top  - gh - 10 },
-      { x: colR.left + 8,  y: rect.bottom + 10     },
-      { x: rightLimit - gw, y: rect.top  - gh - 10 },
+      { x: rect.left,                   y: rect.top    - gh - 10 },
+      { x: rect.left,                   y: rect.bottom + 10      },
+      { x: colR.left + 8,              y: rect.top    - gh - 10 },
+      { x: colR.left + 8,              y: rect.bottom + 10      },
+      { x: rightLimit - gw,            y: rect.top    - gh - 10 },
     ];
 
     for (var i = 0; i < candidates.length; i++) {
@@ -2144,84 +2166,25 @@ document.addEventListener('touchstart', function() {
       var cy = Math.max(60, Math.min(c.y, window.innerHeight - gh - 8));
       if (!intersectsUI(cx, cy, gw, gh)) return { x: cx, y: cy };
     }
-    // Fallback: top-left of stream column
     return { x: colR.left + 8, y: 60 };
   }
 
-  // ── Midpoint of stream column (left/right hotzone boundary) ──
-  function streamMidX() {
-    var col = document.getElementById('stream-col');
-    if (!col) return window.innerWidth / 2;
-    var r = col.getBoundingClientRect();
-    return r.left + r.width / 2;
-  }
-
-  // ── Clamp a follow position away from all UI ──
-  function clampFollowPos(x, y) {
-    var gw = ghost.offsetWidth  || 220;
-    var gh = ghost.offsetHeight || 42;
-    var col = document.getElementById('stream-col');
-    var colR = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth };
-    var mobile = window.innerWidth <= 760;
-    var maxX = mobile ? window.innerWidth - gw - 12 : colR.right - gw - 8;
-    x = Math.max(colR.left + 4, Math.min(x, maxX));
-    y = Math.max(60, Math.min(y, window.innerHeight - gh - 8));
-    // If still in a UI zone, nudge up
-    if (intersectsUI(x, y, gw, gh)) y = Math.max(60, y - gh - 16);
-    return { x: x, y: y };
-  }
-
-  // ── RAF loop ──
+  // ── RAF loop — lerps ghost toward its home over the node ──
   function tick() {
-    var gw = ghost.offsetWidth  || 220;
-    var gh = ghost.offsetHeight || 42;
-
-    if (isFollowing) {
-      var clamped = clampFollowPos(targetX, targetY);
-      ghostX = lerp(ghostX, clamped.x, LERP_FOLLOW);
-      ghostY = lerp(ghostY, clamped.y, LERP_FOLLOW);
-    } else {
-      // Drift to idle — magnetic pull
-      ghostX = lerp(ghostX, idleX, LERP_IDLE);
-      ghostY = lerp(ghostY, idleY, LERP_IDLE);
-    }
-
+    var pos = computeIdlePosition();
+    ghostX = lerp(ghostX, pos.x, LERP_IDLE);
+    ghostY = lerp(ghostY, pos.y, LERP_IDLE);
     ghost.style.left = ghostX + 'px';
     ghost.style.top  = ghostY + 'px';
     if (ghostVisible) rafId = requestAnimationFrame(tick);
     else rafId = null;
   }
 
-  function enterFollowMode() {
-    if (isFollowing) return;
-    isFollowing = true;
-    ghost.style.transition = 'opacity 0.18s ease';
-    if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick);
-  }
-
-  function enterIdleMode() {
-    if (!isFollowing) return;
-    isFollowing = false;
-    // Recompute idle and let tick drift there
-    var pos = computeIdlePosition();
-    idleX = pos.x; idleY = pos.y;
-    ghost.style.transition = 'opacity 0.18s ease';
-    if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick);
-  }
-
-  function applyZone(mx) {
-    if (mx < streamMidX()) enterFollowMode();
-    else enterIdleMode();
-  }
-
   function showGhost() {
-    // Compute idle first so we have a valid starting position
     var pos = computeIdlePosition();
-    idleX = pos.x; idleY = pos.y;
-
     if (!ghostVisible) {
-      // Snap to idle on first appear, then animate from there
-      ghostX = idleX; ghostY = idleY;
+      // Snap to start position on first show so lerp begins from sensible spot
+      ghostX = pos.x; ghostY = pos.y;
       ghost.style.left = ghostX + 'px';
       ghost.style.top  = ghostY + 'px';
     }
@@ -2229,28 +2192,19 @@ document.addEventListener('touchstart', function() {
     ghost.classList.add('visible');
     ghostVisible = true;
     if (!rafId) rafId = requestAnimationFrame(tick);
-    applyZone(mouseX);
   }
 
   function hideGhost() {
     ghost.classList.remove('visible');
     ghostVisible = false;
-    isFollowing = false;
     activeSpecEl = null;
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
   }
 
-  document.addEventListener('mousemove', function(e) {
-    targetX = e.clientX + OFFSET_X;
-    targetY = e.clientY + OFFSET_Y;
-    if (ghostVisible) applyZone(e.clientX);
-  });
-
-  // Re-anchor idle when window resizes
   window.addEventListener('resize', function() {
-    if (ghostVisible && !isFollowing) {
+    if (ghostVisible) {
       var pos = computeIdlePosition();
-      idleX = pos.x; idleY = pos.y;
+      ghostX = pos.x; ghostY = pos.y;
     }
   });
 
@@ -2297,8 +2251,69 @@ function setImage(n) {
   currentImg = n;
   var pi = document.getElementById('panel-img-main');
   if (pi && imgs[n]) pi.src = imgs[n].src;
+  if (window._liImgUpdate && imgs[n]) window._liImgUpdate(imgs[n].src);
 }
 imgs[0].classList.add('visible');
+
+// ── LINKEDIN IMAGE LAYER — lerp-drifting center image ────────────────────
+(function() {
+  var layer  = document.getElementById('li-img-layer');
+  var imgEl  = document.getElementById('li-img-el');
+  if (!layer || !imgEl) return;
+
+  var tx = 0, ty = 0;          // lerp target (parallax offset)
+  var cx = 0, cy = 0;          // current position
+  var raf = null;
+  var LERP = 0.04;             // slow, dreamlike drift
+  var MAG  = 18;               // max pixel travel
+  var currentSrc = '';
+
+  function setLiImage(src) {
+    if (!src || src === currentSrc) return;
+    currentSrc = src;
+    imgEl.classList.remove('li-img-visible');
+    setTimeout(function() {
+      imgEl.src = src;
+      imgEl.onload = function() { imgEl.classList.add('li-img-visible'); };
+    }, 120);
+  }
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function tick() {
+    cx = lerp(cx, tx, LERP);
+    cy = lerp(cy, ty, LERP);
+    imgEl.style.transform = 'scale(1.08) translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+    raf = requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    // Normalize cursor to [-1,1] across viewport
+    var nx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    var ny = (e.clientY / window.innerHeight - 0.5) * 2;
+    tx = -nx * MAG;
+    ty = -ny * MAG * 0.6;
+  }, { passive: true });
+
+  // Start/stop based on li-theme
+  function checkTheme() {
+    if (document.body.classList.contains('li-theme')) {
+      if (!raf) raf = requestAnimationFrame(tick);
+    } else {
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+  }
+
+  // Expose so setImage and goTo can feed it
+  window._liImgUpdate = function(imgSrc) {
+    setLiImage(imgSrc);
+    checkTheme();
+  };
+
+  // Observe body class changes for li-theme toggle
+  var obs = new MutationObserver(checkTheme);
+  obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();
 
 // ── SENTENCE ENGINE ───────────────────────────────────────────────────────
 var all = Array.from(document.querySelectorAll('[data-idx]'));
