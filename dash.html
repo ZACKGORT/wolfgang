@@ -529,26 +529,92 @@ body.scroll-free #scroll-lockout{display:block}
   color:rgba(255,255,255,.10);z-index:50;pointer-events:none;white-space:nowrap;
 }
 
-/* ── MOBILE ───────────────────────────────────────────────────────────────── */
+.nw-action-btn#nw-panel-btn{display:none}
+#panel-overlay-backdrop{display:none;pointer-events:none}
+
 @media(max-width:760px){
-  #shell{grid-template-columns:1fr;grid-template-rows:52px auto}
-  #stream-col{grid-row:2;min-height:auto;padding:40px 24px 140px}
+  #shell{
+    grid-template-columns:1fr;grid-template-rows:52px auto;
+    z-index:auto; /* frees panel from z-index trap */
+  }
+  #stream-col{grid-row:2;min-height:auto;padding:40px 24px 140px;z-index:10}
   .h-center{display:none}
-  #panel{display:none}
+  #header-overlay{grid-template-columns:1fr 1fr}
+  .ho-cell:nth-child(2){border-right:none}
+  .ho-cell:nth-child(3){border-top:1px solid rgba(0,0,0,0.06)}
+
+  /* mobile panel — bottom sheet */
+  #panel{
+    position:fixed;bottom:0;left:0;right:0;top:auto;
+    height:88vh;border-left:none;border-top:none;
+    border-radius:18px 18px 0 0;z-index:2000;grid-column:unset;grid-row:unset;
+    transform:translateY(100%);
+    transition:transform 0.38s cubic-bezier(0.32,0.72,0,1),background 0.4s ease;
+    box-shadow:0 -8px 60px rgba(0,0,0,0.5);
+    background:rgba(248,246,238,1)!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  #panel.sheet-open{transform:translateY(0)}
+  /* drag handle pill */
+  #panel::before{
+    content:'';display:block;width:36px;height:4px;
+    border-radius:2px;background:rgba(0,0,0,0.18);
+    margin:0 auto 20px;flex-shrink:0;
+  }
+  /* force light panel styles */
+  #panel .panel-label{color:#aaa}
+  #panel .panel-stat{background:#f4f0e8;border-color:rgba(0,0,0,.08)}
+  #panel .stat-val{color:#111}
+  #panel .stat-label{color:#888}
+  #panel .stat-delta.up{color:#4a904a}
+  #panel .stat-delta.dn{color:#c04040}
+  #panel .bar-track{background:rgba(0,0,0,.08)}
+  #panel .bar-label{color:#999}
+  #panel .bar-val{color:#777}
+  #panel .spark-bar{background:rgba(0,0,0,.12)}
+  #panel .spark-bar.hi{background:var(--accent)}
+  #panel .remark-badge{background:rgba(200,144,42,.05);border-color:rgba(200,144,42,.25)}
+  #panel .remark-badge-text{color:#444}
+  #panel .remark-badge-meta{color:#999}
+  #panel .panel-wolfie{color:#bbb;border-color:rgba(0,0,0,.08)}
+  #panel .panel-wolfie a{color:var(--accent)}
+
+  /* backdrop */
+  #panel-overlay-backdrop{
+    display:block;
+    position:fixed;inset:0;z-index:1999;
+    background:rgba(0,0,0,0.55);
+    opacity:0;pointer-events:none;
+    transition:opacity 0.38s ease;
+  }
+  #panel-overlay-backdrop.show{opacity:1;pointer-events:auto}
+
+  /* show the panel button in nav widget */
+  .nw-action-btn#nw-panel-btn{display:flex}
+
   #nav-widget{
     position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));
-    left:50%;right:auto;top:auto;transform:translateX(-50%);width:auto;
+    left:50%;right:auto;top:auto;transform:translateX(-50%);z-index:300;width:auto;
   }
-  .nw-shell{flex-direction:row;align-items:stretch;border-radius:24px;min-width:unset;padding:0;gap:0}
+  .nw-shell{flex-direction:row;align-items:stretch;border-radius:24px;min-width:unset;width:auto;padding:0;gap:0;box-shadow:0 8px 40px rgba(0,0,0,0.12)}
   .nw-handle,.nw-divider,.nw-nav-pip,.nw-nav-pip-pct{display:none!important}
   .nw-action-btn{flex:1;border:none;border-right:1px solid var(--hud-border);border-radius:0;padding:12px 14px 10px;font-size:15px;gap:3px}
+  .nw-action-btn:first-of-type{border-radius:24px 0 0 24px}
+  .nw-action-btn:last-of-type{border-right:none}
   .nw-nav{flex:2;flex-direction:row;padding:0;gap:0;width:auto;align-items:stretch}
   .nw-btn-prev,.nw-btn-next{flex:1;height:auto;min-height:52px;font-size:18px;border-radius:0;border:none;border-left:1px solid var(--hud-border);background:none;padding:0 16px}
   .nw-btn-next{border-radius:0 24px 24px 0}
   #chapter-widget{right:0;top:calc(52px + 10px);padding-right:64px}
   #detail-ghost{display:none}
-  #scroll-toggle{position:fixed!important;top:calc(52px + 12px)!important;right:16px!important;left:auto!important}
+  #scroll-toggle{position:fixed!important;top:calc(52px + 12px)!important;right:16px!important;left:auto!important;width:42px;height:42px;z-index:9500!important;pointer-events:auto!important;touch-action:manipulation}
   #scroll-lockout{right:0;pointer-events:none}
+  #toast{bottom:calc(96px + env(safe-area-inset-bottom))}
+  #wolfie-credit{bottom:calc(88px + env(safe-area-inset-bottom))}
+}
+
+@media(min-width:761px){
+  #panel-overlay-backdrop{display:none}
 }
 
 </style>
@@ -643,7 +709,7 @@ body.scroll-free #scroll-lockout{display:block}
       <div class="ho-cell">
         <span class="ho-label">Studio</span>
         <span class="ho-value">
-          <a href="mailto:hello@wolfie.life">hello@wolfie.life</a><br>
+          <a href="/cdn-cgi/l/email-protection#c8a0ada4a4a788bfa7a4aea1ade6a4a1aead"><span class="__cf_email__" data-cfemail="ea828f868685aa9d85868c838fc486838c8f">[email&#160;protected]</span></a><br>
           <a href="#">wolfie.life &rarr;</a>
         </span>
       </div>
@@ -826,16 +892,22 @@ body.scroll-free #scroll-lockout{display:block}
 
     <div class="panel-wolfie">
       Wolfgang &amp; Co &middot; wolfie.life<br>
-      <a href="mailto:hello@wolfie.life">hello@wolfie.life</a> &middot; <a href="#">wolfie.life &rarr;</a>
+      <a href="/cdn-cgi/l/email-protection#85ede0e9e9eac5f2eae9e3ece0abe9ece3e0"><span class="__cf_email__" data-cfemail="fa929f969695ba8d95969c939fd496939c9f">[email&#160;protected]</span></a> &middot; <a href="#">wolfie.life &rarr;</a>
     </div>
 
   </aside>
 </div>
 
+<div id="panel-overlay-backdrop"></div>
+
 <!-- Nav widget -->
 <div id="nav-widget">
   <div class="nw-shell">
     <div class="nw-handle" id="nw-handle"><div class="nw-drag-dots">&middot; &middot; &middot;</div></div>
+    <div class="nw-divider"></div>
+    <button class="nw-action-btn" id="nw-panel-btn" onclick="focusPanel()" title="Stats">
+      <span>&#9636;</span><span class="nw-action-label">Stats</span>
+    </button>
     <div class="nw-divider"></div>
     <button class="nw-action-btn" id="nw-top-btn" title="Back to top">
       <span>&#9671;</span><span class="nw-action-label">Start</span>
@@ -852,7 +924,7 @@ body.scroll-free #scroll-lockout{display:block}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 var DAILY = [112,134,108,167,201,189,143,156,178,195,210,188,167,140,165,190,215,234,198,176,155,168,201,222,245,208,187,163,178,196,211];
@@ -1257,6 +1329,48 @@ renderRemarks();
   });
 })();
 
+// ── MOBILE PANEL SHEET ────────────────────────────────────────────────────────
+function isMobile(){ return window.innerWidth<=760; }
+function openPanelSheet(){
+  var p=document.getElementById('panel');
+  p.classList.add('sheet-open');
+  document.getElementById('panel-overlay-backdrop').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closePanelSheet(){
+  var p=document.getElementById('panel');
+  p.classList.remove('sheet-open');
+  document.getElementById('panel-overlay-backdrop').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.getElementById('panel-overlay-backdrop').addEventListener('click', closePanelSheet);
+
+(function initPanelSwipe(){
+  var panel=document.getElementById('panel');
+  var py=0, pStarted=false;
+  panel.addEventListener('touchstart', function(e){
+    if(panel.scrollTop===0){ py=e.touches[0].clientY; pStarted=true; }
+  }, {passive:true});
+  panel.addEventListener('touchmove', function(e){
+    if(!pStarted) return;
+    var dy=e.touches[0].clientY-py;
+    if(dy>0 && panel.scrollTop===0 && e.cancelable) e.preventDefault();
+  }, {passive:false});
+  panel.addEventListener('touchend', function(e){
+    if(!pStarted) return; pStarted=false;
+    var dy=e.changedTouches[0].clientY-py;
+    if(dy>60) closePanelSheet();
+  }, {passive:true});
+})();
+
+function focusPanel(){
+  if(isMobile()){ openPanelSheet(); return; }
+  var p=document.getElementById('panel');
+  p.scrollIntoView({behavior:'smooth',block:'start'});
+  p.style.outline='1px solid var(--accent)';
+  setTimeout(function(){ p.style.outline=''; }, 700);
+}
+
 // ── TOAST ─────────────────────────────────────────────────────────────────────
 var toastTimer;
 function showToast(title, sub, dur){
@@ -1273,16 +1387,14 @@ function dismissToast(){
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.getElementById('report-month').textContent =
-  new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  (new Date()).toLocaleString('en-US',{month:'long',year:'numeric'});
 
-setTimeout(function(){ document.body.classList.remove('no-transitions'); }, 80);
-goTo(0, {noScroll:true});
-updateCW(1);
-
-setTimeout(function(){
-  showToast('March Dispatch', 'Navigate with ↑↓ or Space · hover any spec row or stat card for detail', 9000);
-}, 1400);
-
+// remove no-transitions after first paint
+requestAnimationFrame(function(){
+  requestAnimationFrame(function(){
+    document.body.classList.remove('no-transitions');
+  });
+});
 </script>
 </body>
 </html>
