@@ -473,6 +473,8 @@ body.no-transitions .sentence * { transition: none !important; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { color-scheme: dark; overscroll-behavior: none; overflow: hidden; height: 100%; }
+::selection { background: transparent; color: inherit; }
+::-moz-selection { background: transparent; color: inherit; }
 body {
   background: var(--bg); color: var(--ink);
   font-family: var(--ui); font-size: 12px; line-height: 1.6;
@@ -1289,28 +1291,29 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   background: var(--hud-bg);
   border: 1px solid var(--hud-border);
   border-radius: 6px;
-  padding: 8px 13px;
+  padding: 16px 24px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 6px 28px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.12);
   display: flex;
   align-items: baseline;
-  gap: 14px;
+  gap: 20px;
   white-space: nowrap;
 }
 .scg-key {
   font-family: var(--ui);
-  font-size: 7.5px;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--hud-accent);
-  min-width: 48px;
+  min-width: 80px;
   flex-shrink: 0;
 }
 .scg-val {
-  font-family: var(--ui);
-  font-size: 10px;
-  letter-spacing: 0.05em;
+  font-family: var(--disp);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--hud-ink);
 }
 /* When a spec is active and the ghost is tracking it, dim the original in stream */
@@ -1478,29 +1481,30 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 #detail-ghost.visible { opacity: 1; }
 .dg-inner {
   background: var(--hud-bg); border: 1px solid var(--hud-border);
-  border-radius: 6px; padding: 11px 15px;
+  border-radius: 8px; padding: 18px 24px;
   backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 8px 36px rgba(0,0,0,.35), 0 1px 4px rgba(0,0,0,.15);
-  min-width: 210px; max-width: 290px;
+  min-width: 320px; max-width: 440px;
 }
 .dg-label {
-  font-family: var(--ui); font-size: 7px;
-  letter-spacing: .22em; text-transform: uppercase;
-  color: var(--hud-accent); margin-bottom: 9px;
+  font-family: var(--ui); font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--hud-accent); margin-bottom: 14px;
 }
 .dg-row {
   display: flex; justify-content: space-between;
-  align-items: baseline; gap: 16px;
-  padding: 4px 0; border-bottom: 1px solid var(--hud-border);
+  align-items: baseline; gap: 20px;
+  padding: 7px 0; border-bottom: 1px solid var(--hud-border);
 }
 .dg-row:last-child { border-bottom: none; }
 .dg-row-key {
-  font-family: var(--ui); font-size: 7px;
-  letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--ui); font-size: 11px;
+  letter-spacing: .10em; text-transform: uppercase;
   color: var(--hud-ink-3); flex-shrink: 0;
 }
 .dg-row-val {
-  font-family: var(--ui); font-size: 9px;
+  font-family: var(--disp); font-size: 18px; font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--hud-ink); text-align: right;
 }
 
@@ -1922,6 +1926,149 @@ body.compose-mode #panel > *:not(#compose-syntax-rail) { display: none !importan
 }
 #panel:hover .csr-parse-desc { color: #888; }
 body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2; border-color: rgba(10,102,194,0.2); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   @@DARK MOMENT — cinematic chrome-hide for chapter heads + ask interstitials
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Veil */
+#dark-veil {
+  position: fixed; inset: 0; z-index: 1800;
+  background: #000; opacity: 0; pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+body.dark-moment #dark-veil { opacity: 0.94; pointer-events: auto; }
+
+/* Chrome recedes */
+body.dark-moment header,
+body.dark-moment #nav-widget,
+body.dark-moment #chapter-widget,
+body.dark-moment #panel,
+body.dark-moment #progress,
+body.dark-moment #built-by,
+body.dark-moment #wolfie-credit,
+body.dark-moment #scroll-toggle {
+  opacity: 0 !important; pointer-events: none !important;
+  transition: opacity 0.5s ease !important;
+}
+body.dark-moment .sentence,
+body.dark-moment .ch-header { opacity: 0 !important; transition: opacity 0.3s ease !important; }
+
+/* Spotlight overlay — fixed, above veil, cloned text rendered here */
+#dark-spotlight {
+  position: fixed; inset: 0; z-index: 1900;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 clamp(32px, 8vw, 120px);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.5s ease 0.2s;
+  text-align: center;
+}
+body.dark-moment #dark-spotlight { opacity: 1; }
+/* Inherit poster styles */
+#dark-spotlight .ds-inner {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(52px, 7.5vw, 100px);
+  line-height: 0.88; letter-spacing: -0.03em;
+  text-transform: uppercase; color: var(--ink);
+}
+#dark-spotlight .ds-inner .ac { color: var(--accent); }
+#dark-spotlight .ds-inner .em { font-style: italic; font-weight: 300; color: var(--ink-2); }
+
+/* Escape hint */
+#dark-escape-hint {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.20em;
+  text-transform: uppercase; color: rgba(255,255,255,0.22);
+  z-index: 2000; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease 1.2s;
+}
+body.dark-moment #dark-escape-hint { opacity: 1; }
+
+/* ── ASK INTERSTITIAL ────────────────────────────────────────────────────── */
+
+#ask-interstitial {
+  position: fixed; inset: 0; z-index: 1950;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 32px; padding: 40px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
+
+.ask-question {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 1.05; letter-spacing: -0.02em;
+  text-transform: uppercase; text-align: center;
+  color: #fff; max-width: 800px;
+}
+.ask-question .ac { color: var(--accent); }
+
+.ask-pills-row {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; max-width: 680px;
+}
+.ask-pill {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 8px 18px;
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 3px;
+  background: none; color: rgba(255,255,255,0.6);
+  cursor: none; transition: all 0.15s ease;
+}
+.ask-pill:hover { border-color: var(--accent); color: var(--accent); }
+.ask-pill.selected {
+  background: var(--accent); border-color: var(--accent);
+  color: #fff; font-weight: 700;
+}
+
+/* Live tally */
+.ask-tally {
+  display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+  max-width: 680px;
+}
+.ask-tally-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  min-width: 80px;
+}
+.ask-tally-bar-wrap {
+  width: 60px; height: 3px; background: rgba(255,255,255,0.10);
+  border-radius: 2px; overflow: hidden;
+}
+.ask-tally-bar-fill {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  width: 0%; transition: width 0.5s ease;
+}
+.ask-tally-count {
+  font-family: var(--ui); font-size: 11px; font-weight: 700;
+  color: rgba(255,255,255,0.7); letter-spacing: 0.04em;
+}
+.ask-tally-label {
+  font-family: var(--ui); font-size: 6px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  text-align: center;
+}
+
+.ask-submit-row {
+  display: flex; align-items: center; gap: 12px;
+}
+#ask-submit-btn {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 9px 22px;
+  background: var(--accent); border: none; border-radius: 3px;
+  color: #fff; font-weight: 700; cursor: none;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, background 0.15s ease;
+}
+#ask-submit-btn.ready { opacity: 1; pointer-events: auto; }
+#ask-submit-btn:hover { background: #e8956a; }
+#ask-submitted-msg {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.10em;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+#ask-submitted-msg.show { opacity: 1; }
+
 </style>
 </head>
 <body class="no-transitions">
@@ -2139,7 +2286,9 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
   <div class="rp-section">
     <div class="rp-label">Mission</div>
 
-    <div class="rp-job">
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Safety First"
+      data-ghost='[{"k":"Approach","v":"Safety-first research"},{"k":"Method","v":"Constitutional AI"},{"k":"Goal","v":"Long-term human benefit"},{"k":"Structure","v":"Public Benefit Corp"}]'>
       <div class="rp-job-company">Safety First</div>
       <div class="rp-job-role">AI research &amp; product with safety at the core</div>
       <div class="rp-pills">
@@ -2149,7 +2298,9 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
       </div>
     </div>
 
-    <div class="rp-job">
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Claude"
+      data-ghost='[{"k":"Character","v":"Helpful · Harmless · Honest"},{"k":"Context","v":"200K token window"},{"k":"Modalities","v":"Text · Vision · Code · Docs"},{"k":"Ranking","v":"#1 on major third-party evals"}]'>
       <div class="rp-job-company">Claude</div>
       <div class="rp-job-role">Helpful, harmless, and honest &mdash; by design</div>
       <div class="rp-pills">
@@ -2159,7 +2310,9 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
       </div>
     </div>
 
-    <div class="rp-job">
+    <div class="rp-job hoverable-stat"
+      data-ghost-label="Research"
+      data-ghost='[{"k":"Focus","v":"Interpretability · Evals · Policy"},{"k":"Published","v":"100+ papers since 2021"},{"k":"Partners","v":"US · EU · UK · UN bodies"},{"k":"Scope","v":"Education · Labor · Access · Equity"}]'>
       <div class="rp-job-company">Research</div>
       <div class="rp-job-role">Interpretability, evals, policy, societal impact</div>
       <div class="rp-pills">
@@ -3181,6 +3334,7 @@ requestAnimationFrame(function() {
   function enter() {
     scrollFree = true; btn.classList.add('on'); syncHud(true);
     document.body.classList.add('scroll-free');
+    document.documentElement.style.overflow = 'auto';
     document.body.style.overflow = 'auto';
     all.forEach(function(el) { el.classList.add('revealed'); el.classList.remove('active'); });
     document.querySelectorAll('.ch-header').forEach(function(g) { g.classList.add('revealed'); });
@@ -3199,6 +3353,7 @@ requestAnimationFrame(function() {
     });
     scrollFree = false; btn.classList.remove('on'); syncHud(false);
     document.body.classList.remove('scroll-free');
+    document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     goTo(nearest, {noScroll: true});
   }
@@ -3244,6 +3399,7 @@ requestAnimationFrame(function() {
     if (active) return;
     active = true;
     document.body.classList.add('scroll-free');
+    document.documentElement.style.overflow = 'auto';
     document.body.style.overflow = 'auto';
     document.getElementById('scroll-toggle').classList.add('on');
     all.forEach(function(el) { el.classList.add('revealed'); el.classList.remove('active'); });
@@ -3258,6 +3414,7 @@ requestAnimationFrame(function() {
     holdMode = false;
     cancelAnimationFrame(rafId);
     document.body.classList.remove('scroll-free');
+    document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
     document.getElementById('scroll-toggle').classList.remove('on');
     var n = getNearestNode();
@@ -3297,6 +3454,11 @@ requestAnimationFrame(function() {
         e.target.closest('#panel') || e.target.closest('header') ||
         e.target.closest('#scroll-toggle')) return;
     exit();
+  });
+
+  // Escape key exits right-click scroll
+  document.addEventListener('keydown', function(e) {
+    if (active && e.key === 'Escape') { e.preventDefault(); exit(); }
   });
 
   // mobile tap exits (safety net)
@@ -4091,6 +4253,7 @@ const narrative = `
 img:18
 [label] Anthropic &middot; A Different Kind of Company
 img:6
+@@darkchapter
 [poster] AI is the most **consequential** technology ever built.
 img:4
 [body] That is not a marketing claim. It is a statement of genuine uncertainty &mdash; and genuine possibility.
@@ -4108,6 +4271,7 @@ img:7
 [body] Anthropic was founded in 2021 by former members of OpenAI who believed the industry needed a different kind of actor. One willing to say: *we might be building something dangerous, and we are doing it anyway, because someone will &mdash; and it should be us.*
 img:15
 [body] That is an uncomfortable position. It is also an honest one. And honesty, at Anthropic, is not a virtue to aspire to. It is a job requirement.
+@@ask:{"id":"ch1-ask","question":"What **matters most** to you right now?","options":["AI Safety","The Opportunity","The Mission","The Craft"]}
 [break]
 
 ###:02 · The Urgency
@@ -4115,6 +4279,7 @@ img:15
 img:19
 [label] The Stakes &middot; No Bystanders
 img:5
+@@darkchapter
 [poster] The mission is **not a tagline.**
 img:2
 [body] Anthropic is a Public Benefit Corporation. Its stated purpose &mdash; the responsible development and maintenance of advanced AI for the long-term benefit of humanity &mdash; is the legal structure. It is also the operating principle.
@@ -4146,6 +4311,7 @@ img:13
 img:14
 [label] Science &middot; Interpretability &middot; The Hard Problems
 img:33
+@@darkchapter
 [poster] We study what we **cannot yet explain.**
 img:24
 [body] Mechanistic interpretability is the attempt to understand *why* a model produces what it produces. Not just what it outputs &mdash; but the internal computation that led there. It is neuroscience for machines.
@@ -4176,6 +4342,7 @@ img:22
 img:108
 [label] How We Work &middot; Empirical. Direct. Low-Ego.
 img:109
+@@darkchapter
 [poster] **Simple** solutions. **Measurable** impact.
 img:110
 [body] We take an empirical approach to every problem. We care about the size of our impact &mdash; not the sophistication of our methods. We do not invent a spaceship when a bicycle will do.
@@ -4206,6 +4373,7 @@ img:23
 img:0
 [label] Claude &middot; The Model &middot; The Standard
 img:8
+@@darkchapter
 [poster] Not just **helpful.** Genuinely **good.**
 img:9
 [body] Claude is Anthropic&apos;s externally-deployed model and, in many ways, its proof of concept. The thesis is that safety and capability are not in tension. That a model can be *more* useful precisely because it is more honest, more careful, more thoughtful.
@@ -4232,6 +4400,7 @@ img:128
 img:11
 [label] 2025 &middot; This Is the Year That Counts
 img:16
+@@darkchapter
 [poster] The window is **open.** It will not stay open.
 img:119
 [body] There is a version of the future where AI development goes well. Where the benefits are broadly distributed. Where the risks are understood, measured, and managed. Where the models that reach hundreds of millions of people have been built by people who actually cared about those people.
@@ -4257,6 +4426,7 @@ img:17
 img:77
 [label] The Work &middot; What Gets Built Here
 img:83
+@@darkchapter
 [poster] Every argument deserves a **stage.**
 img:78
 [body] Anthropic communicates. It publishes research. It briefs governments. It presents at conferences. It runs all-hands meetings for eight hundred people. It makes the case for safety to an industry that does not always want to hear it.
@@ -4279,6 +4449,7 @@ img:18
 img:89
 [label] Zack Gort &middot; Designer &middot; Builder &middot; Open
 img:84
+@@darkchapter
 [poster] I make **difficult things** feel inevitable.
 img:85
 [body] I am a Senior UX and Presentation Designer with twenty years of experience across agency, startup, enterprise, and independent work. I have designed for companies you know and for companies that became companies you know.
@@ -4305,6 +4476,7 @@ img:25
 img:103
 [label] Selected Work &middot; What I Have Built
 img:104
+@@darkchapter
 [poster] Twenty years. **One** through-line.
 img:7
 [body] The through-line is this: I believe that how something is communicated is part of what it *is.* A research finding buried in a dense PDF is less true, in practical terms, than the same finding rendered accessibly. A strategy that nobody understands is not a strategy &mdash; it is a document.
@@ -4334,6 +4506,7 @@ img:105
 img:106
 [label] The Proposal &middot; Let&apos;s Build Something
 img:0
+@@darkchapter
 [poster] What if your **ideas** moved like this?
 img:107
 [body] Every all-hands. Every board presentation. Every research paper walkthrough. Every safety report. Every product announcement. Every onboarding deck for a new hire who needs to understand *why this place exists.*
@@ -5121,7 +5294,7 @@ renderNarrative();
       applyDragPos(startLeft + (e.clientX - startX), startBottom - (e.clientY - startY));
     });
     document.addEventListener('mouseup', function() {
-      if (!isDraging) return;
+      if (!isDragging) return;
       isDragging = false;
       handle.style.cursor = 'grab';
       bar.style.transition = 'transform 0.35s cubic-bezier(0.25,1,0.5,1), opacity 0.35s ease';
@@ -5230,6 +5403,259 @@ renderNarrative();
     });
     composeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// @@DARK MOMENT + @@ASK INTERSTITIAL SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Inject DOM elements
+(function injectDarkDOM() {
+  var veil = document.createElement('div');
+  veil.id = 'dark-veil';
+  document.body.appendChild(veil);
+
+  // Spotlight overlay — fixed layer above veil
+  var spotlight = document.createElement('div');
+  spotlight.id = 'dark-spotlight';
+  spotlight.innerHTML = '<div class="ds-inner" id="ds-inner"></div>';
+  document.body.appendChild(spotlight);
+
+  var hint = document.createElement('div');
+  hint.id = 'dark-escape-hint';
+  hint.textContent = 'scroll or press any key to continue';
+  document.body.appendChild(hint);
+
+  var ask = document.createElement('div');
+  ask.id = 'ask-interstitial';
+  ask.innerHTML = `
+    <div class="ask-question" id="ask-question-text"></div>
+    <div class="ask-pills-row" id="ask-pills-row"></div>
+    <div class="ask-tally" id="ask-tally"></div>
+    <div class="ask-submit-row">
+      <button id="ask-submit-btn">Submit →</button>
+      <span id="ask-submitted-msg">Response recorded ✦</span>
+    </div>
+  `;
+  document.body.appendChild(ask);
+})();
+
+// ── Dark moment state ──────────────────────────────────────────────────────
+var darkMomentActive = false;
+var darkAskActive    = false;
+var darkSpotlightEl  = null; // the navigable sentence being spotlighted
+
+function enterDarkMoment(posterEl) {
+  darkMomentActive = true;
+  darkSpotlightEl = posterEl;
+  // Clone the poster's rendered HTML into the fixed spotlight overlay
+  var inner = document.getElementById('ds-inner');
+  if (inner && posterEl) {
+    // Copy innerHTML but strip the type badge span
+    var clone = posterEl.cloneNode(true);
+    var badge = clone.querySelector('.sentence-type-badge');
+    if (badge) badge.remove();
+    inner.innerHTML = clone.innerHTML;
+  }
+  document.body.classList.add('dark-moment');
+}
+
+function exitDarkMoment() {
+  if (!darkMomentActive) return;
+  darkMomentActive = false;
+  darkSpotlightEl = null;
+  document.body.classList.remove('dark-moment');
+}
+
+function enterDarkAsk(config) {
+  darkAskActive = true;
+  darkMomentActive = true;
+  document.body.classList.add('dark-moment', 'dark-ask');
+
+  // Populate question
+  var qEl = document.getElementById('ask-question-text');
+  qEl.innerHTML = config.question || 'What resonates?';
+
+  // Build pills
+  var pillsRow = document.getElementById('ask-pills-row');
+  pillsRow.innerHTML = '';
+  var tallyEl = document.getElementById('ask-tally');
+  tallyEl.innerHTML = '';
+  var selectedPill = null;
+  var submitBtn = document.getElementById('ask-submit-btn');
+  var submittedMsg = document.getElementById('ask-submitted-msg');
+  submitBtn.classList.remove('ready');
+  submittedMsg.classList.remove('show');
+
+  // Build tally items (one per option)
+  var tallyItems = {};
+  (config.options || []).forEach(function(opt) {
+    var pill = document.createElement('button');
+    pill.className = 'ask-pill';
+    pill.textContent = opt;
+    pill.addEventListener('click', function() {
+      document.querySelectorAll('.ask-pill').forEach(function(p) { p.classList.remove('selected'); });
+      pill.classList.add('selected');
+      selectedPill = opt;
+      submitBtn.classList.add('ready');
+    });
+    pillsRow.appendChild(pill);
+
+    // Tally item
+    var item = document.createElement('div');
+    item.className = 'ask-tally-item';
+    item.innerHTML = `
+      <div class="ask-tally-bar-wrap"><div class="ask-tally-bar-fill" id="tally-bar-${opt.replace(/\W/g,'_')}"></div></div>
+      <div class="ask-tally-count" id="tally-count-${opt.replace(/\W/g,'_')}">0</div>
+      <div class="ask-tally-label">${opt}</div>
+    `;
+    tallyEl.appendChild(item);
+    tallyItems[opt] = item;
+  });
+
+  // Submit handler
+  submitBtn.onclick = function() {
+    if (!selectedPill) return;
+    submitBtn.classList.remove('ready');
+    submittedMsg.classList.add('show');
+
+    // Write to shared storage
+    var key = 'ask:' + (config.id || 'default') + ':' + selectedPill.replace(/\W/g,'_');
+    try {
+      window.storage.get(key, true).then(function(res) {
+        var count = res ? (parseInt(res.value) || 0) : 0;
+        window.storage.set(key, String(count + 1), true);
+      }).catch(function() {
+        window.storage.set(key, '1', true);
+      });
+    } catch(e) {}
+  };
+
+  // Poll tally every 2s
+  function pollTally() {
+    if (!darkAskActive) return;
+    var opts = config.options || [];
+    var counts = {};
+    var total = 0;
+    var promises = opts.map(function(opt) {
+      var key = 'ask:' + (config.id || 'default') + ':' + opt.replace(/\W/g,'_');
+      return (window.storage ? window.storage.get(key, true).catch(function(){ return null; }) : Promise.resolve(null))
+        .then(function(res) {
+          counts[opt] = res ? (parseInt(res.value) || 0) : 0;
+          total += counts[opt];
+        });
+    });
+    Promise.all(promises).then(function() {
+      opts.forEach(function(opt) {
+        var slug = opt.replace(/\W/g,'_');
+        var bar = document.getElementById('tally-bar-' + slug);
+        var cnt = document.getElementById('tally-count-' + slug);
+        if (bar) bar.style.width = total > 0 ? Math.round((counts[opt]/total)*100) + '%' : '0%';
+        if (cnt) cnt.textContent = counts[opt] || 0;
+      });
+      setTimeout(pollTally, 2000);
+    });
+  }
+  pollTally();
+
+  // Auto-open interest panel
+  setTimeout(function() {
+    if (typeof openPanel === 'function') openPanel();
+    else if (typeof toggleInterestPanel === 'function') toggleInterestPanel();
+  }, 600);
+}
+
+function exitDarkAsk() {
+  if (!darkAskActive) return;
+  darkAskActive = false;
+  darkMomentActive = false;
+  document.body.classList.remove('dark-moment', 'dark-ask');
+}
+
+// ── Hook into goTo ─────────────────────────────────────────────────────────
+var _goToOriginal = goTo;
+goTo = function(n, opts) {
+  // If currently in a dark/ask moment, exit it before navigating
+  if (darkAskActive)    exitDarkAsk();
+  else if (darkMomentActive) exitDarkMoment();
+
+  _goToOriginal(n, opts);
+
+  var el = navigable[n];
+  if (!el) return;
+
+  // @@darkchapter — spotlight this poster sentence
+  if (el.dataset.darkChapter === 'true') {
+    setTimeout(function() { enterDarkMoment(el); }, 60);
+    return;
+  }
+
+  // @@dark — spotlight this sentence (non-poster)
+  if (el.dataset.dark === 'true') {
+    setTimeout(function() { enterDarkMoment(el); }, 60);
+    return;
+  }
+
+  // @@ask sentence → ask interstitial
+  if (el.dataset.ask) {
+    try {
+      var config = JSON.parse(el.dataset.ask);
+      setTimeout(function() { enterDarkAsk(config); }, 60);
+    } catch(e) {}
+  }
+};
+
+// Escape / any key / scroll exits dark moment
+document.addEventListener('keydown', function(e) {
+  if (darkAskActive && e.key === 'Escape')    { exitDarkAsk();    return; }
+  if (darkMomentActive && e.key === 'Escape') { exitDarkMoment(); return; }
+  if (darkMomentActive && !darkAskActive && (e.key === 'ArrowDown' || e.key === ' ')) {
+    e.preventDefault(); exitDarkMoment(); goTo(current + 1);
+  }
+  if (darkMomentActive && !darkAskActive && (e.key === 'ArrowUp')) {
+    e.preventDefault(); exitDarkMoment(); goTo(current - 1);
+  }
+});
+
+// Veil click exits
+document.getElementById('dark-veil').addEventListener('click', function() {
+  if (darkAskActive) return; // don't dismiss ask on veil click
+  if (darkMomentActive) { exitDarkMoment(); goTo(current + 1); }
+});
+
+// ── @@dark / @@darkchapter / @@ask stamper ─────────────────────────────────
+// Runs after rewireSentenceEngine has populated the DOM.
+// Walks the narrative source in parse order, matches each [sentence] or ###: line
+// to its corresponding DOM element, and stamps data-dark / data-darkChapter / data-ask.
+(function initDarkStamper() {
+  var src = (typeof narrative !== 'undefined') ? narrative : '';
+  var lines = src.split('\n');
+
+  // Build stamp queue: one entry per [sentence] or ###: line, in order
+  var stampQueue = [];
+  var pD = false, pDC = false, pA = null;
+  lines.forEach(function(raw) {
+    var line = raw.trim();
+    if (line === '@@dark')          { pD  = true; return; }
+    if (line === '@@darkchapter')   { pDC = true; return; }
+    if (line.startsWith('@@ask:'))  { pA  = line.slice(6); return; }
+    if (line.match(/^\[([a-z-]+)\]/) || line.startsWith('###:')) {
+      stampQueue.push({ dark: pD, darkCh: pDC, ask: pA });
+      pD = false; pDC = false; pA = null;
+    }
+  });
+
+  // Walk DOM in order — ch-headers and [data-idx] elements appear in narrative order
+  var domEls = Array.from(document.querySelectorAll('#narrative-root .ch-header, #narrative-root [data-idx]'));
+  var si = 0;
+  domEls.forEach(function(el) {
+    if (si >= stampQueue.length) return;
+    var stamp = stampQueue[si++];
+    if (!stamp) return;
+    if (stamp.dark)   el.dataset.dark          = 'true';
+    if (stamp.darkCh) el.dataset.darkChapter   = 'true';
+    if (stamp.ask)    el.dataset.ask           = stamp.ask;
+  });
 })();
 
 </script>
