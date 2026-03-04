@@ -978,6 +978,82 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 }
 #gridCloseBtn:hover { border-color: rgba(255,255,255,.6); color: #fff; }
 
+/* ── SITES GRID OVERLAY ──────────────────────────────────────────────────── */
+#sites-grid-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9850;
+  flex-direction: column;
+  background: var(--bg);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+#sites-grid-overlay.open   { display: flex; }
+#sites-grid-overlay.visible { opacity: 1; }
+
+#sites-grid-hud {
+  flex-shrink: 0; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; border-bottom: 1px solid var(--border);
+}
+#sites-grid-hud-label {
+  font-family: var(--ui); font-size: 9px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3);
+}
+#sites-grid-close {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--ink-3); font-family: var(--ui); font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 3px; cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+#sites-grid-close:hover { border-color: var(--accent); color: var(--accent); }
+
+#sites-grid-tiles {
+  flex: 1; overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px; padding: 20px;
+}
+
+.grid-tile {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden; cursor: pointer;
+  transition: border-color .2s, transform .2s;
+  background: #000;
+}
+.grid-tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.grid-tile-iframe-wrap {
+  position: relative; width: 100%; padding-top: 75%;
+  overflow: hidden; background: #000;
+}
+.grid-tile-iframe-wrap iframe {
+  position: absolute; top: 0; left: 0;
+  width: 1280px; height: 960px;
+  border: none; pointer-events: none;
+}
+
+.grid-tile-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 14px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.grid-tile-name {
+  font-family: var(--ui); font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2);
+}
+.grid-tile-visit {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: .10em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; transition: opacity .15s;
+}
+.grid-tile:hover .grid-tile-visit { opacity: 1; }
+
+@media (max-width: 760px) {
+  #sites-grid-tiles {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 12px;
+  }
+}
+
 /* mobile */
 @media (max-width: 760px) {
   #shell { 
@@ -1082,6 +1158,16 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
   }
   #detail-ghost.visible { opacity: 1; }
   .dg-inner { min-width: unset; max-width: none; width: 100%; }
+  .dg-row { gap: 12px; }
+  .dg-row-key { flex-shrink: 0; max-width: 40%; }
+  .dg-row-val {
+    word-break: break-word; overflow-wrap: break-word;
+    min-width: 0; font-size: 15px;
+  }
+
+  /* Hide ghost overlays when compose mode is active — they'd collide */
+  body.compose-mode #detail-ghost { opacity: 0 !important; pointer-events: none !important; }
+  body.compose-mode #spec-cursor-ghost { opacity: 0 !important; pointer-events: none !important; }
 }
 @media (min-width: 761px) {
   #panel-overlay-backdrop { display: none; }
@@ -2636,6 +2722,10 @@ body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
       <span class="nw-cell-value">&#9638;</span><span class="nw-action-label">Grid</span>
     </button>
 
+    <button class="nw-action-btn" id="nw-sites-btn" onclick="openSitesGrid()" title="Live sites">
+      <span class="nw-cell-value">&#9633;</span><span class="nw-action-label">Sites</span>
+    </button>
+
     <button class="nw-interest-btn" id="nw-interest-btn" title="I'm interested" onclick="toggleInterestPanel()">
       <span class="nw-cell-value">&#9671;</span><span class="nw-action-label">Interest</span>
     </button>
@@ -2787,6 +2877,14 @@ body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
     <span id="gridHudLabel">Image Gallery &middot; Click any image to jump &middot; Drag to pan &middot; Scroll to zoom</span>
     <button id="gridCloseBtn">&#x2715; Close</button>
   </div>
+</div>
+
+<div id="sites-grid-overlay" aria-hidden="true">
+  <div id="sites-grid-hud">
+    <span id="sites-grid-hud-label">Live Sites &middot; Click to open</span>
+    <button id="sites-grid-close" onclick="closeSitesGrid()">&#x2715; Close</button>
+  </div>
+  <div id="sites-grid-tiles"></div>
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -5705,6 +5803,98 @@ document.getElementById('dark-veil').addEventListener('click', function() {
     if (stamp.ask)    el.dataset.ask           = stamp.ask;
   });
 })();
+
+// ── SITES GRID ────────────────────────────────────────────────────────────
+var GRID_SITES = [
+  { url: 'https://wolfie.love',         label: 'wolfie.love',     tag: 'Platform'  },
+  { url: 'https://intoview.pro',        label: 'intoview.pro',    tag: 'Platform'  },
+  { url: 'https://emdash.click',        label: 'emdash.click',    tag: 'Tool'      },
+  { url: 'https://wolfie.love',         label: 'wolfie.love',     tag: 'Life.html' },
+  { url: 'https://wolfie.love/vitae',   label: 'vitae.html',      tag: 'Résumé'    },
+  { url: 'https://wolfie.love/life',    label: 'life.html',       tag: 'Reference' },
+];
+var sitesGridOpen  = false;
+var sitesGridBuilt = false;
+
+function scaleTile(tile) {
+  var frame = tile.querySelector('iframe');
+  if (!frame) return;
+  var s = Math.max(tile.offsetWidth / 1280, tile.offsetHeight / 960);
+  frame.style.transform = 'scale(' + s + ')';
+  frame.style.transformOrigin = 'top left';
+}
+
+function buildSitesGrid() {
+  if (sitesGridBuilt) return;
+  sitesGridBuilt = true;
+  var ct = document.getElementById('sites-grid-tiles');
+  if (!ct || ct.children.length > 0) return;
+  var ro = window.ResizeObserver ? new ResizeObserver(function(entries) {
+    entries.forEach(function(e) {
+      var t = e.target.closest ? e.target.closest('.grid-tile') : null;
+      if (t) scaleTile(t);
+    });
+  }) : null;
+  GRID_SITES.forEach(function(site) {
+    var tile = document.createElement('div');
+    tile.className = 'grid-tile';
+    var wrap = document.createElement('div');
+    wrap.className = 'grid-tile-iframe-wrap';
+    var frame = document.createElement('iframe');
+    frame.src = site.url;
+    frame.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+    frame.setAttribute('loading', 'lazy');
+    frame.setAttribute('scrolling', 'no');
+    frame.tabIndex = -1;
+    frame.style.opacity = '0';
+    frame.onload = function() { this.style.opacity = '1'; this.style.transition = 'opacity 0.3s ease'; };
+    wrap.appendChild(frame);
+    tile.appendChild(wrap);
+    var bar = document.createElement('div');
+    bar.className = 'grid-tile-bar';
+    bar.innerHTML =
+      '<span class="grid-tile-name">' + site.label +
+      ' <span style="opacity:.35">&middot;</span> ' + site.tag + '</span>' +
+      '<span class="grid-tile-visit">visit &rarr;</span>';
+    tile.appendChild(bar);
+    tile.addEventListener('click', function() { window.open(site.url, '_blank'); });
+    if (ro) ro.observe(tile);
+    ct.appendChild(tile);
+  });
+}
+
+function openSitesGrid() {
+  var ov = document.getElementById('sites-grid-overlay');
+  if (sitesGridOpen) return;
+  ov.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  buildSitesGrid();
+  requestAnimationFrame(function() {
+    ov.classList.add('open');
+    requestAnimationFrame(function() {
+      ov.classList.add('visible');
+      sitesGridOpen = true;
+      setTimeout(function() {
+        document.querySelectorAll('.grid-tile').forEach(scaleTile);
+      }, 150);
+    });
+  });
+}
+
+function closeSitesGrid() {
+  var ov = document.getElementById('sites-grid-overlay');
+  ov.classList.remove('visible');
+  sitesGridOpen = false;
+  setTimeout(function() {
+    ov.classList.remove('open');
+    ov.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (sitesGridOpen && e.key === 'Escape') { e.preventDefault(); closeSitesGrid(); }
+});
 
 </script>
 </body>
