@@ -10,695 +10,1116 @@
 <style>
 
 :root {
-  --bg:#f4f1ea; --bg-2:#ede9e0; --ink:#1a1714; --ink-2:#6a6458; --ink-3:#b0a898;
-  --ink-4:#d8d0c4; --accent:#c8902a; --accent-l:rgba(200,144,42,0.10);
-  --accent-ll:rgba(200,144,42,0.05); --aside-bg:rgba(26,23,20,0.04);
-  --aside-ink:#5a5448; --border:rgba(26,23,20,0.08); --border-2:rgba(26,23,20,0.14);
-  --ui:'Space Mono',monospace; --disp:'Barlow Condensed',sans-serif; --col-w:640px;
+  --bg:        #f4f1ea;
+  --bg-2:      #ede9e0;
+  --bg-3:      #e6e1d6;
+  --ink:       #1a1714;
+  --ink-2:     #6a6458;
+  --ink-3:     #b0a898;
+  --ink-4:     #d8d0c4;
+  --accent:    #c8902a;
+  --accent-l:  rgba(200,144,42,0.12);
+  --accent-ll: rgba(200,144,42,0.05);
+  --aside-bg:  rgba(26,23,20,0.04);
+  --aside-ink: #5a5448;
+  --border:    rgba(26,23,20,0.08);
+  --border-2:  rgba(26,23,20,0.14);
+  --ui:        'Space Mono', monospace;
+  --disp:      'Barlow Condensed', sans-serif;
+  --col-w:     620px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{color-scheme:light}
-body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:12px;
-  line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;cursor:default}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.028;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px}
 
-/* LAYOUT */
-#shell{display:grid;grid-template-columns:1fr var(--col-w) 220px 1fr;
-  grid-template-rows:52px 1fr;min-height:100vh}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: light; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 12px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-/* HEADER */
-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg);
-  position:sticky;top:0;z-index:200}
-.h-mark{font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.04em;
-  text-transform:uppercase;color:var(--ink)}
-.h-mark span{color:var(--accent)}
-.h-sub{font-family:var(--ui);font-size:7px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);position:absolute;left:50%;transform:translateX(-50%)}
-.h-actions{display:flex;gap:8px;align-items:center}
-.h-btn{font-family:var(--ui);font-size:7px;letter-spacing:.12em;text-transform:uppercase;
-  background:none;border:1px solid var(--border-2);color:var(--ink-2);padding:5px 11px;
-  transition:all .15s;cursor:pointer}
-.h-btn:hover{border-color:var(--accent);color:var(--accent)}
-.h-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9000;
+  opacity: 0.025;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px;
+}
 
-/* STREAM */
-#stream-col{grid-column:2;grid-row:2;display:flex;flex-direction:column;
-  min-height:calc(100vh - 52px);border-right:1px solid var(--border);border-left:1px solid var(--border)}
-#stream-scroll{flex:1;overflow-y:auto;padding:48px 48px 24px}
-#stream-scroll::-webkit-scrollbar{width:4px}
-#stream-scroll::-webkit-scrollbar-thumb{background:var(--ink-4);border-radius:2px}
+/* ── LAYOUT ─────────────────────────────────────────────────────────────── */
+#shell {
+  display: grid;
+  grid-template-columns: 1fr var(--col-w) 210px 1fr;
+  grid-template-rows: 52px 1fr;
+  min-height: 100vh;
+}
 
-.exchange{margin-bottom:52px;opacity:0;animation:exchIn .4s ease forwards}
-@keyframes exchIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ── HEADER ─────────────────────────────────────────────────────────────── */
+header {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 500;
+}
+.h-mark {
+  font-family: var(--disp); font-weight: 900; font-size: 17px;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
+}
+.h-mark span { color: var(--accent); }
+.h-sub {
+  font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-3);
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.h-actions { display: flex; gap: 8px; align-items: center; }
+.h-btn {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
+  text-transform: uppercase; background: none;
+  border: 1px solid var(--border-2); color: var(--ink-2);
+  padding: 5px 11px; cursor: pointer; transition: all .15s;
+}
+.h-btn:hover  { border-color: var(--accent); color: var(--accent); }
+.h-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
 
-.who{font-family:var(--ui);font-size:7px;letter-spacing:.22em;text-transform:uppercase;
-  margin-bottom:10px;display:flex;align-items:center;gap:10px}
-.who-name{color:var(--ink-3)}
-.who-mode{color:var(--accent);font-size:7px;padding:1px 6px;border:1px solid var(--accent-l);
-  border-radius:10px;background:var(--accent-ll);letter-spacing:.14em}
-.who::after{content:'';flex:1;height:1px;background:var(--border)}
+/* ── STREAM COLUMN ──────────────────────────────────────────────────────── */
+#stream-col {
+  grid-column: 2; grid-row: 2;
+  display: flex; flex-direction: column;
+  min-height: calc(100vh - 52px);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+#stream-scroll {
+  flex: 1; overflow-y: auto;
+  padding: 48px 48px 32px;
+  scroll-behavior: smooth;
+}
+#stream-scroll::-webkit-scrollbar { width: 4px; }
+#stream-scroll::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 2px; }
 
-/* AI response types */
-.r-body{font-family:var(--disp);font-weight:300;font-size:19px;line-height:1.5;
-  color:var(--ink-2);max-width:520px;margin-bottom:6px}
-.r-poster{font-family:var(--disp);font-weight:900;font-size:clamp(28px,4vw,48px);
-  line-height:.94;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
-.r-pull{font-family:var(--disp);font-style:italic;font-weight:300;font-size:20px;
-  line-height:1.3;color:var(--ink-2);max-width:460px;padding:8px 0 8px 18px;
-  border-left:1px solid var(--ink-3);margin:6px 0}
-.r-aside{font-family:var(--ui);font-size:11px;line-height:1.55;color:var(--aside-ink);
-  background:var(--aside-bg);border-left:2px solid var(--ink-4);padding:6px 12px;
-  border-radius:0 3px 3px 0;margin:4px 0;font-style:italic}
-.r-spec{font-family:var(--ui);font-size:10px;display:flex;align-items:baseline;gap:12px;
-  padding:4px 0;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-.r-spec:last-of-type{border-bottom:none}
-.r-spec::after{content:'';position:absolute;bottom:0;left:0;height:1px;background:var(--accent);
-  width:0;animation:specScan .7s ease forwards .2s}
-@keyframes specScan{to{width:100%}}
-.r-list{margin:4px 0 6px;padding-left:0;list-style:none}
-.r-list li{font-family:var(--disp);font-weight:300;font-size:18px;line-height:1.4;
-  color:var(--ink-2);padding:3px 0 3px 18px;position:relative}
-.r-list li::before{content:'◇';position:absolute;left:0;color:var(--accent);font-size:8px;top:6px}
-.spec-k{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
-  min-width:80px;flex-shrink:0}
-.spec-v{color:var(--ink)}
+/* ── EXCHANGE BLOCK ─────────────────────────────────────────────────────── */
+.exchange {
+  margin-bottom: 56px;
+  opacity: 0; animation: exchIn 0.35s ease forwards;
+}
+@keyframes exchIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-/* Stream node rendering (user side) */
-.sn-title{font-family:var(--disp);font-weight:900;font-size:clamp(24px,4vw,44px);
-  line-height:.94;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);
-  border-left:3px solid var(--accent);padding-left:16px;margin-bottom:4px}
-.sn-thought{font-family:var(--disp);font-weight:400;font-size:20px;color:var(--ink);
-  line-height:1.35;margin-bottom:4px}
-.sn-pull{font-family:var(--disp);font-style:italic;font-weight:300;font-size:20px;
-  line-height:1.25;color:var(--ink-2);border-left:1px solid var(--ink-3);
-  padding:6px 0 6px 16px;margin-bottom:4px}
-.sn-aside{font-family:var(--ui);font-size:11px;line-height:1.55;color:var(--aside-ink);
-  background:var(--aside-bg);border-left:2px solid var(--ink-4);padding:6px 12px;
-  margin-bottom:4px;border-radius:0 3px 3px 0;font-style:italic}
-.sn-spec{font-family:var(--ui);font-size:10px;display:flex;align-items:baseline;gap:12px;
-  padding:4px 0;border-bottom:1px solid var(--border)}
-.sn-break{padding:6px 0;margin:4px 0;border-top:1px solid var(--border);font-size:7px;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.who {
+  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.who-name { color: var(--ink-3); }
+.who-tag {
+  color: var(--accent); font-size: 7px; letter-spacing: 0.14em;
+  padding: 1px 6px; border: 1px solid var(--accent-l);
+  border-radius: 10px; background: var(--accent-ll);
+}
+.who::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* TYPING */
-.typing{display:flex;align-items:center;gap:4px;padding:8px 0}
-.typing-dot{width:4px;height:4px;border-radius:50%;background:var(--ink-3);animation:tdot 1.1s ease-in-out infinite}
-.typing-dot:nth-child(2){animation-delay:.18s}
-.typing-dot:nth-child(3){animation-delay:.36s}
-@keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1);opacity:1}}
+/* ── STREAM — USER NODE RENDERS ─────────────────────────────────────────── */
+.sn-title {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase;
+  color: var(--ink);
+  border-left: 3px solid var(--accent); padding-left: 14px;
+  margin-bottom: 6px;
+}
+.sn-thought {
+  font-family: var(--disp); font-weight: 400; font-size: 20px;
+  color: var(--ink); line-height: 1.35; margin-bottom: 4px;
+}
+.sn-pull {
+  font-family: var(--disp); font-style: italic; font-weight: 300;
+  font-size: 19px; line-height: 1.3; color: var(--ink-2);
+  border-left: 1px solid var(--ink-3); padding: 6px 0 6px 14px;
+  margin-bottom: 4px;
+}
+.sn-aside {
+  font-family: var(--ui); font-size: 11px; line-height: 1.55;
+  color: var(--aside-ink); background: var(--aside-bg);
+  border-left: 2px solid var(--ink-4); padding: 5px 12px;
+  border-radius: 0 3px 3px 0; margin-bottom: 4px; font-style: italic;
+}
+.sn-spec {
+  font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em;
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 3px 0; border-bottom: 1px solid var(--border);
+}
+.sn-spec:last-child { border-bottom: none; }
+.sn-break {
+  font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); padding: 6px 0; margin: 2px 0;
+  border-top: 1px solid var(--border);
+}
+.spec-k {
+  font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); min-width: 80px; flex-shrink: 0;
+}
+.spec-v { color: var(--ink); }
 
-/* ══ CANVAS ════════════════════════════════════════════════════════════════ */
-#compose-area{border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;
-  display:flex;flex-direction:column;max-height:52vh;min-height:190px;position:relative}
+/* ── STREAM — AI RESPONSE RENDERS ──────────────────────────────────────── */
+.r-body {
+  font-family: var(--disp); font-weight: 300; font-size: 19px;
+  line-height: 1.5; color: var(--ink-2);
+  max-width: 500px; margin-bottom: 6px;
+}
+.r-poster {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(26px, 4vw, 46px);
+  line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 8px;
+}
+.r-pull {
+  font-family: var(--disp); font-style: italic; font-weight: 300;
+  font-size: 20px; line-height: 1.3; color: var(--ink-2);
+  max-width: 460px; padding: 8px 0 8px 16px;
+  border-left: 1px solid var(--ink-3); margin: 6px 0;
+}
+.r-aside {
+  font-family: var(--ui); font-size: 11px; line-height: 1.55;
+  color: var(--aside-ink); background: var(--aside-bg);
+  border-left: 2px solid var(--ink-4); padding: 6px 12px;
+  border-radius: 0 3px 3px 0; margin: 4px 0; font-style: italic;
+}
+.r-spec {
+  font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em;
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 4px 0; border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.r-spec:last-of-type { border-bottom: none; }
+.r-spec::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  height: 1px; background: var(--accent); width: 0;
+  animation: specScan 0.6s ease forwards 0.15s;
+}
+@keyframes specScan { to { width: 100%; } }
+.r-list { margin: 4px 0 8px; padding: 0; list-style: none; }
+.r-list li {
+  font-family: var(--disp); font-weight: 300; font-size: 18px;
+  line-height: 1.4; color: var(--ink-2);
+  padding: 3px 0 3px 18px; position: relative;
+}
+.r-list li::before {
+  content: '◇'; position: absolute; left: 0;
+  color: var(--accent); font-size: 8px; top: 6px;
+}
 
-#canvas-toolbar{display:flex;align-items:center;justify-content:space-between;
-  padding:9px 24px 7px;border-bottom:1px solid var(--border);flex-shrink:0;gap:10px}
-.ct-left{display:flex;align-items:center;gap:10px}
-.ct-label{font-family:var(--ui);font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3)}
-.ct-pill{font-family:var(--ui);font-size:7px;letter-spacing:.10em;color:var(--accent);
-  background:var(--accent-ll);border:1px solid var(--accent-l);padding:1px 7px;border-radius:10px}
-.ct-right{display:flex;align-items:center;gap:6px}
+/* ── TYPING INDICATOR ───────────────────────────────────────────────────── */
+.typing { display: flex; align-items: center; gap: 5px; padding: 10px 0; }
+.typing-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--ink-3); animation: tdot 1.1s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.18s; }
+.typing-dot:nth-child(3) { animation-delay: 0.36s; }
+@keyframes tdot {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
 
-#canvas-nodes{flex:1;overflow-y:auto;padding:10px 16px;display:flex;flex-direction:column;gap:5px;min-height:56px}
-#canvas-nodes::-webkit-scrollbar{width:3px}
-#canvas-nodes::-webkit-scrollbar-thumb{background:var(--ink-4);border-radius:2px}
+/* ── CANVAS AREA ────────────────────────────────────────────────────────── */
+#canvas-area {
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+  max-height: 54vh; min-height: 200px;
+}
 
-#canvas-empty{display:flex;align-items:center;justify-content:center;height:56px;pointer-events:none}
-.ce-text{font-family:var(--ui);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4)}
+/* toolbar */
+#canvas-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 20px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ct-left { display: flex; align-items: center; gap: 10px; }
+.ct-label {
+  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);
+}
+#node-count {
+  font-size: 7px; letter-spacing: 0.10em; color: var(--accent);
+  background: var(--accent-ll); border: 1px solid var(--accent-l);
+  padding: 1px 7px; border-radius: 10px;
+}
+.ct-right { display: flex; align-items: center; gap: 6px; }
 
-/* NODE */
-.canvas-node{display:flex;align-items:center;gap:8px;padding:7px 10px;
-  border:1px solid var(--border);background:var(--bg);border-radius:2px;
-  transition:all .12s;position:relative;user-select:none}
-.canvas-node:hover{border-color:var(--border-2);background:var(--bg-2)}
-.canvas-node.committed{opacity:.55}
-.canvas-node.committed:hover{opacity:.75}
-.canvas-node.drag-over{border-color:var(--accent)!important;border-style:dashed}
-.canvas-node.dragging{opacity:.3}
+/* nodes list */
+#canvas-nodes {
+  flex: 1; overflow-y: auto;
+  padding: 8px 12px; display: flex; flex-direction: column; gap: 4px;
+}
+#canvas-nodes::-webkit-scrollbar { width: 3px; }
+#canvas-nodes::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 2px; }
 
-.node-arrows{display:flex;flex-direction:column;gap:1px;flex-shrink:0}
-.node-arrow{background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:8px;
-  padding:0 2px;line-height:1.2;transition:color .1s;display:block}
-.node-arrow:hover{color:var(--accent)}
-.node-arrow:disabled{opacity:.2;pointer-events:none}
+/* empty hint */
+#canvas-hint {
+  display: flex; align-items: center; justify-content: center;
+  height: 52px; pointer-events: none;
+}
+.hint-text {
+  font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-4);
+}
 
-.node-handle{color:var(--ink-4);font-size:9px;cursor:grab;flex-shrink:0;letter-spacing:-2px;
-  line-height:1;padding:0 1px}
-.node-handle:active{cursor:grabbing}
+/* ── NODE BLOCK ─────────────────────────────────────────────────────────── */
+.node {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 2px;
+  transition: border-color 0.12s, background 0.12s, opacity 0.2s;
+  position: relative;
+  user-select: none;
+}
+.node:hover { border-color: var(--border-2); background: var(--bg-2); }
+.node.committed { opacity: 0.52; }
+.node.committed:hover { opacity: 0.72; }
+.node.drag-over { border-color: var(--accent) !important; border-style: dashed; }
+.node.dragging  { opacity: 0.25; }
 
-.node-badge{font-family:var(--ui);font-size:7px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent);background:var(--accent-ll);border:1px solid var(--accent-l);
-  padding:2px 7px;border-radius:10px;flex-shrink:0;min-width:54px;text-align:center}
+/* arrow controls */
+.node-arrows { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
+.arr {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-4); font-size: 7px; padding: 1px 3px;
+  line-height: 1; transition: color 0.1s; display: block;
+}
+.arr:hover { color: var(--accent); }
+.arr:disabled { opacity: 0.18; pointer-events: none; }
 
-.node-content{flex:1;min-width:0;display:flex;align-items:baseline;gap:0}
+/* drag handle */
+.node-grip {
+  color: var(--ink-4); font-size: 10px; cursor: grab;
+  flex-shrink: 0; letter-spacing: -2px; line-height: 1;
+}
+.node-grip:active { cursor: grabbing; }
 
-/* per-type inputs */
-.ni-title{font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:-.01em;
-  text-transform:uppercase;color:var(--ink);background:none;border:none;outline:none;
-  width:100%;caret-color:var(--accent);line-height:1.1}
-.ni-thought{font-family:var(--disp);font-weight:400;font-size:16px;color:var(--ink);
-  background:none;border:none;outline:none;width:100%;caret-color:var(--accent);line-height:1.3}
-.ni-pull{font-family:var(--disp);font-style:italic;font-weight:300;font-size:15px;
-  color:var(--ink-2);background:none;border:none;outline:none;width:100%;
-  border-left:2px solid var(--ink-4);padding-left:10px;caret-color:var(--accent);line-height:1.3}
-.ni-aside{font-family:var(--ui);font-size:11px;color:var(--aside-ink);background:none;
-  border:none;outline:none;width:100%;font-style:italic;caret-color:var(--accent);line-height:1.5}
-.ni-spec-key{font-family:var(--ui);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--ink-3);background:none;border:none;outline:none;width:72px;
-  flex-shrink:0;caret-color:var(--accent)}
-.ni-spec-sep{color:var(--ink-4);font-size:9px;padding:0 6px;flex-shrink:0;line-height:1}
-.ni-spec-val{font-family:var(--ui);font-size:10px;color:var(--ink);background:none;
-  border:none;outline:none;flex:1;caret-color:var(--accent)}
-.node-break-label{font-family:var(--ui);font-size:7px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--ink-3);display:flex;align-items:center;gap:8px;width:100%}
-.node-break-label::after{content:'';flex:1;height:1px;background:var(--border)}
+/* type badge */
+.node-badge {
+  font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-ll);
+  border: 1px solid var(--accent-l); padding: 2px 7px;
+  border-radius: 10px; flex-shrink: 0;
+  min-width: 56px; text-align: center;
+}
 
-.node-del{background:none;border:none;cursor:pointer;color:var(--ink-4);font-size:12px;
-  padding:0 3px;flex-shrink:0;transition:color .1s;line-height:1;margin-left:2px}
-.node-del:hover{color:var(--ink)}
+/* content area */
+.node-content { flex: 1; min-width: 0; }
 
-/* commit state badge on node */
-.node-commit-mark{position:absolute;right:36px;top:50%;transform:translateY(-50%);
-  font-family:var(--ui);font-size:6px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--accent);opacity:0;transition:opacity .3s}
-.canvas-node.committed .node-commit-mark{opacity:.6}
+/* "sent" mark */
+.node-sent {
+  font-size: 6px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); opacity: 0; transition: opacity 0.3s;
+  flex-shrink: 0;
+}
+.node.committed .node-sent { opacity: 0.5; }
 
-/* PREVIEW BAR */
-#preview-bar{border-top:1px solid var(--border);padding:8px 24px 10px;flex-shrink:0;
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-#preview-text{font-family:var(--ui);font-size:8px;letter-spacing:.03em;color:var(--ink-3);
-  line-height:1.5;flex:1;overflow:hidden;display:-webkit-box;
-  -webkit-line-clamp:2;-webkit-box-orient:vertical}
-.pv-br{color:var(--accent)}
-.commit-btn{font-family:var(--ui);font-size:7px;letter-spacing:.14em;text-transform:uppercase;
-  background:var(--ink);border:none;color:var(--bg);padding:8px 20px;font-weight:700;
-  cursor:pointer;transition:background .15s,opacity .15s;flex-shrink:0}
-.commit-btn:hover{background:var(--accent)}
-.commit-btn:disabled{opacity:.3;pointer-events:none}
+/* delete */
+.node-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--ink-4); font-size: 13px; padding: 0 4px;
+  flex-shrink: 0; line-height: 1; transition: color 0.1s;
+}
+.node-del:hover { color: var(--ink); }
 
-/* ══ NODE PALETTE RAIL ══════════════════════════════════════════════════ */
-#node-rail{grid-column:3;grid-row:2;padding:28px 20px 28px 24px;
-  border-left:1px solid var(--border);overflow-y:auto;
-  position:sticky;top:52px;height:calc(100vh - 52px);transition:opacity .2s,transform .2s}
-#node-rail.hidden{opacity:0;pointer-events:none;transform:translateX(8px)}
-#node-rail::-webkit-scrollbar{width:0}
+/* ── NODE INPUT STYLES (visual rendering per type) ──────────────────────── */
+.ni {
+  background: none; border: none; outline: none;
+  width: 100%; caret-color: var(--accent); font-family: inherit;
+}
+.ni-title {
+  font-family: var(--disp); font-weight: 900; font-size: 20px;
+  letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
+  line-height: 1.1;
+}
+.ni-thought {
+  font-family: var(--disp); font-weight: 400; font-size: 17px;
+  color: var(--ink); line-height: 1.3;
+}
+.ni-pull {
+  font-family: var(--disp); font-style: italic; font-weight: 300;
+  font-size: 16px; color: var(--ink-2); line-height: 1.3;
+  border-left: 2px solid var(--ink-4); padding-left: 10px;
+}
+.ni-aside {
+  font-family: var(--ui); font-size: 11px; color: var(--aside-ink);
+  line-height: 1.5; font-style: italic;
+}
+.ni-spec-row { display: flex; align-items: baseline; gap: 0; width: 100%; }
+.ni-spec-key {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  background: none; border: none; outline: none;
+  width: 76px; flex-shrink: 0; caret-color: var(--accent);
+}
+.ni-spec-sep { color: var(--ink-4); font-size: 9px; padding: 0 6px; flex-shrink: 0; }
+.ni-spec-val {
+  font-family: var(--ui); font-size: 10px; color: var(--ink);
+  background: none; border: none; outline: none;
+  flex: 1; caret-color: var(--accent);
+}
+.ni-break {
+  font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 8px; width: 100%;
+}
+.ni-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-.nr-head{font-family:var(--ui);font-size:7px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.nr-sec-title{font-family:var(--ui);font-size:7px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:8px;margin-top:16px}
-.nr-btn{width:100%;text-align:left;background:none;border:1px solid var(--border);cursor:pointer;
-  padding:9px 12px;margin-bottom:5px;transition:all .12s;border-radius:2px;display:block}
-.nr-btn:hover{border-color:var(--accent);background:var(--accent-ll)}
-.nr-btn:active{background:var(--accent-l)}
-.nr-type{font-family:var(--ui);font-size:8px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:3px;font-weight:700}
-.nr-preview{font-family:var(--disp);font-weight:300;font-size:13px;color:var(--ink-2);line-height:1.2}
-.nr-effect{font-family:var(--ui);font-size:7px;letter-spacing:.06em;color:var(--ink-3);margin-top:3px;font-style:italic}
-.nr-divider{height:1px;background:var(--border);margin:14px 0}
+/* ── PREVIEW + COMMIT BAR ───────────────────────────────────────────────── */
+#preview-bar {
+  border-top: 1px solid var(--border);
+  padding: 8px 20px 10px;
+  display: flex; align-items: flex-start; gap: 14px;
+  flex-shrink: 0;
+}
+#preview-text {
+  flex: 1; font-size: 8px; letter-spacing: 0.03em; color: var(--ink-3);
+  line-height: 1.6; overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+#preview-text .pb { color: var(--accent); }
+.commit-btn {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em;
+  text-transform: uppercase; font-weight: 700;
+  background: var(--ink); border: none; color: var(--bg);
+  padding: 8px 20px; cursor: pointer; flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+.commit-btn:hover    { background: var(--accent); }
+.commit-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+/* ── NODE PALETTE RAIL ──────────────────────────────────────────────────── */
+#node-rail {
+  grid-column: 3; grid-row: 2;
+  border-left: 1px solid var(--border);
+  padding: 28px 18px 28px 22px;
+  overflow-y: auto;
+  position: sticky; top: 52px;
+  height: calc(100vh - 52px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+#node-rail.hidden { opacity: 0; pointer-events: none; transform: translateX(8px); }
+#node-rail::-webkit-scrollbar { width: 0; }
+
+.rail-head {
+  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.rail-sec {
+  font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-3); margin: 16px 0 8px;
+}
+.rail-sec:first-of-type { margin-top: 0; }
+
+.pal-btn {
+  width: 100%; text-align: left; background: none;
+  border: 1px solid var(--border); cursor: pointer;
+  padding: 9px 11px; margin-bottom: 5px;
+  transition: border-color 0.12s, background 0.12s;
+  border-radius: 2px; display: block;
+}
+.pal-btn:hover  { border-color: var(--accent); background: var(--accent-ll); }
+.pal-btn:active { background: var(--accent-l); }
+.pal-type {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 3px;
+}
+.pal-preview {
+  font-family: var(--disp); font-weight: 300; font-size: 13px;
+  color: var(--ink-2); line-height: 1.2;
+}
+.pal-effect {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.06em;
+  color: var(--ink-3); margin-top: 3px; font-style: italic;
+}
+
+.rail-divider { height: 1px; background: var(--border); margin: 14px 0; }
 
 /* chapters */
-.ch-item{padding:8px 10px;border:1px solid var(--border);margin-bottom:5px;
-  cursor:pointer;transition:all .12s;border-radius:2px}
-.ch-item:hover{border-color:var(--border-2);background:var(--bg-2)}
-.ch-item.active{border-color:var(--accent);background:var(--accent-ll)}
-.ch-name{font-family:var(--ui);font-size:9px;letter-spacing:.10em;color:var(--ink-2);margin-bottom:2px}
-.ch-meta{font-family:var(--ui);font-size:7px;letter-spacing:.08em;color:var(--ink-3)}
-.ch-add{width:100%;background:none;border:1px dashed var(--border-2);color:var(--ink-3);
-  font-family:var(--ui);font-size:7px;letter-spacing:.14em;text-transform:uppercase;
-  padding:8px;cursor:pointer;transition:all .12s;border-radius:2px;margin-top:4px}
-.ch-add:hover{border-color:var(--accent);color:var(--accent)}
-
-/* empty state */
-#empty-state{padding:60px 0;display:flex;flex-direction:column;gap:6px}
-.es-title{font-family:var(--disp);font-weight:900;font-size:48px;line-height:.9;
-  letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
-.es-title span{color:var(--accent)}
-.es-body{font-family:var(--disp);font-weight:300;font-size:17px;color:var(--ink-2);
-  line-height:1.5;max-width:400px;margin-top:12px}
-
-#progress{position:fixed;bottom:0;left:0;height:2px;background:var(--accent);
-  z-index:300;width:0%;transition:width .3s ease}
-
-@media(max-width:900px){
-  #shell{grid-template-columns:1fr;grid-template-rows:52px 1fr}
-  #stream-col{grid-column:1;border:none}
-  #node-rail{display:none}
-  #stream-scroll{padding:32px 24px 16px}
+.ch-item {
+  padding: 8px 10px; border: 1px solid var(--border);
+  margin-bottom: 5px; cursor: pointer;
+  transition: all 0.12s; border-radius: 2px;
 }
+.ch-item:hover  { border-color: var(--border-2); background: var(--bg-2); }
+.ch-item.active { border-color: var(--accent); background: var(--accent-ll); }
+.ch-name { font-size: 9px; letter-spacing: 0.10em; color: var(--ink-2); margin-bottom: 2px; }
+.ch-meta { font-size: 7px; letter-spacing: 0.08em; color: var(--ink-3); }
+.ch-add {
+  width: 100%; background: none; border: 1px dashed var(--border-2);
+  color: var(--ink-3); font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 7px; cursor: pointer; transition: all 0.12s;
+  border-radius: 2px; margin-top: 4px;
+}
+.ch-add:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── EMPTY STATE ────────────────────────────────────────────────────────── */
+#empty-state {
+  padding: 64px 0 32px;
+}
+.es-title {
+  font-family: var(--disp); font-weight: 900; font-size: 48px;
+  line-height: 0.9; letter-spacing: -0.02em; text-transform: uppercase;
+  color: var(--ink); margin-bottom: 16px;
+}
+.es-title span { color: var(--accent); }
+.es-body {
+  font-family: var(--disp); font-weight: 300; font-size: 17px;
+  color: var(--ink-2); line-height: 1.5; max-width: 380px;
+}
+
+/* ── PROGRESS BAR ───────────────────────────────────────────────────────── */
+#progress {
+  position: fixed; bottom: 0; left: 0; height: 2px;
+  background: var(--accent); z-index: 600;
+  width: 0%; transition: width 0.4s ease;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px 1fr; }
+  #stream-col { grid-column: 1; border: none; }
+  #node-rail  { display: none; }
+  #stream-scroll { padding: 32px 24px 16px; }
+  #canvas-area { max-height: 50vh; }
+}
+
 </style>
 </head>
 <body>
 <div id="progress"></div>
+
 <div id="shell">
 
-<header>
-  <div class="h-mark">wolfie<span>.</span>dialogue</div>
-  <div class="h-sub">visual prompt editor · intent-first</div>
-  <div class="h-actions">
-    <button class="h-btn active" id="rail-btn" onclick="toggleRail()">[ ] Palette</button>
-    <button class="h-btn" onclick="clearAll()">↺ Clear</button>
-  </div>
-</header>
+  <header>
+    <div class="h-mark">wolfie<span>.</span>dialogue</div>
+    <div class="h-sub">visual prompt editor · intent-first</div>
+    <div class="h-actions">
+      <button class="h-btn active" id="rail-btn" onclick="toggleRail()">[ ] Palette</button>
+      <button class="h-btn" onclick="clearAll()">↺ Clear</button>
+    </div>
+  </header>
 
-<main id="stream-col">
-  <div id="stream-scroll">
-    <div id="narrative-root">
-      <div id="empty-state">
-        <div class="es-title">Build a<br>prompt<br><span>visually.</span></div>
-        <div class="es-body">Add typed nodes from the palette. Each block renders as what it is — a title looks like a title, a pull quote looks like a pull quote. Commit sends the whole structure as one prompt.</div>
+  <!-- ── STREAM ── -->
+  <main id="stream-col">
+
+    <div id="stream-scroll">
+      <div id="narrative-root">
+        <div id="empty-state">
+          <div class="es-title">Build a<br>prompt<br><span>visually.</span></div>
+          <div class="es-body">Add typed nodes from the palette. Each block renders as what it is — a title looks like a title, a pull looks like a pull. Commit sends the whole structure as one prompt.</div>
+        </div>
+      </div>
+      <div id="typing-wrap" style="display:none">
+        <div class="who"><span class="who-name">wolfie</span></div>
+        <div class="typing">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
       </div>
     </div>
-    <div id="typing-wrap" style="display:none">
-      <div class="who"><span class="who-name">wolfie</span></div>
-      <div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
-    </div>
-  </div>
 
-  <!-- Canvas -->
-  <div id="compose-area">
-    <div id="canvas-toolbar">
-      <div class="ct-left">
-        <span class="ct-label">Canvas</span>
-        <span class="ct-pill" id="node-count-pill">0 nodes</span>
+    <!-- ── CANVAS ── -->
+    <div id="canvas-area">
+
+      <div id="canvas-toolbar">
+        <div class="ct-left">
+          <span class="ct-label">Canvas</span>
+          <span id="node-count">0 nodes</span>
+        </div>
+        <div class="ct-right">
+          <button class="h-btn" onclick="clearCanvas()">Clear canvas</button>
+        </div>
       </div>
-      <div class="ct-right">
-        <button class="h-btn" onclick="clearCanvas()">Clear</button>
+
+      <div id="canvas-nodes">
+        <div id="canvas-hint"><span class="hint-text">← add nodes from the palette to begin</span></div>
       </div>
+
+      <div id="preview-bar">
+        <div id="preview-text"><span style="color:var(--ink-4);font-style:italic">Prompt preview will appear as you build…</span></div>
+        <button class="commit-btn" id="commit-btn" onclick="commit()" disabled>Commit ↗</button>
+      </div>
+
     </div>
-    <div id="canvas-nodes">
-      <div id="canvas-empty"><span class="ce-text">← Add nodes from the palette</span></div>
+  </main>
+
+  <!-- ── NODE PALETTE RAIL ── -->
+  <aside id="node-rail">
+
+    <div class="rail-head">Node Palette</div>
+
+    <div class="rail-sec" style="margin-top:0">Add Node</div>
+
+    <button class="pal-btn" onclick="addNode('title')">
+      <div class="pal-type">Title</div>
+      <div class="pal-preview">THE BIG HEADLINE</div>
+      <div class="pal-effect">Sets the frame. Bold declaration.</div>
+    </button>
+
+    <button class="pal-btn" onclick="addNode('thought')">
+      <div class="pal-type">Thought</div>
+      <div class="pal-preview">A plain sentence</div>
+      <div class="pal-effect">Think out loud. Main body.</div>
+    </button>
+
+    <button class="pal-btn" onclick="addNode('pull')">
+      <div class="pal-type">[pull]</div>
+      <div class="pal-preview"><em>The one true question</em></div>
+      <div class="pal-effect">Distill to the essential thing.</div>
+    </button>
+
+    <button class="pal-btn" onclick="addNode('aside')">
+      <div class="pal-type">[aside]</div>
+      <div class="pal-preview">quiet parenthetical</div>
+      <div class="pal-effect">Footnote. Scrutinized detail.</div>
+    </button>
+
+    <button class="pal-btn" onclick="addNode('spec')">
+      <div class="pal-type">[spec]</div>
+      <div class="pal-preview">key :: value</div>
+      <div class="pal-effect">Structured constraint or context.</div>
+    </button>
+
+    <button class="pal-btn" onclick="addNode('break')">
+      <div class="pal-type">Break —</div>
+      <div class="pal-preview">— separator</div>
+      <div class="pal-effect">New thread within the prompt.</div>
+    </button>
+
+    <div class="rail-divider"></div>
+
+    <div class="rail-sec">Chapters</div>
+    <div id="chapters-list"></div>
+    <button class="ch-add" onclick="addChapter()">+ New Chapter</button>
+
+    <div class="rail-divider"></div>
+
+    <div class="rail-sec">How it works</div>
+    <div style="font-family:var(--disp);font-weight:300;font-size:13px;color:var(--ink-2);line-height:1.5">
+      Each node is a typed intention. Drag or use ↑↓ to reorder.<br><br>
+      Commit sends the full structure as one coherent message. The canvas stays — refine and re-commit.
     </div>
-    <div id="preview-bar">
-      <div id="preview-text"><span style="color:var(--ink-4);font-style:italic">Prompt preview…</span></div>
-      <button class="commit-btn" id="commit-btn" onclick="commit()" disabled>Commit ↗</button>
-    </div>
-  </div>
-</main>
 
-<aside id="node-rail">
-  <div class="nr-head">Node Palette</div>
+  </aside>
 
-  <div class="nr-sec-title" style="margin-top:0">Add Node</div>
-
-  <button class="nr-btn" onclick="addNode('title')">
-    <div class="nr-type">Title</div>
-    <div class="nr-preview">THE BIG HEADLINE</div>
-    <div class="nr-effect">Sets the frame. Bold declaration.</div>
-  </button>
-  <button class="nr-btn" onclick="addNode('thought')">
-    <div class="nr-type">Thought</div>
-    <div class="nr-preview">A plain sentence</div>
-    <div class="nr-effect">Think out loud. Main body.</div>
-  </button>
-  <button class="nr-btn" onclick="addNode('pull')">
-    <div class="nr-type">[pull]</div>
-    <div class="nr-preview"><em>The one true question</em></div>
-    <div class="nr-effect">Distill. Ask the essential thing.</div>
-  </button>
-  <button class="nr-btn" onclick="addNode('aside')">
-    <div class="nr-type">[aside]</div>
-    <div class="nr-preview">quiet parenthetical</div>
-    <div class="nr-effect">Footnote-level scrutiny.</div>
-  </button>
-  <button class="nr-btn" onclick="addNode('spec')">
-    <div class="nr-type">[spec]</div>
-    <div class="nr-preview">key :: value</div>
-    <div class="nr-effect">Structured constraint or context.</div>
-  </button>
-  <button class="nr-btn" onclick="addNode('break')">
-    <div class="nr-type">Break —</div>
-    <div class="nr-preview">— separator</div>
-    <div class="nr-effect">New thread within the prompt.</div>
-  </button>
-
-  <div class="nr-divider"></div>
-
-  <div class="nr-sec-title">Chapters</div>
-  <div id="chapters-list"></div>
-  <button class="ch-add" onclick="addChapter()">+ New Chapter</button>
-
-  <div class="nr-divider"></div>
-
-  <div class="nr-sec-title">How it works</div>
-  <div style="font-family:var(--disp);font-weight:300;font-size:13px;color:var(--ink-2);line-height:1.5">
-    Each node is a typed intention. Drag or use ↑↓ to reorder.<br><br>
-    Commit captures the full structure and sends it as one coherent message to Claude. The canvas stays — refine and re-commit.
-  </div>
-</aside>
-
-</div>
+</div><!-- /shell -->
 
 <script>
-// ── SYSTEM PROMPT ─────────────────────────────────────────────────────────
-const SYS = `You are Wolfie — a direct, precise thinking partner inside a visual prompt editor called wolfie.dialogue.
+// ─────────────────────────────────────────────────────────────────────────────
+// SYSTEM PROMPT
+// ─────────────────────────────────────────────────────────────────────────────
+const SYSTEM = `You are Wolfie — a direct, precise thinking partner inside a visual prompt editor called wolfie.dialogue.
 
-Users compose prompts from typed nodes. Respond according to each node's type:
+Users compose prompts from typed nodes. Each node has a type that declares intent. Respond accordingly:
 
-title → [poster] bold declarative headline, then 1-2 [body] sentences
-thought → [body] conversational, exploratory prose
-[pull] → [pull] the single truest answer, optionally 1-2 [body] sentences  
-[aside] → [aside] brief footnote-level response only
-[spec] key :: value → [spec] Key :: Value rows, structured, no narrative
-break → acknowledge briefly, await next direction
-[list] → [list] then — item per line
+title → respond with a [poster] bold declarative headline, then 1-2 [body] sentences
+thought → respond with [body] conversational, exploratory prose  
+[pull] → respond with a [pull] — the single truest answer — optionally 1-2 [body] sentences
+[aside] → respond with a brief [aside] — footnote-level only, no elaboration
+[spec] key :: value → respond with [spec] Key :: Value rows — structured, no narrative
+break — → acknowledge briefly, await next direction
 
-Multi-node: honor each node's type, weave coherent response, lead with what the dominant node demands.
+Multi-node prompts: honor each node's declared type. Weave a coherent response. Let the dominant node lead.
 
-Rules: prefix every sentence with its type in brackets. Tight. No filler. No markdown headers. Voice: direct, considered, precise.`;
+FORMATTING RULES:
+- Prefix every response sentence with its type: [body], [pull], [poster], [spec], [aside], [list]
+- [spec] format exactly: [spec] Key :: Value
+- [list] items on separate lines as: — item
+- Keep responses tight. This is a thinking tool, not a chat interface.
+- No markdown headers or bullets outside the defined syntax.
+- Never open with filler ("Certainly", "Of course", "Great question").
+- Voice: direct, considered, precise. Not casual, not corporate.`;
 
-// ── STATE ──────────────────────────────────────────────────────────────────
-var nodes = [];
-var nid = 0;
-var history = [];
-var thinking = false;
-var chapters = [{name:'Chapter 1', prompts:0}];
-var activeChapter = 0;
-var railOn = true;
-var dragSrc = null;
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let nodes = [];
+let nodeId = 0;
+let history = [];
+let thinking = false;
+let chapters = [{ name: 'Chapter 1', prompts: 0 }];
+let activeChapter = 0;
+let railVisible = true;
+let dragSrcId = null;
 
-// ── NODE OPS ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// NODE OPERATIONS
+// ─────────────────────────────────────────────────────────────────────────────
 function addNode(type) {
-  var node = {id:++nid, type:type, content:'', key:'', val:'', committed:false};
-  nodes.push(node);
-  render();
-  preview();
-  setTimeout(function(){
-    var el = document.querySelector('[data-nid="'+node.id+'"]');
-    if (!el) return;
-    var inp = el.querySelector('input,textarea');
-    if (inp) inp.focus();
+  const id = ++nodeId;
+  nodes.push({ id, type, content: '', key: '', val: '', committed: false });
+  renderCanvas();
+  updatePreview();
+  // focus the new node's input
+  setTimeout(() => {
+    const el = document.querySelector(`[data-nid="${id}"] input`);
+    if (el) el.focus();
   }, 40);
 }
 
-function delNode(id) {
-  nodes = nodes.filter(function(n){return n.id!==id;});
-  render(); preview();
+function removeNode(id) {
+  nodes = nodes.filter(n => n.id !== id);
+  renderCanvas();
+  updatePreview();
 }
 
 function moveNode(id, dir) {
-  var i = nodes.findIndex(function(n){return n.id===id;});
-  var j = i + dir;
+  const i = nodes.findIndex(n => n.id === id);
+  const j = i + dir;
   if (j < 0 || j >= nodes.length) return;
-  var tmp = nodes[i]; nodes[i] = nodes[j]; nodes[j] = tmp;
-  render(); preview();
-  // restore focus
-  setTimeout(function(){
-    var el = document.querySelector('[data-nid="'+id+'"]');
-    if (el) { var inp = el.querySelector('input'); if (inp) inp.focus(); }
-  }, 20);
+  [nodes[i], nodes[j]] = [nodes[j], nodes[i]];
+  renderCanvas();
+  updatePreview();
+  // restore focus after re-render
+  setTimeout(() => {
+    const el = document.querySelector(`[data-nid="${id}"] input`);
+    if (el) el.focus();
+  }, 30);
 }
 
-function setField(id, field, val) {
-  var n = nodes.find(function(n){return n.id===id;});
-  if (n) { n[field] = val; preview(); }
+function updateNodeField(id, field, val) {
+  const n = nodes.find(n => n.id === id);
+  if (n) { n[field] = val; updatePreview(); }
 }
 
 function clearCanvas() {
-  nodes = []; render(); preview();
+  nodes = [];
+  renderCanvas();
+  updatePreview();
 }
 
-// ── RENDER CANVAS ──────────────────────────────────────────────────────────
-function render() {
-  var wrap = document.getElementById('canvas-nodes');
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER CANVAS
+// ─────────────────────────────────────────────────────────────────────────────
+function renderCanvas() {
+  const wrap = document.getElementById('canvas-nodes');
   wrap.innerHTML = '';
-  document.getElementById('node-count-pill').textContent = nodes.length + ' node' + (nodes.length!==1?'s':'');
+
+  const pill = document.getElementById('node-count');
+  pill.textContent = nodes.length + (nodes.length === 1 ? ' node' : ' nodes');
 
   if (!nodes.length) {
-    var e = document.createElement('div'); e.id='canvas-empty';
-    e.innerHTML='<span class="ce-text">← Add nodes from the palette</span>';
-    wrap.appendChild(e);
+    const hint = document.createElement('div');
+    hint.id = 'canvas-hint';
+    hint.innerHTML = '<span class="hint-text">← add nodes from the palette to begin</span>';
+    wrap.appendChild(hint);
     document.getElementById('commit-btn').disabled = true;
     return;
   }
+
   document.getElementById('commit-btn').disabled = thinking;
 
-  nodes.forEach(function(node, idx) {
-    var d = document.createElement('div');
-    d.className = 'canvas-node' + (node.committed ? ' committed' : '');
+  nodes.forEach((node, idx) => {
+    const d = document.createElement('div');
+    d.className = 'node' + (node.committed ? ' committed' : '');
     d.setAttribute('data-nid', node.id);
-    d.setAttribute('draggable','true');
+    d.setAttribute('draggable', 'true');
 
-    // drag events
-    d.addEventListener('dragstart', function(e){
-      dragSrc = node.id;
-      setTimeout(function(){ d.classList.add('dragging'); }, 0);
+    // ── drag events
+    d.addEventListener('dragstart', e => {
+      dragSrcId = node.id;
+      setTimeout(() => d.classList.add('dragging'), 0);
       e.dataTransfer.effectAllowed = 'move';
     });
-    d.addEventListener('dragend', function(){ d.classList.remove('dragging'); d.classList.remove('drag-over'); });
-    d.addEventListener('dragover', function(e){ e.preventDefault(); d.classList.add('drag-over'); });
-    d.addEventListener('dragleave', function(){ d.classList.remove('drag-over'); });
-    d.addEventListener('drop', function(e){
-      e.preventDefault(); d.classList.remove('drag-over');
-      if (dragSrc === node.id) return;
-      var si = nodes.findIndex(function(n){return n.id===dragSrc;});
-      var di = nodes.findIndex(function(n){return n.id===node.id;});
-      if (si===-1||di===-1) return;
-      var m = nodes.splice(si,1)[0]; nodes.splice(di,0,m);
-      render(); preview();
+    d.addEventListener('dragend', () => {
+      d.classList.remove('dragging', 'drag-over');
+    });
+    d.addEventListener('dragover', e => {
+      e.preventDefault();
+      d.classList.add('drag-over');
+    });
+    d.addEventListener('dragleave', () => {
+      d.classList.remove('drag-over');
+    });
+    d.addEventListener('drop', e => {
+      e.preventDefault();
+      d.classList.remove('drag-over');
+      if (dragSrcId === node.id) return;
+      const si = nodes.findIndex(n => n.id === dragSrcId);
+      const di = nodes.findIndex(n => n.id === node.id);
+      if (si === -1 || di === -1) return;
+      const [moved] = nodes.splice(si, 1);
+      nodes.splice(di, 0, moved);
+      renderCanvas();
+      updatePreview();
     });
 
-    // arrows
-    var arrows = document.createElement('div'); arrows.className='node-arrows';
-    var up = document.createElement('button'); up.className='node-arrow'; up.textContent='▲';
-    up.title='Move up'; if (idx===0) up.disabled=true;
-    up.addEventListener('click', function(e){e.stopPropagation(); moveNode(node.id,-1);});
-    var dn = document.createElement('button'); dn.className='node-arrow'; dn.textContent='▼';
-    dn.title='Move down'; if (idx===nodes.length-1) dn.disabled=true;
-    dn.addEventListener('click', function(e){e.stopPropagation(); moveNode(node.id,1);});
-    arrows.appendChild(up); arrows.appendChild(dn);
+    // ── arrows
+    const arrows = document.createElement('div');
+    arrows.className = 'node-arrows';
+    const up = document.createElement('button');
+    up.className = 'arr'; up.textContent = '▲'; up.title = 'Move up';
+    if (idx === 0) up.disabled = true;
+    up.onclick = e => { e.stopPropagation(); moveNode(node.id, -1); };
+    const dn = document.createElement('button');
+    dn.className = 'arr'; dn.textContent = '▼'; dn.title = 'Move down';
+    if (idx === nodes.length - 1) dn.disabled = true;
+    dn.onclick = e => { e.stopPropagation(); moveNode(node.id, 1); };
+    arrows.append(up, dn);
     d.appendChild(arrows);
 
-    // handle
-    var handle = document.createElement('div'); handle.className='node-handle'; handle.textContent='⠿';
-    d.appendChild(handle);
+    // ── grip
+    const grip = document.createElement('div');
+    grip.className = 'node-grip'; grip.textContent = '⠿';
+    d.appendChild(grip);
 
-    // badge
-    var badge = document.createElement('div'); badge.className='node-badge';
-    var labels = {title:'title',thought:'thought',pull:'[pull]',aside:'[aside]',spec:'[spec]','break':'break —'};
-    badge.textContent = labels[node.type]||node.type;
+    // ── badge
+    const badge = document.createElement('div');
+    badge.className = 'node-badge';
+    const LABELS = { title: 'title', thought: 'thought', pull: '[pull]', aside: '[aside]', spec: '[spec]', break: 'break —' };
+    badge.textContent = LABELS[node.type] || node.type;
     d.appendChild(badge);
 
-    // content
-    var cont = document.createElement('div'); cont.className='node-content';
-    buildInput(node, cont);
+    // ── content
+    const cont = document.createElement('div');
+    cont.className = 'node-content';
+    buildNodeContent(node, cont);
     d.appendChild(cont);
 
-    // commit mark
-    var cm = document.createElement('div'); cm.className='node-commit-mark'; cm.textContent='sent';
-    d.appendChild(cm);
+    // ── sent mark
+    const sent = document.createElement('div');
+    sent.className = 'node-sent'; sent.textContent = 'sent';
+    d.appendChild(sent);
 
-    // delete
-    var del = document.createElement('button'); del.className='node-del'; del.textContent='×';
-    del.addEventListener('click', function(e){e.stopPropagation(); delNode(node.id);});
+    // ── delete
+    const del = document.createElement('button');
+    del.className = 'node-del'; del.textContent = '×';
+    del.onclick = e => { e.stopPropagation(); removeNode(node.id); };
     d.appendChild(del);
 
     wrap.appendChild(d);
   });
 }
 
-function buildInput(node, cont) {
+function buildNodeContent(node, cont) {
   if (node.type === 'break') {
-    var lbl = document.createElement('div'); lbl.className='node-break-label';
-    lbl.textContent='— thread break'; cont.appendChild(lbl); return;
+    const lbl = document.createElement('div');
+    lbl.className = 'ni-break'; lbl.textContent = '— thread break';
+    cont.appendChild(lbl);
+    return;
   }
+
   if (node.type === 'spec') {
-    var k = document.createElement('input'); k.className='ni-spec-key';
-    k.placeholder='key'; k.value=node.key||'';
-    k.addEventListener('input', function(){setField(node.id,'key',this.value);});
-    k.addEventListener('keydown', enterCommit);
-    var sep = document.createElement('span'); sep.className='ni-spec-sep'; sep.textContent='::';
-    var v = document.createElement('input'); v.className='ni-spec-val';
-    v.placeholder='value or context'; v.value=node.val||'';
-    v.addEventListener('input', function(){setField(node.id,'val',this.value);});
-    v.addEventListener('keydown', enterCommit);
-    cont.appendChild(k); cont.appendChild(sep); cont.appendChild(v); return;
+    const row = document.createElement('div');
+    row.className = 'ni-spec-row';
+    const k = document.createElement('input');
+    k.className = 'ni ni-spec-key'; k.placeholder = 'key'; k.value = node.key || '';
+    k.addEventListener('input', () => updateNodeField(node.id, 'key', k.value));
+    k.addEventListener('keydown', commitOnEnter);
+    const sep = document.createElement('span');
+    sep.className = 'ni-spec-sep'; sep.textContent = '::';
+    const v = document.createElement('input');
+    v.className = 'ni ni-spec-val'; v.placeholder = 'value or context'; v.value = node.val || '';
+    v.addEventListener('input', () => updateNodeField(node.id, 'val', v.value));
+    v.addEventListener('keydown', commitOnEnter);
+    row.append(k, sep, v);
+    cont.appendChild(row);
+    return;
   }
-  var classMap = {title:'ni-title',thought:'ni-thought',pull:'ni-pull',aside:'ni-aside'};
-  var phMap = {
-    title:'THE BIG HEADLINE', thought:'Think out loud…',
-    pull:'The one question that matters…', aside:'a quiet detail or concern…'
+
+  const CLASS_MAP = {
+    title:   'ni ni-title',
+    thought: 'ni ni-thought',
+    pull:    'ni ni-pull',
+    aside:   'ni ni-aside',
   };
-  var inp = document.createElement('input');
-  inp.className = classMap[node.type]||'ni-thought';
-  inp.placeholder = phMap[node.type]||'';
-  inp.value = node.content||'';
-  inp.addEventListener('input', function(){setField(node.id,'content',this.value);});
-  inp.addEventListener('keydown', enterCommit);
+  const PLACEHOLDER = {
+    title:   'THE BIG HEADLINE',
+    thought: 'Think out loud…',
+    pull:    'The one question that matters…',
+    aside:   'a quiet detail or concern…',
+  };
+
+  const inp = document.createElement('input');
+  inp.className = CLASS_MAP[node.type] || 'ni ni-thought';
+  inp.placeholder = PLACEHOLDER[node.type] || '';
+  inp.value = node.content || '';
+  inp.addEventListener('input', () => updateNodeField(node.id, 'content', inp.value));
+  inp.addEventListener('keydown', commitOnEnter);
   cont.appendChild(inp);
 }
 
-function enterCommit(e) {
-  if (e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); commit(); }
+function commitOnEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); commit(); }
 }
 
-// ── PREVIEW ────────────────────────────────────────────────────────────────
-function buildPrompt() {
-  var parts = [];
-  nodes.forEach(function(n){
-    if (n.type==='break'){ parts.push('—'); return; }
-    if (n.type==='title'&&n.content.trim()) parts.push('[poster] '+n.content.trim());
-    else if (n.type==='thought'&&n.content.trim()) parts.push(n.content.trim());
-    else if (n.type==='pull'&&n.content.trim()) parts.push('[pull] '+n.content.trim());
-    else if (n.type==='aside'&&n.content.trim()) parts.push('[aside] '+n.content.trim());
-    else if (n.type==='spec'&&n.key.trim()) parts.push('[spec] '+n.key.trim()+' :: '+(n.val.trim()||'—'));
-  });
-  return parts.join('\n');
+// ─────────────────────────────────────────────────────────────────────────────
+// PROMPT PREVIEW
+// ─────────────────────────────────────────────────────────────────────────────
+function buildPromptString() {
+  return nodes.flatMap(n => {
+    if (n.type === 'break')   return ['—'];
+    if (n.type === 'title'   && n.content.trim()) return [`[poster] ${n.content.trim()}`];
+    if (n.type === 'thought' && n.content.trim()) return [n.content.trim()];
+    if (n.type === 'pull'    && n.content.trim()) return [`[pull] ${n.content.trim()}`];
+    if (n.type === 'aside'   && n.content.trim()) return [`[aside] ${n.content.trim()}`];
+    if (n.type === 'spec'    && n.key.trim())     return [`[spec] ${n.key.trim()} :: ${n.val.trim() || '—'}`];
+    return [];
+  }).join('\n');
 }
 
-function preview() {
-  var p = buildPrompt();
-  var el = document.getElementById('preview-text');
-  if (!p) { el.innerHTML='<span style="color:var(--ink-4);font-style:italic">Prompt preview…</span>'; return; }
-  el.innerHTML = p.replace(/\n/g,' <span style="color:var(--ink-4)">·</span> ')
-    .replace(/\[(poster|pull|aside|spec)\]/g,'<span class="pv-br">[$1]</span>');
+function updatePreview() {
+  const prompt = buildPromptString();
+  const el = document.getElementById('preview-text');
+  if (!prompt) {
+    el.innerHTML = '<span style="color:var(--ink-4);font-style:italic">Prompt preview will appear as you build…</span>';
+    return;
+  }
+  el.innerHTML = prompt
+    .replace(/\n/g, ' <span style="color:var(--ink-4)">·</span> ')
+    .replace(/\[(poster|pull|aside|spec|list)\]/g, '<span class="pb">[$1]</span>');
 }
 
-// ── COMMIT ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMIT
+// ─────────────────────────────────────────────────────────────────────────────
 function commit() {
   if (thinking || !nodes.length) return;
-  var prompt = buildPrompt();
+  const prompt = buildPromptString();
   if (!prompt.trim()) return;
 
-  // remove empty state
-  var es = document.getElementById('empty-state'); if (es) es.remove();
+  // kill empty state
+  const es = document.getElementById('empty-state');
+  if (es) es.remove();
 
-  var root = document.getElementById('narrative-root');
-  var wrap = document.createElement('div'); wrap.className='exchange';
+  const root = document.getElementById('narrative-root');
+  const wrap = document.createElement('div');
+  wrap.className = 'exchange';
 
   // who label
-  var who = document.createElement('div'); who.className='who';
-  who.innerHTML='<span class="who-name">You</span><span class="who-mode">'+nodes.length+' node'+(nodes.length!==1?'s':'')+'</span>';
+  const who = document.createElement('div');
+  who.className = 'who';
+  who.innerHTML = `<span class="who-name">You</span><span class="who-tag">${nodes.length} node${nodes.length !== 1 ? 's' : ''}</span>`;
   wrap.appendChild(who);
 
-  // render nodes in stream
-  nodes.forEach(function(n){ var el=streamNode(n); if(el) wrap.appendChild(el); });
+  // render nodes visually in stream
+  nodes.forEach(n => {
+    const el = renderNodeInStream(n);
+    if (el) wrap.appendChild(el);
+  });
+
   root.appendChild(wrap);
-  wrap.scrollIntoView({behavior:'smooth',block:'end'});
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-  // mark committed
-  nodes.forEach(function(n){ n.committed=true; }); render();
+  // mark nodes as committed (canvas persists)
+  nodes.forEach(n => n.committed = true);
+  renderCanvas();
 
-  // update chapter
+  // update chapters
   chapters[activeChapter].prompts++;
   renderChapters();
 
-  // api
+  // disable commit while waiting
   thinking = true;
   document.getElementById('commit-btn').disabled = true;
-  document.getElementById('typing-wrap').style.display='block';
-  document.getElementById('typing-wrap').scrollIntoView({behavior:'smooth',block:'end'});
+  document.getElementById('typing-wrap').style.display = 'block';
+  document.getElementById('typing-wrap').scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-  history.push({role:'user',content:prompt});
+  // push to history and call API
+  history.push({ role: 'user', content: prompt });
 
-  callClaude(history).then(function(resp){
-    document.getElementById('typing-wrap').style.display='none';
-    thinking=false; document.getElementById('commit-btn').disabled=false;
+  callClaude(history)
+    .then(responseText => {
+      document.getElementById('typing-wrap').style.display = 'none';
+      thinking = false;
+      document.getElementById('commit-btn').disabled = false;
 
-    var aiWho=document.createElement('div'); aiWho.className='who'; aiWho.style.marginTop='20px';
-    aiWho.innerHTML='<span class="who-name">wolfie</span>'; wrap.appendChild(aiWho);
+      // wolfie who label
+      const aiWho = document.createElement('div');
+      aiWho.className = 'who';
+      aiWho.style.marginTop = '20px';
+      aiWho.innerHTML = '<span class="who-name">wolfie</span>';
+      wrap.appendChild(aiWho);
 
-    parseResp(resp).forEach(function(s,i){
-      var el=renderSentence(s); if(!el) return;
-      el.style.animationDelay=(i*55)+'ms'; wrap.appendChild(el);
+      // render sentences
+      parseSentences(responseText).forEach((s, i) => {
+        const el = renderResponseSentence(s);
+        if (!el) return;
+        el.style.animationDelay = `${i * 55}ms`;
+        wrap.appendChild(el);
+      });
+
+      history.push({ role: 'assistant', content: responseText });
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      updateProgress();
+    })
+    .catch(err => {
+      document.getElementById('typing-wrap').style.display = 'none';
+      thinking = false;
+      document.getElementById('commit-btn').disabled = false;
+      const errEl = document.createElement('div');
+      errEl.className = 'r-aside';
+      errEl.textContent = 'Connection failed. ' + (err.message || '');
+      wrap.appendChild(errEl);
     });
-    history.push({role:'assistant',content:resp});
-    wrap.scrollIntoView({behavior:'smooth',block:'end'});
-    updateProgress();
-  }).catch(function(err){
-    document.getElementById('typing-wrap').style.display='none';
-    thinking=false; document.getElementById('commit-btn').disabled=false;
-    var e=document.createElement('div'); e.className='r-aside';
-    e.textContent='Connection failed. '+(err.message||''); wrap.appendChild(e);
-  });
 }
 
-function streamNode(n) {
-  if (n.type==='title'&&n.content.trim()){ var e=document.createElement('div'); e.className='sn-title'; e.textContent=n.content; return e; }
-  if (n.type==='thought'&&n.content.trim()){ var e=document.createElement('div'); e.className='sn-thought'; e.textContent=n.content; return e; }
-  if (n.type==='pull'&&n.content.trim()){ var e=document.createElement('div'); e.className='sn-pull'; e.textContent=n.content; return e; }
-  if (n.type==='aside'&&n.content.trim()){ var e=document.createElement('div'); e.className='sn-aside'; e.textContent=n.content; return e; }
-  if (n.type==='spec'&&n.key.trim()){ var e=document.createElement('div'); e.className='sn-spec'; e.innerHTML='<span class="spec-k">'+n.key+'</span><span class="spec-v">'+(n.val||'—')+'</span>'; return e; }
-  if (n.type==='break'){ var e=document.createElement('div'); e.className='sn-break'; e.textContent='— break'; return e; }
-  return null;
+// render a node for the stream (user side)
+function renderNodeInStream(n) {
+  let el;
+  if (n.type === 'title' && n.content.trim()) {
+    el = document.createElement('div'); el.className = 'sn-title'; el.textContent = n.content;
+  } else if (n.type === 'thought' && n.content.trim()) {
+    el = document.createElement('div'); el.className = 'sn-thought'; el.textContent = n.content;
+  } else if (n.type === 'pull' && n.content.trim()) {
+    el = document.createElement('div'); el.className = 'sn-pull'; el.textContent = n.content;
+  } else if (n.type === 'aside' && n.content.trim()) {
+    el = document.createElement('div'); el.className = 'sn-aside'; el.textContent = n.content;
+  } else if (n.type === 'spec' && n.key.trim()) {
+    el = document.createElement('div'); el.className = 'sn-spec';
+    el.innerHTML = `<span class="spec-k">${n.key}</span><span class="spec-v">${n.val || '—'}</span>`;
+  } else if (n.type === 'break') {
+    el = document.createElement('div'); el.className = 'sn-break'; el.textContent = '— break';
+  }
+  return el || null;
 }
 
-// ── RESPONSE PARSER ────────────────────────────────────────────────────────
-function parseResp(text) {
-  var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
-  var out=[]; var listItems=[]; var inList=false;
-  lines.forEach(function(line){
-    if (line.startsWith('— ')||line.startsWith('- ')){ listItems.push(line.replace(/^[—\-]\s*/,'')); inList=true; return; }
-    if (inList){ out.push({type:'list',items:listItems.slice()}); listItems=[]; inList=false; }
-    var m=line.match(/^\[([a-z]+)\]\s*(.*)/s);
-    if (!m){ out.push({type:'body',text:line}); return; }
-    var t=m[1],c=m[2].trim();
-    if (t==='spec'){ var s=c.indexOf('::'); if(s!==-1) out.push({type:'spec',key:c.slice(0,s).trim(),val:c.slice(s+2).trim()}); else out.push({type:'spec',key:c,val:''}); }
-    else { out.push({type:t,text:c}); }
-  });
-  if (inList&&listItems.length) out.push({type:'list',items:listItems});
+// ─────────────────────────────────────────────────────────────────────────────
+// RESPONSE PARSING + RENDERING
+// ─────────────────────────────────────────────────────────────────────────────
+function parseSentences(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const out = [];
+  let listItems = [], inList = false;
+
+  for (const line of lines) {
+    const isBullet = line.startsWith('— ') || line.startsWith('- ');
+    if (isBullet) {
+      listItems.push(line.replace(/^[—\-]\s*/, ''));
+      inList = true;
+      continue;
+    }
+    if (inList) {
+      out.push({ type: 'list', items: [...listItems] });
+      listItems = []; inList = false;
+    }
+
+    const m = line.match(/^\[([a-z]+)\]\s*(.*)/s);
+    if (!m) { out.push({ type: 'body', text: line }); continue; }
+    const [, type, content] = m;
+
+    if (type === 'spec') {
+      const sep = content.indexOf('::');
+      if (sep !== -1) out.push({ type: 'spec', key: content.slice(0, sep).trim(), val: content.slice(sep + 2).trim() });
+      else out.push({ type: 'spec', key: content, val: '' });
+    } else {
+      out.push({ type, text: content.trim() });
+    }
+  }
+  if (inList && listItems.length) out.push({ type: 'list', items: listItems });
   return out;
 }
 
-function renderSentence(s) {
-  var e;
-  if (s.type==='body'){ e=document.createElement('div'); e.className='r-body'; e.innerHTML=s.text; }
-  else if (s.type==='pull'){ e=document.createElement('div'); e.className='r-pull'; e.innerHTML=s.text; }
-  else if (s.type==='poster'){ e=document.createElement('div'); e.className='r-poster'; e.innerHTML=s.text; }
-  else if (s.type==='aside'){ e=document.createElement('div'); e.className='r-aside'; e.textContent=s.text; }
-  else if (s.type==='spec'){ e=document.createElement('div'); e.className='r-spec'; e.innerHTML='<span class="spec-k">'+(s.key||'')+'</span><span class="spec-v">'+(s.val||'')+'</span>'; }
-  else if (s.type==='list'){ e=document.createElement('ul'); e.className='r-list'; (s.items||[]).forEach(function(item){ var li=document.createElement('li'); li.textContent=item; e.appendChild(li); }); }
-  else { e=document.createElement('div'); e.className='r-body'; e.innerHTML=s.text||''; }
-  return e;
+function renderResponseSentence(s) {
+  let el;
+  switch (s.type) {
+    case 'body':
+      el = document.createElement('div'); el.className = 'r-body'; el.innerHTML = s.text; break;
+    case 'pull':
+      el = document.createElement('div'); el.className = 'r-pull'; el.innerHTML = s.text; break;
+    case 'poster':
+      el = document.createElement('div'); el.className = 'r-poster'; el.innerHTML = s.text; break;
+    case 'aside':
+      el = document.createElement('div'); el.className = 'r-aside'; el.textContent = s.text; break;
+    case 'spec':
+      el = document.createElement('div'); el.className = 'r-spec';
+      el.innerHTML = `<span class="spec-k">${s.key || ''}</span><span class="spec-v">${s.val || ''}</span>`; break;
+    case 'list':
+      el = document.createElement('ul'); el.className = 'r-list';
+      (s.items || []).forEach(item => {
+        const li = document.createElement('li'); li.textContent = item; el.appendChild(li);
+      }); break;
+    default:
+      el = document.createElement('div'); el.className = 'r-body'; el.innerHTML = s.text || '';
+  }
+  return el;
 }
 
-// ── API ────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// CLAUDE API
+// ─────────────────────────────────────────────────────────────────────────────
 async function callClaude(hist) {
-  const r = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:hist})
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1024,
+      system: SYSTEM,
+      messages: hist,
+    }),
   });
-  const d = await r.json();
-  if (d.error) throw new Error(d.error.message||'API error');
-  return d.content.map(function(b){return b.type==='text'?b.text:'';}).join('\n');
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || 'API error');
+  return data.content.map(b => b.type === 'text' ? b.text : '').join('\n');
 }
 
-// ── CHAPTERS ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// CHAPTERS
+// ─────────────────────────────────────────────────────────────────────────────
 function addChapter() {
-  chapters.push({name:'Chapter '+(chapters.length+1),prompts:0});
-  activeChapter=chapters.length-1; renderChapters();
+  chapters.push({ name: `Chapter ${chapters.length + 1}`, prompts: 0 });
+  activeChapter = chapters.length - 1;
+  renderChapters();
 }
+
 function renderChapters() {
-  var list=document.getElementById('chapters-list'); list.innerHTML='';
-  chapters.forEach(function(ch,i){
-    var d=document.createElement('div'); d.className='ch-item'+(i===activeChapter?' active':'');
-    d.innerHTML='<div class="ch-name">'+ch.name+'</div><div class="ch-meta">'+ch.prompts+' prompt'+(ch.prompts!==1?'s':'')+'</div>';
-    d.onclick=function(){ activeChapter=i; renderChapters(); };
+  const list = document.getElementById('chapters-list');
+  list.innerHTML = '';
+  chapters.forEach((ch, i) => {
+    const d = document.createElement('div');
+    d.className = 'ch-item' + (i === activeChapter ? ' active' : '');
+    d.innerHTML = `<div class="ch-name">${ch.name}</div><div class="ch-meta">${ch.prompts} prompt${ch.prompts !== 1 ? 's' : ''}</div>`;
+    d.onclick = () => { activeChapter = i; renderChapters(); };
     list.appendChild(d);
   });
 }
 
-// ── MISC ───────────────────────────────────────────────────────────────────
-function toggleRail(){
-  railOn=!railOn;
-  document.getElementById('node-rail').classList.toggle('hidden',!railOn);
-  document.getElementById('rail-btn').classList.toggle('active',railOn);
-}
-function clearAll(){
-  document.getElementById('narrative-root').innerHTML=
-    '<div id="empty-state"><div class="es-title">Build a<br>prompt<br><span style="color:var(--accent)">visually.</span></div><div class="es-body">Add typed nodes from the palette. Each block renders as what it is. Commit sends the whole structure as one prompt.</div></div>';
-  history=[]; clearCanvas(); updateProgress();
-}
-function updateProgress(){
-  var t=chapters.reduce(function(s,c){return s+c.prompts;},0);
-  document.getElementById('progress').style.width=Math.min(t*10,100)+'%';
+// ─────────────────────────────────────────────────────────────────────────────
+// MISC
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleRail() {
+  railVisible = !railVisible;
+  document.getElementById('node-rail').classList.toggle('hidden', !railVisible);
+  document.getElementById('rail-btn').classList.toggle('active', railVisible);
 }
 
-// init
-render(); renderChapters();
+function clearAll() {
+  document.getElementById('narrative-root').innerHTML = `
+    <div id="empty-state">
+      <div class="es-title">Build a<br>prompt<br><span style="color:var(--accent)">visually.</span></div>
+      <div class="es-body">Add typed nodes from the palette. Each block renders as what it is. Commit sends the whole structure as one prompt.</div>
+    </div>`;
+  history = [];
+  clearCanvas();
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = chapters.reduce((s, c) => s + c.prompts, 0);
+  document.getElementById('progress').style.width = Math.min(total * 8, 100) + '%';
+}
+
+// ── INIT
+renderCanvas();
+renderChapters();
 </script>
 </body>
 </html>
