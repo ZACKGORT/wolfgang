@@ -1782,6 +1782,79 @@ body.compose-mode .compose-bar {
 }
 .compose-hint-divider { width: 1px; height: 10px; background: var(--hud-border, rgba(0,0,0,0.10)); flex-shrink: 0; align-self: center; }
 
+/* ── MOBILE COMPOSE HUD — docks above compose bar, slimmed to essentials ── */
+@media (max-width: 760px) {
+  body.compose-mode #nav-widget { display: none !important; }
+
+  #compose-mobile-hud {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 9199;
+    pointer-events: none;
+  }
+  body.compose-mode #compose-mobile-hud {
+    display: block;
+    pointer-events: auto;
+  }
+  .cmh-bar {
+    display: flex; align-items: center;
+    background: var(--hud-bg);
+    border-top: 1px solid var(--hud-border);
+    padding: 0 4px; gap: 0; height: 44px;
+  }
+  .cmh-btn {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    height: 100%; border: none; background: none;
+    font-family: var(--ui); font-size: 17px;
+    color: var(--hud-ink-2);
+    border-right: 1px solid var(--hud-border);
+    padding: 0 2px; cursor: pointer;
+    transition: color .12s, background .12s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cmh-btn:last-child { border-right: none; }
+  .cmh-btn .cmh-lbl { font-size: 6.5px; letter-spacing: 0.10em; text-transform: uppercase; color: var(--hud-ink-3); transition: color .12s; }
+  .cmh-btn:active { background: rgba(0,0,0,0.06); }
+  .cmh-btn.cmh-submit { background: var(--accent); color: #fff !important; border-right-color: transparent; }
+  .cmh-btn.cmh-submit .cmh-lbl { color: rgba(255,255,255,0.65) !important; }
+  .cmh-btn.cmh-submit:active { opacity: 0.82; }
+  .cmh-btn.cmh-scroll-on { color: var(--accent) !important; }
+  .cmh-btn.cmh-scroll-on .cmh-lbl { color: var(--accent) !important; }
+
+  body.compose-mode .compose-bar { bottom: 44px !important; }
+
+  #mobile-quickkeys {
+    position: fixed; left: 12px; right: 12px;
+    z-index: 9300;
+    background: var(--hud-bg); border: 1px solid var(--hud-border);
+    border-radius: 10px; padding: 14px 14px 10px;
+    box-shadow: 0 -4px 32px rgba(0,0,0,0.22);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    opacity: 0; pointer-events: none;
+    transform: translateY(16px);
+    transition: opacity .22s ease, transform .22s cubic-bezier(0.34,1.56,0.64,1);
+    bottom: 140px;
+  }
+  body.compose-mode #mobile-quickkeys.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .mqk-title { font-family: var(--ui); font-size: 7px; letter-spacing: 0.20em; text-transform: uppercase; color: var(--hud-ink-3); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .mqk-close { background: none; border: none; color: var(--hud-ink-3); font-size: 14px; line-height: 1; padding: 0; cursor: pointer; }
+  .mqk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .mqk-key { display: flex; flex-direction: column; gap: 1px; padding: 9px 6px 7px; background: rgba(0,0,0,0.04); border: 1px solid var(--hud-border); border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: border-color .12s, background .12s; text-align: center; }
+  .mqk-key:active { background: var(--accent-l); border-color: var(--accent); }
+  .mqk-key-tag { font-family: var(--ui); font-size: 9px; letter-spacing: 0.02em; color: var(--accent); font-weight: 700; }
+  .mqk-key-desc { font-family: var(--ui); font-size: 6.5px; letter-spacing: 0.06em; color: var(--hud-ink-3); text-transform: uppercase; margin-top: 1px; }
+  .mqk-section-rule { grid-column: 1 / -1; height: 1px; background: var(--hud-border); margin: 2px 0; }
+  .mqk-key.mqk-wide { grid-column: span 3; }
+
+  .compose-hints-btn .compose-hints-popover { display: none !important; }
+}
+@media (min-width: 761px) {
+  #compose-mobile-hud { display: none !important; }
+  #mobile-quickkeys { display: none !important; }
+}
+
 /* Compose mode — stack sentences */
 body.compose-mode .sentence,
 body.compose-mode .ch-header {
@@ -1963,26 +2036,26 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
 
 <div id="image-layer">
   <!-- 0–19: original images -->
-  <img id="img-0"  src="https://i.ibb.co/ym4M89VT/1-sq-USg-c1x-GQx-Zd-QS4-L7f-Sw.webp" alt="">
-  <img id="img-1"  src="https://i.ibb.co/bjCjbfbT/603a93efdfd184c21ef2d238-IMG-3352.webp" alt="">
-  <img id="img-2"  src="https://i.ibb.co/DPJM0yfz/1-k-Y6yg0chz7-Puu-Wgrl-YNMA.webp" alt="">
-  <img id="img-3"  src="https://i.ibb.co/fdxZdwwC/1-d-MG5-YE20sk-Uzo3z7-GIyf1w.webp" alt="">
-  <img id="img-4"  src="https://i.ibb.co/WpPWpTwN/Oaks-2.webp" alt="">
-  <img id="img-5"  src="https://i.ibb.co/nNdHf3zM/1-dt-Ggr-Sm7am-TRi-5j-QMVe-Iw.webp" alt="">
-  <img id="img-6"  src="https://i.ibb.co/KJsXgPv/1-dy-MNhi-XFPWPe9og0-dbv-Q.webp" alt="">
-  <img id="img-7"  src="https://i.ibb.co/5gGkM1yF/1-a-QOv-TWfv-Awf6m7-oy-Zy-Gy-A.webp" alt="">
-  <img id="img-8"  src="https://i.ibb.co/8LmdVjbY/160over90brands.webp" alt="">
-  <img id="img-9"  src="https://i.ibb.co/LXmyD2hq/IMG-20170104-184947-650.webp" alt="">
-  <img id="img-10" src="https://i.ibb.co/jv7dC3hH/1-m-Zdgz7y-Elh7n-WKuu-S8-XZ2g.webp" alt="">
-  <img id="img-11" src="https://i.ibb.co/HpnrrYMR/2269419019461331921-5144774570.webp" alt="">
-  <img id="img-12" src="https://i.ibb.co/23WVc0PW/tunnel-ANIMATION.gif" alt="">
-  <img id="img-13" src="https://i.ibb.co/cK6Nywxq/skyline.webp" alt="">
-  <img id="img-14" src="https://i.ibb.co/XZymcJck/pinstripes.webp" alt="">
-  <img id="img-15" src="https://i.ibb.co/jP8rS95G/1-5g-Mvv7027-cm7r0vm-IDy1-A.webp" alt="">
-  <img id="img-16" src="https://i.ibb.co/XkM2hn8n/bny1.png" alt="">
-  <img id="img-17" src="https://i.ibb.co/ym1z1pyb/DSC05994.webp" alt="">
-  <img id="img-18" src="https://i.ibb.co/MyqYv5cS/1-RLgidsi-DWtxpf-Y4y52-WLWA.webp" alt="">
-  <img id="img-19" src="https://i.ibb.co/tTTgw7Md/1-q-zg-Zh-Kn-Cs6ab-K8-CIp-E00-Q.webp" alt="">
+  <img id="img-0"  src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&q=80" alt="">
+  <img id="img-1"  src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80" alt="">
+  <img id="img-2"  src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80" alt="">
+  <img id="img-3"  src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80" alt="">
+  <img id="img-4"  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80" alt="">
+  <img id="img-5"  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80" alt="">
+  <img id="img-6"  src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&q=80" alt="">
+  <img id="img-7"  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80" alt="">
+  <img id="img-8"  src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200&q=80" alt="">
+  <img id="img-9"  src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&q=80" alt="">
+  <img id="img-10" src="https://images.unsplash.com/photo-1509017174183-0b7e0278f1ec?w=1200&q=80" alt="">
+  <img id="img-11" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1200&q=80" alt="">
+  <img id="img-12" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80" alt="">
+  <img id="img-13" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&q=80" alt="">
+  <img id="img-14" src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&q=80" alt="">
+  <img id="img-15" src="https://images.unsplash.com/photo-1580758606010-5cee4df22c13?w=1200&q=80" alt="">
+  <img id="img-16" src="https://images.unsplash.com/photo-1605792657660-596af9009e82?w=1200&q=80" alt="">
+  <img id="img-17" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80" alt="">
+  <img id="img-18" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&q=80" alt="">
+  <img id="img-19" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80" alt="">
   <!-- 20+: new narrative images -->
   <img id="img-20" src="https://i.ibb.co/MDw7nWfZ/greenpoint.webp" alt="">           <!-- The year is 2026 / Totally -->
   <img id="img-21" src="https://i.ibb.co/Y7wVfbfK/DSC08212.webp" alt="">             <!-- burn and turn -->
@@ -2218,7 +2291,7 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
 
   <div class="rp-footer">
     Zack Gort &middot; Presentation Designer<br>
-    <a href="mailto:zack@wolfie.love">zack@wolfie.love</a> &middot;
+    <a href="/cdn-cgi/l/email-protection#067c67656d4671696a606f63286a697063"><span class="__cf_email__" data-cfemail="b6ccd7d5ddf6c1d9dad0dfd398dad9c0d3">[email&#160;protected]</span></a> &middot;
     <a href="https://wolfie.love" target="_blank" rel="noopener">wolfie.love</a>
   </div>
 
@@ -2361,10 +2434,16 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
     <span class="cw-trigger-arrow">&#9662;</span>
   </button>
   <div class="cw-dropdown" role="menu" id="cw-dropdown">
-    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">The Premise</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">The Urgency</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">The Method</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">The Ask</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item active" data-ch="1"  role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">The Premise</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="2"  role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">The Urgency</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="3"  role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">The Research</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="4"  role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">The Method</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="5"  role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">Claude</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="6"  role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">The Moment</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="7"  role="menuitem"><span class="cw-item-num">07</span><span class="cw-item-name">The Opportunity</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="8"  role="menuitem"><span class="cw-item-num">08</span><span class="cw-item-name">Who I Am</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="9"  role="menuitem"><span class="cw-item-num">09</span><span class="cw-item-name">The Work</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="10" role="menuitem"><span class="cw-item-num">10</span><span class="cw-item-name">The Ask</span><span class="cw-item-dot"></span></button>
   </div>
 </div>
 
@@ -2431,6 +2510,49 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
 
 <div id="wolfie-credit">zack gort &middot; zackgort.com</div>
 
+<!-- Mobile compose micro-HUD -->
+<div id="compose-mobile-hud" aria-hidden="true">
+  <div class="cmh-bar">
+    <button class="cmh-btn cmh-submit" id="cmh-submit" aria-label="Submit sentence">
+      <span>&#8629;</span><span class="cmh-lbl">Submit</span>
+    </button>
+    <button class="cmh-btn" id="cmh-scroll" aria-label="Toggle scroll">
+      <span id="cmh-scroll-icon">&#8645;</span><span class="cmh-lbl" id="cmh-scroll-lbl">Scroll</span>
+    </button>
+    <button class="cmh-btn" id="cmh-prev" aria-label="Previous">
+      <span>&#8593;</span><span class="cmh-lbl">Prev</span>
+    </button>
+    <button class="cmh-btn" id="cmh-next" aria-label="Next">
+      <span>&#8595;</span><span class="cmh-lbl">Next</span>
+    </button>
+    <button class="cmh-btn" id="cmh-info" aria-label="Markup keys">
+      <span>&#9432;</span><span class="cmh-lbl">Keys</span>
+    </button>
+  </div>
+</div>
+
+<!-- Mobile markup quickkeys -->
+<div id="mobile-quickkeys" aria-hidden="true">
+  <div class="mqk-title">
+    <span>Markup Quick Keys</span>
+    <button class="mqk-close" id="mqk-close" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="mqk-grid">
+    <button class="mqk-key" data-insert="[body] "><span class="mqk-key-tag">[body]</span><span class="mqk-key-desc">Narrative</span></button>
+    <button class="mqk-key" data-insert="[poster] "><span class="mqk-key-tag">[poster]</span><span class="mqk-key-desc">Hero</span></button>
+    <button class="mqk-key" data-insert="[pull] "><span class="mqk-key-tag">[pull]</span><span class="mqk-key-desc">Quote</span></button>
+    <button class="mqk-key" data-insert="[label] "><span class="mqk-key-tag">[label]</span><span class="mqk-key-desc">Section</span></button>
+    <button class="mqk-key" data-insert="[spec] Key :: "><span class="mqk-key-tag">[spec]</span><span class="mqk-key-desc">Key&middot;Val</span></button>
+    <button class="mqk-key" data-insert="[break]"><span class="mqk-key-tag">[break]</span><span class="mqk-key-desc">Divider</span></button>
+    <div class="mqk-section-rule"></div>
+    <button class="mqk-key mqk-wide" data-insert="**"><span class="mqk-key-tag">**bold**</span><span class="mqk-key-desc">Accent / Bold</span></button>
+    <button class="mqk-key" data-insert="*"><span class="mqk-key-tag">*italic*</span><span class="mqk-key-desc">Italic</span></button>
+    <div class="mqk-section-rule"></div>
+    <button class="mqk-key mqk-wide" data-insert="###:"><span class="mqk-key-tag">###:Title</span><span class="mqk-key-desc">Chapter Header</span></button>
+    <button class="mqk-key" data-insert="img:"><span class="mqk-key-tag">img:N</span><span class="mqk-key-desc">Image</span></button>
+  </div>
+</div>
+
 <!-- Compose bar — floating narrative editor -->
 <div class="compose-bar" id="composeBar" aria-label="Compose">
     <div class="compose-drag-handle" id="composeDragHandle">&#8942;&#8942;</div>
@@ -2493,7 +2615,7 @@ body.li-theme .csr-parse-tag { background: rgba(10,102,194,0.08); color: #0a66c2
   <div id="grid-tiles"></div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── DETAIL GHOST ─────────────────────────────────────────────────────────────
 (function(){
   var ghost   = document.getElementById('detail-ghost');
@@ -3008,13 +3130,13 @@ function goTo(n, opts) {
     window._specGhostUpdate(ghostTarget);
   }
   // Ch-9 (Contact): show a warm contact toast calling out the interest function
-  if (ch === 9 && prevCh !== 9) {
+  if (ch === 10 && prevCh !== 10) {
     setTimeout(function() {
       showContactToast();
     }, 600);
   }
   // On mobile: if NOT contact chapter, auto-surface the panel at last sentence
-  if (isMobile() && n === navigable.length - 1 && ch !== 9) {
+  if (isMobile() && n === navigable.length - 1 && ch !== 10) {
     setTimeout(function() { openPanelSheet(); }, 480);
   }
   // End-of-content toast
@@ -3044,7 +3166,7 @@ function updatePanelService(ch) {
   });
 }
 
-var CH_NAMES = ['', 'The Premise', 'The Urgency', 'The Method', 'The Ask'];
+var CH_NAMES = ['', 'The Premise', 'The Urgency', 'The Research', 'The Method', 'Claude', 'The Moment', 'The Opportunity', 'Who I Am', 'The Work', 'The Ask'];
 var CH_FIRST = {};
 navigable.forEach(function(el, i) {
   var ch = parseInt(el.dataset.ch || 1);
@@ -3158,10 +3280,20 @@ requestAnimationFrame(function() {
     ALL_NAV.forEach(function(c) { cursor.classList.remove(c); });
   }
   function exit() {
+    // Find nearest navigable sentence to current scroll position BEFORE removing scroll-free
+    var scrollY = window.scrollY;
+    var nearest = current;
+    var bestDist = Infinity;
+    navigable.forEach(function(el, i) {
+      var r = el.getBoundingClientRect();
+      var center = scrollY + r.top + r.height / 2;
+      var dist = Math.abs(center - (scrollY + window.innerHeight / 2));
+      if (dist < bestDist) { bestDist = dist; nearest = i; }
+    });
     scrollFree = false; btn.classList.remove('on'); syncHud(false);
     document.body.classList.remove('scroll-free');
     document.body.style.overflow = '';
-    goTo(current, {noScroll: true});
+    goTo(nearest, {noScroll: true});
   }
   btn.addEventListener('click', function() { scrollFree ? exit() : enter(); });
   btn.addEventListener('touchend', function(e) {
@@ -3631,7 +3763,7 @@ function closeGrid() {
     anchoredCh = getCurrentCh();
     anchoredSentence = getCurrentSentenceText();
 
-    var chNames = ['', 'About', 'Bootstrap', 'Turn5', 'Agency Life · Philly', 'Agency Life · NYC', 'Big Logos', 'wolfie.life', 'Open to Work', 'Say Hello'];
+    var chNames = ['', 'The Premise', 'The Urgency', 'The Research', 'The Method', 'Claude', 'The Moment', 'The Opportunity', 'Who I Am', 'The Work', 'The Ask'];
     var anchor = document.getElementById('ip-anchor');
     if (anchor) anchor.textContent = (chNames[anchoredCh] || 'Introduction').toUpperCase() + '  ·  Currently reading';
 
@@ -3662,7 +3794,7 @@ function closeGrid() {
 
   window.sendInterest = function() {
     if (selectedPills.size === 0) return;
-    var chNames = ['', 'The Premise', 'The Urgency', 'The Method', 'The Ask'];
+    var chNames = ['', 'The Premise', 'The Urgency', 'The Research', 'The Method', 'Claude', 'The Moment', 'The Opportunity', 'Who I Am', 'The Work', 'The Ask'];
     var chName = chNames[anchoredCh] || 'Introduction';
     var choices = Array.from(selectedPills).join(', ');
     var subject = encodeURIComponent('Re: Anthropic Presentation Demo — Zack Gort');
@@ -3700,7 +3832,7 @@ function closeGrid() {
           var newCh = getCurrentCh();
           if (newCh !== anchoredCh) {
             anchoredCh = newCh;
-            var chNames = ['', 'The Premise', 'The Urgency', 'The Method', 'The Ask'];
+            var chNames = ['', 'The Premise', 'The Urgency', 'The Research', 'The Method', 'Claude', 'The Moment', 'The Opportunity', 'Who I Am', 'The Work', 'The Ask'];
             var anchor = document.getElementById('ip-anchor');
             if (anchor) anchor.textContent = (chNames[newCh] || 'Introduction').toUpperCase() + '  ·  Currently reading';
                         buildPills(newCh);
@@ -3794,75 +3926,279 @@ img:17
 [label] Anthropic &middot; A Different Kind of Company
 img:18
 [poster] AI is the most **consequential** technology ever built.
+img:0
+[body] That is not a marketing claim. It is a statement of genuine uncertainty &mdash; and genuine possibility.
 img:15
-[body] That is not a marketing claim. It is a statement of genuine uncertainty &mdash; and genuine possibility. The same capabilities that could accelerate science could also concentrate power. The same system that helps a student learn could, if built carelessly, cause irreversible harm.
-img:6
+[body] The same capabilities that could accelerate science could also concentrate power. The same system that helps a student learn could, if built carelessly, cause irreversible harm.
+img:3
 [pull] &ldquo;We need shade to understand the bad. We need light to realize the good.&rdquo;
 img:19
 [body] Anthropic holds both of these truths at once. It is why the company was founded not as an AI lab, but as a *safety-first* research institution that happens to build frontier systems.
+img:14
+[body] The word &ldquo;frontier&rdquo; is deliberate. These are not stable technologies. They are moving fast &mdash; faster than regulation, faster than public understanding, faster than most institutions are prepared for.
+img:11
+[pull] The danger is not science fiction. It is the ordinary failure modes of powerful systems deployed without sufficient care.
+img:16
+[body] Anthropic was founded in 2021 by former members of OpenAI who believed the industry needed a different kind of actor. One willing to say: *we might be building something dangerous, and we are doing it anyway, because someone will &mdash; and it should be us.*
+img:12
+[body] That is an uncomfortable position. It is also an honest one. And honesty, at Anthropic, is not a virtue to aspire to. It is a job requirement.
 [break]
 
 ###:02 · The Urgency
 
-img:3
+img:2
 [label] The Stakes &middot; No Bystanders
 img:10
 [poster] The mission is **not a tagline.**
 img:5
-[body] Anthropic is a Public Benefit Corporation whose purpose is the responsible development and maintenance of advanced AI for the long-term benefit of humanity. This is the legal structure. It is also the operating principle.
+[body] Anthropic is a Public Benefit Corporation. Its stated purpose &mdash; the responsible development and maintenance of advanced AI for the long-term benefit of humanity &mdash; is the legal structure. It is also the operating principle.
 img:6
 [body] Every researcher, every engineer, every designer &mdash; every person who works here has personal ownership over whether the mission succeeds. None of us are *bystanders.*
-img:15
+img:13
 [pull] The question is not whether AI will be transformative. The question is whether transformation happens *with us* or *to us.*
-img:18
-[spec] Safety Research :: $100M invested in 2024 alone
-[spec] Constitutional AI :: Alignment technique, pioneered here
-[spec] Model Context Protocol :: Open standard, now an industry norm
-[spec] Certification :: First lab, ISO/IEC 42001:2023
+img:20
+[body] History does not remember the bystanders. It remembers the ones who showed up &mdash; with rigor, with intention, with the courage to say &ldquo;this is hard and it matters and I am not going anywhere.&rdquo;
+img:21
+[body] The pace of capability development is not slowing. Every six months, the models get significantly better. The window for establishing safety norms &mdash; for embedding them deeply enough to matter &mdash; is *not indefinitely open.*
+img:22
+[pull] We are in the period where the decisions made will shape the technology for decades. This is not metaphor. This is engineering.
+img:23
+[body] Constitutional AI is not a feature. It is a framework for teaching models to reason about their own behavior &mdash; to internalize values rather than simply follow rules. It is the difference between a guardrail and a conscience.
+img:24
+[body] Model Context Protocol is not a product. It is infrastructure &mdash; an open standard for how AI systems communicate with the tools and data they work with. Anthropic built it and gave it away. Because the mission is not *our* advantage. The mission is *a safer world.*
+img:25
+[spec] Safety Research :: $100M committed in 2024 alone
+[spec] Constitutional AI :: Alignment technique, pioneered at Anthropic
+[spec] Model Context Protocol :: Open standard &middot; now industry-wide
+[spec] ISO/IEC 42001:2023 :: First major lab to certify
+[spec] Frontier Model Forum :: Founding member
+[spec] Responsible Scaling Policy :: Published &middot; externally audited
 [break]
 
-###:03 · The Method
+###:03 · The Research
 
-img:4
+img:26
+[label] Science &middot; Interpretability &middot; The Hard Problems
+img:27
+[poster] We study what we **cannot yet explain.**
+img:28
+[body] Mechanistic interpretability is the attempt to understand *why* a model produces what it produces. Not just what it outputs &mdash; but the internal computation that led there. It is neuroscience for machines.
+img:29
+[body] This is painstaking work. It does not produce headlines. It produces the kind of understanding that makes safety claims credible rather than convenient.
+img:30
+[pull] You cannot align what you cannot understand. Interpretability is not a research interest. It is a prerequisite.
+img:31
+[body] Anthropic&apos;s evaluations team does not ask &ldquo;is this model good?&rdquo; They ask: what are the specific, measurable conditions under which this model fails? What does failure look like? How do we detect it before it happens in the wild?
+img:32
+[body] The answer is a rigorous evaluation framework &mdash; red-teaming, capability assessments, behavioral benchmarks &mdash; that runs continuously, not just before a launch.
+img:33
+[pull] Responsible scaling means having the policy *before* you need it. Not writing the rulebook after the game has already started.
+img:34
+[body] Policy work at Anthropic is not PR. It is technical. Researchers work with governments, international bodies, and peer institutions on frameworks that will matter &mdash; because someone has to do the unglamorous work of *building the standards.*
+img:35
+[body] The societal impact team studies what actually happens when AI meets the real world. Economic displacement. Access and equity. The downstream effects on education, healthcare, creative work. These are not afterthoughts. They are design inputs.
+img:36
+[spec] Interpretability :: Understanding internal model computation
+[spec] Red-Teaming :: Adversarial testing before every deployment
+[spec] Evals :: Ongoing behavioral + capability benchmarking
+[spec] Policy :: Active government & standards-body engagement
+[spec] Societal Research :: Education &middot; labor &middot; access &middot; equity
+[break]
+
+###:04 · The Method
+
+img:37
 [label] How We Work &middot; Empirical. Direct. Low-Ego.
-img:4
+img:38
 [poster] **Simple** solutions. **Measurable** impact.
-img:5
+img:39
 [body] We take an empirical approach to every problem. We care about the size of our impact &mdash; not the sophistication of our methods. We do not invent a spaceship when a bicycle will do.
-img:6
-[body] We communicate *kindly and directly.* We assume good intentions even in disagreement. We are a high-trust, low-ego organization &mdash; because the mission requires it.
-img:10
+img:40
+[body] We communicate *kindly and directly.* We assume good intentions even in disagreement. Directness is not harshness &mdash; it is respect. It says: I trust you enough to tell you the truth.
+img:41
 [pull] If something urgently needs to be done, the right person to do it is *probably you.*
-img:15
-[body] Claude is the embodiment of this method. Helpful, harmless, honest &mdash; not as constraints, but as design principles baked into every layer of how the system thinks.
+img:42
+[body] We are a high-trust organization. That means trust is the operating default, not a reward for good behavior. It is extended generously, and it is the foundation of everything else.
+img:43
+[body] Claude is the embodiment of this method. Helpful, harmless, honest &mdash; not as constraints, but as design principles baked into every layer of how the system thinks. The model reflects the organization that built it.
+img:44
+[body] Intellectual curiosity is not a nice-to-have. It is how we make progress. The researchers who do the best work here are the ones who find the problems *genuinely interesting* &mdash; not just professionally obligating.
+img:45
+[pull] We move fast. We also slow down when it matters. The ability to know the difference is the skill.
+img:46
+[body] The people who thrive here are not the ones who need the most direction. They are the ones who see a problem, decide it is theirs, and do something about it &mdash; and then tell everyone what they learned.
+img:47
+[spec] Team Size :: ~800 people &middot; growing deliberately
+[spec] HQ :: San Francisco, CA &middot; global remote
+[spec] Founded :: 2021 &middot; Dario Amodei &amp; Daniela Amodei
+[spec] Culture :: High-trust &middot; low-ego &middot; empirical
+[spec] Benefits :: Exceptional &middot; full family coverage &middot; generous equity
 [break]
 
-###:04 · The Ask
+###:05 · Claude
 
-img:8
-[label] Zack Gort &middot; Presentation Designer &middot; Open to Work
-img:1
+img:48
+[label] Claude &middot; The Model &middot; The Standard
+img:49
+[poster] Not just **helpful.** Genuinely **good.**
+img:50
+[body] Claude is Anthropic&apos;s externally-deployed model and, in many ways, its proof of concept. The thesis is that safety and capability are not in tension. That a model can be *more* useful precisely because it is more honest, more careful, more thoughtful.
+img:51
+[body] Claude 3 Opus, Sonnet, and Haiku established a new tier in the industry. Claude 3.5 Sonnet broke benchmarks. Claude 3.5 Haiku brought frontier capability to everyday price points. The trajectory is *not slowing.*
+img:52
+[pull] The goal is not the best model in the world. The goal is the best model in the world that you can also *trust.*
+img:53
+[body] The Claude Character &mdash; curious, warm, honest, direct, slightly playful &mdash; is not a persona bolted on after training. It is the result of a deliberate process of values alignment. The character and the safety properties are the same thing, expressed differently.
+img:54
+[body] Enterprise adoption has been significant. Claude powers products, workflows, and services at companies across every sector. The API is one of the most capable and well-documented in the industry. Developers build on it because it works &mdash; and because it behaves.
+img:55
+[pull] When Claude says &ldquo;I don&apos;t know,&rdquo; it means it. When it declines to do something, it explains why. This is not a limitation. It is *trustworthy behavior at scale.*
+img:56
+[spec] Context Window :: 200K tokens (Claude 3 and beyond)
+[spec] Modalities :: Text &middot; vision &middot; document analysis &middot; code
+[spec] API :: Available via anthropic.com &middot; AWS Bedrock &middot; GCP Vertex
+[spec] Claude.ai :: Consumer product &middot; Free + Pro + Team + Enterprise
+[spec] Response Quality :: Ranked #1 across major third-party evals
+[break]
+
+###:06 · The Moment
+
+img:57
+[label] 2025 &middot; This Is the Year That Counts
+img:58
+[poster] The window is **open.** It will not stay open.
+img:59
+[body] There is a version of the future where AI development goes well. Where the benefits are broadly distributed. Where the risks are understood, measured, and managed. Where the models that reach hundreds of millions of people have been built by people who actually cared about those people.
+img:60
+[body] And there is another version. We do not need to describe it. The AI safety community has described it at length. The point is not to frighten &mdash; it is to name the fork in the road *clearly enough to choose.*
+img:61
+[pull] The organizations doing this work right now are not hedge-betting. They are making a claim about what kind of future is worth building, and then building it.
+img:62
+[body] Anthropic is one of those organizations. Possibly the one most explicitly committed to the position that you can do this responsibly &mdash; that frontier capability and genuine safety research are *not mutually exclusive* but mutually reinforcing.
+img:63
+[body] The pace of the world is not waiting. Models are being deployed. Products are being built. Legislation is being drafted. Standards are being set. The question is who is in the room when those decisions are made.
+img:64
+[pull] Anthropic intends to be in the room. And it intends to show up having done the work.
+img:65
+[spec] Claude Usage :: Hundreds of millions of people
+[spec] Enterprise Customers :: Fortune 500 &middot; Healthcare &middot; Legal &middot; Finance
+[spec] Research Published :: 100+ papers since founding
+[spec] Policy Engagement :: US &middot; EU &middot; UK &middot; UN AI advisory bodies
+[break]
+
+###:07 · The Opportunity
+
+img:66
+[label] The Work &middot; What Gets Built Here
+img:67
+[poster] Every argument deserves a **stage.**
+img:68
+[body] Anthropic communicates. It publishes research. It briefs governments. It presents at conferences. It runs all-hands meetings for eight hundred people. It makes the case for safety to an industry that does not always want to hear it.
+img:69
+[body] That communication happens in documents, in slide decks, in videos, in emails, in Notion pages, in live presentations. And too much of it is *flattened.* Collapsed into bullet points. Compressed into a template. Delivered in a format that was designed for a different era and a different argument.
+img:70
+[pull] The ideas are extraordinary. The vessels they travel in should be worthy of them.
+img:71
+[body] What if the safety report read like a *case for the future* instead of a compliance document? What if the all-hands felt like a *shared understanding* instead of a status update? What if every slide deck communicated not just what was decided, but *why it matters?*
+img:72
+[body] Presentation design at this level is not decoration. It is the translation layer between rigorous thinking and human understanding. It is the difference between a paper being cited and a paper being *understood.*
+img:73
+[pull] The form of the argument is part of the argument. How you say something shapes what people believe about it.
+img:74
+[body] This is the work. Building the tools, the templates, the systems, and the individual pieces that let the smartest people in AI communicate at the level their ideas deserve.
+[break]
+
+###:08 · Who I Am
+
+img:75
+[label] Zack Gort &middot; Designer &middot; Builder &middot; Open
+img:93
+[poster] I make **difficult things** feel inevitable.
+img:94
+[body] I am a Senior UX and Presentation Designer with twenty years of experience across agency, startup, enterprise, and independent work. I have designed for companies you know and for companies that became companies you know.
+img:95
+[body] I am *self-taught.* That is not a caveat &mdash; it is a design philosophy. I learned by doing the work, studying what existed, and building things I wished existed. The result is a practice that is genuinely cross-disciplinary: product, narrative, visual, interactive.
+img:96
+[body] I am *left-handed* and I think that is relevant. The instinct to find the oblique angle, the unexpected entry point, the solution that is structurally different from the obvious one &mdash; that is how I approach every brief.
+img:97
+[pull] I am not a consultant who delivers decks. I am a practitioner who builds systems &mdash; and then teaches the organization how to use them.
+img:98
+[body] I have designed presentations for board rooms, for investor pitches, for internal culture-building, for product launches. I have built the tools that let *other people* make better presentations. I believe the medium is underinvested in, and I intend to fix that.
+img:99
+[body] I am also a builder of digital products. Wolfie &mdash; a presentation platform &mdash; is the current primary project. It is built with exactly the same conviction that drives this page: that the way ideas move should be *as good as the ideas themselves.*
+img:100
+[spec] Practice :: UX &middot; Product Design &middot; Presentation Design &middot; Front-end
+[spec] Years :: 20+ &middot; Agency &middot; Startup &middot; Enterprise &middot; Independent
+[spec] Clients :: Code &amp; Theory &middot; Publicis Sapient &middot; Huge &middot; LiveArea &middot; FlightPath
+[spec] Currently Building :: wolfie.love &middot; intoview.pro &middot; emdash.click
+[spec] Availability :: Immediate &middot; Remote &middot; Open to full-time
+[break]
+
+###:09 · The Work
+
+img:101
+[label] Selected Work &middot; What I Have Built
+img:56
+[poster] Twenty years. **One** through-line.
+img:57
+[body] The through-line is this: I believe that how something is communicated is part of what it *is.* A research finding buried in a dense PDF is less true, in practical terms, than the same finding rendered accessibly. A strategy that nobody understands is not a strategy &mdash; it is a document.
+img:58
+[body] At 160/90, I led interactive design for campaigns that moved millions of people. The work was fast, high-pressure, and genuinely innovative &mdash; agency life at its most demanding and its most creative.
+img:59
+[body] At O3 World, I built digital products from the ground up &mdash; discovery, wireframes, design systems, shipped code. A full-stack design practice before &ldquo;full-stack designer&rdquo; was a category.
+img:60
+[body] At Workarea, I designed the e-commerce platform itself &mdash; not campaigns built on top of it, but the actual infrastructure that forty million dollars of annual revenue ran on. That is a different kind of design problem.
+img:61
+[pull] The discipline is the same whether you are designing a checkout flow or a keynote. You are building a *path* through information. You are deciding what the person sees next.
+img:62
+[body] At LiveArea, I led design across a gamut of B2B and B2C engagements for enterprise clients. I ran discovery. I directed and delegated. I socialized solutions to stakeholders who had different priorities and helped them find the version they could all say yes to.
+img:63
+[body] Independently, I have built tools, written about the craft, and taken on clients who needed not just a deliverable but a *point of view.* The independent practice is where the clearest thinking happens &mdash; because no one is telling you what to think.
+img:64
+[spec] 160 Over Ninety :: Interactive design lead &middot; national campaigns
+[spec] O3 World :: Full-stack product design &middot; Fishtown, Philadelphia
+[spec] Workarea Commerce :: Platform design &middot; $40M ARR product
+[spec] LiveArea :: Senior design lead &middot; enterprise B2B + B2C
+[spec] FlightPath :: Design director &middot; emerging-from-bankruptcy arc
+[spec] Code &amp; Theory :: Senior UX &middot; healthcare + financial services
+[break]
+
+###:10 · The Ask
+
+img:102
+[label] The Proposal &middot; Let&apos;s Build Something
+img:91
 [poster] What if your **ideas** moved like this?
-img:9
-[body] Every all-hands. Every board presentation. Every product announcement. Every research paper walkthrough. Anthropic has things to *say* &mdash; arguments to make, evidence to present, a philosophy to communicate.
-img:10
-[body] Keynote flattens that into bullets. This renders it as *cinema.* Sentence by sentence. Chapter by chapter. The argument builds the way it was written &mdash; with intention, with weight, with a voice.
-img:6
-[pull] This is not a portfolio. This is a *proof of concept* for how Anthropic could present itself &mdash; internally, externally, at every scale.
-img:7
-[body] I built this today. I am a Senior UX and Product Designer with 20 years of experience. I am **open to work.** I would like to build this, and much more, under your umbrella.
+img:92
+[body] Every all-hands. Every board presentation. Every research paper walkthrough. Every safety report. Every product announcement. Every onboarding deck for a new hire who needs to understand *why this place exists.*
+img:103
+[body] Keynote flattens all of that into bullets. This renders it as *cinema.* Sentence by sentence. Chapter by chapter. The argument builds the way it was written &mdash; with intention, with weight, with a voice.
+img:104
+[pull] This is not a portfolio piece. This is a *live proof of concept* for how Anthropic could present itself &mdash; internally, externally, at every scale.
+img:105
+[body] I built this in a single day. Not because it was easy, but because I wanted to show what is possible when the tool fits the thinking. This is what &ldquo;day one&rdquo; looks like. Imagine *year one.*
+img:106
+[body] I am **open to work.** I am looking for a full-time role at an organization where the stakes are real and the standards are high. I believe Anthropic is that organization. I would like to build the presentation layer for the most important technology company in the world.
 [spec] Role :: Senior UX / Presentation Designer
-[spec] Availability :: Immediately &middot; Remote
+[spec] Reports to :: Design, Communications, or Research leadership
+[spec] Availability :: Immediate &middot; Remote &middot; San Francisco open
 [spec] Contact :: zack@wolfie.love
 [spec] Portfolio :: wolfie.love/real
+[spec] This page :: Built in one day &middot; from scratch &middot; for this application
 `;
 
 // ── Chapter metadata (mirrors link.html chapter system) ──
 const CHAPTERS = [
-  { ch: 1, label: 'Opening',  num: '01', title: 'The Premise', sub: 'Why this company exists' },
-  { ch: 2, label: 'Stakes',   num: '02', title: 'The Urgency', sub: 'What is actually at stake' },
-  { ch: 3, label: 'Approach', num: '03', title: 'The Method',  sub: 'How the work gets done' },
-  { ch: 4, label: 'Proposal', num: '04', title: 'The Ask',     sub: 'What comes next' },
+  { ch: 1,  label: 'Opening',      num: '01', title: 'The Premise',     sub: 'Why this company exists' },
+  { ch: 2,  label: 'Stakes',       num: '02', title: 'The Urgency',     sub: 'What is actually at stake' },
+  { ch: 3,  label: 'Research',     num: '03', title: 'The Research',    sub: 'The hard problems' },
+  { ch: 4,  label: 'Method',       num: '04', title: 'The Method',      sub: 'How the work gets done' },
+  { ch: 5,  label: 'Claude',       num: '05', title: 'Claude',          sub: 'The model and the standard' },
+  { ch: 6,  label: 'Moment',       num: '06', title: 'The Moment',      sub: 'Why now matters' },
+  { ch: 7,  label: 'Opportunity',  num: '07', title: 'The Opportunity', sub: 'What gets built here' },
+  { ch: 8,  label: 'Who I Am',     num: '08', title: 'Who I Am',        sub: 'Zack Gort, designer' },
+  { ch: 9,  label: 'Work',         num: '09', title: 'The Work',        sub: 'Selected projects' },
+  { ch: 10, label: 'Ask',          num: '10', title: 'The Ask',         sub: 'The proposal' },
 ];
 
 // ── Inline markdown ──
@@ -4126,7 +4462,7 @@ renderNarrative();
 
   function isContactChapter() {
     var el = navigable[current];
-    return el && parseInt(el.dataset.ch) === 9;
+    return el && parseInt(el.dataset.ch) === 10;
   }
 
   function setContactMode(on) {
@@ -4619,14 +4955,117 @@ renderNarrative();
       applyDragPos(startLeft + (e.clientX - startX), startBottom - (e.clientY - startY));
     });
     document.addEventListener('mouseup', function() {
-      if (!isDragging) return;
-      isDragging = false; handle.style.cursor = 'grab';
-      bar.style.transition = 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease';
+      if (!isDraging) return;
+      isDragging = false;
+      handle.style.cursor = 'grab';
+      bar.style.transition = 'transform 0.35s cubic-bezier(0.25,1,0.5,1), opacity 0.35s ease';
     });
   })();
 
 })(); // end initCompose
 
+// ── MOBILE COMPOSE MICRO-HUD ────────────────────────────────────────────────
+(function initMobileComposeHud() {
+  var cmhSubmit   = document.getElementById('cmh-submit');
+  var cmhScroll   = document.getElementById('cmh-scroll');
+  var cmhScrollIcon = document.getElementById('cmh-scroll-icon');
+  var cmhScrollLbl  = document.getElementById('cmh-scroll-lbl');
+  var cmhPrev     = document.getElementById('cmh-prev');
+  var cmhNext     = document.getElementById('cmh-next');
+  var cmhInfo     = document.getElementById('cmh-info');
+  var quickkeys   = document.getElementById('mobile-quickkeys');
+  var mqkClose    = document.getElementById('mqk-close');
+  var composeInput = document.getElementById('composeInput');
+
+  if (!cmhSubmit) return;
+
+  // Submit button — fires Enter on textarea
+  cmhSubmit.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    if (!composeInput) return;
+    var val = composeInput.value.trim();
+    if (!val) return;
+    // Dispatch Enter key event on the input
+    var evt = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    composeInput.dispatchEvent(evt);
+  });
+
+  // Scroll toggle
+  cmhScroll.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    var scrollBtn = document.getElementById('scroll-toggle');
+    if (scrollBtn) scrollBtn.click();
+  });
+
+  // Sync scroll button state
+  var scrollToggle = document.getElementById('scroll-toggle');
+  if (scrollToggle) {
+    var scrollObserver = new MutationObserver(function() {
+      var on = scrollToggle.classList.contains('on');
+      cmhScroll.classList.toggle('cmh-scroll-on', on);
+      if (cmhScrollIcon) cmhScrollIcon.textContent = on ? '\u2715' : '\u21C5';
+      if (cmhScrollLbl) cmhScrollLbl.textContent = on ? 'Exit' : 'Scroll';
+    });
+    scrollObserver.observe(scrollToggle, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // Prev / Next
+  cmhPrev.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    if (typeof prev === 'function') prev();
+  });
+  cmhNext.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    if (typeof next === 'function') next();
+  });
+
+  // Info/Keys toggle
+  var quickkeysOpen = false;
+  function openQK() {
+    quickkeys.classList.add('open');
+    quickkeys.setAttribute('aria-hidden', 'false');
+    quickkeysOpen = true;
+  }
+  function closeQK() {
+    quickkeys.classList.remove('open');
+    quickkeys.setAttribute('aria-hidden', 'true');
+    quickkeysOpen = false;
+  }
+
+  cmhInfo.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    quickkeysOpen ? closeQK() : openQK();
+  });
+  if (mqkClose) mqkClose.addEventListener('click', closeQK);
+
+  // Wire quickkey buttons — insert text into compose input
+  document.querySelectorAll('.mqk-key').forEach(function(key) {
+    key.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      var insert = key.dataset.insert;
+      if (!insert || !composeInput) return;
+      var start = composeInput.selectionStart || 0;
+      var end = composeInput.selectionEnd || 0;
+      var val = composeInput.value;
+      composeInput.value = val.slice(0, start) + insert + val.slice(end);
+      var newPos = start + insert.length;
+      composeInput.setSelectionRange(newPos, newPos);
+      composeInput.focus();
+      closeQK();
+    });
+  });
+
+  // Close quickkeys when compose exits
+  var _origEnterCompose = document.body.classList.contains.bind(document.body);
+  var composeBarEl = document.getElementById('composeBar');
+  if (composeBarEl) {
+    var composeObserver = new MutationObserver(function() {
+      if (!document.body.classList.contains('compose-mode')) closeQK();
+    });
+    composeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
+
 </script>
 </body>
-</html>
+</html> 
