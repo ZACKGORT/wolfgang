@@ -39,6 +39,72 @@ body.ch-6 { --bg:#0c0800; --ink:#f8f0d8; --ink-2:#b09060; --ink-3:#4a3818; --acc
 /* ch-7: now — near-black with rose */
 body.ch-7 { --bg:#0a0608; --ink:#f0e4e8; --ink-2:#986070; --ink-3:#301820; --accent:#d46080; --border:rgba(240,228,232,0.07); }
 
+/* ── SUB-CHAPTER PALETTES — cinematic agency shifts ─────────────────────── */
+/* subch-160: One Sixty Over Ninety — hunting green, editorial, tense */
+body.subch-160 {
+  --bg:     #030d06;
+  --ink:    #d4f0d8;
+  --ink-2:  #4a8a54;
+  --ink-3:  #0d2a12;
+  --accent: #2ecc60;
+  --border: rgba(46,204,96,0.08);
+  transition: background-color 1.4s ease, color 1.4s ease;
+}
+/* subch-o3: O3 World — deep blood red, Fishtown grit */
+body.subch-o3 {
+  --bg:     #0d0203;
+  --ink:    #f5d8d8;
+  --ink-2:  #a04040;
+  --ink-3:  #2a0808;
+  --accent: #e03030;
+  --border: rgba(224,48,48,0.08);
+  transition: background-color 1.4s ease, color 1.4s ease;
+}
+/* subch-workarea: Workarea — molten amber-orange, industrial */
+body.subch-workarea {
+  --bg:     #0c0600;
+  --ink:    #fce8c8;
+  --ink-2:  #b86c10;
+  --ink-3:  #3a1e00;
+  --accent: #f07820;
+  --border: rgba(240,120,32,0.08);
+  transition: background-color 1.4s ease, color 1.4s ease;
+}
+
+/* Sub-chapter palette suppressed in LinkedIn theme */
+body.li-theme.subch-160,
+body.li-theme.subch-o3,
+body.li-theme.subch-workarea {
+  --bg:     #f3f2ef;
+  --ink:    #191919;
+  --ink-2:  #555;
+  --ink-3:  #bbb;
+  --accent: #0a66c2;
+  --border: rgba(0,0,0,0.10);
+}
+
+/* Accent bleeds onto pull + poster in sub-chapter mode */
+body.subch-160 .sentence.pull,
+body.subch-o3   .sentence.pull,
+body.subch-workarea .sentence.pull {
+  border-left-color: var(--accent);
+}
+body.subch-160 .sentence.label,
+body.subch-o3   .sentence.label,
+body.subch-workarea .sentence.label {
+  color: var(--accent);
+}
+body.subch-160 .ch-header-rule,
+body.subch-o3   .ch-header-rule,
+body.subch-workarea .ch-header-rule {
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+}
+body.subch-160 #progress,
+body.subch-o3   #progress,
+body.subch-workarea #progress {
+  background: var(--accent);
+}
+
 /* ── LINKEDIN THEME ──────────────────────────────────────────────────────── */
 body.li-theme {
   --bg:      #f3f2ef;
@@ -61,7 +127,11 @@ body.li-theme.ch-3,
 body.li-theme.ch-4,
 body.li-theme.ch-5,
 body.li-theme.ch-6,
-body.li-theme.ch-7 {
+body.li-theme.ch-7,
+body.li-theme.ch-8,
+body.li-theme.ch-9,
+body.li-theme.ch-10,
+body.li-theme.ch-11 {
   --bg:     #f3f2ef;
   --ink:    #191919;
   --ink-2:  #555;
@@ -2624,9 +2694,14 @@ function goTo(n, opts) {
   document.getElementById('nw-nav-pip').style.height = pct + '%';
   scheduleAutoFlow(n);
   var ch = parseInt(activeEl ? activeEl.dataset.ch : 1) || 1;
-  var prevCh = parseInt((document.body.className.match(/\bch-(\d)\b/) || [])[1] || '1');
-  document.body.className = document.body.className.replace(/\bch-\d\b/g, '').trim();
+  var prevCh = parseInt((document.body.className.match(/\bch-(\d+)\b/) || [])[1] || '1');
+  document.body.className = document.body.className.replace(/\bch-\d+\b/g, '').trim();
   if (ch > 1) document.body.classList.add('ch-' + ch);
+
+  // ── Sub-chapter palette shift ──────────────────────────────────────────────
+  var subch = activeEl ? (activeEl.dataset.subch || '') : '';
+  document.body.classList.remove('subch-160', 'subch-o3', 'subch-workarea');
+  if (subch) document.body.classList.add('subch-' + subch);
   document.querySelectorAll('.ch-header').forEach(function(g) {
     parseInt(g.dataset.ch) <= ch ? g.classList.add('revealed') : g.classList.remove('revealed');
   });
@@ -3475,26 +3550,35 @@ img:55
 [body] I built an *interactive haiku* to test my skills &mdash; it wasn&rsquo;t profound, but it proved potential. Enter #agencylife.
 img:56
 [label] One Sixty Over Ninety.
+subch:160
 img:7
 [body] One Sixty Over Ninety &mdash; my heartrate when offered a job as an Interaction Designer in Center City, Philadelphia. I took a pay cut to join their new Interactive Department, but I was there to learn.
+subch:160
 img:8
 [body] Clients included Comcast, Kent State, and the Philadelphia Eagles. We worked long days, *longer nights,* and short weekends. Lots of weekends.
+subch:160
 img:60
 [body] The culture demanded we dare &mdash; to try; to push beyond. The agency invited creatives to take risks; operating and ideating beyond our comfort zone.
+subch:160
 img:61
 [body] The work wasn&rsquo;t scientific. It was *expressive.* It was *novel.* It was *considered.* As an interactive designer, I had a hand in every aspect of the creative process.
 img:64
 [label] A Digital Product Shop.
+subch:o3
 img:9
 [body] O3 World was an elevating experience. A digital product shop in the heart of Fishtown, Philly. We were Agile in nature and scrum led.
+subch:o3
 img:65
 [body] We held daily stand-ups to manage projects for clients like La Colombe, Vertex, and SEIC. We practiced true *Lean UX* methodologies.
+subch:o3
 img:66
 [body] We workshopped with whiteboards. We wireframed with Balsamiq. We shipped.
 img:68
 [label] A Bona Fide Dev Shop.
+subch:workarea
 img:69
 [body] Downtown from Fishtown was Workarea, where I worked on a proprietary SaaS platform. We skipped high-fidelity mockups for *napkin sketches* and direct collaboration with developers.
+subch:workarea
 img:70
 [body] We were a dev-shop through and through. We built things better, faster, smarter. The company sold, requiring I reframe my approach.
 [break]
@@ -3642,6 +3726,7 @@ function parseNarrative(text) {
   const parts = [];
   const lines = text.split('\n');
   let pendingImg = null;
+  let pendingSubch = null;
   let chapterIdx = 0;
 
   for (const rawLine of lines) {
@@ -3663,13 +3748,21 @@ function parseNarrative(text) {
       continue;
     }
 
+    // subch:name — pending sub-chapter tag for next sentence
+    if (line.startsWith('subch:')) {
+      pendingSubch = line.substring(6).trim();
+      continue;
+    }
+
     // Sentence types
     const typeMatch = line.match(/^\[([a-z-]+)\]\s*(.*)/s);
     if (typeMatch) {
       const type = typeMatch[1];
       const content = typeMatch[2].trim();
       const imgIdx = pendingImg !== null ? pendingImg : -1;
+      const subch  = pendingSubch !== null ? pendingSubch : null;
       pendingImg = null;
+      pendingSubch = null;
 
       if (type === 'break') {
         parts.push({ type: 'break', img: imgIdx });
@@ -3678,12 +3771,12 @@ function parseNarrative(text) {
       } else if (type === 'spec') {
         const sep = content.indexOf('::');
         if (sep !== -1) {
-          parts.push({ type: 'spec', key: content.substring(0, sep).trim(), val: content.substring(sep + 2).trim(), img: imgIdx });
+          parts.push({ type: 'spec', key: content.substring(0, sep).trim(), val: content.substring(sep + 2).trim(), img: imgIdx, subch });
         }
       } else if (['label','poster','body','pull'].includes(type)) {
-        parts.push({ type, content, img: imgIdx });
+        parts.push({ type, content, img: imgIdx, subch });
       } else {
-        parts.push({ type: 'body', content, img: imgIdx });
+        parts.push({ type: 'body', content, img: imgIdx, subch });
       }
     }
   }
@@ -3744,6 +3837,7 @@ function renderNarrative() {
     el.dataset.idx = idxCounter++;
     el.dataset.ch = currentCh;
     if (part.img >= 0) el.dataset.img = part.img;
+    if (part.subch)    el.dataset.subch = part.subch;
 
     if (part.type === 'label') {
       el.className = 'sentence label';
