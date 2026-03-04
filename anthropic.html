@@ -730,7 +730,7 @@ body.scroll-free .sentence.label { color: var(--accent) !important; }
 body.scroll-free .ch-header { opacity: 1 !important; }
 #scroll-lockout {
   display: none; position: fixed; top: 0; left: 0; bottom: 0; right: 320px;
-  z-index: 490;
+  z-index: 490; pointer-events: none;
 }
 body.scroll-free #scroll-lockout { display: block; }
 body.scroll-free #nav-widget { opacity: 0.15; pointer-events: none; }
@@ -4253,7 +4253,7 @@ const narrative = `
 img:18
 [label] Anthropic &middot; A Different Kind of Company
 img:6
-@@darkchapter
+
 [poster] AI is the most **consequential** technology ever built.
 img:4
 [body] That is not a marketing claim. It is a statement of genuine uncertainty &mdash; and genuine possibility.
