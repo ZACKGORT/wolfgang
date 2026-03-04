@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Nike — Senior Product Designer, Digital Commerce</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:     #09080b;
+  --ink:    #f0ece4;
+  --ink-2:  #8a8070;
+  --ink-3:  #3a3028;
+  --accent: #fa5400; /* Nike orange */
+  --accent-l: rgba(250,84,0,0.10);
+  --border: rgba(255,255,255,0.06);
+  --ui:     'Space Mono', monospace;
+  --disp:   'Barlow Condensed', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; overscroll-behavior: none; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--ui); font-size: 12px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; cursor: none; min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+/* grain */
+body::after {
+  content: ''; position: fixed; inset: 0;
+  pointer-events: none; z-index: 9000; opacity: 0.050;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px;
+}
+
+/* cursor */
+#cursor {
+  position: fixed; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--accent);
+  pointer-events: none; z-index: 10001;
+  transform: translate(-50%,-50%);
+  transition: width .14s, height .14s, background .2s, opacity .2s;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ui); font-size: 18px; font-weight: 700;
+  opacity: 0;
+}
+#cursor::after { content: ''; opacity: 0; transition: opacity .14s; color: var(--bg); }
+#cursor.big { width: 36px; height: 36px; }
+#cursor.nav-prev, #cursor.nav-next { width: 56px; height: 56px; background: var(--ink); }
+#cursor.nav-prev::after { content: '↑'; opacity: 1; }
+#cursor.nav-next::after { content: '↓'; opacity: 1; }
+a, button, [data-idx] { cursor: none; }
+
+/* progress */
+#progress {
+  position: fixed; bottom: 0; left: 0; height: 2px;
+  background: var(--accent); z-index: 200; width: 0%;
+  transition: width 0.25s ease;
+}
+
+/* image layer */
+#image-layer {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+}
+#image-layer img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 35%;
+  opacity: 0; transform: scale(1.03);
+  transition: opacity 0.55s ease, transform 9s ease;
+}
+#image-layer img.visible { opacity: 0.28; transform: scale(1); }
+#image-layer::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(to right, rgba(9,8,11,0.96) 0%, rgba(9,8,11,0.62) 52%, rgba(9,8,11,0.20) 100%),
+    linear-gradient(to top, rgba(9,8,11,0.85) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* layout shell */
+#shell {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: 52px 1fr;
+  min-height: 100vh;
+  position: relative; z-index: 10;
+}
+
+/* header */
+header {
+  grid-column: 1 / -1; grid-row: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px 0 22px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(9,8,11,0.55); backdrop-filter: blur(20px);
+  position: sticky; top: 0; z-index: 500;
+  transition: background 0.3s ease;
+}
+header:hover { background: rgba(9,8,11,0.92); }
+
+.mall-crumb {
+  font-family: var(--ui); font-size: 8px; font-weight: 400;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; align-items: center; gap: 8px;
+}
+.mall-crumb .sep { opacity: 0.5; }
+.mall-crumb .node { transition: color .15s; cursor: none; }
+.mall-crumb .node:hover { color: var(--accent); }
+
+.h-center {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.h-name {
+  font-family: var(--disp); font-weight: 900; font-size: 16px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink);
+  transition: color .35s;
+}
+.h-tagline {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.12em; color: var(--accent);
+  transition: color .35s;
+}
+.h-actions { display: flex; gap: 8px; align-items: center; }
+.h-btn {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: 1px solid var(--border);
+  color: var(--ink-3); padding: 5px 12px;
+  transition: all .15s; text-decoration: none; display: inline-flex; align-items: center;
+}
+.h-btn:hover { border-color: var(--accent); color: var(--accent); }
+.h-btn.cta { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+.h-btn.cta:hover { opacity: 0.85; }
+
+/* swoosh mark */
+.nike-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 18px; color: #fff; line-height: 1; flex-shrink: 0;
+}
+
+/* header overlay */
+#header-overlay {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: rgba(9,8,11,0.97);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 99;
+}
+header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.ho-cell { padding: 16px 24px; border-right: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 6px; }
+.ho-cell:last-child { border-right: none; }
+.ho-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+.ho-value { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; color: var(--ink-2); line-height: 1.6; }
+.ho-value a { color: var(--accent); text-decoration: none; }
+.ho-value a:hover { text-decoration: underline; }
+.ho-value strong { color: var(--ink); }
+
+/* main stream */
+#stream-col {
+  grid-column: 1; grid-row: 2;
+  padding: clamp(52px,8vh,96px) clamp(28px,5vw,80px);
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: calc(100vh - 52px); position: relative;
+}
+
+/* sentences */
+.sentence {
+  display: block; position: relative;
+  padding: 5px 0;
+  transition: opacity 0.4s ease, color 0.4s ease;
+  opacity: 0.08;
+}
+.sentence.poster {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(52px,7.5vw,100px);
+  line-height: 0.88; letter-spacing: -0.03em; text-transform: uppercase; padding: 4px 0;
+}
+.sentence.poster .ac { color: var(--accent); }
+.sentence.poster .dim { color: var(--ink-2); font-weight: 300; font-style: italic; }
+.sentence.body {
+  font-family: var(--disp); font-weight: 300;
+  font-size: clamp(17px,2.2vw,24px); line-height: 1.45;
+  letter-spacing: 0.005em; color: var(--ink-2); max-width: 560px;
+}
+.sentence.body .em { font-style: italic; font-weight: 700; color: var(--ink); }
+.sentence.pull {
+  font-family: var(--disp); font-weight: 300;
+  font-size: clamp(20px,2.6vw,34px);
+  line-height: 1.2; letter-spacing: 0.01em;
+  color: var(--ink-2); max-width: 480px; padding: 8px 0;
+  border-left: 1px solid var(--ink-3); padding-left: 20px; opacity: 0.88;
+}
+.sentence.pull .ac { color: var(--accent); }
+.sentence.spec {
+  font-family: var(--ui); font-size: 10px;
+  letter-spacing: 0.06em; color: var(--ink-3);
+  display: flex; align-items: baseline; gap: 14px; padding: 3px 0;
+}
+.sentence.spec .spec-key {
+  text-transform: uppercase; letter-spacing: 0.14em; font-size: 8px;
+  color: var(--ink-3); min-width: 96px; flex-shrink: 0;
+}
+.sentence.spec .spec-val { color: var(--ink-2); }
+.sentence.label {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--accent); padding: 12px 0 4px; opacity: 0.7;
+}
+.sentence.break { padding: 10px 0; opacity: 0.4; }
+.sentence.break::before {
+  content: ''; display: block; width: 28px; height: 2px; background: var(--ink-3);
+}
+.sentence.cta-sentence { padding: 28px 0 8px; }
+
+/* sentence states */
+.sentence.active { opacity: 1; }
+.sentence.active.body { color: var(--ink); }
+.sentence.active.pull { color: var(--ink); }
+.sentence.active.spec .spec-val { color: var(--ink); }
+.sentence.revealed { opacity: 0.30; }
+.sentence.past { opacity: 0.72; }
+.sentence.past.body { color: var(--ink-2); }
+.sentence:hover:not(.active):not(.break):not(.label) { opacity: 0.55; }
+.sentence.poster.active::before {
+  content: ''; position: absolute;
+  left: -24px; top: 0; bottom: 0; width: 3px;
+  background: var(--accent); border-radius: 2px;
+}
+
+/* CTA button */
+.apply-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.20em; text-transform: uppercase;
+  background: var(--accent); border: none; color: #fff;
+  padding: 14px 28px; font-weight: 700;
+  transition: all .18s; text-decoration: none;
+  position: relative; overflow: hidden;
+}
+.apply-btn::after {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,0); transition: background .18s;
+}
+.apply-btn:hover::after { background: rgba(255,255,255,0.10); }
+.apply-btn .arrow { font-size: 14px; transition: transform .18s; }
+.apply-btn:hover .arrow { transform: translateX(4px); }
+
+.save-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: 1px solid var(--border); color: var(--ink-3);
+  padding: 13px 20px;
+  transition: all .15s; text-decoration: none;
+}
+.save-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.cta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* chapter-like section dividers */
+.section-marker {
+  display: flex; align-items: center; gap: 20px;
+  padding: 56px 0 16px; opacity: 0;
+  transition: opacity 0.7s ease; pointer-events: none;
+}
+.section-marker.revealed { opacity: 1; }
+.section-rule {
+  height: 1px; width: 28px; flex-shrink: 0;
+  background: linear-gradient(to right, transparent, var(--accent));
+}
+.section-num {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(36px,5vw,60px);
+  line-height: 0.85; letter-spacing: -0.04em;
+  color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.07);
+  user-select: none;
+}
+.section-title {
+  font-family: var(--disp); font-weight: 900;
+  font-size: clamp(16px,2vw,24px);
+  letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
+}
+
+/* HUD */
+:root {
+  --hud-bg: rgba(14,12,16,0.97);
+  --hud-ink: #f0ece4;
+  --hud-ink-2: #7a7060;
+  --hud-ink-3: #3a3028;
+  --hud-border: rgba(255,255,255,0.08);
+  --hud-accent: #fa5400;
+}
+
+/* nav widget */
+#nav-widget {
+  position: fixed; top: 50%; right: 320px; bottom: auto; left: auto;
+  transform: translateY(-50%); z-index: 300;
+  user-select: none; touch-action: none;
+}
+.nw-shell {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  backdrop-filter: blur(20px); border-radius: 10px;
+  padding: 6px 4px; gap: 0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.38), 0 1px 4px rgba(0,0,0,0.20);
+  min-width: 60px;
+}
+.nw-nav { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 4px; width: 100%; }
+.nw-btn-prev, .nw-btn-next {
+  height: 40px; border-radius: 7px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--hud-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--hud-ink-2); font-size: 16px;
+  transition: background .12s, transform .08s, color .12s;
+  cursor: none; width: 100%;
+}
+.nw-btn-prev { border-radius: 7px 7px 4px 4px; }
+.nw-btn-next { border-radius: 4px 4px 7px 7px; }
+.nw-btn-prev:hover { background: rgba(255,255,255,0.08); color: var(--hud-ink); }
+.nw-btn-next:hover { background: var(--hud-accent); color: #fff; border-color: var(--hud-accent); }
+.nw-btn-prev:active, .nw-btn-next:active { transform: scale(0.92); }
+.nw-nav-pip { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; width: 100%; }
+.nw-nav-pip-bar { width: 1px; height: 40px; background: var(--hud-border); position: relative; overflow: hidden; border-radius: 1px; align-self: center; }
+.nw-nav-pip-fill { position: absolute; top: 0; left: 0; right: 0; background: var(--hud-accent); height: 0%; width: 100%; transition: height 0.3s ease; }
+.nw-nav-pip-pct { font-family: var(--ui); font-size: 7px; color: var(--hud-ink-3); letter-spacing: 0.06em; }
+
+/* panel */
+#panel {
+  grid-column: 2; grid-row: 2;
+  position: sticky; top: 52px; height: calc(100vh - 52px);
+  display: flex; flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: rgba(9,8,11,0.65); backdrop-filter: blur(20px);
+  overflow-y: auto; padding: 22px 18px 48px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+#panel:hover { background: rgba(14,12,16,0.99); border-left-color: rgba(255,255,255,0.10); }
+#panel::-webkit-scrollbar { width: 3px; }
+#panel::-webkit-scrollbar-track { background: transparent; }
+#panel::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 2px; }
+
+/* panel logo area */
+.panel-logo-zone {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 20px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-swoosh {
+  width: 44px; height: 44px;
+  background: #111; border: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  border-radius: 3px;
+  transition: border-color .3s;
+}
+#panel:hover .panel-swoosh { border-color: rgba(255,255,255,0.20); }
+.panel-co-name {
+  font-family: var(--disp); font-weight: 900;
+  font-size: 18px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink);
+}
+.panel-co-sub {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.12em; color: var(--ink-3); margin-top: 2px;
+}
+
+/* panel section label */
+.rp-label {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 8px;
+}
+
+/* job card in panel */
+.panel-job-card {
+  background: rgba(250,84,0,0.06);
+  border: 1px solid rgba(250,84,0,0.18);
+  border-radius: 3px; padding: 14px;
+  margin-bottom: 14px;
+}
+.pjc-title {
+  font-family: var(--disp); font-weight: 900;
+  font-size: 18px; line-height: 1; color: var(--ink);
+  text-transform: uppercase; letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.pjc-dept {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.10em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.pjc-meta { display: flex; flex-direction: column; gap: 5px; }
+.pjc-row {
+  display: flex; align-items: baseline; gap: 10px;
+}
+.pjc-key {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3); min-width: 64px; flex-shrink: 0;
+}
+.pjc-val {
+  font-family: var(--ui); font-size: 9px;
+  color: var(--ink-2);
+}
+
+/* culture stats */
+.panel-stat-block { margin-bottom: 16px; }
+.stat-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-name {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.08em; color: var(--ink-3);
+}
+.stat-val {
+  font-family: var(--disp); font-weight: 700;
+  font-size: 15px; letter-spacing: -0.01em; color: var(--accent);
+}
+
+/* team grid */
+.team-row {
+  display: flex; gap: 7px; margin-bottom: 14px;
+}
+.team-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; flex-shrink: 0;
+  transition: border-color .2s;
+}
+#panel:hover .team-dot { border-color: rgba(250,84,0,0.30); }
+.team-more {
+  font-family: var(--ui); font-size: 7px;
+  letter-spacing: 0.10em; color: var(--ink-3);
+  align-self: center; margin-left: 4px;
+}
+
+/* panel apply button */
+.panel-apply {
+  display: block; width: 100%;
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  background: var(--accent); border: none; color: #fff; font-weight: 700;
+  padding: 13px; text-align: center; cursor: none;
+  transition: all .15s; text-decoration: none; margin-bottom: 8px;
+  border-radius: 2px;
+}
+.panel-apply:hover { opacity: 0.85; }
+.panel-save {
+  display: block; width: 100%;
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: none; border: 1px solid var(--border); color: var(--ink-3);
+  padding: 12px; text-align: center; cursor: none;
+  transition: all .15s; text-decoration: none; margin-bottom: 16px;
+  border-radius: 2px;
+}
+.panel-save:hover { border-color: var(--accent); color: var(--accent); }
+
+/* panel footer */
+.panel-footer {
+  font-family: var(--ui); font-size: 8px;
+  letter-spacing: 0.06em; color: var(--ink-3); line-height: 1.9;
+  border-top: 1px solid var(--border); padding-top: 14px;
+  margin-top: auto;
+}
+.panel-footer a { color: var(--accent); text-decoration: none; }
+.panel-footer a:hover { text-decoration: underline; }
+
+/* toast */
+#toast {
+  position: fixed; bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--hud-bg); border: 1px solid var(--hud-border);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.38); backdrop-filter: blur(20px);
+  border-radius: 8px; padding: 14px 22px 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--ui); font-size: 10px; letter-spacing: 0.06em;
+  color: var(--hud-ink); opacity: 0; pointer-events: none; z-index: 9000;
+  transition: opacity .35s ease, transform .35s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap; max-width: 90vw;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+#toast .toast-icon { font-size: 16px; }
+#toast .toast-title { font-weight: 700; color: var(--hud-ink); letter-spacing: 0.10em; text-transform: uppercase; font-size: 9px; }
+#toast .toast-sub { color: var(--hud-ink-2); font-size: 8px; letter-spacing: 0.06em; }
+
+/* mobile */
+@media (max-width: 760px) {
+  #shell { grid-template-columns: 1fr; grid-template-rows: 52px auto; }
+  #stream-col { grid-row: 2; min-height: auto; padding: 40px 24px 140px; z-index: 10; }
+  .h-center { display: none; }
+  .sentence.poster { font-size: clamp(40px,11vw,72px); }
+  .sentence.poster.active::before { left: -16px; }
+  #header-overlay { grid-template-columns: 1fr 1fr; }
+  .ho-cell:nth-child(2) { border-right: none; }
+  .ho-cell:nth-child(3) { border-top: 1px solid rgba(255,255,255,0.06); }
+  #nav-widget {
+    position: fixed; bottom: 20px;
+    left: 50%; right: auto; top: auto; transform: translateX(-50%);
+  }
+  .nw-shell { flex-direction: row; align-items: stretch; border-radius: 24px; min-width: unset; padding: 0; gap: 0; }
+  .nw-nav-pip, .nw-nav-pip-pct { display: none !important; }
+  .nw-nav { flex-direction: row; padding: 0; gap: 0; }
+  .nw-btn-prev, .nw-btn-next { flex: 1; height: 52px; font-size: 18px; border-radius: 0; border: none; padding: 0 16px; }
+  .nw-btn-prev { border-radius: 24px 0 0 24px; }
+  .nw-btn-next { border-radius: 0 24px 24px 0; }
+  #panel {
+    position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+    height: 88vh; border-left: none; border-top: none;
+    border-radius: 18px 18px 0 0; z-index: 2000;
+    transform: translateY(100%);
+    transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+    box-shadow: 0 -8px 60px rgba(0,0,0,0.7);
+    background: rgba(14,12,16,0.99) !important;
+  }
+  #panel.sheet-open { transform: translateY(0); }
+}
+</style>
+</head>
+<body class="no-transitions">
+
+<div id="cursor"></div>
+<div id="progress"></div>
+
+<!-- Background image layer — athleticism, movement, culture -->
+<div id="image-layer">
+  <img id="img-0" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1600&q=80" alt="">
+  <img id="img-1" src="https://images.unsplash.com/photo-1556906781-9a412961a28c?w=1600&q=80" alt="">
+  <img id="img-2" src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1600&q=80" alt="">
+  <img id="img-3" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1600&q=80" alt="">
+  <img id="img-4" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1600&q=80" alt="">
+  <img id="img-5" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=1600&q=80" alt="">
+  <img id="img-6" src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=1600&q=80" alt="">
+</div>
+
+<div id="shell">
+  <!-- ── HEADER ── -->
+  <header>
+    <nav class="mall-crumb">
+      <span class="node">&#9671; Nike Careers</span>
+      <span class="sep">/</span>
+      <span class="node">Product Design</span>
+      <span class="sep">/</span>
+      <span class="node">Digital Commerce</span>
+    </nav>
+    <div class="h-center">
+      <span class="h-name" style="display:flex;align-items:center;gap:8px;"><span style="font-size:18px;">&#10003;</span> NIKE, INC.</span>
+      <span class="h-tagline">Just Do It &middot; Beaverton, OR &middot; est. 1964</span>
+    </div>
+    <div class="h-actions">
+      <a href="#" class="h-btn">Save Role</a>
+      <a href="#" class="h-btn cta">Apply Now &rarr;</a>
+    </div>
+    <div id="header-overlay">
+      <div class="ho-cell">
+        <span class="ho-label">Role</span>
+        <span class="ho-value"><strong>Senior Product Designer</strong><br>Digital Commerce &middot; Nike Direct</span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Location</span>
+        <span class="ho-value">Beaverton, Oregon<br>Hybrid &middot; 3 days on-site</span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Compensation</span>
+        <span class="ho-value">$135,000 – $175,000<br>+ Equity &middot; Full Benefits</span>
+      </div>
+      <div class="ho-cell">
+        <span class="ho-label">Team Size</span>
+        <span class="ho-value">120+ product designers<br>across Nike Direct global</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN NARRATIVE STREAM ── -->
+  <main id="stream-col">
+    <div id="narrative-root">
+
+      <!-- SECTION 01: THE ROLE -->
+      <div class="section-marker revealed" data-section="1">
+        <div class="section-rule"></div>
+        <span class="section-num">01</span>
+        <span class="section-title">The Role</span>
+      </div>
+
+      <div class="sentence poster" data-idx="0" data-img="0">
+        <span>DESIGN<br>THE<br><span class="ac">FUTURE</span><br><span class="dim">of sport.</span></span>
+      </div>
+
+      <div class="sentence body" data-idx="1">
+        You won't be making another checkout flow. You'll be <span class="em">rethinking what it means to buy the shoe you trained in</span> — the intersection of performance data, personal expression, and the athlete's relationship with Nike Direct.
+      </div>
+
+      <div class="sentence pull" data-idx="2">
+        "We believe if you have a body, <span class="ac">you are an athlete.</span> Design for that."
+      </div>
+
+      <div class="sentence body" data-idx="3">
+        This role sits at the center of Nike's digital direct-to-consumer strategy — the place where brand becomes product, and product becomes <span class="em">a relationship</span>.
+      </div>
+
+      <div class="sentence break" data-idx="4"></div>
+
+      <!-- SECTION 02: THE WORK -->
+      <div class="section-marker revealed" data-section="2">
+        <div class="section-rule"></div>
+        <span class="section-num">02</span>
+        <span class="section-title">What You'll Do</span>
+      </div>
+
+      <div class="sentence label" data-idx="5">Craft &amp; Scope</div>
+
+      <div class="sentence poster" data-idx="6" data-img="1">
+        OWN THE<br><span class="ac">WHOLE</span><br>CANVAS.
+      </div>
+
+      <div class="sentence body" data-idx="7">
+        Lead end-to-end design across Nike.com's commerce experience — from discovery to post-purchase. You'll shape <span class="em">information architecture, interaction systems, and visual execution</span> with equal care.
+      </div>
+
+      <div class="sentence spec" data-idx="8">
+        <span class="spec-key">Focus Area</span>
+        <span class="spec-val">Nike Direct Digital Commerce (Nike.com)</span>
+      </div>
+      <div class="sentence spec" data-idx="9">
+        <span class="spec-key">Deliverables</span>
+        <span class="spec-val">Research synthesis, flows, prototypes, shipped product</span>
+      </div>
+      <div class="sentence spec" data-idx="10">
+        <span class="spec-key">Collaboration</span>
+        <span class="spec-val">PM, Engineering, Brand, Data Science, Merchandising</span>
+      </div>
+      <div class="sentence spec" data-idx="11">
+        <span class="spec-key">Tools</span>
+        <span class="spec-val">Figma, Protopie, Looker, custom Nike design system</span>
+      </div>
+
+      <div class="sentence break" data-idx="12"></div>
+
+      <div class="sentence body" data-idx="13">
+        You won't be a UI merchant. You'll be <span class="em">the advocate for the athlete's experience</span> — in the room with engineering when tradeoffs get made, and at the table when strategy gets set.
+      </div>
+
+      <div class="sentence pull" data-idx="14">
+        We don't design features. We design <span class="ac">moments of belief</span> — the instant someone puts the shoe in the bag.
+      </div>
+
+      <!-- SECTION 03: THE CULTURE -->
+      <div class="section-marker revealed" data-section="3">
+        <div class="section-rule"></div>
+        <span class="section-num">03</span>
+        <span class="section-title">The Culture</span>
+      </div>
+
+      <div class="sentence poster" data-idx="15" data-img="2">
+        WIN AS<br>A <span class="ac">TEAM.</span>
+      </div>
+
+      <div class="sentence body" data-idx="16">
+        Nike's culture is about being <span class="em">on the offense always</span>. You'll work alongside designers who are also athletes, researchers who compete, and engineers who coach youth leagues on weekends.
+      </div>
+
+      <div class="sentence body" data-idx="17">
+        Nike Direct Design is a <span class="em">creative team that ships</span>. We have a bias for action, a reverence for craft, and a standing weekly critique that gets heated in the best way.
+      </div>
+
+      <div class="sentence pull" data-idx="18">
+        <span class="ac">Failure is part of the playbook</span> — because innovation depends on risk. What matters is that you own it and come back faster.
+      </div>
+
+      <div class="sentence break" data-idx="19"></div>
+
+      <!-- SECTION 04: YOU -->
+      <div class="section-marker revealed" data-section="4">
+        <div class="section-rule"></div>
+        <span class="section-num">04</span>
+        <span class="section-title">Who You Are</span>
+      </div>
+
+      <div class="sentence label" data-idx="20">What moves you</div>
+
+      <div class="sentence poster" data-idx="21" data-img="3">
+        <span class="dim">THE</span> RIGHT<br><span class="ac">PROBLEM</span><br>PLAYER.
+      </div>
+
+      <div class="sentence body" data-idx="22">
+        You're not here to have a title. You're here because <span class="em">designing commerce experiences at Nike's scale is one of the hardest design problems on the planet</span>, and that sounds like exactly what you want to work on.
+      </div>
+
+      <div class="sentence spec" data-idx="23">
+        <span class="spec-key">Experience</span>
+        <span class="spec-val">5+ years product design, 2+ in commerce or marketplace</span>
+      </div>
+      <div class="sentence spec" data-idx="24">
+        <span class="spec-key">Portfolio</span>
+        <span class="spec-val">Shipped consumer products at scale (millions of users)</span>
+      </div>
+      <div class="sentence spec" data-idx="25">
+        <span class="spec-key">Strength</span>
+        <span class="spec-val">Systems thinking + high visual craft, not one without the other</span>
+      </div>
+      <div class="sentence spec" data-idx="26">
+        <span class="spec-key">Bonus</span>
+        <span class="spec-val">You play, run, train, compete. Any sport. Any level.</span>
+      </div>
+
+      <div class="sentence break" data-idx="27"></div>
+
+      <!-- SECTION 05: THE OFFER -->
+      <div class="section-marker revealed" data-section="5">
+        <div class="section-rule"></div>
+        <span class="section-num">05</span>
+        <span class="section-title">The Offer</span>
+      </div>
+
+      <div class="sentence poster" data-idx="28" data-img="4">
+        MORE THAN<br>A <span class="dim">JOB.</span>
+      </div>
+
+      <div class="sentence body" data-idx="29">
+        Nike's total rewards are built on the premise that an athlete needs <span class="em">to be whole to perform</span>. That means rest, recovery, flexibility — not just salary.
+      </div>
+
+      <div class="sentence spec" data-idx="30">
+        <span class="spec-key">Base Salary</span>
+        <span class="spec-val">$135,000 – $175,000 depending on level</span>
+      </div>
+      <div class="sentence spec" data-idx="31">
+        <span class="spec-key">Equity</span>
+        <span class="spec-val">RSUs vested over 4 years</span>
+      </div>
+      <div class="sentence spec" data-idx="32">
+        <span class="spec-key">Product Bonus</span>
+        <span class="spec-val">Annual performance bonus, target 15%</span>
+      </div>
+      <div class="sentence spec" data-idx="33">
+        <span class="spec-key">Benefits</span>
+        <span class="spec-val">Medical, dental, vision + Nike product discount</span>
+      </div>
+      <div class="sentence spec" data-idx="34">
+        <span class="spec-key">Time Off</span>
+        <span class="spec-val">Flexible PTO + Nike shutdown weeks (winter, summer)</span>
+      </div>
+      <div class="sentence spec" data-idx="35">
+        <span class="spec-key">Location</span>
+        <span class="spec-val">Beaverton World HQ — hybrid, 3 days on-site expected</span>
+      </div>
+
+      <div class="sentence break" data-idx="36"></div>
+
+      <!-- CTA -->
+      <div class="sentence cta-sentence" data-idx="37">
+        <div class="cta-row">
+          <a href="#" class="apply-btn">Apply Now <span class="arrow">→</span></a>
+          <a href="#" class="save-btn">☆ Save Role</a>
+        </div>
+      </div>
+
+      <div class="sentence body" data-idx="38" style="padding-top:8px;">
+        <span style="color:var(--ink-3);font-size:11px;">Posted March 1, 2026 &middot; Req. #NKE-DX-4481 &middot; <a href="#" style="color:var(--accent);text-decoration:none;">careers.nike.com</a></span>
+      </div>
+
+    </div><!-- /narrative-root -->
+  </main>
+
+  <!-- ── RIGHT PANEL ── -->
+  <aside id="panel">
+
+    <!-- Logo / Company -->
+    <div class="panel-logo-zone">
+      <div class="panel-swoosh">&#10003;</div>
+      <div>
+        <div class="panel-co-name">Nike, Inc.</div>
+        <div class="panel-co-sub">Beaverton, Oregon &middot; Founded 1964</div>
+      </div>
+    </div>
+
+    <!-- Job card -->
+    <div class="rp-section">
+      <div class="panel-job-card">
+        <div class="pjc-title">Senior Product Designer</div>
+        <div class="pjc-dept">Digital Commerce · Nike Direct</div>
+        <div class="pjc-meta">
+          <div class="pjc-row">
+            <span class="pjc-key">Type</span>
+            <span class="pjc-val">Full-time, Hybrid</span>
+          </div>
+          <div class="pjc-row">
+            <span class="pjc-key">Location</span>
+            <span class="pjc-val">Beaverton, OR</span>
+          </div>
+          <div class="pjc-row">
+            <span class="pjc-key">Level</span>
+            <span class="pjc-val">IC4 / Senior</span>
+          </div>
+          <div class="pjc-row">
+            <span class="pjc-key">Pay</span>
+            <span class="pjc-val">$135k – $175k + equity</span>
+          </div>
+          <div class="pjc-row">
+            <span class="pjc-key">Req. ID</span>
+            <span class="pjc-val">NKE-DX-4481</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Apply CTA -->
+    <a href="#" class="panel-apply">Apply Now →</a>
+    <a href="#" class="panel-save">☆ Save for Later</a>
+
+    <!-- Culture stats -->
+    <div class="rp-section">
+      <div class="rp-label">Company Pulse</div>
+      <div class="panel-stat-block">
+        <div class="stat-row">
+          <span class="stat-name">Glassdoor Rating</span>
+          <span class="stat-val">4.1</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">CEO Approval</span>
+          <span class="stat-val">82%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">Designers Worldwide</span>
+          <span class="stat-val">1,200+</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-name">Would Recommend</span>
+          <span class="stat-val">78%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team -->
+    <div class="rp-section">
+      <div class="rp-label">Your Future Team</div>
+      <div class="team-row">
+        <div class="team-dot">🏃</div>
+        <div class="team-dot">🎨</div>
+        <div class="team-dot">⚽</div>
+        <div class="team-dot">🏀</div>
+        <div class="team-dot">🧢</div>
+        <span class="team-more">+115 more</span>
+      </div>
+      <div style="font-family:var(--ui);font-size:8px;color:var(--ink-3);letter-spacing:0.06em;line-height:1.7;margin-bottom:14px;">
+        Nike Direct Design is 120+ designers across Nike.com, the Nike App, and Nike+ experiences globally.
+      </div>
+    </div>
+
+    <!-- Related roles -->
+    <div class="rp-section">
+      <div class="rp-label">Also Open</div>
+      <div style="display:flex;flex-direction:column;gap:0;">
+        <a href="#" style="text-decoration:none;color:inherit;">
+          <div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .15s;border-radius:3px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;opacity:0.5;"></div>
+            <div>
+              <div style="font-family:var(--ui);font-size:9px;color:var(--ink-2);">Principal Product Designer</div>
+              <div style="font-family:var(--ui);font-size:7px;color:var(--ink-3);letter-spacing:0.10em;text-transform:uppercase;">Nike Run Club · App</div>
+            </div>
+          </div>
+        </a>
+        <a href="#" style="text-decoration:none;color:inherit;">
+          <div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .15s;border-radius:3px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;opacity:0.5;"></div>
+            <div>
+              <div style="font-family:var(--ui);font-size:9px;color:var(--ink-2);">Design Systems Lead</div>
+              <div style="font-family:var(--ui);font-size:7px;color:var(--ink-3);letter-spacing:0.10em;text-transform:uppercase;">Nike Design Platform</div>
+            </div>
+          </div>
+        </a>
+        <a href="#" style="text-decoration:none;color:inherit;">
+          <div style="padding:9px 0;display:flex;align-items:center;gap:10px;transition:background .15s;border-radius:3px;">
+            <div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;opacity:0.5;"></div>
+            <div>
+              <div style="font-family:var(--ui);font-size:9px;color:var(--ink-2);">UX Researcher, Commerce</div>
+              <div style="font-family:var(--ui);font-size:7px;color:var(--ink-3);letter-spacing:0.10em;text-transform:uppercase;">Nike Direct · Remote</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="panel-footer">
+      <a href="https://careers.nike.com" target="_blank">careers.nike.com</a> &middot;
+      <a href="#">Equal Opportunity Employer</a><br>
+      NIKE, Inc. &#10003; Beaverton, Oregon<br>
+      Req. NKE-DX-4481 &middot; Posted 03/2026
+    </div>
+
+  </aside>
+</div>
+
+<!-- Toast -->
+<div id="toast">
+  <span class="toast-icon">✓</span>
+  <div>
+    <div class="toast-title">Role Saved</div>
+    <div class="toast-sub">Find it in your Nike profile</div>
+  </div>
+</div>
+
+<!-- Nav widget -->
+<div id="nav-widget">
+  <div class="nw-shell">
+    <div class="nw-nav">
+      <button class="nw-btn-prev" id="btn-prev" aria-label="Previous">↑</button>
+      <div class="nw-nav-pip">
+        <div class="nw-nav-pip-bar"><div class="nw-nav-pip-fill" id="pip-fill"></div></div>
+        <div class="nw-nav-pip-pct" id="pip-pct">0%</div>
+      </div>
+      <button class="nw-btn-next" id="btn-next" aria-label="Next">↓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Cursor ──
+  var cur = document.getElementById('cursor');
+  var mx = -100, my = -100;
+  document.addEventListener('mousemove', function(e) {
+    mx = e.clientX; my = e.clientY;
+    cur.style.left = mx + 'px';
+    cur.style.top  = my + 'px';
+    cur.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', function() { cur.style.opacity = '0'; });
+
+  // ── Sentence engine ──
+  var all = Array.from(document.querySelectorAll('[data-idx]'));
+  var navigable = all.filter(function(e) {
+    return !e.classList.contains('break') &&
+           !e.classList.contains('label') &&
+           !e.classList.contains('cta-sentence');
+  });
+
+  var current = 0;
+  var IMAGES = [
+    'img-0','img-1','img-2','img-3','img-4','img-5','img-6'
+  ];
+  var currentImg = null;
+
+  function showImg(id) {
+    if (id === currentImg) return;
+    IMAGES.forEach(function(imgId) {
+      var el = document.getElementById(imgId);
+      if (el) el.classList.remove('visible');
+    });
+    var next = document.getElementById(id);
+    if (next) next.classList.add('visible');
+    currentImg = id;
+  }
+
+  function goTo(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= navigable.length) idx = navigable.length - 1;
+    current = idx;
+
+    all.forEach(function(s, i) {
+      var navIdx = navigable.indexOf(s);
+      s.classList.remove('active','revealed','past');
+      if (s === navigable[current]) {
+        s.classList.add('active');
+      } else if (navIdx >= 0 && navIdx < current) {
+        s.classList.add('past');
+      } else if (navIdx >= 0) {
+        s.classList.add('revealed');
+      } else {
+        // break/label — reveal based on surrounding sentences
+        s.classList.add('revealed');
+      }
+    });
+
+    // Image
+    var active = navigable[current];
+    if (active && active.dataset.img) {
+      showImg('img-' + active.dataset.img);
+    }
+
+    // Progress
+    var pct = navigable.length > 1 ? (current / (navigable.length - 1)) * 100 : 0;
+    var prog = document.getElementById('progress');
+    if (prog) prog.style.width = pct + '%';
+    var fill = document.getElementById('pip-fill');
+    if (fill) fill.style.height = pct + '%';
+    var pctEl = document.getElementById('pip-pct');
+    if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+
+    // Cursor nav hint
+    cur.classList.remove('nav-prev','nav-next');
+    if (idx === 0) cur.classList.add('nav-next');
+    else if (idx === navigable.length - 1) cur.classList.add('nav-prev');
+  }
+
+  // Init
+  setTimeout(function() {
+    document.body.classList.remove('no-transitions');
+    goTo(0);
+    // Reveal section markers
+    document.querySelectorAll('.section-marker').forEach(function(sm) {
+      sm.classList.add('revealed');
+    });
+    showImg('img-0');
+  }, 80);
+
+  // Click to advance
+  document.getElementById('stream-col').addEventListener('click', function(e) {
+    if (e.target.closest('a') || e.target.closest('button')) return;
+    goTo(current + 1);
+  });
+
+  // Nav buttons
+  document.getElementById('btn-next').addEventListener('click', function() { goTo(current + 1); });
+  document.getElementById('btn-prev').addEventListener('click', function() { goTo(current - 1); });
+
+  // Keyboard
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+  });
+
+  // Cursor over bottom/top zones
+  document.addEventListener('mousemove', function(e) {
+    var zone = e.clientY / window.innerHeight;
+    cur.classList.remove('nav-prev','nav-next');
+    if (zone < 0.3 && current > 0) cur.classList.add('nav-prev');
+    else if (zone > 0.7 && current < navigable.length - 1) cur.classList.add('nav-next');
+  });
+
+  // Click nav zones
+  document.getElementById('stream-col').addEventListener('click', function(e) {
+    if (e.target.closest('a') || e.target.closest('button')) return;
+    var zone = e.clientY / window.innerHeight;
+    if (zone < 0.35) goTo(current - 1);
+    else goTo(current + 1);
+  });
+
+  // Cursor big on interactive
+  document.querySelectorAll('a, button').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { cur.classList.add('big'); });
+    el.addEventListener('mouseleave', function() { cur.classList.remove('big'); });
+  });
+
+  // Save button toast
+  document.querySelectorAll('.panel-save, .save-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    });
+  });
+
+  // Mobile panel
+  var panel = document.getElementById('panel');
+  var mobileOpen = false;
+  if (window.innerWidth <= 760) {
+    // Add pull tab
+    var tab = document.createElement('button');
+    tab.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;padding:14px;background:none;border:none;color:var(--ink-3);font-family:var(--ui);font-size:7px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;';
+    tab.textContent = '▲ Role Details';
+    document.getElementById('stream-col').appendChild(tab);
+    tab.addEventListener('click', function() {
+      panel.classList.toggle('sheet-open');
+    });
+    panel.addEventListener('click', function(e) {
+      if (e.target === panel) panel.classList.remove('sheet-open');
+    });
+  }
+
+  // Scroll behavior — wheel
+  var wheelTimeout;
+  document.addEventListener('wheel', function(e) {
+    clearTimeout(wheelTimeout);
+    wheelTimeout = setTimeout(function() {
+      if (e.deltaY > 0) goTo(current + 1);
+      else goTo(current - 1);
+    }, 20);
+  }, { passive: true });
+
+})();
+</script>
+</body>
+</html>
