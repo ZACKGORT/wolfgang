@@ -3349,16 +3349,29 @@ function updateChapterWidget(ch) {
   updateChapterWidget(1);
 })();
 
-document.getElementById('nw-next').addEventListener('click', next);
-document.getElementById('nw-prev').addEventListener('click', function() { clearAutoFlow(); prev(); });
+document.getElementById('nw-next').addEventListener('click', function() {
+  if (darkMomentActive) { exitDarkMoment(); goToSkipDark(current + 1,  1); return; }
+  next();
+});
+document.getElementById('nw-prev').addEventListener('click', function() {
+  if (darkMomentActive) { exitDarkMoment(); goToSkipDark(current - 1, -1); return; }
+  clearAutoFlow(); prev();
+});
 navigable.forEach(function(el, i) { el.addEventListener('click', function() { goTo(i); }); });
 
 // ── KEYBOARD ──────────────────────────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
   if (isGridOpen() && e.key === 'Escape') { e.preventDefault(); closeGrid(); return; }
   if (document.body.classList.contains('scroll-free')) return;
+  if (darkMomentActive) return; // dark moment keydown handler owns navigation while active
   if (e.key === 'ArrowDown' || e.key === 'j' || e.key === ' ') { e.preventDefault(); next(); }
   if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
+  if (e.key === 'Tab') {
+    // Only intercept Tab when focus is not inside a form/input element
+    if (document.activeElement && (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) return;
+    e.preventDefault();
+    e.shiftKey ? prev() : next();
+  }
 });
 
 // ── SWIPE ─────────────────────────────────────────────────────────────────
@@ -3379,7 +3392,12 @@ window.addEventListener('touchend', function(e) {
   var dy = touchStartY - e.changedTouches[0].clientY;
   if (Math.abs(dy) > 50) {
     swipeCooldown = true; clearAutoFlow();
-    dy > 0 ? next() : prev();
+    if (darkMomentActive) {
+      if (dy > 0) { exitDarkMoment(); goToSkipDark(current + 1,  1); }
+      else        { exitDarkMoment(); goToSkipDark(current - 1, -1); }
+    } else {
+      dy > 0 ? next() : prev();
+    }
     setTimeout(function() { swipeCooldown = false; }, 100);
   }
 }, {passive: true});
@@ -3741,20 +3759,29 @@ function showContactToast() {
 var infiniteLoop = false;
 var _origNext = null;
 function next() {
-  if (infiniteLoop && current === navigable.length - 1) {
-    goTo(0);
-  } else {
-    goTo(current + 1);
-  }
+  var target = infiniteLoop && current === navigable.length - 1 ? 0 : current + 1;
+  goTo(Math.min(target, navigable.length - 1));
 }
-function prev() { goTo(current - 1); }
+function prev() {
+  goTo(Math.max(current - 1, 0));
+}
 
 // ── WHEEL ─────────────────────────────────────────────────────────────────
 var lastWheel = 0;
 document.addEventListener('wheel', function(e) {
   if (isGridOpen()) return;
   if (document.body.classList.contains('scroll-free')) return;
+  // Let wheel events inside scrollable UI panels pass through natively
+  var scrollableParent = e.target.closest('#panel, #interest-panel, .compose-bar, #csr-preview-ghost');
+  if (scrollableParent) return;
   e.preventDefault();
+  if (darkMomentActive) {
+    // Wheel advances/retreats through the dark moment same as arrow keys
+    var now = Date.now(); if (now - lastWheel < 550) return; lastWheel = now;
+    if (e.deltaY > 0) { exitDarkMoment(); goToSkipDark(current + 1,  1); }
+    else              { exitDarkMoment(); goToSkipDark(current - 1, -1); }
+    return;
+  }
   var now = Date.now(); if (now - lastWheel < 550) return; lastWheel = now;
   e.deltaY > 0 ? next() : prev();
 }, {passive: false});
@@ -5517,8 +5544,11 @@ function exitDarkAsk() {
 // ── Hook into goTo ─────────────────────────────────────────────────────────
 var _goToOriginal = goTo;
 goTo = function(n, opts) {
+  // Clamp n here so navigable[n] lookup below is always valid
+  n = Math.max(0, Math.min(navigable.length - 1, n));
+
   // If currently in a dark/ask moment, exit it before navigating
-  if (darkAskActive)    exitDarkAsk();
+  if (darkAskActive)         exitDarkAsk();
   else if (darkMomentActive) exitDarkMoment();
 
   _goToOriginal(n, opts);
@@ -5549,30 +5579,38 @@ goTo = function(n, opts) {
 
 // Navigate to index n, skipping over any @@dark/@@darkchapter nodes in the given
 // direction (dir = +1 forward, -1 backward) so the user is never re-trapped.
+var _skipDarkBusy = false;
 function goToSkipDark(n, dir) {
+  if (_skipDarkBusy) return;
   var max = navigable.length - 1;
   while (n >= 0 && n <= max) {
     var el = navigable[n];
     if (!el) break;
     if (el.dataset.darkChapter === 'true' || el.dataset.dark === 'true') {
-      n += dir; // skip this dark node
+      n += dir; // skip this dark node in the travel direction
     } else {
       break;
     }
   }
   n = Math.max(0, Math.min(max, n));
-  _goToOriginal(n);
+  _skipDarkBusy = true;
+  goTo(n); // call wrapped goTo so destination can trigger its own dark moment
+  _skipDarkBusy = false;
 }
 
-// Escape / any key / scroll exits dark moment
+// Escape / arrow / j/k / Tab exits dark moment
 document.addEventListener('keydown', function(e) {
-  if (darkAskActive && e.key === 'Escape')    { exitDarkAsk();    return; }
-  if (darkMomentActive && e.key === 'Escape') { exitDarkMoment(); return; }
-  if (darkMomentActive && !darkAskActive && (e.key === 'ArrowDown' || e.key === ' ')) {
-    e.preventDefault(); exitDarkMoment(); goToSkipDark(current + 1, 1);
-  }
-  if (darkMomentActive && !darkAskActive && (e.key === 'ArrowUp')) {
-    e.preventDefault(); exitDarkMoment(); goToSkipDark(current - 1, -1);
+  if (!darkMomentActive) return;
+  if (darkAskActive && e.key === 'Escape') { exitDarkAsk(); return; }
+  if (e.key === 'Escape') { e.preventDefault(); exitDarkMoment(); return; }
+  if (!darkAskActive) {
+    if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'j' ||
+        (e.key === 'Tab' && !e.shiftKey)) {
+      e.preventDefault(); exitDarkMoment(); goToSkipDark(current + 1,  1);
+    } else if (e.key === 'ArrowUp' || e.key === 'k' ||
+               (e.key === 'Tab' && e.shiftKey)) {
+      e.preventDefault(); exitDarkMoment(); goToSkipDark(current - 1, -1);
+    }
   }
 });
 
