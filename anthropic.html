@@ -4253,7 +4253,7 @@ const narrative = `
 img:18
 [label] Anthropic &middot; A Different Kind of Company
 img:6
-
+@@darkchapter
 [poster] AI is the most **consequential** technology ever built.
 img:4
 [body] That is not a marketing claim. It is a statement of genuine uncertainty &mdash; and genuine possibility.
@@ -5605,22 +5605,39 @@ goTo = function(n, opts) {
   }
 };
 
+// Navigate to index n, skipping over any @@dark/@@darkchapter nodes in the given
+// direction (dir = +1 forward, -1 backward) so the user is never re-trapped.
+function goToSkipDark(n, dir) {
+  var max = navigable.length - 1;
+  while (n >= 0 && n <= max) {
+    var el = navigable[n];
+    if (!el) break;
+    if (el.dataset.darkChapter === 'true' || el.dataset.dark === 'true') {
+      n += dir; // skip this dark node
+    } else {
+      break;
+    }
+  }
+  n = Math.max(0, Math.min(max, n));
+  _goToOriginal(n);
+}
+
 // Escape / any key / scroll exits dark moment
 document.addEventListener('keydown', function(e) {
   if (darkAskActive && e.key === 'Escape')    { exitDarkAsk();    return; }
   if (darkMomentActive && e.key === 'Escape') { exitDarkMoment(); return; }
   if (darkMomentActive && !darkAskActive && (e.key === 'ArrowDown' || e.key === ' ')) {
-    e.preventDefault(); exitDarkMoment(); goTo(current + 1);
+    e.preventDefault(); exitDarkMoment(); goToSkipDark(current + 1, 1);
   }
   if (darkMomentActive && !darkAskActive && (e.key === 'ArrowUp')) {
-    e.preventDefault(); exitDarkMoment(); goTo(current - 1);
+    e.preventDefault(); exitDarkMoment(); goToSkipDark(current - 1, -1);
   }
 });
 
 // Veil click exits
 document.getElementById('dark-veil').addEventListener('click', function() {
   if (darkAskActive) return; // don't dismiss ask on veil click
-  if (darkMomentActive) { exitDarkMoment(); goTo(current + 1); }
+  if (darkMomentActive) { exitDarkMoment(); goToSkipDark(current + 1, 1); }
 });
 
 // ── @@dark / @@darkchapter / @@ask stamper ─────────────────────────────────
