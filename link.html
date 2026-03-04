@@ -2247,7 +2247,7 @@ body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
     <div class="h-actions">
       <button id="li-toggle" aria-label="Toggle LinkedIn theme">
         <span class="li-mark">in</span>
-        <span id="li-toggle-label">LinkedIn</span>
+        <span id="li-toggle-label">In</span>
       </button>
       <button id="h-compose-btn" class="h-btn h-compose-btn" aria-label="Toggle compose mode" title="Edit narrative (Cmd+E)">
         <span class="h-compose-icon">&#9998;</span>
@@ -4337,12 +4337,12 @@ function isGridOpen() { return document.getElementById('imageGridOverlay').class
     var label = document.getElementById('li-toggle-label');
     if (active) {
       document.body.classList.add('li-theme', 'no-transitions');
-      if (label) label.textContent = 'Exit LinkedIn';
-      showLiToast('🔵', 'LinkedIn Mode', 'Congratulations. You are open to work.', 'Escape →', toggle, 6000);
+      if (label) label.textContent = 'Out';
+      showLiToast('🔵', 'In Mode', 'Congratulations. You are open to work.', 'Escape →', toggle, 6000);
       setTimeout(function() { document.body.classList.remove('no-transitions'); }, 50);
     } else {
       document.body.classList.remove('li-theme');
-      if (label) label.textContent = 'LinkedIn';
+      if (label) label.textContent = 'In';
       showLiToast('✦', 'Back to Normal', 'Conviction restored.', null, null, 2800);
     }
   }
