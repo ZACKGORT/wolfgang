@@ -279,7 +279,86 @@ body.li-theme .ip-pill:hover { background: rgba(10,102,194,0.08); border-color: 
 body.li-theme .ip-pill.selected { background: rgba(10,102,194,0.14); border-color: #0a66c2; color: #191919; }
 body.li-theme .ip-cta:not(:disabled):hover { background: #0a66c2; border-color: #0a66c2; }
 
-/* ── TOGGLE BUTTON ── */
+/* ── Header compose button ── */
+#h-compose-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px;
+}
+#h-compose-btn .h-compose-icon { font-size: 11px; line-height: 1; }
+#h-compose-btn .h-compose-label { font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; }
+#h-compose-btn.compose-active {
+  border-color: var(--accent); color: var(--accent);
+  background: var(--accent-l);
+}
+body.li-theme #h-compose-btn.compose-active { border-color: #0a66c2; color: #0a66c2; background: rgba(10,102,194,0.08); }
+header:hover #h-compose-btn.compose-active { border-color: #c8902a; color: #c8902a; background: rgba(200,144,42,0.08); }
+
+/* ── SUBCHAPTER BREAK DIVIDERS — cinematic transition marker ── */
+.subch-break {
+  display: block;
+  position: relative;
+  padding: 20px 0 16px;
+  opacity: 0.08;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.subch-break.revealed,
+.subch-break.past { opacity: 1; }
+.subch-break-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.subch-break-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  opacity: 0.35;
+  transition: background 1.4s ease;
+}
+.subch-break-label {
+  font-family: var(--ui);
+  font-size: 7px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  opacity: 0.7;
+  transition: color 1.4s ease;
+}
+.subch-break-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  opacity: 0.6;
+  transition: background 1.4s ease;
+}
+
+/* ── AMBIENT PULSE — past chapters/subchapters ── */
+@keyframes ambientPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, 200,144,42), 0.0); }
+  50%  { box-shadow: 0 0 0 3px rgba(var(--pulse-rgb, 200,144,42), 0.08); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, 200,144,42), 0.0); }
+}
+.ch-header.past-pulse {
+  animation: ambientPulse 3.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+/* ch colour-matched pulse RGB values */
+body.ch-1 { --pulse-rgb: 200,144,42; }
+body.ch-2 { --pulse-rgb: 200,144,42; }
+body.ch-3 { --pulse-rgb: 123,130,232; }
+body.ch-4 { --pulse-rgb: 88,152,212; }
+body.ch-5 { --pulse-rgb: 114,184,114; }
+body.ch-6 { --pulse-rgb: 232,168,48; }
+body.ch-7 { --pulse-rgb: 212,96,128; }
+body.subch-160     { --pulse-rgb: 46,204,96; }
+body.subch-o3      { --pulse-rgb: 224,48,48; }
+body.subch-workarea{ --pulse-rgb: 240,120,32; }
+
+/* ── CONTACT CHAPTER TOAST ── */
+#toast.contact-toast #toast-icon { color: var(--accent); }
+#toast.contact-toast .toast-title { color: var(--hud-ink); }
+
 #li-toggle {
   position: relative;
   display: inline-flex; align-items: center; gap: 7px;
@@ -1875,8 +1954,11 @@ body.compose-mode .sentence-type-badge { display: inline; }
         <span class="li-mark">in</span>
         <span id="li-toggle-label">LinkedIn</span>
       </button>
-      <a href="/cdn-cgi/l/email-protection#48202d2424270832292b232f273a3c662b2725" class="h-btn">Message</a>
-      <a href="https://zackgort.com" target="_blank" class="h-btn cta">Portfolio &rarr;</a>
+      <button id="h-compose-btn" class="h-btn h-compose-btn" aria-label="Toggle compose mode" title="Edit narrative (Cmd+E)">
+        <span class="h-compose-icon">&#9998;</span>
+        <span class="h-compose-label">Compose</span>
+      </button>
+      <a href="https://wolfie.love" target="_blank" class="h-btn cta">wolfie.love &rarr;</a>
     </div>
     <div id="header-overlay">
       <div class="ho-cell">
@@ -2432,121 +2514,151 @@ document.addEventListener('touchstart', function() {
   cursor.style.opacity = '0'; cursorVisible = false;
 }, {passive: true});
 
-// ── SPEC GHOST — magnetic, avoids HUD/panel, left=cursor right=anchored ─────
+// ── SPEC GHOST — cursor-follow left zone, magnetic idle right zone ────────────
 (function() {
   var ghost     = document.getElementById('spec-cursor-ghost');
   var ghostKey  = document.getElementById('scg-key');
   var ghostVal  = document.getElementById('scg-val');
+  if (!ghost) return;
+
   var ghostVisible = false;
-  var isFollowing  = false;
-  var ghostX = 0, ghostY = 0;
-  var targetX = 0, targetY = 0;
-  var idleX = 0,  idleY = 0;   // magnetic resting position
-  var rafId = null;
-  var LERP_FOLLOW = 0.11;
-  var LERP_IDLE   = 0.07;      // slower drift back to idle
-  var OFFSET_X = 24, OFFSET_Y = -18;
-  var PADDING = 12;             // clearance from any UI boundary
+  var following    = false;       // true = tracking cursor, false = idle anchor
+  var ghostX = 0, ghostY = 0;    // current lerped position
+  var cursorTX = 0, cursorTY = 0;// cursor target (with offset)
+  var idleX  = 0, idleY  = 0;    // anchored idle target
+  var rafId  = null;
+  var mx     = window.innerWidth / 2; // last known mouse X
+
+  var LERP_FOLLOW = 0.13;
+  var LERP_IDLE   = 0.07;
+  var OX = 22, OY = -16;   // cursor offset
+  var PAD = 12;
   var activeSpecEl = null;
 
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function isMob() { return window.innerWidth <= 760; }
 
-  // ── Exclusion zones — returns array of {left,top,right,bottom} rects ──
+  function midX() {
+    var col = document.getElementById('stream-col');
+    if (!col) return window.innerWidth * 0.5;
+    var r = col.getBoundingClientRect();
+    return r.left + r.width * 0.5;
+  }
+
   function exclusionRects() {
     var rects = [];
-    // Right panel (always present)
     rects.push({ left: window.innerWidth - 320, top: 52, right: window.innerWidth, bottom: window.innerHeight });
-    // Nav-widget
     var nw = document.getElementById('nav-widget');
-    if (nw) { var r = nw.getBoundingClientRect(); rects.push({ left: r.left - PADDING, top: r.top - PADDING, right: r.right + PADDING, bottom: r.bottom + PADDING }); }
-    // Chapter widget
+    if (nw) { var r = nw.getBoundingClientRect(); rects.push({ left: r.left-PAD, top: r.top-PAD, right: r.right+PAD, bottom: r.bottom+PAD }); }
     var cw = document.getElementById('chapter-widget');
-    if (cw) { var t = cw.querySelector('.cw-trigger'); if (t) { var r2 = t.getBoundingClientRect(); rects.push({ left: r2.left - PADDING, top: r2.top - PADDING, right: r2.right + PADDING, bottom: r2.bottom + PADDING }); } }
-    // Header bar
+    if (cw) { var t = cw.querySelector('.cw-trigger'); if (t) { var r2 = t.getBoundingClientRect(); rects.push({ left: r2.left-PAD, top: r2.top-PAD, right: r2.right+PAD, bottom: r2.bottom+PAD }); } }
     rects.push({ left: 0, top: 0, right: window.innerWidth, bottom: 52 });
     return rects;
   }
 
-  // ── Check if a rect {x,y,w,h} intersects any exclusion zone ──
   function intersectsUI(x, y, w, h) {
     var zones = exclusionRects();
     for (var i = 0; i < zones.length; i++) {
       var z = zones[i];
-      if (x < z.right && x + w > z.left && y < z.bottom && y + h > z.top) return true;
+      if (x < z.right && x+w > z.left && y < z.bottom && y+h > z.top) return true;
     }
     return false;
   }
 
-  // ── Find the magnetic idle position: near the sentence, in clear space ──
-  function computeIdlePosition() {
+  function computeIdlePos() {
     if (!activeSpecEl) return { x: ghostX, y: ghostY };
-    var rect  = activeSpecEl.getBoundingClientRect();
-    var gw    = ghost.offsetWidth  || 220;
-    var gh    = ghost.offsetHeight || 42;
-    var col   = document.getElementById('stream-col');
-    var colR  = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
-    var rightLimit = colR.right - 8;
-
-    // Candidate positions in priority order: above-right, below-right, above-left, below-left, above-far-right
+    var rect = activeSpecEl.getBoundingClientRect();
+    var gw   = ghost.offsetWidth  || 220;
+    var gh   = ghost.offsetHeight || 42;
+    var col  = document.getElementById('stream-col');
+    var colR = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
+    var rLim = colR.right - 8;
     var candidates = [
-      { x: rect.left,                   y: rect.top    - gh - 10 },
-      { x: rect.left,                   y: rect.bottom + 10      },
-      { x: colR.left + 8,              y: rect.top    - gh - 10 },
-      { x: colR.left + 8,              y: rect.bottom + 10      },
-      { x: rightLimit - gw,            y: rect.top    - gh - 10 },
+      { x: rect.left,        y: rect.top    - gh - 10 },
+      { x: rect.left,        y: rect.bottom + 10      },
+      { x: colR.left + 8,   y: rect.top    - gh - 10 },
+      { x: colR.left + 8,   y: rect.bottom + 10      },
+      { x: rLim - gw,       y: rect.top    - gh - 10 },
     ];
-
     for (var i = 0; i < candidates.length; i++) {
       var c = candidates[i];
-      var cx = Math.max(colR.left + 4, Math.min(c.x, rightLimit - gw));
+      var cx = Math.max(colR.left + 4, Math.min(c.x, rLim - gw));
       var cy = Math.max(60, Math.min(c.y, window.innerHeight - gh - 8));
       if (!intersectsUI(cx, cy, gw, gh)) return { x: cx, y: cy };
     }
     return { x: colR.left + 8, y: 60 };
   }
 
-  // ── RAF loop — lerps ghost toward its home over the node ──
+  function clampFollow(x, y) {
+    var gw = ghost.offsetWidth || 220, gh = ghost.offsetHeight || 42;
+    var col = document.getElementById('stream-col');
+    var colR = col ? col.getBoundingClientRect() : { left: 0, right: window.innerWidth - 320 };
+    var rLim = colR.right - 8;
+    x = Math.max(colR.left + 4, Math.min(x, rLim - gw));
+    y = Math.max(60, Math.min(y, window.innerHeight - gh - 8));
+    if (intersectsUI(x, y, gw, gh)) y = Math.max(60, y - gh - 16);
+    return { x: x, y: y };
+  }
+
+  function enterFollow() { if (following) return; following = true;  if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick); }
+  function enterIdle()   {
+    if (!following) return; following = false;
+    var p = computeIdlePos(); idleX = p.x; idleY = p.y;
+    if (!rafId && ghostVisible) rafId = requestAnimationFrame(tick);
+  }
+  function applyZone(mouseXval) { mouseXval < midX() ? enterFollow() : enterIdle(); }
+
   function tick() {
-    var pos = computeIdlePosition();
-    ghostX = lerp(ghostX, pos.x, LERP_IDLE);
-    ghostY = lerp(ghostY, pos.y, LERP_IDLE);
+    if (following) {
+      var c = clampFollow(cursorTX, cursorTY);
+      ghostX = lerp(ghostX, c.x, LERP_FOLLOW);
+      ghostY = lerp(ghostY, c.y, LERP_FOLLOW);
+    } else {
+      var p = computeIdlePos();
+      ghostX = lerp(ghostX, p.x, LERP_IDLE);
+      ghostY = lerp(ghostY, p.y, LERP_IDLE);
+    }
     ghost.style.left = ghostX + 'px';
     ghost.style.top  = ghostY + 'px';
-    if (ghostVisible) rafId = requestAnimationFrame(tick);
-    else rafId = null;
+    rafId = ghostVisible ? requestAnimationFrame(tick) : null;
   }
 
   function showGhost() {
-    var pos = computeIdlePosition();
-    if (!ghostVisible) {
-      // Snap to start position on first show so lerp begins from sensible spot
-      ghostX = pos.x; ghostY = pos.y;
-      ghost.style.left = ghostX + 'px';
-      ghost.style.top  = ghostY + 'px';
-    }
+    var p = computeIdlePos();
+    if (!ghostVisible) { ghostX = p.x; ghostY = p.y; ghost.style.left = ghostX + 'px'; ghost.style.top = ghostY + 'px'; }
     ghost.style.transition = 'opacity 0.22s ease';
     ghost.classList.add('visible');
     ghostVisible = true;
     if (!rafId) rafId = requestAnimationFrame(tick);
+    applyZone(mx);
   }
 
   function hideGhost() {
     ghost.classList.remove('visible');
-    ghostVisible = false;
-    activeSpecEl = null;
+    ghostVisible = false; following = false;
+    if (activeSpecEl) { activeSpecEl.classList.remove('ghost-active'); activeSpecEl = null; }
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    if (isMob()) ghost.style.cssText = '';
   }
 
+  // Track mouse for both cursor-follow and zone switching
+  document.addEventListener('mousemove', function(e) {
+    mx = e.clientX;
+    cursorTX = e.clientX + OX;
+    cursorTY = e.clientY + OY;
+    if (ghostVisible && !isMob()) applyZone(e.clientX);
+  }, { passive: true });
+
   window.addEventListener('resize', function() {
-    if (ghostVisible) {
-      var pos = computeIdlePosition();
-      ghostX = pos.x; ghostY = pos.y;
-    }
+    if (ghostVisible && !following) { var p = computeIdlePos(); idleX = p.x; idleY = p.y; }
   });
 
+  // ── Called by goTo on each sentence navigation ──
   window._specGhostUpdate = function(el) {
     document.querySelectorAll('.ghost-active').forEach(function(s) { s.classList.remove('ghost-active'); });
     activeSpecEl = null;
+
+    // spec auto-flow sentence
     if (el && el.classList.contains('spec') && el.classList.contains('auto-flow')) {
       var keyEl = el.querySelector('.spec-key');
       var valEl = el.querySelector('.spec-val');
@@ -2555,21 +2667,37 @@ document.addEventListener('touchstart', function() {
         activeSpecEl = el;
         ghostKey.textContent = keyEl.textContent;
         ghostVal.textContent = valEl.textContent;
-        // Mobile: show as fixed bottom bar
-        if (window.innerWidth <= 760) {
+        if (isMob()) {
           ghost.style.cssText = 'display:block;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));top:auto;width:auto;opacity:1;';
           ghost.querySelector('.scg-inner').style.cssText = 'min-width:unset;max-width:none;width:100%;justify-content:space-between;';
-          ghost.classList.add('visible');
-          ghostVisible = true;
-        } else {
-          showGhost();
-        }
+          ghost.classList.add('visible'); ghostVisible = true;
+        } else { showGhost(); }
         return;
       }
     }
+
+    // subch-break divider — show with agency name + chapter context
+    if (el && el.classList.contains('subch-break')) {
+      var label = el.dataset.subchBreak || '';
+      var name  = label === '160'      ? 'One Sixty Over Ninety'
+                : label === 'o3'       ? 'O3 World'
+                : label === 'workarea' ? 'Workarea'
+                : label === 'end'      ? 'Returning'
+                : label;
+      var ch    = el.dataset.ch || '';
+      el.classList.add('ghost-active');
+      activeSpecEl = el;
+      ghostKey.textContent = name || 'Sub-chapter';
+      ghostVal.textContent = 'Ch.' + (ch || '?') + ' · Agency Life · Philly';
+      if (isMob()) {
+        ghost.style.cssText = 'display:block;position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));top:auto;width:auto;opacity:1;';
+        ghost.querySelector('.scg-inner').style.cssText = 'min-width:unset;max-width:none;width:100%;justify-content:space-between;';
+        ghost.classList.add('visible'); ghostVisible = true;
+      } else { showGhost(); }
+      return;
+    }
+
     hideGhost();
-    // Also clean up mobile inline style
-    if (window.innerWidth <= 760) ghost.style.cssText = '';
   };
 })();
 document.querySelectorAll('a,button,[data-idx]').forEach(function(el) {
@@ -2703,18 +2831,45 @@ function goTo(n, opts) {
   document.body.classList.remove('subch-160', 'subch-o3', 'subch-workarea');
   if (subch) document.body.classList.add('subch-' + subch);
   document.querySelectorAll('.ch-header').forEach(function(g) {
-    parseInt(g.dataset.ch) <= ch ? g.classList.add('revealed') : g.classList.remove('revealed');
+    var gch = parseInt(g.dataset.ch);
+    if (gch <= ch) {
+      g.classList.add('revealed');
+      // Pulse past chapter headers (not the current one)
+      if (gch < ch) {
+        g.classList.add('past-pulse');
+      } else {
+        g.classList.remove('past-pulse');
+      }
+    } else {
+      g.classList.remove('revealed');
+      g.classList.remove('past-pulse');
+    }
+  });
+  // Reveal subch-break dividers that belong to past/current chapter
+  document.querySelectorAll('.subch-break').forEach(function(brk) {
+    var bch = parseInt(brk.dataset.ch);
+    if (bch < ch) { brk.classList.add('past'); brk.classList.remove('revealed'); }
+    else if (bch === ch) { brk.classList.add('revealed'); brk.classList.remove('past'); }
+    else { brk.classList.remove('past'); brk.classList.remove('revealed'); }
   });
   updateChapterWidget(ch);
   updatePanelService(ch);
-  if (window._specGhostUpdate) window._specGhostUpdate(activeEl);
-  // Ch-7 (Contact): auto-surface compose mode on first arrival from another chapter
-  if (ch === 9 && prevCh !== 9 && window.toggleCompose) {
-    setTimeout(function() {
-      if (typeof composeState !== 'undefined' && !composeState.active) {
-        window.toggleCompose();
+  if (window._specGhostUpdate) {
+    // Check if active sentence is immediately preceded by a subch-break divider
+    var ghostTarget = activeEl;
+    if (activeEl) {
+      var prev = activeEl.previousElementSibling;
+      if (prev && prev.classList.contains('subch-break')) {
+        ghostTarget = prev;
       }
-    }, 700);
+    }
+    window._specGhostUpdate(ghostTarget);
+  }
+  // Ch-9 (Contact): show a warm contact toast calling out the interest function
+  if (ch === 9 && prevCh !== 9) {
+    setTimeout(function() {
+      showContactToast();
+    }, 600);
   }
   // On mobile: if NOT contact chapter, auto-surface the panel at last sentence
   if (isMobile() && n === navigable.length - 1 && ch !== 9) {
@@ -3124,6 +3279,43 @@ function showEndToast() {
 }
 
 function dismissToast() { document.getElementById('toast').classList.remove('show'); clearTimeout(toastTimer); }
+
+function showContactToast() {
+  var t = document.getElementById('toast');
+  t.classList.add('contact-toast');
+  document.getElementById('toast-icon').textContent = '◈';
+  document.getElementById('toast-title').textContent = 'Say hello.';
+  document.getElementById('toast-sub').innerHTML = 'Leave a note &mdash; no friction. Or express your interest below.';
+  var actions = document.getElementById('toast-actions');
+  actions.innerHTML = '';
+
+  var noteBtn = document.createElement('button');
+  noteBtn.className = 'toast-act-btn';
+  noteBtn.textContent = '✎  Leave a note';
+  noteBtn.onclick = function() {
+    dismissToast();
+    setTimeout(function() {
+      if (window.toggleCompose && typeof composeState !== 'undefined' && !composeState.active) {
+        window.toggleCompose();
+      }
+    }, 180);
+  };
+
+  var intBtn = document.createElement('button');
+  intBtn.className = 'toast-act-btn primary';
+  intBtn.textContent = '◇  I\'m interested';
+  intBtn.onclick = function() {
+    dismissToast();
+    setTimeout(function() { if (window.toggleInterestPanel) window.toggleInterestPanel(); }, 180);
+  };
+
+  actions.appendChild(noteBtn);
+  actions.appendChild(intBtn);
+
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('contact-toast'); dismissToast(); }, 10000);
+}
 
 // Infinite loop flag — when on, next() wraps from last to first
 var infiniteLoop = false;
@@ -3798,6 +3990,7 @@ function renderNarrative() {
   let idxCounter = 0;
   let currentCh = 1;
   let specGroupStart = -1;
+  let lastSubch = null; // track subch transitions for break dividers
 
   // Build chapter index map: ch → first idx of navigable sentence
   const CH_FIRST = {};
@@ -3840,6 +4033,28 @@ function renderNarrative() {
 
     // Navigable sentence
     const el = document.createElement('span');
+
+    // ── Subchapter break divider — inject when subch enters/exits ──
+    const thisSubch = part.subch || null;
+    if (thisSubch !== lastSubch && (thisSubch || lastSubch)) {
+      // Entering a new subchapter (or leaving back to none)
+      const brk = document.createElement('div');
+      brk.className = 'subch-break';
+      brk.dataset.ch = currentCh;
+      brk.dataset.subchBreak = thisSubch || 'end';
+      const label = thisSubch === '160'      ? 'One Sixty Over Ninety'
+                  : thisSubch === 'o3'       ? 'O3 World'
+                  : thisSubch === 'workarea' ? 'Workarea'
+                  : thisSubch ? thisSubch : '';
+      brk.innerHTML = `<div class="subch-break-inner">
+        <div class="subch-break-rule"></div>
+        ${label ? `<span class="subch-break-label">${label}</span>` : ''}
+        <div class="subch-break-dot"></div>
+        <div class="subch-break-rule"></div>
+      </div>`;
+      root.appendChild(brk);
+      lastSubch = thisSubch;
+    }
     el.dataset.idx = idxCounter++;
     el.dataset.ch = currentCh;
     if (part.img >= 0) el.dataset.img = part.img;
@@ -3923,7 +4138,7 @@ renderNarrative();
   var chapterSel = document.getElementById('composeChapterSelect');
   var wordCount  = document.getElementById('composeWordCount');
   var mobileClose= document.getElementById('composeMobileClose');
-  var composeBtn = document.getElementById('nw-compose-btn');
+  var composeBtn = document.getElementById('h-compose-btn'); // ← now in header
 
   // ── Populate chapter selector ──
   function populateChapterSelect() {
