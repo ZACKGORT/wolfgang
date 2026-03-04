@@ -472,12 +472,12 @@ body.no-transitions .sentence * { transition: none !important; }
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { color-scheme: dark; overscroll-behavior: none; }
+html { color-scheme: dark; overscroll-behavior: none; overflow: hidden; height: 100%; }
 body {
   background: var(--bg); color: var(--ink);
   font-family: var(--ui); font-size: 12px; line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden; cursor: none; min-height: 100vh;
+  overflow: hidden; cursor: none; height: 100%;
   overscroll-behavior: none;
 }
 
@@ -718,7 +718,7 @@ header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: tran
   box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(200,144,42,0.40);
 }
 
-body.scroll-free { overflow-y: auto !important; }
+body.scroll-free { overflow-y: auto !important; overflow-x: hidden !important; }
 body.scroll-free #stream-col { justify-content: flex-start; min-height: auto; padding-top: 64px; padding-bottom: 80px; }
 body.scroll-free .sentence { opacity: 1 !important; pointer-events: none; }
 body.scroll-free .sentence.past { opacity: 1 !important; }
@@ -3131,16 +3131,6 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowUp'   || e.key === 'k')                  { e.preventDefault(); prev(); }
 });
 
-// ── WHEEL ─────────────────────────────────────────────────────────────────
-var lastWheel = 0;
-document.getElementById('stream-col').addEventListener('wheel', function(e) {
-  if (gridOpen) return;
-  if (document.body.classList.contains('scroll-free')) return;
-  e.preventDefault();
-  var now = Date.now(); if (now - lastWheel < 550) return; lastWheel = now;
-  e.deltaY > 0 ? next() : prev();
-}, {passive: false});
-
 // ── SWIPE ─────────────────────────────────────────────────────────────────
 var touchStartY = 0, touchMoved = false, swipeCooldown = false;
 window.addEventListener('touchstart', function(e) {
@@ -3520,6 +3510,16 @@ function next() {
 }
 function prev() { goTo(current - 1); }
 
+// ── WHEEL ─────────────────────────────────────────────────────────────────
+var lastWheel = 0;
+document.addEventListener('wheel', function(e) {
+  if (isGridOpen()) return;
+  if (document.body.classList.contains('scroll-free')) return;
+  e.preventDefault();
+  var now = Date.now(); if (now - lastWheel < 550) return; lastWheel = now;
+  e.deltaY > 0 ? next() : prev();
+}, {passive: false});
+
 // ── CANVAS PHOTO GRID ────────────────────────────────────────────────────────
 // Pure 2D canvas. Drag + inertia + pinch-zoom + click to jump to sentence.
 const _GRID = (function() {
@@ -3849,11 +3849,35 @@ function isGridOpen() { return document.getElementById('imageGridOverlay').class
       pills: ['The safety angle', 'The scale of impact', 'The honesty', 'All of it']
     },
     3: {
-      prompt: 'What catches your eye about the method?',
-      pills: ['Empirical approach', 'Low-ego culture', 'Constitutional AI', 'The craft']
+      prompt: 'What stands out about the research?',
+      pills: ['Constitutional AI', 'Interpretability', 'The hard problems', 'The rigor']
     },
     4: {
-      prompt: 'Ready to have a conversation?',
+      prompt: 'What catches your eye about the method?',
+      pills: ['Empirical approach', 'Low-ego culture', 'Simple solutions', 'The craft']
+    },
+    5: {
+      prompt: 'What do you think about Claude?',
+      pills: ['The design of it', 'Helpful + honest', 'The voice', 'The ambition']
+    },
+    6: {
+      prompt: 'What do you think about the moment?',
+      pills: ['The timing', 'The stakes', 'Why now', 'The opportunity']
+    },
+    7: {
+      prompt: 'What would you build here?',
+      pills: ['Presentation tools', 'Design systems', 'Internal comms', 'Something new']
+    },
+    8: {
+      prompt: 'What resonates about Zack?',
+      pills: ['20 years of craft', 'Self-taught path', 'Systems thinker', 'The conviction']
+    },
+    9: {
+      prompt: 'What catches your eye about the work?',
+      pills: ['The portfolio', 'The case studies', 'The range', 'The execution']
+    },
+    10: {
+      prompt: 'Ready to start a conversation?',
       pills: ['Hire Zack', 'White-label this', 'Just say hello', 'Share this demo']
     }
   };
