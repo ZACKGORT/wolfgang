@@ -1992,25 +1992,14 @@ body.dark-moment #dark-spotlight { opacity: 1; }
   color: var(--ink-2);
 }
 
-/* li-theme dark moment — force dark ink/veil regardless of LinkedIn palette */
-body.li-theme.dark-moment #dark-veil { background: #000; opacity: 0.96; }
-body.li-theme.dark-moment #dark-spotlight .ds-inner { color: #f0ece4; }
-body.li-theme.dark-moment #dark-spotlight .ds-inner .ac { color: #c8902a; }
-body.li-theme.dark-moment #dark-spotlight .ds-inner .em { color: #8a8070; }
-body.li-theme.dark-moment .ds-ch-label { color: #c8902a; }
-body.li-theme.dark-moment .ds-ch-title { color: #8a8070; }
-body.li-theme.dark-moment #dark-escape-hint { color: rgba(255,255,255,0.22); }
-
-/* Light chapter — li-theme treatment for @@darkchapter (no veil, accent highlight) */
-body.li-theme .sentence.poster.light-chapter-active {
-  color: #0a66c2 !important;
-  background: rgba(10,102,194,0.05);
-  border-radius: 4px;
-  padding-left: 12px;
-  border-left: 3px solid #0a66c2;
-  transition: color 0.4s ease, background 0.4s ease;
-}
-body.li-theme .sentence.poster.light-chapter-active .ac { color: #0a66c2 !important; }
+/* li-theme dark moment — inverted: white veil, dark ink on light */
+body.li-theme.dark-moment #dark-veil { background: #f3f2ef; opacity: 0.97; }
+body.li-theme.dark-moment #dark-spotlight .ds-inner { color: #191919; }
+body.li-theme.dark-moment #dark-spotlight .ds-inner .ac { color: #0a66c2; }
+body.li-theme.dark-moment #dark-spotlight .ds-inner .em { color: #555; }
+body.li-theme.dark-moment .ds-ch-label { color: #0a66c2; }
+body.li-theme.dark-moment .ds-ch-title { color: #555; }
+body.li-theme.dark-moment #dark-escape-hint { color: rgba(0,0,0,0.25); }
 
 /* Escape hint */
 #dark-escape-hint {
@@ -5606,11 +5595,6 @@ goTo = function(n, opts) {
   if (darkAskActive)         exitDarkAsk();
   else if (darkMomentActive) exitDarkMoment();
 
-  // Clear any light-chapter highlight
-  document.querySelectorAll('.light-chapter-active').forEach(function(e) {
-    e.classList.remove('light-chapter-active');
-  });
-
   _goToOriginal(n, opts);
 
   var el = navigable[n];
@@ -5622,12 +5606,7 @@ goTo = function(n, opts) {
   // @@darkchapter — spotlight this poster sentence
   if (el.dataset.darkChapter === 'true') {
     if (!isScrollFree) {
-      // In light themes (li-theme), treat as a light chapter highlight instead of dark veil
-      if (document.body.classList.contains('li-theme')) {
-        el.classList.add('light-chapter-active');
-      } else {
-        setTimeout(function() { enterDarkMoment(el); }, 60);
-      }
+      setTimeout(function() { enterDarkMoment(el); }, 60);
     }
     return;
   }
