@@ -949,6 +949,33 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 .cw-item-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--hud-accent); margin-left: auto; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
 .cw-item.active .cw-item-dot { opacity: 1; }
 
+/* ── Canvas photo grid overlay ── */
+.image-grid-overlay {
+  position: fixed; inset: 0; z-index: 9800;
+  display: none; opacity: 0; transition: opacity 0.3s ease;
+  background: #000;
+}
+.image-grid-overlay.open { display: block; opacity: 1; }
+#gridCanvas { position: absolute; inset: 0; display: block; cursor: grab; touch-action: none; }
+#gridCanvas.grabbing { cursor: grabbing; }
+#gridHud {
+  position: absolute; top: 0; left: 0; right: 0; height: 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; pointer-events: none; z-index: 2;
+}
+#gridHudLabel {
+  font-family: var(--ui); font-size: 9px; letter-spacing: .15em;
+  text-transform: uppercase; color: rgba(255,255,255,.4);
+}
+#gridCloseBtn {
+  pointer-events: auto; background: transparent;
+  border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.55);
+  font-family: var(--ui); font-size: 9px; letter-spacing: .1em;
+  text-transform: uppercase; padding: 5px 14px; cursor: pointer;
+  border-radius: 3px; transition: border-color .15s, color .15s;
+}
+#gridCloseBtn:hover { border-color: rgba(255,255,255,.6); color: #fff; }
+
 /* mobile */
 @media (max-width: 760px) {
   #shell { 
@@ -3743,7 +3770,6 @@ const _GRID = (function() {
         }
         overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
-
         canvas = document.getElementById('gridCanvas');
         ctx    = canvas.getContext('2d');
         canvas.width  = window.innerWidth;
