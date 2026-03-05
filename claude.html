@@ -510,6 +510,7 @@ header {
     <div class="h-mark">wolfie<span>.</span>dialogue</div>
     <div class="h-sub">visual prompt editor · intent-first</div>
     <div class="h-actions">
+        <button class="h-btn" id="api-key-btn" title="Set API key">⚿ api key</button>
       <button class="h-btn active" id="rail-btn" onclick="toggleRail()">[ ] Palette</button>
       <button class="h-btn" onclick="clearAll()">↺ Clear</button>
     </div>
@@ -1055,12 +1056,113 @@ function renderResponseSentence(s) {
 // ─────────────────────────────────────────────────────────────────────────────
 // CLAUDE API
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Session-only API key (never persisted to disk or localStorage)
+let _sessionApiKey = null;
+
+function getApiKey() {
+  if (_sessionApiKey) return _sessionApiKey;
+  showApiKeyModal();
+  return null;
+}
+
+function showApiKeyModal() {
+  // Remove any existing modal
+  const existing = document.getElementById('api-key-modal');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'api-key-modal';
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(26,23,20,0.72);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+  `;
+
+  const box = document.createElement('div');
+  box.style.cssText = `
+    background: #f4f1ea; border: 1px solid rgba(26,23,20,0.14);
+    padding: 36px 40px; max-width: 420px; width: 90%;
+    box-shadow: 0 8px 40px rgba(26,23,20,0.18);
+  `;
+
+  box.innerHTML = `
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;
+      text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;color:#1a1714;">
+      <span style="color:#c8902a;">wolfie</span> · api key
+    </div>
+    <div style="font-size:10px;letter-spacing:0.06em;color:#6a6458;margin-bottom:22px;line-height:1.7;">
+      Enter your Anthropic API key to connect.<br>
+      Stored in session memory only — never saved anywhere.
+    </div>
+    <input id="api-key-input" type="password"
+      placeholder="sk-ant-..."
+      style="
+        width:100%; font-family:'Space Mono',monospace; font-size:11px;
+        padding:10px 14px; border:1px solid rgba(26,23,20,0.2);
+        background:#ede9e0; color:#1a1714; outline:none;
+        letter-spacing:0.04em; margin-bottom:14px;
+        box-sizing:border-box;
+      "
+    />
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button id="api-key-submit" style="
+        font-family:'Space Mono',monospace; font-size:8px; letter-spacing:0.14em;
+        text-transform:uppercase; font-weight:700;
+        background:#1a1714; border:none; color:#f4f1ea;
+        padding:9px 22px; cursor:pointer; flex-shrink:0;
+        transition:background 0.15s;
+      ">Connect</button>
+      <div id="api-key-err" style="font-size:9px;color:#c8902a;letter-spacing:0.06em;"></div>
+    </div>
+    <div style="margin-top:16px;font-size:8px;letter-spacing:0.08em;color:#b0a898;line-height:1.6;">
+      Get a key at <a href="https://console.anthropic.com/keys" target="_blank"
+        style="color:#c8902a;text-decoration:none;">console.anthropic.com/keys</a>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  const input = document.getElementById('api-key-input');
+  const submit = document.getElementById('api-key-submit');
+  const err = document.getElementById('api-key-err');
+
+  submit.onmouseenter = () => submit.style.background = '#c8902a';
+  submit.onmouseleave = () => submit.style.background = '#1a1714';
+
+  function attempt() {
+    const val = input.value.trim();
+    if (!val.startsWith('sk-ant-') && !val.startsWith('sk-')) {
+      err.textContent = 'Key should start with sk-ant-…';
+      return;
+    }
+    _sessionApiKey = val;
+    overlay.remove();
+  }
+
+  submit.onclick = attempt;
+  input.onkeydown = e => { if (e.key === 'Enter') attempt(); };
+
+  // Focus after paint
+  requestAnimationFrame(() => input.focus());
+}
+
 async function callClaude(hist) {
-  const res = await fetch('https://wolfie.zack-gort.workers.dev', {
+  const key = _sessionApiKey;
+  if (!key) {
+    showApiKeyModal();
+    throw new Error('API key required — enter it in the prompt above.');
+  }
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Token': 'wolfie-2024',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-allow-browser': 'true',
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
@@ -1069,6 +1171,7 @@ async function callClaude(hist) {
       messages: hist,
     }),
   });
+
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || 'API error');
   return data.content.map(b => b.type === 'text' ? b.text : '').join('\n');
@@ -1123,6 +1226,15 @@ function updateProgress() {
 // ── INIT
 renderCanvas();
 renderChapters();
+
+// Show API key modal on load
+showApiKeyModal();
+
+// Wire up the header key button
+document.getElementById('api-key-btn').onclick = () => {
+  _sessionApiKey = null;
+  showApiKeyModal();
+};
 </script>
 </body>
 </html>
