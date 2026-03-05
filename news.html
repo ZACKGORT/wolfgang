@@ -755,18 +755,19 @@ body.story-engaged {
   #shell { grid-template-columns: 1fr; grid-template-rows: var(--header-h) 1fr; }
   #panel { display: none; }
 
-  /* header — hide full nav, just wordmark */
+  /* header — hide full nav on mobile */
   .h-nav { display: none; }
 
   /* feed masthead */
   .feed-masthead { padding: 24px 16px 20px; }
   .feed-masthead-hed { font-size: clamp(32px, 9vw, 52px); }
   .feed-masthead-dek { font-size: 13px; }
+  .feed-masthead-meta { flex-wrap: wrap; gap: 8px; }
 
   /* category strip */
   .cat-strip { padding: 0 16px; }
 
-  /* feed items — remove excess horizontal padding, drop toggle */
+  /* feed items */
   .feed-item {
     grid-template-columns: 36px 1fr;
     gap: 0 12px;
@@ -776,22 +777,10 @@ body.story-engaged {
   .fi-dek { max-width: none; }
   .fi-hed { font-size: clamp(17px, 5.5vw, 24px); }
 
-  /* story reader — flush left, minimal padding */
-  .story-reader { padding: 0 16px 0 52px; }
-  .story-stream { padding: 24px 0 36px; max-width: none; }
-
-  /* mobile-engaged reader covers screen fully */
-  .story-reader.mobile-engaged {
-    padding: 16px 16px 48px;
-  }
-  .story-reader.mobile-engaged .story-stream {
-    max-width: none;
-  }
-
-  /* sentence sizes tighter on mobile */
-  .story-sentence.s-poster { font-size: clamp(22px, 7vw, 36px); }
-  .story-sentence.s-pull   { font-size: clamp(15px, 4.5vw, 22px); }
-  .story-sentence.s-body   { font-size: 14px; }
+  /* on mobile the inline story-reader is suppressed — ghost sheet used instead */
+  .feed-item.expanded .story-reader { display: none; }
+  .feed-item.expanded { background: none; }
+  .feed-item.expanded .fi-hed { color: var(--item-accent, var(--accent)); }
 
   /* NST */
   .nst {
@@ -801,9 +790,151 @@ body.story-engaged {
   }
   .nst.nst-open { transform: translateY(0); }
 
-  /* ghost overlays — hidden on mobile */
-  .ghost { display: none !important; }
+  /* desktop ghost overlays hidden on touch */
+  #ghost-nav, #ghost-panel { display: none !important; }
 }
+/* ── MOBILE STORY GHOST SHEET ────────────────────────────────────────────── */
+#mob-story-scrim {
+  display: none;
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(9,8,11,0.72);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  touch-action: none;
+}
+#mob-story-scrim.scrim-open { opacity: 1; }
+
+#mob-story-sheet {
+  display: none;
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 910;
+  max-height: 88vh;
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 48px rgba(0,0,0,0.48);
+  transform: translateY(100%);
+  transition: transform 0.36s cubic-bezier(0.25,1,0.5,1);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  touch-action: pan-y;
+}
+#mob-story-sheet.sheet-open {
+  transform: translateY(0);
+}
+
+/* drag handle */
+.mob-sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--ink-3);
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
+/* sheet header */
+.mob-sheet-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 12px 18px 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mob-sheet-meta { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.mob-sheet-eyebrow {
+  font-family: var(--ui); font-size: 6.5px; letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+.mob-sheet-hed {
+  font-family: var(--disp); font-weight: 700; font-size: 16px;
+  text-transform: uppercase; letter-spacing: -0.01em;
+  color: var(--ink); line-height: 1.1;
+}
+.mob-sheet-close {
+  font-family: var(--ui); font-size: 9px; color: var(--ink-3);
+  background: none; border: 1px solid var(--border);
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-left: 10px; margin-top: 2px;
+  transition: all .14s;
+}
+.mob-sheet-close:hover { border-color: var(--ink); color: var(--ink); }
+
+/* sheet story stream */
+.mob-sheet-stream {
+  flex: 1; overflow: hidden; position: relative;
+  padding: 20px 20px 0;
+}
+
+/* active sentence fills this area — others hidden */
+.mob-sheet-stream .story-sentence {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.mob-sheet-stream .story-sentence.s-active {
+  display: block;
+  opacity: 1;
+}
+/* labels always show above active sentence */
+.mob-sheet-stream .story-sentence.s-label {
+  display: block;
+  opacity: 0.7;
+  padding-bottom: 6px;
+}
+
+/* sentence type sizing for small screen */
+.mob-sheet-stream .story-sentence.s-poster {
+  font-size: clamp(24px, 7.5vw, 38px);
+  padding: 8px 0 6px;
+}
+.mob-sheet-stream .story-sentence.s-body {
+  font-size: 15px; line-height: 1.7;
+}
+.mob-sheet-stream .story-sentence.s-pull {
+  font-size: clamp(16px, 5vw, 22px);
+}
+.mob-sheet-stream .story-sentence.s-spec {
+  font-size: 11px;
+}
+
+/* sheet HUD */
+.mob-sheet-hud {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mob-shud-count {
+  font-family: var(--ui); font-size: 8px; letter-spacing: 0.08em;
+  color: var(--ink-3); min-width: 52px;
+}
+.mob-shud-bar {
+  flex: 1; height: 1px; background: var(--border); position: relative; overflow: hidden;
+}
+.mob-shud-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%; transition: width 0.25s ease;
+}
+.mob-shud-btn {
+  font-family: var(--ui); font-size: 14px; color: var(--ink-3);
+  background: none; border: 1px solid var(--border);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s; flex-shrink: 0;
+}
+.mob-shud-btn:active { transform: scale(0.88); }
+
+/* swipe hint on first open */
+.mob-sheet-swipe-hint {
+  font-family: var(--ui); font-size: 6.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-3);
+  text-align: center; padding: 0 20px 4px;
+  opacity: 0; transition: opacity 0.4s ease;
+  flex-shrink: 0;
+}
+.mob-sheet-swipe-hint.hint-show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -840,7 +971,28 @@ body.story-engaged {
   </div>
 </div>
 
-<!-- ── MOBILE STORY EXIT BAR ── -->
+<!-- ── MOBILE STORY GHOST SHEET ── -->
+<div id="mob-story-scrim"></div>
+<div id="mob-story-sheet" role="dialog" aria-modal="true" aria-label="Story reader">
+  <div class="mob-sheet-handle"></div>
+  <div class="mob-sheet-header">
+    <div class="mob-sheet-meta">
+      <span class="mob-sheet-eyebrow" id="mob-sheet-eyebrow"></span>
+      <span class="mob-sheet-hed"     id="mob-sheet-hed"></span>
+    </div>
+    <button class="mob-sheet-close" id="mob-sheet-close" aria-label="Close story">✕</button>
+  </div>
+  <div class="mob-sheet-swipe-hint" id="mob-swipe-hint">Swipe or tap arrows to advance</div>
+  <div class="mob-sheet-stream" id="mob-sheet-stream"></div>
+  <div class="mob-sheet-hud">
+    <div class="mob-shud-count" id="mob-shud-count">1 / 1</div>
+    <div class="mob-shud-bar"><div class="mob-shud-fill" id="mob-shud-fill"></div></div>
+    <button class="mob-shud-btn" id="mob-shud-prev" aria-label="Previous sentence">↑</button>
+    <button class="mob-shud-btn" id="mob-shud-next" aria-label="Next sentence">↓</button>
+  </div>
+</div>
+
+<!-- ── MOBILE STORY EXIT BAR (kept for desktop fallback, hidden on mobile) ── -->
 <div class="mobile-exit-bar" id="mob-exit-bar">
   <span class="mob-exit-label">Reading</span>
   <span class="mob-exit-hed" id="mob-exit-hed"></span>
@@ -1488,6 +1640,13 @@ function buildFeed(filter) {
     // Toggle expand
     function toggleStory(e) {
       if (e && e.target && (e.target.closest('.story-reader') || e.target.closest('.shud-btn'))) return;
+
+      // Mobile: open ghost sheet instead of inline expand
+      if (isMob()) {
+        openStoryMobile(story, item);
+        return;
+      }
+
       var isOpen = item.classList.contains('expanded');
 
       // Collapse any open story
@@ -1637,34 +1796,185 @@ function disengageReader() {
   if (bar) bar.classList.remove('visible');
 }
 
-function mobileEngage(storyId, readerEl, story) {
-  engageReader(storyId, readerEl);
-  readerEl.classList.add('mobile-engaged');
-  document.body.classList.add('story-engaged');
-  // Show exit bar
-  var bar  = document.getElementById('mob-exit-bar');
-  var hed  = document.getElementById('mob-exit-hed');
-  if (bar) bar.classList.add('visible');
-  if (hed) hed.textContent = story.hed;
-  // Touch swipe inside engaged reader
-  var ty0 = 0;
-  readerEl._touchStart = function(e) { ty0 = e.touches[0].clientY; };
-  readerEl._touchEnd   = function(e) {
-    var dy = ty0 - e.changedTouches[0].clientY;
-    if (Math.abs(dy) < 30) return;
-    var st = activeReaders[storyId];
-    if (!st) return;
-    dy > 0 ? storyGoTo(storyId, st.current + 1) : storyGoTo(storyId, st.current - 1);
-  };
-  readerEl.addEventListener('touchstart', readerEl._touchStart, { passive: true });
-  readerEl.addEventListener('touchend',   readerEl._touchEnd,   { passive: true });
-  readerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// ── MOBILE STORY GHOST SHEET ──────────────────────────────────────────────
+var mobScrim   = document.getElementById('mob-story-scrim');
+var mobSheet   = document.getElementById('mob-story-sheet');
+var mobStream  = document.getElementById('mob-sheet-stream');
+var mobHed     = document.getElementById('mob-sheet-hed');
+var mobEyebrow = document.getElementById('mob-sheet-eyebrow');
+var mobCount   = document.getElementById('mob-shud-count');
+var mobFill    = document.getElementById('mob-shud-fill');
+var mobPrev    = document.getElementById('mob-shud-prev');
+var mobNext    = document.getElementById('mob-shud-next');
+var mobClose   = document.getElementById('mob-sheet-close');
+var mobHint    = document.getElementById('mob-swipe-hint');
+
+var mobState   = { story: null, sentences: [], current: 0, hintShown: false };
+
+function mobSheetOpen(story) {
+  if (!isMob() || !mobSheet || !story) return;
+
+  mobState.story = story;
+  mobState.current = 0;
+
+  // Populate header
+  mobSheet.style.setProperty('--item-accent', story.accent);
+  mobFill.style.background = story.accent;
+  mobEyebrow.style.color   = story.accent;
+  mobEyebrow.textContent   = story.catLabel;
+  mobHed.textContent       = story.hed;
+
+  // Build sentences into stream
+  mobStream.innerHTML = '';
+  var navigable = [];
+  story.sentences.forEach(function(s) {
+    var el = buildSentenceEl(s, story.accent);
+    el.classList.remove('s-revealed', 's-past', 's-active');
+    // Labels shown persistently at top
+    if (s.type === 'label') {
+      el.classList.add('s-active'); // always visible
+    }
+    mobStream.appendChild(el);
+    if (s.type !== 'label' && s.type !== 'break') navigable.push(el);
+  });
+  mobState.sentences = navigable;
+
+  // Swipe hint on first open ever
+  if (!mobState.hintShown && mobHint) {
+    mobState.hintShown = true;
+    setTimeout(function() {
+      mobHint.classList.add('hint-show');
+      setTimeout(function() { mobHint.classList.remove('hint-show'); }, 2800);
+    }, 500);
+  }
+
+  mobSheetGoTo(0);
+
+  // Show scrim + sheet
+  mobScrim.style.display = 'block';
+  mobSheet.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      mobScrim.classList.add('scrim-open');
+      mobSheet.classList.add('sheet-open');
+    });
+  });
+
+  // Body color
+  document.body.className = 'cat-' + story.cat;
 }
 
-// Mobile exit button
+function mobSheetClose() {
+  if (!mobSheet) return;
+  mobScrim.classList.remove('scrim-open');
+  mobSheet.classList.remove('sheet-open');
+  document.body.style.overflow = '';
+  setTimeout(function() {
+    mobScrim.style.display = 'none';
+    mobSheet.style.display = 'none';
+    mobStream.innerHTML    = '';
+    mobState.story         = null;
+    // Deactivate feed item highlight
+    document.querySelectorAll('.feed-item.expanded').forEach(function(el) {
+      el.classList.remove('expanded');
+    });
+    document.body.className = '';
+    document.getElementById('read-progress').style.width = '0%';
+    hideNst(false);
+  }, 360);
+}
+
+function mobSheetGoTo(n) {
+  var nav = mobState.sentences;
+  if (!nav.length) return;
+  n = Math.max(0, Math.min(nav.length - 1, n));
+  mobState.current = n;
+
+  nav.forEach(function(el, i) {
+    el.classList.remove('s-active', 's-past', 's-revealed');
+    if (i === n) el.classList.add('s-active');
+    else         el.classList.remove('s-active');
+  });
+
+  // Progress
+  var pct = nav.length > 1 ? Math.round((n / (nav.length - 1)) * 100) : 100;
+  if (mobFill)  mobFill.style.width = pct + '%';
+  if (mobCount) mobCount.textContent = (n + 1) + ' / ' + nav.length;
+  document.getElementById('read-progress').style.width = pct + '%';
+
+  // NST trigger
+  var activeEl = nav[n];
+  if (activeEl && activeEl.dataset.trigger && mobState.story && mobState.story.nst) {
+    if (!nstDismissed.has(mobState.story.nst.url)) {
+      setTimeout(function() { showNst(mobState.story.nst); }, 600);
+    }
+  }
+}
+
+// Wire sheet controls
+if (mobClose)  mobClose.addEventListener('click', mobSheetClose);
+if (mobScrim)  mobScrim.addEventListener('click', mobSheetClose);
+if (mobPrev)   mobPrev.addEventListener('click', function(e) { e.stopPropagation(); mobSheetGoTo(mobState.current - 1); });
+if (mobNext)   mobNext.addEventListener('click', function(e) { e.stopPropagation(); mobSheetGoTo(mobState.current + 1); });
+
+// Swipe up/down on sheet
 (function() {
-  var btn = document.getElementById('mob-exit-btn');
-  if (btn) btn.addEventListener('click', function() { disengageReader(); });
+  var ty0 = 0, startedOnSheet = false;
+  mobSheet && mobSheet.addEventListener('touchstart', function(e) {
+    ty0 = e.touches[0].clientY;
+    startedOnSheet = true;
+  }, { passive: true });
+  mobSheet && mobSheet.addEventListener('touchend', function(e) {
+    if (!startedOnSheet) return;
+    startedOnSheet = false;
+    var dy = ty0 - e.changedTouches[0].clientY;
+    if (Math.abs(dy) < 28) return;
+    // Large downward swipe = close
+    if (dy < -80) { mobSheetClose(); return; }
+    dy > 0 ? mobSheetGoTo(mobState.current + 1) : mobSheetGoTo(mobState.current - 1);
+  }, { passive: true });
+})();
+
+// Keyboard on mobile sheet (external keyboard / foldable)
+document.addEventListener('keydown', function(e) {
+  if (!mobState.story) return;
+  if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); mobSheetGoTo(mobState.current + 1); }
+  if (e.key === 'ArrowUp'   || e.key === 'k') { e.preventDefault(); mobSheetGoTo(mobState.current - 1); }
+  if (e.key === 'Escape') mobSheetClose();
+});
+
+// Override toggleStory on mobile — open sheet instead of inline expand
+function openStoryMobile(story, feedItem) {
+  // Highlight the tapped row lightly
+  document.querySelectorAll('.feed-item.expanded').forEach(function(el) { el.classList.remove('expanded'); });
+  feedItem.classList.add('expanded');
+  expandedId = story.id;
+  mobSheetOpen(story);
+}
+
+// mobileEngage is no longer needed — stub it out
+function mobileEngage() {}
+
+// Mobile: auto-engage when story expands — hooked via MutationObserver on feed-list
+// (desktop only now — on mobile, openStoryMobile bypasses expand entirely)
+(function() {
+  var feedList = document.getElementById('feed-list');
+  if (!feedList) return;
+  var mo = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (!isMob()) {
+        // Desktop engage mode
+        m.target && m.target.querySelectorAll && m.target.querySelectorAll('.feed-item.expanded').forEach(function(item) {
+          var sid    = item.dataset.storyId;
+          var reader = item.querySelector('.story-reader');
+          if (!sid || !reader || !activeReaders[sid]) return;
+          if (reader.classList.contains('engaged')) return;
+        });
+      }
+    });
+  });
+  mo.observe(feedList, { subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
 
 // Click outside any engaged reader to disengage
@@ -1894,14 +2204,16 @@ var origBuildFeed = buildFeed;
   mo.observe(feedList, { childList: true });
 })();
 
-// ── TOUCH SWIPE (global fallback, non-engaged) ────────────────────────────
+// ── TOUCH SWIPE (global fallback, non-engaged, desktop only) ─────────────
 (function() {
   var ty0 = 0;
   document.addEventListener('touchstart', function(e) {
     ty0 = e.touches[0] ? e.touches[0].clientY : 0;
   }, { passive: true });
   document.addEventListener('touchend', function(e) {
-    if (!expandedId || engagedStoryId) return; // engaged reader handles its own
+    // mob sheet has its own handler; global only for desktop engage
+    if (isMob()) return;
+    if (!expandedId || engagedStoryId) return;
     var dy = ty0 - (e.changedTouches[0] ? e.changedTouches[0].clientY : ty0);
     if (Math.abs(dy) < 40) return;
     var st = activeReaders[expandedId];
