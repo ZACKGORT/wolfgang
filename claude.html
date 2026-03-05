@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="modular">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>wolfie · dialogue</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 
-:root {
+/* ═══════════════════════════════════════════════════════════════════════════
+   THEME TOKENS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── MODULAR: warm parchment · editorial columns · Space Mono · amber ──── */
+[data-theme="modular"] {
   --bg:        #f4f1ea;
   --bg-2:      #ede9e0;
   --bg-3:      #e6e1d6;
@@ -27,10 +32,85 @@
   --ui:        'Space Mono', monospace;
   --disp:      'Barlow Condensed', sans-serif;
   --col-w:     620px;
+  --header-h:  52px;
+  color-scheme: light;
 }
 
+/* ── STACKED: deep obsidian · single scroll column · serif · gold ───────── */
+[data-theme="stacked"] {
+  --bg:        #0e0d0c;
+  --bg-2:      #161412;
+  --bg-3:      #1e1b18;
+  --ink:       #f0ebe2;
+  --ink-2:     #a09080;
+  --ink-3:     #5a5040;
+  --ink-4:     #302820;
+  --accent:    #d4a044;
+  --accent-l:  rgba(212,160,68,0.15);
+  --accent-ll: rgba(212,160,68,0.06);
+  --aside-bg:  rgba(255,255,255,0.03);
+  --aside-ink: #807060;
+  --border:    rgba(255,255,255,0.07);
+  --border-2:  rgba(255,255,255,0.13);
+  --ui:        'IBM Plex Mono', monospace;
+  --disp:      'DM Serif Display', serif;
+  --col-w:     560px;
+  --header-h:  52px;
+  color-scheme: dark;
+}
+
+/* ── WINDOWED: cool slate · floating panels · system mono · blue ────────── */
+[data-theme="windowed"] {
+  --bg:        #1a1d24;
+  --bg-2:      #20242e;
+  --bg-3:      #272c38;
+  --ink:       #c8d0e0;
+  --ink-2:     #7888a8;
+  --ink-3:     #424e68;
+  --ink-4:     #2a3048;
+  --accent:    #5b8fd4;
+  --accent-l:  rgba(91,143,212,0.15);
+  --accent-ll: rgba(91,143,212,0.06);
+  --aside-bg:  rgba(91,143,212,0.05);
+  --aside-ink: #6878a8;
+  --border:    rgba(255,255,255,0.07);
+  --border-2:  rgba(255,255,255,0.13);
+  --ui:        'IBM Plex Mono', monospace;
+  --disp:      'Barlow Condensed', sans-serif;
+  --col-w:     560px;
+  --header-h:  44px;
+  color-scheme: dark;
+}
+
+/* ── TRIFOLD: sage forest · three-panel broadsheet · serif · green ─────── */
+[data-theme="trifold"] {
+  --bg:        #f1f3ee;
+  --bg-2:      #e8ece3;
+  --bg-3:      #dde3d5;
+  --ink:       #1c2218;
+  --ink-2:     #4e6040;
+  --ink-3:     #8aa070;
+  --ink-4:     #c0ccb0;
+  --accent:    #3d7032;
+  --accent-l:  rgba(61,112,50,0.12);
+  --accent-ll: rgba(61,112,50,0.05);
+  --aside-bg:  rgba(28,34,24,0.04);
+  --aside-ink: #445538;
+  --border:    rgba(28,34,24,0.09);
+  --border-2:  rgba(28,34,24,0.16);
+  --ui:        'Space Mono', monospace;
+  --disp:      'DM Serif Display', serif;
+  --col-w:     560px;
+  --header-h:  52px;
+  color-scheme: light;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESET + BASE
+   ═══════════════════════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { color-scheme: light; }
+html { color-scheme: light dark; }
+
 body {
   background: var(--bg);
   color: var(--ink);
@@ -40,62 +120,243 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.25s, color 0.25s;
 }
 
-/* grain overlay */
+/* grain */
 body::before {
   content: '';
   position: fixed; inset: 0;
   pointer-events: none; z-index: 9000;
-  opacity: 0.025;
+  opacity: 0.022;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/180px;
 }
 
-/* ── LAYOUT ─────────────────────────────────────────────────────────────── */
-#shell {
-  display: grid;
-  grid-template-columns: 1fr var(--col-w) 210px 1fr;
-  grid-template-rows: 52px 1fr;
-  min-height: 100vh;
-}
-
-/* ── HEADER ─────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════════════════ */
 header {
   grid-column: 1 / -1;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px;
+  padding: 0 20px;
+  height: var(--header-h);
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   position: sticky; top: 0; z-index: 500;
+  transition: background 0.25s, border-color 0.25s;
 }
 .h-mark {
-  font-family: var(--disp); font-weight: 900; font-size: 17px;
+  font-family: var(--disp); font-weight: 900; font-size: 16px;
   letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink);
+  flex-shrink: 0;
 }
+[data-theme="stacked"] .h-mark,
+[data-theme="trifold"] .h-mark { font-size: 18px; letter-spacing: 0; font-weight: 400; font-style: italic; }
 .h-mark span { color: var(--accent); }
 .h-sub {
   font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--ink-3);
   position: absolute; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
 }
-.h-actions { display: flex; gap: 8px; align-items: center; }
+@media (max-width: 700px) { .h-sub { display: none; } }
+
+.h-actions { display: flex; gap: 6px; align-items: center; }
 .h-btn {
   font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
   text-transform: uppercase; background: none;
   border: 1px solid var(--border-2); color: var(--ink-2);
-  padding: 5px 11px; cursor: pointer; transition: all .15s;
+  padding: 5px 10px; cursor: pointer; transition: all .15s;
+  white-space: nowrap;
 }
 .h-btn:hover  { border-color: var(--accent); color: var(--accent); }
 .h-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
 
-/* ── STREAM COLUMN ──────────────────────────────────────────────────────── */
-#stream-col {
-  grid-column: 2; grid-row: 2;
-  display: flex; flex-direction: column;
-  min-height: calc(100vh - 52px);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
+/* ── THEME SWITCHER ──────────────────────────────────────────────────────── */
+.theme-switcher {
+  display: flex; align-items: center; gap: 3px;
+  background: var(--bg-2); border: 1px solid var(--border-2);
+  padding: 3px 4px; border-radius: 3px;
 }
+.t-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; padding: 4px 6px; cursor: pointer;
+  border: 1px solid transparent; border-radius: 2px;
+  transition: all 0.15s; background: none;
+  position: relative;
+}
+.t-btn:hover { background: var(--bg-3); border-color: var(--border-2); }
+.t-btn.active { background: var(--accent-l); border-color: var(--accent); }
+
+/* mini layout preview icons */
+.t-icon {
+  width: 22px; height: 16px; position: relative; flex-shrink: 0;
+}
+/* modular: two columns side by side */
+.t-icon-modular { display: flex; gap: 2px; }
+.t-icon-modular::before {
+  content: ''; flex: 1; background: var(--ink-3); border-radius: 1px;
+}
+.t-icon-modular::after {
+  content: ''; width: 7px; background: var(--ink-4); border-radius: 1px;
+}
+/* stacked: single tall column */
+.t-icon-stacked {
+  display: flex; justify-content: center;
+}
+.t-icon-stacked::before {
+  content: ''; width: 12px; height: 100%; background: var(--ink-3); border-radius: 1px;
+}
+/* windowed: overlapping box layout */
+.t-icon-windowed {
+  position: relative;
+}
+.t-icon-windowed::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 14px; height: 10px;
+  background: var(--ink-4); border: 1px solid var(--ink-3); border-radius: 1px;
+}
+.t-icon-windowed::after {
+  content: ''; position: absolute;
+  bottom: 0; right: 0; width: 14px; height: 10px;
+  background: var(--ink-3); border: 1px solid var(--ink-2); border-radius: 1px;
+}
+/* trifold: three equal columns */
+.t-icon-trifold { display: flex; gap: 2px; }
+.t-icon-trifold::before {
+  content: ''; flex: 1; background: var(--ink-3); border-radius: 1px;
+}
+.t-icon-trifold span {
+  flex: 1; background: var(--ink-4); border-radius: 1px; display: block;
+}
+.t-icon-trifold::after {
+  content: ''; flex: 1; background: var(--ink-3); border-radius: 1px;
+}
+
+.t-label {
+  font-family: var(--ui); font-size: 6px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-3);
+  white-space: nowrap;
+}
+.t-btn.active .t-label { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYOUT SYSTEM — four distinct shell configurations
+   ═══════════════════════════════════════════════════════════════════════════ */
+#shell {
+  display: grid;
+  min-height: 100vh;
+}
+
+/* ── MODULAR: classic editorial columns ─────────────────────────────────── */
+[data-theme="modular"] #shell {
+  grid-template-columns: 1fr var(--col-w) 210px 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+}
+[data-theme="modular"] header        { grid-column: 1 / -1; }
+[data-theme="modular"] #stream-col   { grid-column: 2; grid-row: 2; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+[data-theme="modular"] #node-rail    { grid-column: 3; grid-row: 2; border-left: 1px solid var(--border); }
+
+/* ── STACKED: single centered column ────────────────────────────────────── */
+[data-theme="stacked"] #shell {
+  grid-template-columns: 1fr min(var(--col-w), 100%) 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+}
+[data-theme="stacked"] header        { grid-column: 1 / -1; }
+[data-theme="stacked"] #stream-col   { grid-column: 2; grid-row: 2; }
+[data-theme="stacked"] #node-rail    {
+  /* in stacked mode the rail becomes a floating bottom drawer on desktop */
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: min(var(--col-w), 100vw);
+  max-height: 50vh;
+  border: 1px solid var(--border-2); border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--bg-2);
+  z-index: 400;
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.4);
+  display: flex; flex-direction: row; flex-wrap: wrap;
+  padding: 14px 16px 8px;
+  gap: 6px;
+  overflow-y: auto;
+  grid-column: unset; grid-row: unset;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+[data-theme="stacked"] #node-rail.hidden {
+  transform: translateX(-50%) translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+[data-theme="stacked"] #node-rail .rail-head,
+[data-theme="stacked"] #node-rail .rail-divider,
+[data-theme="stacked"] #node-rail .rail-sec { display: none; }
+[data-theme="stacked"] .pal-btn { flex: 0 0 calc(50% - 3px); margin-bottom: 0; }
+[data-theme="stacked"] #stream-scroll { padding: 48px 40px 32px; }
+
+/* ── WINDOWED: floating panel approach ───────────────────────────────────── */
+[data-theme="windowed"] #shell {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+  gap: 0;
+}
+[data-theme="windowed"] header { grid-column: 1 / -1; }
+[data-theme="windowed"] #stream-col {
+  grid-column: 1; grid-row: 2;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+[data-theme="windowed"] #node-rail {
+  grid-column: 2; grid-row: 2;
+  background: var(--bg-2);
+  border-left: none;
+}
+[data-theme="windowed"] #stream-scroll { padding: 32px 36px 24px; }
+/* window title bars */
+[data-theme="windowed"] #stream-col::before {
+  content: '● dialogue stream';
+  display: block; padding: 7px 14px;
+  font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--bg-3);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--ui);
+}
+[data-theme="windowed"] #node-rail::before {
+  content: '● node palette';
+  display: block; padding: 7px 14px;
+  font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); background: var(--bg-3);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--ui);
+  position: sticky; top: 0; z-index: 10;
+}
+
+/* ── TRIFOLD: three-column broadsheet ───────────────────────────────────── */
+[data-theme="trifold"] #shell {
+  grid-template-columns: 220px 1fr 220px;
+  grid-template-rows: var(--header-h) 1fr;
+}
+[data-theme="trifold"] header        { grid-column: 1 / -1; }
+[data-theme="trifold"] #stream-col   { grid-column: 2; grid-row: 2; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+[data-theme="trifold"] #node-rail    { grid-column: 3; grid-row: 2; }
+/* trifold gets a chapter sidebar in the leftmost column */
+[data-theme="trifold"] #trifold-left { display: flex; flex-direction: column; grid-column: 1; grid-row: 2; border-right: 1px solid var(--border); padding: 28px 18px; }
+[data-theme="trifold"] #trifold-left .rail-head {
+  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+[data-theme="trifold"] #trifold-chapters { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STREAM COLUMN
+   ═══════════════════════════════════════════════════════════════════════════ */
+#stream-col {
+  display: flex; flex-direction: column;
+  min-height: calc(100vh - var(--header-h));
+  overflow: hidden;
+}
+[data-theme="modular"] #stream-col,
+[data-theme="stacked"] #stream-col { min-height: calc(100vh - var(--header-h)); }
+
 #stream-scroll {
   flex: 1; overflow-y: auto;
   padding: 48px 48px 32px;
@@ -104,7 +365,13 @@ header {
 #stream-scroll::-webkit-scrollbar { width: 4px; }
 #stream-scroll::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 2px; }
 
-/* ── EXCHANGE BLOCK ─────────────────────────────────────────────────────── */
+/* stacked uses serif drop-cap styling */
+[data-theme="stacked"] .sn-title { font-size: clamp(32px,5vw,56px); letter-spacing: -0.03em; }
+[data-theme="trifold"] #stream-scroll { padding: 36px 32px 24px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EXCHANGE + RENDERING
+   ═══════════════════════════════════════════════════════════════════════════ */
 .exchange {
   margin-bottom: 56px;
   opacity: 0; animation: exchIn 0.35s ease forwards;
@@ -113,11 +380,9 @@ header {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .who {
   font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
-  margin-bottom: 12px;
-  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
 }
 .who-name { color: var(--ink-3); }
 .who-tag {
@@ -127,376 +392,392 @@ header {
 }
 .who::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* ── STREAM — USER NODE RENDERS ─────────────────────────────────────────── */
+/* user nodes in stream */
 .sn-title {
   font-family: var(--disp); font-weight: 900;
   font-size: clamp(26px, 4vw, 44px);
   line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase;
-  color: var(--ink);
-  border-left: 3px solid var(--accent); padding-left: 14px;
-  margin-bottom: 6px;
+  color: var(--ink); border-left: 3px solid var(--accent); padding-left: 14px; margin-bottom: 6px;
 }
-.sn-thought {
-  font-family: var(--disp); font-weight: 400; font-size: 20px;
-  color: var(--ink); line-height: 1.35; margin-bottom: 4px;
-}
-.sn-pull {
-  font-family: var(--disp); font-style: italic; font-weight: 300;
-  font-size: 19px; line-height: 1.3; color: var(--ink-2);
-  border-left: 1px solid var(--ink-3); padding: 6px 0 6px 14px;
-  margin-bottom: 4px;
-}
-.sn-aside {
-  font-family: var(--ui); font-size: 11px; line-height: 1.55;
-  color: var(--aside-ink); background: var(--aside-bg);
-  border-left: 2px solid var(--ink-4); padding: 5px 12px;
-  border-radius: 0 3px 3px 0; margin-bottom: 4px; font-style: italic;
-}
-.sn-spec {
-  font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em;
-  display: flex; align-items: baseline; gap: 12px;
-  padding: 3px 0; border-bottom: 1px solid var(--border);
-}
+[data-theme="stacked"] .sn-title { font-weight: 400; text-transform: none; letter-spacing: -0.02em; }
+[data-theme="trifold"] .sn-title { font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.sn-thought { font-family: var(--disp); font-weight: 400; font-size: 20px; color: var(--ink); line-height: 1.35; margin-bottom: 4px; }
+.sn-pull { font-family: var(--disp); font-style: italic; font-weight: 300; font-size: 19px; line-height: 1.3; color: var(--ink-2); border-left: 1px solid var(--ink-3); padding: 6px 0 6px 14px; margin-bottom: 4px; }
+.sn-aside { font-family: var(--ui); font-size: 11px; line-height: 1.55; color: var(--aside-ink); background: var(--aside-bg); border-left: 2px solid var(--ink-4); padding: 5px 12px; border-radius: 0 3px 3px 0; margin-bottom: 4px; font-style: italic; }
+.sn-spec { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; display: flex; align-items: baseline; gap: 12px; padding: 3px 0; border-bottom: 1px solid var(--border); }
 .sn-spec:last-child { border-bottom: none; }
-.sn-break {
-  font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--ink-3); padding: 6px 0; margin: 2px 0;
-  border-top: 1px solid var(--border);
-}
-.spec-k {
-  font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--ink-3); min-width: 80px; flex-shrink: 0;
-}
+.sn-constraint { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; display: flex; align-items: baseline; gap: 12px; padding: 3px 0; border-bottom: 1px solid rgba(180,60,40,0.15); }
+.sn-constraint:last-child { border-bottom: none; }
+.sn-break { font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); padding: 6px 0; margin: 2px 0; border-top: 1px solid var(--border); }
+.spec-k { font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); min-width: 80px; flex-shrink: 0; }
 .spec-v { color: var(--ink); }
+.constraint-k { font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: #b43c28; min-width: 80px; flex-shrink: 0; }
+.constraint-v { color: var(--ink); }
 
-/* ── STREAM — AI RESPONSE RENDERS ──────────────────────────────────────── */
-.r-body {
-  font-family: var(--disp); font-weight: 300; font-size: 19px;
-  line-height: 1.5; color: var(--ink-2);
-  max-width: 500px; margin-bottom: 6px;
-}
-.r-poster {
-  font-family: var(--disp); font-weight: 900;
-  font-size: clamp(26px, 4vw, 46px);
-  line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase;
-  color: var(--ink); margin-bottom: 8px;
-}
-.r-pull {
-  font-family: var(--disp); font-style: italic; font-weight: 300;
-  font-size: 20px; line-height: 1.3; color: var(--ink-2);
-  max-width: 460px; padding: 8px 0 8px 16px;
-  border-left: 1px solid var(--ink-3); margin: 6px 0;
-}
-.r-aside {
-  font-family: var(--ui); font-size: 11px; line-height: 1.55;
-  color: var(--aside-ink); background: var(--aside-bg);
-  border-left: 2px solid var(--ink-4); padding: 6px 12px;
-  border-radius: 0 3px 3px 0; margin: 4px 0; font-style: italic;
-}
-.r-spec {
-  font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em;
-  display: flex; align-items: baseline; gap: 12px;
-  padding: 4px 0; border-bottom: 1px solid var(--border);
-  position: relative; overflow: hidden;
-}
+/* response renders */
+.r-body { font-family: var(--disp); font-weight: 300; font-size: 19px; line-height: 1.5; color: var(--ink-2); max-width: 500px; margin-bottom: 6px; }
+.r-poster { font-family: var(--disp); font-weight: 900; font-size: clamp(26px, 4vw, 46px); line-height: 0.93; letter-spacing: -0.02em; text-transform: uppercase; color: var(--ink); margin-bottom: 8px; }
+[data-theme="stacked"] .r-poster,
+[data-theme="trifold"] .r-poster { font-weight: 400; text-transform: none; letter-spacing: -0.02em; }
+.r-pull { font-family: var(--disp); font-style: italic; font-weight: 300; font-size: 20px; line-height: 1.3; color: var(--ink-2); max-width: 460px; padding: 8px 0 8px 16px; border-left: 1px solid var(--ink-3); margin: 6px 0; }
+.r-aside { font-family: var(--ui); font-size: 11px; line-height: 1.55; color: var(--aside-ink); background: var(--aside-bg); border-left: 2px solid var(--ink-4); padding: 6px 12px; border-radius: 0 3px 3px 0; margin: 4px 0; font-style: italic; }
+.r-spec { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; display: flex; align-items: baseline; gap: 12px; padding: 4px 0; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
 .r-spec:last-of-type { border-bottom: none; }
-.r-spec::after {
-  content: ''; position: absolute; bottom: 0; left: 0;
-  height: 1px; background: var(--accent); width: 0;
-  animation: specScan 0.6s ease forwards 0.15s;
-}
+.r-spec::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; background: var(--accent); width: 0; animation: specScan 0.6s ease forwards 0.15s; }
 @keyframes specScan { to { width: 100%; } }
+.r-constraint { font-family: var(--ui); font-size: 10px; letter-spacing: 0.04em; display: flex; align-items: baseline; gap: 12px; padding: 4px 0; border-bottom: 1px solid rgba(180,60,40,0.15); position: relative; overflow: hidden; }
+.r-constraint:last-of-type { border-bottom: none; }
+.r-constraint::after { content: ''; position: absolute; bottom: 0; left: 0; height: 1px; background: #b43c28; width: 0; animation: specScan 0.6s ease forwards 0.15s; }
 .r-list { margin: 4px 0 8px; padding: 0; list-style: none; }
-.r-list li {
-  font-family: var(--disp); font-weight: 300; font-size: 18px;
-  line-height: 1.4; color: var(--ink-2);
-  padding: 3px 0 3px 18px; position: relative;
-}
-.r-list li::before {
-  content: '◇'; position: absolute; left: 0;
-  color: var(--accent); font-size: 8px; top: 6px;
-}
+.r-list li { font-family: var(--disp); font-weight: 300; font-size: 18px; line-height: 1.4; color: var(--ink-2); padding: 3px 0 3px 18px; position: relative; }
+.r-list li::before { content: '◇'; position: absolute; left: 0; color: var(--accent); font-size: 8px; top: 6px; }
 
-/* ── TYPING INDICATOR ───────────────────────────────────────────────────── */
+/* typing indicator */
 .typing { display: flex; align-items: center; gap: 5px; padding: 10px 0; }
-.typing-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--ink-3); animation: tdot 1.1s ease-in-out infinite;
-}
+.typing-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-3); animation: tdot 1.1s ease-in-out infinite; }
 .typing-dot:nth-child(2) { animation-delay: 0.18s; }
 .typing-dot:nth-child(3) { animation-delay: 0.36s; }
-@keyframes tdot {
-  0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; }
-  40% { transform: scale(1); opacity: 1; }
-}
+@keyframes tdot { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
 
-/* ── CANVAS AREA ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CANVAS AREA
+   ═══════════════════════════════════════════════════════════════════════════ */
 #canvas-area {
   border-top: 1px solid var(--border);
   background: var(--bg);
   flex-shrink: 0;
   display: flex; flex-direction: column;
-  max-height: 54vh; min-height: 200px;
+  max-height: 52vh; min-height: 180px;
 }
+[data-theme="windowed"] #canvas-area { max-height: 44vh; }
+[data-theme="stacked"]  #canvas-area { max-height: 48vh; }
 
-/* toolbar */
 #canvas-toolbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 20px 8px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
+  padding: 8px 16px 7px; border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .ct-left { display: flex; align-items: center; gap: 10px; }
-.ct-label {
-  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3);
-}
-#node-count {
-  font-size: 7px; letter-spacing: 0.10em; color: var(--accent);
-  background: var(--accent-ll); border: 1px solid var(--accent-l);
-  padding: 1px 7px; border-radius: 10px;
-}
+.ct-label { font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); }
+#node-count { font-size: 7px; letter-spacing: 0.10em; color: var(--accent); background: var(--accent-ll); border: 1px solid var(--accent-l); padding: 1px 7px; border-radius: 10px; }
 .ct-right { display: flex; align-items: center; gap: 6px; }
 
-/* nodes list */
-#canvas-nodes {
-  flex: 1; overflow-y: auto;
-  padding: 8px 12px; display: flex; flex-direction: column; gap: 4px;
-}
+#canvas-nodes { flex: 1; overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; }
 #canvas-nodes::-webkit-scrollbar { width: 3px; }
 #canvas-nodes::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 2px; }
 
-/* empty hint */
-#canvas-hint {
-  display: flex; align-items: center; justify-content: center;
-  height: 52px; pointer-events: none;
-}
-.hint-text {
-  font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-4);
-}
+#canvas-hint { display: flex; align-items: center; justify-content: center; height: 52px; pointer-events: none; }
+.hint-text { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-4); }
 
-/* ── NODE BLOCK ─────────────────────────────────────────────────────────── */
-.node {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  border-radius: 2px;
-  transition: border-color 0.12s, background 0.12s, opacity 0.2s;
-  position: relative;
-  user-select: none;
-}
+/* node blocks */
+.node { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border: 1px solid var(--border); background: var(--bg); border-radius: 2px; transition: border-color 0.12s, background 0.12s, opacity 0.2s; position: relative; user-select: none; }
 .node:hover { border-color: var(--border-2); background: var(--bg-2); }
 .node.committed { opacity: 0.52; }
 .node.committed:hover { opacity: 0.72; }
 .node.drag-over { border-color: var(--accent) !important; border-style: dashed; }
 .node.dragging  { opacity: 0.25; }
 
-/* arrow controls */
 .node-arrows { display: flex; flex-direction: column; gap: 1px; flex-shrink: 0; }
-.arr {
-  background: none; border: none; cursor: pointer;
-  color: var(--ink-4); font-size: 7px; padding: 1px 3px;
-  line-height: 1; transition: color 0.1s; display: block;
-}
+.arr { background: none; border: none; cursor: pointer; color: var(--ink-4); font-size: 7px; padding: 1px 3px; line-height: 1; transition: color 0.1s; display: block; }
 .arr:hover { color: var(--accent); }
 .arr:disabled { opacity: 0.18; pointer-events: none; }
-
-/* drag handle */
-.node-grip {
-  color: var(--ink-4); font-size: 10px; cursor: grab;
-  flex-shrink: 0; letter-spacing: -2px; line-height: 1;
-}
+.node-grip { color: var(--ink-4); font-size: 10px; cursor: grab; flex-shrink: 0; letter-spacing: -2px; line-height: 1; }
 .node-grip:active { cursor: grabbing; }
 
-/* type badge */
-.node-badge {
-  font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--accent); background: var(--accent-ll);
-  border: 1px solid var(--accent-l); padding: 2px 7px;
-  border-radius: 10px; flex-shrink: 0;
-  min-width: 56px; text-align: center;
-}
-
-/* content area */
+.node-badge { font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); background: var(--accent-ll); border: 1px solid var(--accent-l); padding: 2px 7px; border-radius: 10px; flex-shrink: 0; min-width: 56px; text-align: center; }
+.node-badge.badge-constraint { color: #b43c28; background: rgba(180,60,40,0.06); border-color: rgba(180,60,40,0.2); }
 .node-content { flex: 1; min-width: 0; }
-
-/* "sent" mark */
-.node-sent {
-  font-size: 6px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--accent); opacity: 0; transition: opacity 0.3s;
-  flex-shrink: 0;
-}
+.node-sent { font-size: 6px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); opacity: 0; transition: opacity 0.3s; flex-shrink: 0; }
 .node.committed .node-sent { opacity: 0.5; }
-
-/* delete */
-.node-del {
-  background: none; border: none; cursor: pointer;
-  color: var(--ink-4); font-size: 13px; padding: 0 4px;
-  flex-shrink: 0; line-height: 1; transition: color 0.1s;
-}
+.node-del { background: none; border: none; cursor: pointer; color: var(--ink-4); font-size: 13px; padding: 0 4px; flex-shrink: 0; line-height: 1; transition: color 0.1s; }
 .node-del:hover { color: var(--ink); }
 
-/* ── NODE INPUT STYLES (visual rendering per type) ──────────────────────── */
-.ni {
-  background: none; border: none; outline: none;
-  width: 100%; caret-color: var(--accent); font-family: inherit;
-}
-.ni-title {
-  font-family: var(--disp); font-weight: 900; font-size: 20px;
-  letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
-  line-height: 1.1;
-}
-.ni-thought {
-  font-family: var(--disp); font-weight: 400; font-size: 17px;
-  color: var(--ink); line-height: 1.3;
-}
-.ni-pull {
-  font-family: var(--disp); font-style: italic; font-weight: 300;
-  font-size: 16px; color: var(--ink-2); line-height: 1.3;
-  border-left: 2px solid var(--ink-4); padding-left: 10px;
-}
-.ni-aside {
-  font-family: var(--ui); font-size: 11px; color: var(--aside-ink);
-  line-height: 1.5; font-style: italic;
-}
+/* node inputs */
+.ni { background: none; border: none; outline: none; width: 100%; caret-color: var(--accent); font-family: inherit; }
+.ni-title  { font-family: var(--disp); font-weight: 900; font-size: 20px; letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink); line-height: 1.1; }
+[data-theme="stacked"] .ni-title,
+[data-theme="trifold"] .ni-title { text-transform: none; font-weight: 400; }
+.ni-thought { font-family: var(--disp); font-weight: 400; font-size: 17px; color: var(--ink); line-height: 1.3; }
+.ni-pull    { font-family: var(--disp); font-style: italic; font-weight: 300; font-size: 16px; color: var(--ink-2); line-height: 1.3; border-left: 2px solid var(--ink-4); padding-left: 10px; }
+.ni-aside   { font-family: var(--ui); font-size: 11px; color: var(--aside-ink); line-height: 1.5; font-style: italic; }
 .ni-spec-row { display: flex; align-items: baseline; gap: 0; width: 100%; }
-.ni-spec-key {
-  font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--ink-3);
-  background: none; border: none; outline: none;
-  width: 76px; flex-shrink: 0; caret-color: var(--accent);
-}
+.ni-spec-key { font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); background: none; border: none; outline: none; width: 76px; flex-shrink: 0; caret-color: var(--accent); }
 .ni-spec-sep { color: var(--ink-4); font-size: 9px; padding: 0 6px; flex-shrink: 0; }
-.ni-spec-val {
-  font-family: var(--ui); font-size: 10px; color: var(--ink);
-  background: none; border: none; outline: none;
-  flex: 1; caret-color: var(--accent);
-}
-.ni-break {
-  font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--ink-3); display: flex; align-items: center; gap: 8px; width: 100%;
-}
+.ni-spec-val { font-family: var(--ui); font-size: 10px; color: var(--ink); background: none; border: none; outline: none; flex: 1; caret-color: var(--accent); }
+.ni-constraint-row { display: flex; align-items: baseline; gap: 0; width: 100%; }
+.ni-constraint-key { font-family: var(--ui); font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: #b43c28; background: none; border: none; outline: none; width: 76px; flex-shrink: 0; caret-color: #b43c28; }
+.ni-constraint-sep { color: rgba(180,60,40,0.4); font-size: 9px; padding: 0 6px; flex-shrink: 0; }
+.ni-constraint-val { font-family: var(--ui); font-size: 10px; color: var(--ink); background: none; border: none; outline: none; flex: 1; caret-color: #b43c28; }
+.ni-break { font-size: 7px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: center; gap: 8px; width: 100%; }
 .ni-break::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* ── PREVIEW + COMMIT BAR ───────────────────────────────────────────────── */
-#preview-bar {
-  border-top: 1px solid var(--border);
-  padding: 8px 20px 10px;
-  display: flex; align-items: flex-start; gap: 14px;
-  flex-shrink: 0;
-}
-#preview-text {
-  flex: 1; font-size: 8px; letter-spacing: 0.03em; color: var(--ink-3);
-  line-height: 1.6; overflow: hidden;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-}
+/* commit bar */
+#preview-bar { border-top: 1px solid var(--border); padding: 8px 16px 10px; display: flex; align-items: flex-start; gap: 14px; flex-shrink: 0; }
+#preview-text { flex: 1; font-size: 8px; letter-spacing: 0.03em; color: var(--ink-3); line-height: 1.6; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 #preview-text .pb { color: var(--accent); }
-.commit-btn {
-  font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em;
-  text-transform: uppercase; font-weight: 700;
-  background: var(--ink); border: none; color: var(--bg);
-  padding: 8px 20px; cursor: pointer; flex-shrink: 0;
-  transition: background 0.15s, opacity 0.15s;
-}
-.commit-btn:hover    { background: var(--accent); }
+.commit-btn { font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; background: var(--ink); border: none; color: var(--bg); padding: 8px 18px; cursor: pointer; flex-shrink: 0; transition: background 0.15s, opacity 0.15s; }
+.commit-btn:hover { background: var(--accent); }
 .commit-btn:disabled { opacity: 0.3; pointer-events: none; }
 
-/* ── NODE PALETTE RAIL ──────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   NODE PALETTE RAIL
+   ═══════════════════════════════════════════════════════════════════════════ */
 #node-rail {
-  grid-column: 3; grid-row: 2;
   border-left: 1px solid var(--border);
-  padding: 28px 18px 28px 22px;
+  padding: 24px 16px 24px 20px;
   overflow-y: auto;
-  position: sticky; top: 52px;
-  height: calc(100vh - 52px);
+  position: sticky; top: var(--header-h);
+  height: calc(100vh - var(--header-h));
   transition: opacity 0.2s, transform 0.2s;
+  background: var(--bg);
 }
 #node-rail.hidden { opacity: 0; pointer-events: none; transform: translateX(8px); }
 #node-rail::-webkit-scrollbar { width: 0; }
 
-.rail-head {
-  font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--ink-3); margin-bottom: 16px;
-  padding-bottom: 8px; border-bottom: 1px solid var(--border);
-}
-.rail-sec {
-  font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--ink-3); margin: 16px 0 8px;
-}
+.rail-head { font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.rail-sec  { font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 8px; }
 .rail-sec:first-of-type { margin-top: 0; }
+.rail-divider { height: 1px; background: var(--border); margin: 12px 0; }
 
+/* ── PALETTE BUTTONS WITH VISUAL PREVIEWS ────────────────────────────────── */
 .pal-btn {
   width: 100%; text-align: left; background: none;
   border: 1px solid var(--border); cursor: pointer;
-  padding: 9px 11px; margin-bottom: 5px;
+  padding: 0; margin-bottom: 5px;
   transition: border-color 0.12s, background 0.12s;
-  border-radius: 2px; display: block;
+  border-radius: 2px; display: block; overflow: hidden;
 }
-.pal-btn:hover  { border-color: var(--accent); background: var(--accent-ll); }
+.pal-btn:hover  { border-color: var(--accent); }
 .pal-btn:active { background: var(--accent-l); }
-.pal-type {
-  font-family: var(--ui); font-size: 8px; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 3px;
-}
-.pal-preview {
-  font-family: var(--disp); font-weight: 300; font-size: 13px;
-  color: var(--ink-2); line-height: 1.2;
-}
-.pal-effect {
-  font-family: var(--ui); font-size: 7px; letter-spacing: 0.06em;
-  color: var(--ink-3); margin-top: 3px; font-style: italic;
-}
 
-.rail-divider { height: 1px; background: var(--border); margin: 14px 0; }
+/* preview strip — visual render at top of each palette button */
+.pal-preview-strip {
+  background: var(--bg-2);
+  padding: 7px 10px 6px;
+  border-bottom: 1px solid var(--border);
+  min-height: 32px;
+  display: flex; align-items: center;
+}
+.pal-btn:hover .pal-preview-strip { background: var(--accent-ll); }
+
+/* preview renderings per type */
+.prev-title {
+  font-family: var(--disp); font-weight: 900; font-size: 15px;
+  letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
+  border-left: 2px solid var(--accent); padding-left: 7px;
+  line-height: 1; white-space: nowrap; overflow: hidden;
+}
+[data-theme="stacked"] .prev-title,
+[data-theme="trifold"] .prev-title { font-weight: 400; text-transform: none; }
+
+.prev-thought {
+  font-family: var(--disp); font-weight: 400; font-size: 13px;
+  color: var(--ink); line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prev-pull {
+  font-family: var(--disp); font-style: italic; font-weight: 300;
+  font-size: 13px; color: var(--ink-2); line-height: 1.2;
+  border-left: 1px solid var(--ink-3); padding-left: 7px;
+  white-space: nowrap; overflow: hidden;
+}
+.prev-aside {
+  font-family: var(--ui); font-size: 9px; color: var(--aside-ink);
+  font-style: italic; border-left: 2px solid var(--ink-4); padding-left: 7px;
+  white-space: nowrap; overflow: hidden;
+}
+.prev-spec {
+  font-family: var(--ui); font-size: 9px; color: var(--ink-2); letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 6px;
+}
+.prev-spec-k { color: var(--ink-3); font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; }
+.prev-constraint {
+  font-family: var(--ui); font-size: 9px; letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 6px;
+}
+.prev-constraint-k { color: #b43c28; font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; }
+.prev-constraint-v { color: var(--ink); font-size: 9px; }
+.prev-break {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 8px; width: 100%;
+}
+.prev-break::after { content: ''; flex: 1; height: 1px; background: var(--ink-4); }
+
+/* label + description below the strip */
+.pal-meta { padding: 6px 10px 8px; }
+.pal-type { font-family: var(--ui); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+.pal-effect { font-family: var(--ui); font-size: 7px; letter-spacing: 0.06em; color: var(--ink-3); font-style: italic; }
 
 /* chapters */
-.ch-item {
-  padding: 8px 10px; border: 1px solid var(--border);
-  margin-bottom: 5px; cursor: pointer;
-  transition: all 0.12s; border-radius: 2px;
-}
-.ch-item:hover  { border-color: var(--border-2); background: var(--bg-2); }
+.ch-item { padding: 8px 10px; border: 1px solid var(--border); margin-bottom: 5px; cursor: pointer; transition: all 0.12s; border-radius: 2px; }
+.ch-item:hover { border-color: var(--border-2); background: var(--bg-2); }
 .ch-item.active { border-color: var(--accent); background: var(--accent-ll); }
 .ch-name { font-size: 9px; letter-spacing: 0.10em; color: var(--ink-2); margin-bottom: 2px; }
 .ch-meta { font-size: 7px; letter-spacing: 0.08em; color: var(--ink-3); }
-.ch-add {
-  width: 100%; background: none; border: 1px dashed var(--border-2);
-  color: var(--ink-3); font-family: var(--ui); font-size: 7px;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  padding: 7px; cursor: pointer; transition: all 0.12s;
-  border-radius: 2px; margin-top: 4px;
-}
+.ch-add { width: 100%; background: none; border: 1px dashed var(--border-2); color: var(--ink-3); font-family: var(--ui); font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase; padding: 7px; cursor: pointer; transition: all 0.12s; border-radius: 2px; margin-top: 4px; }
 .ch-add:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── EMPTY STATE ────────────────────────────────────────────────────────── */
-#empty-state {
-  padding: 64px 0 32px;
+/* ── STACKED DRAWER TOGGLE ───────────────────────────────────────────────── */
+#stacked-drawer-btn {
+  display: none;
+  position: fixed; bottom: 20px; right: 20px;
+  z-index: 450;
+  background: var(--ink); color: var(--bg);
+  border: none; border-radius: 50%;
+  width: 46px; height: 46px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.2s;
+  font-family: var(--ui);
 }
-.es-title {
-  font-family: var(--disp); font-weight: 900; font-size: 48px;
-  line-height: 0.9; letter-spacing: -0.02em; text-transform: uppercase;
-  color: var(--ink); margin-bottom: 16px;
-}
+#stacked-drawer-btn:hover { background: var(--accent); transform: scale(1.08); }
+[data-theme="stacked"] #stacked-drawer-btn { display: flex; }
+[data-theme="stacked"] #rail-btn { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════════════════════ */
+#empty-state { padding: 64px 0 32px; }
+.es-title { font-family: var(--disp); font-weight: 900; font-size: 48px; line-height: 0.9; letter-spacing: -0.02em; text-transform: uppercase; color: var(--ink); margin-bottom: 16px; }
+[data-theme="stacked"] .es-title,
+[data-theme="trifold"] .es-title { font-weight: 400; text-transform: none; letter-spacing: -0.02em; font-size: 42px; }
 .es-title span { color: var(--accent); }
-.es-body {
-  font-family: var(--disp); font-weight: 300; font-size: 17px;
-  color: var(--ink-2); line-height: 1.5; max-width: 380px;
+.es-body { font-family: var(--disp); font-weight: 300; font-size: 17px; color: var(--ink-2); line-height: 1.5; max-width: 380px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TRIFOLD SIDE PANEL (chapters on left)
+   ═══════════════════════════════════════════════════════════════════════════ */
+#trifold-left { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE PALETTE — bottom sheet with large tap targets
+   ═══════════════════════════════════════════════════════════════════════════ */
+#mobile-palette {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-2); border-top: 1px solid var(--border-2);
+  z-index: 600;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px 14px 0 0;
+  max-height: 75vh;
+  flex-direction: column;
+}
+#mobile-palette.open { transform: translateY(0); }
+
+.mp-handle {
+  display: flex; justify-content: center; padding: 10px 0 4px;
+  flex-shrink: 0;
+}
+.mp-handle::after { content: ''; width: 36px; height: 4px; background: var(--ink-4); border-radius: 2px; }
+
+.mp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 10px; flex-shrink: 0;
+}
+.mp-title { font-family: var(--ui); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); }
+.mp-close { background: none; border: none; color: var(--ink-3); font-size: 18px; cursor: pointer; padding: 0; line-height: 1; }
+
+.mp-grid {
+  overflow-y: auto; padding: 4px 12px 32px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.mp-grid::-webkit-scrollbar { display: none; }
+
+.mp-btn {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0; cursor: pointer;
+  text-align: left; overflow: hidden;
+  transition: border-color 0.12s, background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 80px;
+}
+.mp-btn:active { background: var(--accent-ll); border-color: var(--accent); }
+
+.mp-preview {
+  background: var(--bg-2); padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  min-height: 42px; display: flex; align-items: center;
+}
+.mp-meta { padding: 8px 12px 10px; }
+.mp-type { font-family: var(--ui); font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+.mp-btn.constraint-btn .mp-type { color: #b43c28; }
+.mp-effect { font-family: var(--ui); font-size: 8px; color: var(--ink-3); line-height: 1.4; }
+
+/* FAB — mobile palette trigger */
+#palette-fab {
+  display: none;
+  position: fixed; bottom: 24px; right: 20px;
+  z-index: 550;
+  background: var(--accent); color: white;
+  border: none; border-radius: 50%;
+  width: 52px; height: 52px;
+  font-size: 22px; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.15s;
+}
+#palette-fab:active { transform: scale(0.92); }
+#palette-fab.open { transform: rotate(45deg); }
+
+/* backdrop */
+#palette-backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 590;
+  background: rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 0.25s;
+}
+#palette-backdrop.visible { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════════════════════════════════════ */
+#progress { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--accent); z-index: 600; width: 0%; transition: width 0.4s ease; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  /* hide desktop rail on all themes at mobile sizes */
+  #node-rail { display: none !important; }
+  #stacked-drawer-btn { display: none !important; }
+  [data-theme="stacked"] #node-rail { display: none !important; }
+
+  /* force single column layout */
+  #shell { grid-template-columns: 1fr !important; }
+  #stream-col { grid-column: 1 !important; border: none !important; }
+  #trifold-left { display: none !important; }
+  [data-theme="windowed"] #stream-col::before { display: none; }
+
+  /* show mobile palette */
+  #mobile-palette { display: flex; }
+  #palette-fab    { display: flex; }
+  #palette-backdrop { display: block; }
+
+  /* adjust stream padding */
+  #stream-scroll { padding: 28px 20px 16px !important; }
+  #canvas-area { max-height: 46vh; padding-bottom: 80px; }
+
+  /* header */
+  .h-sub { display: none; }
+  .theme-switcher { display: none; }
+  #rail-btn { display: none; }
 }
 
-/* ── PROGRESS BAR ───────────────────────────────────────────────────────── */
-#progress {
-  position: fixed; bottom: 0; left: 0; height: 2px;
-  background: var(--accent); z-index: 600;
-  width: 0%; transition: width 0.4s ease;
+/* trifold hides left panel below 1100px */
+@media (max-width: 1100px) {
+  [data-theme="trifold"] #trifold-left { display: none; }
+  [data-theme="trifold"] #shell { grid-template-columns: 1fr 200px !important; }
+  [data-theme="trifold"] #stream-col { grid-column: 1 !important; }
+  [data-theme="trifold"] #node-rail  { grid-column: 2 !important; }
 }
 
-/* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
+/* windowed goes single column below 900px */
 @media (max-width: 900px) {
-  #shell { grid-template-columns: 1fr; grid-template-rows: 52px 1fr; }
-  #stream-col { grid-column: 1; border: none; }
-  #node-rail  { display: none; }
-  #stream-scroll { padding: 32px 24px 16px; }
-  #canvas-area { max-height: 50vh; }
+  [data-theme="windowed"] #shell { grid-template-columns: 1fr !important; }
 }
 
 </style>
@@ -508,12 +789,40 @@ header {
 
   <header>
     <div class="h-mark">wolfie<span>.</span>dialogue</div>
-    <div class="h-sub">visual prompt editor · <span style="color:var(--accent)">demo</span></div>
+    <div class="h-sub">visual prompt editor · intent-first</div>
     <div class="h-actions">
+
+      <!-- Layout / Theme switcher -->
+      <div class="theme-switcher">
+        <button class="t-btn active" data-t="modular" onclick="setTheme('modular')" title="Modular — editorial columns">
+          <div class="t-icon t-icon-modular"></div>
+          <span class="t-label">modular</span>
+        </button>
+        <button class="t-btn" data-t="stacked" onclick="setTheme('stacked')" title="Stacked — single focused column">
+          <div class="t-icon t-icon-stacked"></div>
+          <span class="t-label">stacked</span>
+        </button>
+        <button class="t-btn" data-t="windowed" onclick="setTheme('windowed')" title="Windowed — split panels">
+          <div class="t-icon t-icon-windowed"></div>
+          <span class="t-label">windowed</span>
+        </button>
+        <button class="t-btn" data-t="trifold" onclick="setTheme('trifold')" title="Trifold — broadsheet">
+          <div class="t-icon t-icon-trifold"><span></span></div>
+          <span class="t-label">trifold</span>
+        </button>
+      </div>
+
       <button class="h-btn active" id="rail-btn" onclick="toggleRail()">[ ] Palette</button>
       <button class="h-btn" onclick="clearAll()">↺ Clear</button>
     </div>
   </header>
+
+  <!-- ── TRIFOLD: LEFT CHAPTER PANEL ── -->
+  <div id="trifold-left">
+    <div class="rail-head">Chapters</div>
+    <div id="trifold-chapters"></div>
+    <button class="ch-add" style="margin-top:8px" onclick="addChapter()">+ New Chapter</button>
+  </div>
 
   <!-- ── STREAM ── -->
   <main id="stream-col">
@@ -537,89 +846,132 @@ header {
 
     <!-- ── CANVAS ── -->
     <div id="canvas-area">
-
       <div id="canvas-toolbar">
         <div class="ct-left">
           <span class="ct-label">Canvas</span>
           <span id="node-count">0 nodes</span>
         </div>
         <div class="ct-right">
-          <button class="h-btn" onclick="clearCanvas()">Clear canvas</button>
+          <button class="h-btn" onclick="clearCanvas()">Clear</button>
         </div>
       </div>
-
       <div id="canvas-nodes">
         <div id="canvas-hint"><span class="hint-text">← add nodes from the palette to begin</span></div>
       </div>
-
       <div id="preview-bar">
         <div id="preview-text"><span style="color:var(--ink-4);font-style:italic">Prompt preview will appear as you build…</span></div>
         <button class="commit-btn" id="commit-btn" onclick="commit()" disabled>Commit ↗</button>
       </div>
-
     </div>
+
   </main>
 
-  <!-- ── NODE PALETTE RAIL ── -->
+  <!-- ── DESKTOP NODE PALETTE RAIL ── -->
   <aside id="node-rail">
 
     <div class="rail-head">Node Palette</div>
-
     <div class="rail-sec" style="margin-top:0">Add Node</div>
 
     <button class="pal-btn" onclick="addNode('title')">
-      <div class="pal-type">Title</div>
-      <div class="pal-preview">THE BIG HEADLINE</div>
-      <div class="pal-effect">Sets the frame. Bold declaration.</div>
+      <div class="pal-preview-strip"><div class="prev-title">HEADLINE</div></div>
+      <div class="pal-meta"><div class="pal-type">Title</div><div class="pal-effect">Sets the frame.</div></div>
     </button>
-
     <button class="pal-btn" onclick="addNode('thought')">
-      <div class="pal-type">Thought</div>
-      <div class="pal-preview">A plain sentence</div>
-      <div class="pal-effect">Think out loud. Main body.</div>
+      <div class="pal-preview-strip"><div class="prev-thought">Think out loud…</div></div>
+      <div class="pal-meta"><div class="pal-type">Thought</div><div class="pal-effect">Main body prose.</div></div>
     </button>
-
     <button class="pal-btn" onclick="addNode('pull')">
-      <div class="pal-type">[pull]</div>
-      <div class="pal-preview"><em>The one true question</em></div>
-      <div class="pal-effect">Distill to the essential thing.</div>
+      <div class="pal-preview-strip"><div class="prev-pull">The one true question</div></div>
+      <div class="pal-meta"><div class="pal-type">[pull]</div><div class="pal-effect">Distill the essential.</div></div>
     </button>
-
     <button class="pal-btn" onclick="addNode('aside')">
-      <div class="pal-type">[aside]</div>
-      <div class="pal-preview">quiet parenthetical</div>
-      <div class="pal-effect">Footnote. Scrutinized detail.</div>
+      <div class="pal-preview-strip"><div class="prev-aside">a quiet parenthetical</div></div>
+      <div class="pal-meta"><div class="pal-type">[aside]</div><div class="pal-effect">Footnote. Scrutinized.</div></div>
     </button>
-
     <button class="pal-btn" onclick="addNode('spec')">
-      <div class="pal-type">[spec]</div>
-      <div class="pal-preview">key :: value</div>
-      <div class="pal-effect">Structured constraint or context.</div>
+      <div class="pal-preview-strip">
+        <div class="prev-spec"><span class="prev-spec-k">format</span><span>::</span><span>value</span></div>
+      </div>
+      <div class="pal-meta"><div class="pal-type">[spec]</div><div class="pal-effect">Format &amp; style params.</div></div>
     </button>
-
+    <button class="pal-btn" onclick="addNode('constraint')" style="border-color:rgba(180,60,40,0.25)">
+      <div class="pal-preview-strip" style="background:rgba(180,60,40,0.05)">
+        <div class="prev-constraint"><span class="prev-constraint-k">rule</span><span style="color:rgba(180,60,40,0.4);">::</span><span class="prev-constraint-v">must not…</span></div>
+      </div>
+      <div class="pal-meta"><div class="pal-type" style="color:#b43c28">[constraint]</div><div class="pal-effect">Hard logical rule.</div></div>
+    </button>
     <button class="pal-btn" onclick="addNode('break')">
-      <div class="pal-type">Break —</div>
-      <div class="pal-preview">— separator</div>
-      <div class="pal-effect">New thread within the prompt.</div>
+      <div class="pal-preview-strip"><div class="prev-break">break</div></div>
+      <div class="pal-meta"><div class="pal-type">Break —</div><div class="pal-effect">Thread separator.</div></div>
     </button>
 
     <div class="rail-divider"></div>
-
     <div class="rail-sec">Chapters</div>
     <div id="chapters-list"></div>
     <button class="ch-add" onclick="addChapter()">+ New Chapter</button>
 
     <div class="rail-divider"></div>
-
-    <div class="rail-sec">How it works</div>
+    <div class="rail-sec">Legend</div>
     <div style="font-family:var(--disp);font-weight:300;font-size:13px;color:var(--ink-2);line-height:1.5">
-      Each node is a typed intention. Drag or use ↑↓ to reorder.<br><br>
-      Commit sends the full structure as one coherent message. The canvas stays — refine and re-commit.
+      Each node is a typed intention. Drag or ↑↓ to reorder.<br><br>
+      <strong style="font-weight:700;color:var(--ink)">spec</strong> = style params &nbsp;·&nbsp;
+      <strong style="font-weight:700;color:#b43c28">constraint</strong> = hard rules
     </div>
 
   </aside>
 
 </div><!-- /shell -->
+
+<!-- ── STACKED DRAWER TOGGLE FAB ── -->
+<button id="stacked-drawer-btn" onclick="toggleStackedDrawer()" title="Open palette">+</button>
+
+<!-- ── MOBILE PALETTE BOTTOM SHEET ── -->
+<div id="palette-backdrop" onclick="closeMobilePalette()"></div>
+
+<div id="mobile-palette">
+  <div class="mp-handle"></div>
+  <div class="mp-header">
+    <span class="mp-title">Add Node</span>
+    <button class="mp-close" onclick="closeMobilePalette()">×</button>
+  </div>
+  <div class="mp-grid">
+
+    <button class="mp-btn" onclick="mobileAdd('title')">
+      <div class="mp-preview"><div class="prev-title" style="font-size:13px">HEADLINE</div></div>
+      <div class="mp-meta"><div class="mp-type">Title</div><div class="mp-effect">Bold frame declaration</div></div>
+    </button>
+    <button class="mp-btn" onclick="mobileAdd('thought')">
+      <div class="mp-preview"><div class="prev-thought">Think out loud…</div></div>
+      <div class="mp-meta"><div class="mp-type">Thought</div><div class="mp-effect">Main body prose</div></div>
+    </button>
+    <button class="mp-btn" onclick="mobileAdd('pull')">
+      <div class="mp-preview"><div class="prev-pull">The one question</div></div>
+      <div class="mp-meta"><div class="mp-type">[pull]</div><div class="mp-effect">Distill the essential</div></div>
+    </button>
+    <button class="mp-btn" onclick="mobileAdd('aside')">
+      <div class="mp-preview"><div class="prev-aside">a quiet detail</div></div>
+      <div class="mp-meta"><div class="mp-type">[aside]</div><div class="mp-effect">Footnote nuance</div></div>
+    </button>
+    <button class="mp-btn" onclick="mobileAdd('spec')">
+      <div class="mp-preview"><div class="prev-spec"><span class="prev-spec-k">key</span><span>::</span><span>value</span></div></div>
+      <div class="mp-meta"><div class="mp-type">[spec]</div><div class="mp-effect">Style parameters</div></div>
+    </button>
+    <button class="mp-btn constraint-btn" onclick="mobileAdd('constraint')">
+      <div class="mp-preview" style="background:rgba(180,60,40,0.05)">
+        <div class="prev-constraint"><span class="prev-constraint-k">rule</span><span style="color:rgba(180,60,40,0.4)">::</span><span class="prev-constraint-v">must not</span></div>
+      </div>
+      <div class="mp-meta"><div class="mp-type">[constraint]</div><div class="mp-effect">Hard logical rule</div></div>
+    </button>
+    <button class="mp-btn" onclick="mobileAdd('break')" style="grid-column: 1 / -1">
+      <div class="mp-preview"><div class="prev-break" style="font-size:8px">— thread break</div></div>
+      <div class="mp-meta"><div class="mp-type">Break</div><div class="mp-effect">New thread within prompt</div></div>
+    </button>
+
+  </div>
+</div>
+
+<!-- ── MOBILE FAB ── -->
+<button id="palette-fab" onclick="toggleMobilePalette()">+</button>
 
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
@@ -633,14 +985,17 @@ title → respond with a [poster] bold declarative headline, then 1-2 [body] sen
 thought → respond with [body] conversational, exploratory prose  
 [pull] → respond with a [pull] — the single truest answer — optionally 1-2 [body] sentences
 [aside] → respond with a brief [aside] — footnote-level only, no elaboration
-[spec] key :: value → respond with [spec] Key :: Value rows — structured, no narrative
+[spec] key :: value → respond with [spec] Key :: Value rows — format/style parameters, structured, no narrative
+[constraint] rule :: condition → respond with [constraint] Rule :: Condition rows — acknowledge each hard logical rule explicitly; treat them as inviolable
 break — → acknowledge briefly, await next direction
 
 Multi-node prompts: honor each node's declared type. Weave a coherent response. Let the dominant node lead.
+When both [spec] and [constraint] nodes are present, list [constraint] rows before [spec] rows to signal their priority.
 
 FORMATTING RULES:
-- Prefix every response sentence with its type: [body], [pull], [poster], [spec], [aside], [list]
+- Prefix every response sentence with its type: [body], [pull], [poster], [spec], [constraint], [aside], [list]
 - [spec] format exactly: [spec] Key :: Value
+- [constraint] format exactly: [constraint] Rule :: Condition
 - [list] items on separate lines as: — item
 - Keep responses tight. This is a thinking tool, not a chat interface.
 - No markdown headers or bullets outside the defined syntax.
@@ -658,6 +1013,27 @@ let chapters = [{ name: 'Chapter 1', prompts: 0 }];
 let activeChapter = 0;
 let railVisible = true;
 let dragSrcId = null;
+let currentTheme = 'modular';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────────────────────────────────────
+function setTheme(t) {
+  currentTheme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('.t-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  // stacked hides normal rail hint
+  const hint = document.getElementById('canvas-hint');
+  if (hint) hint.querySelector('.hint-text').textContent =
+    t === 'stacked' ? '↓ tap + to add nodes' : '← add nodes from the palette to begin';
+  // ensure rail state is clean
+  const rail = document.getElementById('node-rail');
+  if (t === 'stacked') {
+    rail.classList.add('hidden');
+  } else {
+    rail.classList.toggle('hidden', !railVisible);
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NODE OPERATIONS
@@ -667,11 +1043,15 @@ function addNode(type) {
   nodes.push({ id, type, content: '', key: '', val: '', committed: false });
   renderCanvas();
   updatePreview();
-  // focus the new node's input
   setTimeout(() => {
     const el = document.querySelector(`[data-nid="${id}"] input`);
     if (el) el.focus();
   }, 40);
+}
+
+function mobileAdd(type) {
+  closeMobilePalette();
+  setTimeout(() => addNode(type), 120);
 }
 
 function removeNode(id) {
@@ -687,7 +1067,6 @@ function moveNode(id, dir) {
   [nodes[i], nodes[j]] = [nodes[j], nodes[i]];
   renderCanvas();
   updatePreview();
-  // restore focus after re-render
   setTimeout(() => {
     const el = document.querySelector(`[data-nid="${id}"] input`);
     if (el) el.focus();
@@ -711,14 +1090,14 @@ function clearCanvas() {
 function renderCanvas() {
   const wrap = document.getElementById('canvas-nodes');
   wrap.innerHTML = '';
-
   const pill = document.getElementById('node-count');
   pill.textContent = nodes.length + (nodes.length === 1 ? ' node' : ' nodes');
 
   if (!nodes.length) {
     const hint = document.createElement('div');
     hint.id = 'canvas-hint';
-    hint.innerHTML = '<span class="hint-text">← add nodes from the palette to begin</span>';
+    const isStacked = currentTheme === 'stacked';
+    hint.innerHTML = `<span class="hint-text">${isStacked ? '↓ tap + to add nodes' : '← add nodes from the palette to begin'}</span>`;
     wrap.appendChild(hint);
     document.getElementById('commit-btn').disabled = true;
     return;
@@ -732,36 +1111,25 @@ function renderCanvas() {
     d.setAttribute('data-nid', node.id);
     d.setAttribute('draggable', 'true');
 
-    // ── drag events
     d.addEventListener('dragstart', e => {
       dragSrcId = node.id;
       setTimeout(() => d.classList.add('dragging'), 0);
       e.dataTransfer.effectAllowed = 'move';
     });
-    d.addEventListener('dragend', () => {
-      d.classList.remove('dragging', 'drag-over');
-    });
-    d.addEventListener('dragover', e => {
-      e.preventDefault();
-      d.classList.add('drag-over');
-    });
-    d.addEventListener('dragleave', () => {
-      d.classList.remove('drag-over');
-    });
+    d.addEventListener('dragend', () => d.classList.remove('dragging', 'drag-over'));
+    d.addEventListener('dragover', e => { e.preventDefault(); d.classList.add('drag-over'); });
+    d.addEventListener('dragleave', () => d.classList.remove('drag-over'));
     d.addEventListener('drop', e => {
-      e.preventDefault();
-      d.classList.remove('drag-over');
+      e.preventDefault(); d.classList.remove('drag-over');
       if (dragSrcId === node.id) return;
       const si = nodes.findIndex(n => n.id === dragSrcId);
       const di = nodes.findIndex(n => n.id === node.id);
       if (si === -1 || di === -1) return;
       const [moved] = nodes.splice(si, 1);
       nodes.splice(di, 0, moved);
-      renderCanvas();
-      updatePreview();
+      renderCanvas(); updatePreview();
     });
 
-    // ── arrows
     const arrows = document.createElement('div');
     arrows.className = 'node-arrows';
     const up = document.createElement('button');
@@ -775,30 +1143,26 @@ function renderCanvas() {
     arrows.append(up, dn);
     d.appendChild(arrows);
 
-    // ── grip
     const grip = document.createElement('div');
     grip.className = 'node-grip'; grip.textContent = '⠿';
     d.appendChild(grip);
 
-    // ── badge
     const badge = document.createElement('div');
     badge.className = 'node-badge';
-    const LABELS = { title: 'title', thought: 'thought', pull: '[pull]', aside: '[aside]', spec: '[spec]', break: 'break —' };
+    const LABELS = { title: 'title', thought: 'thought', pull: '[pull]', aside: '[aside]', spec: '[spec]', constraint: '[constraint]', break: 'break —' };
     badge.textContent = LABELS[node.type] || node.type;
+    if (node.type === 'constraint') badge.classList.add('badge-constraint');
     d.appendChild(badge);
 
-    // ── content
     const cont = document.createElement('div');
     cont.className = 'node-content';
     buildNodeContent(node, cont);
     d.appendChild(cont);
 
-    // ── sent mark
     const sent = document.createElement('div');
     sent.className = 'node-sent'; sent.textContent = 'sent';
     d.appendChild(sent);
 
-    // ── delete
     const del = document.createElement('button');
     del.className = 'node-del'; del.textContent = '×';
     del.onclick = e => { e.stopPropagation(); removeNode(node.id); };
@@ -812,41 +1176,32 @@ function buildNodeContent(node, cont) {
   if (node.type === 'break') {
     const lbl = document.createElement('div');
     lbl.className = 'ni-break'; lbl.textContent = '— thread break';
-    cont.appendChild(lbl);
-    return;
+    cont.appendChild(lbl); return;
   }
-
   if (node.type === 'spec') {
-    const row = document.createElement('div');
-    row.className = 'ni-spec-row';
-    const k = document.createElement('input');
-    k.className = 'ni ni-spec-key'; k.placeholder = 'key'; k.value = node.key || '';
+    const row = document.createElement('div'); row.className = 'ni-spec-row';
+    const k = document.createElement('input'); k.className = 'ni ni-spec-key'; k.placeholder = 'key'; k.value = node.key || '';
     k.addEventListener('input', () => updateNodeField(node.id, 'key', k.value));
     k.addEventListener('keydown', commitOnEnter);
-    const sep = document.createElement('span');
-    sep.className = 'ni-spec-sep'; sep.textContent = '::';
-    const v = document.createElement('input');
-    v.className = 'ni ni-spec-val'; v.placeholder = 'value or context'; v.value = node.val || '';
+    const sep = document.createElement('span'); sep.className = 'ni-spec-sep'; sep.textContent = '::';
+    const v = document.createElement('input'); v.className = 'ni ni-spec-val'; v.placeholder = 'value or context'; v.value = node.val || '';
     v.addEventListener('input', () => updateNodeField(node.id, 'val', v.value));
     v.addEventListener('keydown', commitOnEnter);
-    row.append(k, sep, v);
-    cont.appendChild(row);
-    return;
+    row.append(k, sep, v); cont.appendChild(row); return;
   }
-
-  const CLASS_MAP = {
-    title:   'ni ni-title',
-    thought: 'ni ni-thought',
-    pull:    'ni ni-pull',
-    aside:   'ni ni-aside',
-  };
-  const PLACEHOLDER = {
-    title:   'THE BIG HEADLINE',
-    thought: 'Think out loud…',
-    pull:    'The one question that matters…',
-    aside:   'a quiet detail or concern…',
-  };
-
+  if (node.type === 'constraint') {
+    const row = document.createElement('div'); row.className = 'ni-constraint-row';
+    const k = document.createElement('input'); k.className = 'ni ni-constraint-key'; k.placeholder = 'rule'; k.value = node.key || '';
+    k.addEventListener('input', () => updateNodeField(node.id, 'key', k.value));
+    k.addEventListener('keydown', commitOnEnter);
+    const sep = document.createElement('span'); sep.className = 'ni-constraint-sep'; sep.textContent = '::';
+    const v = document.createElement('input'); v.className = 'ni ni-constraint-val'; v.placeholder = 'must / must not…'; v.value = node.val || '';
+    v.addEventListener('input', () => updateNodeField(node.id, 'val', v.value));
+    v.addEventListener('keydown', commitOnEnter);
+    row.append(k, sep, v); cont.appendChild(row); return;
+  }
+  const CLASS_MAP    = { title: 'ni ni-title', thought: 'ni ni-thought', pull: 'ni ni-pull', aside: 'ni ni-aside' };
+  const PLACEHOLDER  = { title: 'THE BIG HEADLINE', thought: 'Think out loud…', pull: 'The one question that matters…', aside: 'a quiet detail or concern…' };
   const inp = document.createElement('input');
   inp.className = CLASS_MAP[node.type] || 'ni ni-thought';
   inp.placeholder = PLACEHOLDER[node.type] || '';
@@ -865,12 +1220,13 @@ function commitOnEnter(e) {
 // ─────────────────────────────────────────────────────────────────────────────
 function buildPromptString() {
   return nodes.flatMap(n => {
-    if (n.type === 'break')   return ['—'];
-    if (n.type === 'title'   && n.content.trim()) return [`[poster] ${n.content.trim()}`];
-    if (n.type === 'thought' && n.content.trim()) return [n.content.trim()];
-    if (n.type === 'pull'    && n.content.trim()) return [`[pull] ${n.content.trim()}`];
-    if (n.type === 'aside'   && n.content.trim()) return [`[aside] ${n.content.trim()}`];
-    if (n.type === 'spec'    && n.key.trim())     return [`[spec] ${n.key.trim()} :: ${n.val.trim() || '—'}`];
+    if (n.type === 'break')                          return ['—'];
+    if (n.type === 'title'      && n.content.trim()) return [`[poster] ${n.content.trim()}`];
+    if (n.type === 'thought'    && n.content.trim()) return [n.content.trim()];
+    if (n.type === 'pull'       && n.content.trim()) return [`[pull] ${n.content.trim()}`];
+    if (n.type === 'aside'      && n.content.trim()) return [`[aside] ${n.content.trim()}`];
+    if (n.type === 'spec'       && n.key.trim())     return [`[spec] ${n.key.trim()} :: ${n.val.trim() || '—'}`];
+    if (n.type === 'constraint' && n.key.trim())     return [`[constraint] ${n.key.trim()} :: ${n.val.trim() || '—'}`];
     return [];
   }).join('\n');
 }
@@ -884,7 +1240,8 @@ function updatePreview() {
   }
   el.innerHTML = prompt
     .replace(/\n/g, ' <span style="color:var(--ink-4)">·</span> ')
-    .replace(/\[(poster|pull|aside|spec|list)\]/g, '<span class="pb">[$1]</span>');
+    .replace(/\[(poster|pull|aside|spec|list)\]/g, '<span class="pb">[$1]</span>')
+    .replace(/\[constraint\]/g, '<span style="color:#b43c28">[constraint]</span>');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -895,7 +1252,6 @@ function commit() {
   const prompt = buildPromptString();
   if (!prompt.trim()) return;
 
-  // kill empty state
   const es = document.getElementById('empty-state');
   if (es) es.remove();
 
@@ -903,13 +1259,11 @@ function commit() {
   const wrap = document.createElement('div');
   wrap.className = 'exchange';
 
-  // who label
   const who = document.createElement('div');
   who.className = 'who';
   who.innerHTML = `<span class="who-name">You</span><span class="who-tag">${nodes.length} node${nodes.length !== 1 ? 's' : ''}</span>`;
   wrap.appendChild(who);
 
-  // render nodes visually in stream
   nodes.forEach(n => {
     const el = renderNodeInStream(n);
     if (el) wrap.appendChild(el);
@@ -918,21 +1272,16 @@ function commit() {
   root.appendChild(wrap);
   wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-  // mark nodes as committed (canvas persists)
   nodes.forEach(n => n.committed = true);
   renderCanvas();
-
-  // update chapters
   chapters[activeChapter].prompts++;
   renderChapters();
 
-  // disable commit while waiting
   thinking = true;
   document.getElementById('commit-btn').disabled = true;
   document.getElementById('typing-wrap').style.display = 'block';
   document.getElementById('typing-wrap').scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-  // push to history and call API
   history.push({ role: 'user', content: prompt });
 
   callClaude(history)
@@ -941,14 +1290,11 @@ function commit() {
       thinking = false;
       document.getElementById('commit-btn').disabled = false;
 
-      // wolfie who label
       const aiWho = document.createElement('div');
-      aiWho.className = 'who';
-      aiWho.style.marginTop = '20px';
+      aiWho.className = 'who'; aiWho.style.marginTop = '20px';
       aiWho.innerHTML = '<span class="who-name">wolfie</span>';
       wrap.appendChild(aiWho);
 
-      // render sentences
       parseSentences(responseText).forEach((s, i) => {
         const el = renderResponseSentence(s);
         if (!el) return;
@@ -971,23 +1317,15 @@ function commit() {
     });
 }
 
-// render a node for the stream (user side)
 function renderNodeInStream(n) {
   let el;
-  if (n.type === 'title' && n.content.trim()) {
-    el = document.createElement('div'); el.className = 'sn-title'; el.textContent = n.content;
-  } else if (n.type === 'thought' && n.content.trim()) {
-    el = document.createElement('div'); el.className = 'sn-thought'; el.textContent = n.content;
-  } else if (n.type === 'pull' && n.content.trim()) {
-    el = document.createElement('div'); el.className = 'sn-pull'; el.textContent = n.content;
-  } else if (n.type === 'aside' && n.content.trim()) {
-    el = document.createElement('div'); el.className = 'sn-aside'; el.textContent = n.content;
-  } else if (n.type === 'spec' && n.key.trim()) {
-    el = document.createElement('div'); el.className = 'sn-spec';
-    el.innerHTML = `<span class="spec-k">${n.key}</span><span class="spec-v">${n.val || '—'}</span>`;
-  } else if (n.type === 'break') {
-    el = document.createElement('div'); el.className = 'sn-break'; el.textContent = '— break';
-  }
+  if (n.type === 'title'      && n.content.trim()) { el = document.createElement('div'); el.className = 'sn-title';      el.textContent = n.content; }
+  else if (n.type === 'thought'    && n.content.trim()) { el = document.createElement('div'); el.className = 'sn-thought';    el.textContent = n.content; }
+  else if (n.type === 'pull'       && n.content.trim()) { el = document.createElement('div'); el.className = 'sn-pull';       el.textContent = n.content; }
+  else if (n.type === 'aside'      && n.content.trim()) { el = document.createElement('div'); el.className = 'sn-aside';      el.textContent = n.content; }
+  else if (n.type === 'spec'       && n.key.trim())     { el = document.createElement('div'); el.className = 'sn-spec';       el.innerHTML = `<span class="spec-k">${n.key}</span><span class="spec-v">${n.val || '—'}</span>`; }
+  else if (n.type === 'constraint' && n.key.trim())     { el = document.createElement('div'); el.className = 'sn-constraint'; el.innerHTML = `<span class="constraint-k">${n.key}</span><span class="constraint-v">${n.val || '—'}</span>`; }
+  else if (n.type === 'break')                          { el = document.createElement('div'); el.className = 'sn-break';      el.textContent = '— break'; }
   return el || null;
 }
 
@@ -998,27 +1336,21 @@ function parseSentences(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const out = [];
   let listItems = [], inList = false;
-
   for (const line of lines) {
     const isBullet = line.startsWith('— ') || line.startsWith('- ');
-    if (isBullet) {
-      listItems.push(line.replace(/^[—\-]\s*/, ''));
-      inList = true;
-      continue;
-    }
-    if (inList) {
-      out.push({ type: 'list', items: [...listItems] });
-      listItems = []; inList = false;
-    }
-
+    if (isBullet) { listItems.push(line.replace(/^[—\-]\s*/, '')); inList = true; continue; }
+    if (inList) { out.push({ type: 'list', items: [...listItems] }); listItems = []; inList = false; }
     const m = line.match(/^\[([a-z]+)\]\s*(.*)/s);
     if (!m) { out.push({ type: 'body', text: line }); continue; }
     const [, type, content] = m;
-
     if (type === 'spec') {
       const sep = content.indexOf('::');
       if (sep !== -1) out.push({ type: 'spec', key: content.slice(0, sep).trim(), val: content.slice(sep + 2).trim() });
       else out.push({ type: 'spec', key: content, val: '' });
+    } else if (type === 'constraint') {
+      const sep = content.indexOf('::');
+      if (sep !== -1) out.push({ type: 'constraint', key: content.slice(0, sep).trim(), val: content.slice(sep + 2).trim() });
+      else out.push({ type: 'constraint', key: content, val: '' });
     } else {
       out.push({ type, text: content.trim() });
     }
@@ -1030,50 +1362,32 @@ function parseSentences(text) {
 function renderResponseSentence(s) {
   let el;
   switch (s.type) {
-    case 'body':
-      el = document.createElement('div'); el.className = 'r-body'; el.innerHTML = s.text; break;
-    case 'pull':
-      el = document.createElement('div'); el.className = 'r-pull'; el.innerHTML = s.text; break;
-    case 'poster':
-      el = document.createElement('div'); el.className = 'r-poster'; el.innerHTML = s.text; break;
-    case 'aside':
-      el = document.createElement('div'); el.className = 'r-aside'; el.textContent = s.text; break;
-    case 'spec':
-      el = document.createElement('div'); el.className = 'r-spec';
-      el.innerHTML = `<span class="spec-k">${s.key || ''}</span><span class="spec-v">${s.val || ''}</span>`; break;
+    case 'body':       el = document.createElement('div'); el.className = 'r-body';       el.innerHTML  = s.text; break;
+    case 'pull':       el = document.createElement('div'); el.className = 'r-pull';       el.innerHTML  = s.text; break;
+    case 'poster':     el = document.createElement('div'); el.className = 'r-poster';     el.innerHTML  = s.text; break;
+    case 'aside':      el = document.createElement('div'); el.className = 'r-aside';      el.textContent = s.text; break;
+    case 'spec':       el = document.createElement('div'); el.className = 'r-spec';       el.innerHTML = `<span class="spec-k">${s.key||''}</span><span class="spec-v">${s.val||''}</span>`; break;
+    case 'constraint': el = document.createElement('div'); el.className = 'r-constraint'; el.innerHTML = `<span class="constraint-k">${s.key||''}</span><span class="constraint-v">${s.val||''}</span>`; break;
     case 'list':
       el = document.createElement('ul'); el.className = 'r-list';
-      (s.items || []).forEach(item => {
-        const li = document.createElement('li'); li.textContent = item; el.appendChild(li);
-      }); break;
-    default:
-      el = document.createElement('div'); el.className = 'r-body'; el.innerHTML = s.text || '';
+      (s.items||[]).forEach(item => { const li = document.createElement('li'); li.textContent = item; el.appendChild(li); }); break;
+    default: el = document.createElement('div'); el.className = 'r-body'; el.innerHTML = s.text||'';
   }
   return el;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DEMO MODE — simulated responses (public build, no API)
+// CLAUDE API
 // ─────────────────────────────────────────────────────────────────────────────
-const DEMO_RESPONSES = [
-  `[poster] Structure is the argument.\n[body] Most prompts fail before they're sent — not because the idea is wrong, but because the intention is shapeless.\n[pull] A typed node is a commitment. It says: this is what kind of thing this is.`,
-  `[body] The distinction between a thought and a pull quote isn't aesthetic — it's epistemic.\n[pull] What you foreground is what you believe matters.\n[aside] This is why editors exist. And why good ones are rare.`,
-  `[poster] Form precedes clarity.\n[body] You don't find the right structure after you know what you think. The structure is how you find out.\n[body] Every node type here is a question: is this a claim, a context, a thread-break, a detail?`,
-  `[pull] The canvas is the thinking.\n[body] Committing sends the structure — but building it is already the work.\n[aside] Most tools hide this. This one makes it visible.`,
-  `[body] Precision isn't about fewer words. It's about words that know what they are.\n[pull] Type declares intent. Intent shapes response.\n[body] That's the whole idea.`,
-  `[poster] Hierarchy is an argument about importance.\n[body] When you choose title over thought, you're saying: this leads. Everything else serves it.\n[aside] Readers feel this even when they can't name it.`,
-  `[pull] A spec row is a refusal to be vague.\n[body] Key :: Value. No narrative, no hedge, no qualification. Just the thing and what it is.\n[body] There's a kind of honesty in that format that prose rarely achieves.`,
-];
-
-let _demoIdx = 0;
-
 async function callClaude(hist) {
-  // Simulate network latency
-  await new Promise(r => setTimeout(r, 1100 + Math.random() * 800));
-  // Rotate through demo responses
-  const response = DEMO_RESPONSES[_demoIdx % DEMO_RESPONSES.length];
-  _demoIdx++;
-  return response;
+  const res = await fetch('https://wolfie.zack-gort.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Token': 'wolfie-2024' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1024, system: SYSTEM, messages: hist }),
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || 'API error');
+  return data.content.map(b => b.type === 'text' ? b.text : '').join('\n');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1086,19 +1400,22 @@ function addChapter() {
 }
 
 function renderChapters() {
-  const list = document.getElementById('chapters-list');
-  list.innerHTML = '';
-  chapters.forEach((ch, i) => {
-    const d = document.createElement('div');
-    d.className = 'ch-item' + (i === activeChapter ? ' active' : '');
-    d.innerHTML = `<div class="ch-name">${ch.name}</div><div class="ch-meta">${ch.prompts} prompt${ch.prompts !== 1 ? 's' : ''}</div>`;
-    d.onclick = () => { activeChapter = i; renderChapters(); };
-    list.appendChild(d);
+  ['chapters-list', 'trifold-chapters'].forEach(id => {
+    const list = document.getElementById(id);
+    if (!list) return;
+    list.innerHTML = '';
+    chapters.forEach((ch, i) => {
+      const d = document.createElement('div');
+      d.className = 'ch-item' + (i === activeChapter ? ' active' : '');
+      d.innerHTML = `<div class="ch-name">${ch.name}</div><div class="ch-meta">${ch.prompts} prompt${ch.prompts !== 1 ? 's' : ''}</div>`;
+      d.onclick = () => { activeChapter = i; renderChapters(); };
+      list.appendChild(d);
+    });
   });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MISC
+// PALETTE CONTROLS
 // ─────────────────────────────────────────────────────────────────────────────
 function toggleRail() {
   railVisible = !railVisible;
@@ -1106,6 +1423,32 @@ function toggleRail() {
   document.getElementById('rail-btn').classList.toggle('active', railVisible);
 }
 
+function toggleStackedDrawer() {
+  const rail = document.getElementById('node-rail');
+  const btn  = document.getElementById('stacked-drawer-btn');
+  const open = rail.classList.toggle('hidden');
+  btn.textContent = open ? '+' : '×';
+}
+
+function toggleMobilePalette() {
+  const pal = document.getElementById('mobile-palette');
+  const fab = document.getElementById('palette-fab');
+  const bd  = document.getElementById('palette-backdrop');
+  const opening = !pal.classList.contains('open');
+  pal.classList.toggle('open', opening);
+  fab.classList.toggle('open', opening);
+  bd.classList.toggle('visible', opening);
+}
+
+function closeMobilePalette() {
+  document.getElementById('mobile-palette').classList.remove('open');
+  document.getElementById('palette-fab').classList.remove('open');
+  document.getElementById('palette-backdrop').classList.remove('visible');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MISC
+// ─────────────────────────────────────────────────────────────────────────────
 function clearAll() {
   document.getElementById('narrative-root').innerHTML = `
     <div id="empty-state">
