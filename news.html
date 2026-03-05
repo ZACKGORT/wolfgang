@@ -30,7 +30,7 @@ a,button,.feed-item,.story-sentence{cursor:none}
 #read-progress{position:fixed;top:0;left:0;height:2px;z-index:10001;background:var(--cat-color);width:0%;transition:width .1s linear,background 1.4s ease;pointer-events:none}
 
 /* layout */
-#shell{display:grid;grid-template-columns:1fr var(--panel-w);grid-template-rows:var(--header-h) 1fr;min-height:100vh}
+#shell{display:grid;grid-template-columns:1fr var(--panel-w);grid-template-rows:var(--header-h) 1fr;height:100vh;overflow:hidden;}
 header{grid-column:1/-1;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:rgba(9,8,11,0.90);backdrop-filter:blur(20px);position:sticky;top:0;z-index:500}
 .h-wordmark{font-family:var(--disp);font-weight:900;font-size:18px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);text-decoration:none;display:flex;align-items:baseline;gap:8px}
 .h-wordmark-sub{font-family:var(--ui);font-size:7px;letter-spacing:0.22em;text-transform:uppercase;color:var(--cat-color);transition:color 1.4s ease}
@@ -749,7 +749,7 @@ function goTo(sid,n){
   if(fill)fill.style.width=pct+'%';
   if(cnt)cnt.textContent=(n+1)+' / '+nav.length;
   document.getElementById('read-progress').style.width=pct+'%';
-  nav[n].scrollIntoView({behavior:'smooth',block:'nearest'});
+  nav[n].scrollIntoView({behavior:'smooth',block:'center'});
   var ae=nav[n];
   if(ae.dataset.img&&st.fader)st.fader.set(ae.dataset.img);
   if(!isMob()&&ae.dataset.trigger&&st.story.nst&&!nstDis.has(st.story.nst.url)){
@@ -1025,22 +1025,47 @@ function buildFeed(filter){
           '</div>'+
         '</div>'+
       '</div>';
-    function tog(e){
+      function tog(e){
       if(e&&e.target&&(e.target.closest('.story-reader')||e.target.closest('.shud-btn')))return;
       if(isMob()){document.querySelectorAll('.feed-item.expanded').forEach(function(el){el.classList.remove('expanded');});item.classList.add('expanded');expId=story.id;mobOpen(story);return;}
       var isOpen=item.classList.contains('expanded');
-      document.querySelectorAll('.feed-item.expanded').forEach(function(el){el.classList.remove('expanded');el.querySelector('.fi-toggle').textContent='Read →';delete aR[el.dataset.storyId];});
+
+      // 1. Disengage old listener before closing
+      disengage(); 
+
+      document.querySelectorAll('.feed-item.expanded').forEach(function(el){
+        el.classList.remove('expanded');
+        el.querySelector('.fi-toggle').textContent='Read →';
+        delete aR[el.dataset.storyId];
+      });
+
       if(!isOpen){
-        item.classList.add('expanded');item.querySelector('.fi-toggle').textContent='Close ×';expId=story.id;
+        item.classList.add('expanded');
+        item.querySelector('.fi-toggle').textContent='Close ×';
+        expId=story.id;
         initReader(story,item);
         if(story.panelSite)loadPP(story.panelSite.url,story.panelSite.desc);
         document.querySelectorAll('.rp-story-row').forEach(function(r){r.classList.toggle('rp-active',r.dataset.storyId===story.id);});
         document.body.className='cat-'+story.cat;
+        
+        // 2. Hide scrollbar to lock the page visually
+        document.getElementById('feed-col').style.overflowY = 'hidden';
+        
+        // 3. Auto-engage reader
+        engage(story.id, item.querySelector('.story-reader'));
+
         setTimeout(function(){item.scrollIntoView({behavior:'smooth',block:'start'});},80);
         document.onkeydown=function(e){var st=aR[story.id];if(!st)return;if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();goTo(story.id,st.cur+1);}if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();goTo(story.id,st.cur-1);}};
       }else{
-        expId=null;document.body.className='';document.getElementById('read-progress').style.width='0%';
-        hideNst(false);loadPP('https://wolfie.love','Platform Preview');
+        expId=null;
+        document.body.className='';
+        document.getElementById('read-progress').style.width='0%';
+        
+        // 4. Restore scrollbar
+        document.getElementById('feed-col').style.overflowY = 'auto'; 
+        
+        hideNst(false);
+        loadPP('https://wolfie.love','Platform Preview');
         document.querySelectorAll('.rp-story-row').forEach(function(r){r.classList.remove('rp-active');});
         document.onkeydown=null;
       }
@@ -1076,9 +1101,33 @@ window.filterCat=filterCat;
 
 // ── ENGAGE MODE ───────────────────────────────────────────────────────────
 var engSid=null,engEl=null;
-function engage(sid,rEl){if(engSid===sid)return;disengage();engSid=sid;engEl=rEl;rEl.classList.add('engaged');rEl._wh=function(e){var st=aR[sid];if(!st)return;e.preventDefault();e.stopPropagation();e.deltaY>0?goTo(sid,st.cur+1):goTo(sid,st.cur-1);};rEl.addEventListener('wheel',rEl._wh,{passive:false});}
-function disengage(){if(engEl){engEl.classList.remove('engaged');if(engEl._wh){engEl.removeEventListener('wheel',engEl._wh);delete engEl._wh;}}engSid=null;engEl=null;}
-document.addEventListener('click',function(e){if(isMob())return;var r=e.target.closest('.story-reader');if(r){var fi=r.closest('.feed-item');if(fi&&fi.classList.contains('expanded'))engage(fi.dataset.storyId,r);}else disengage();},false);
+function engage(sid,rEl){
+  if(engSid===sid)return;
+  disengage();
+  engSid=sid;
+  engEl=rEl;
+  rEl.classList.add('engaged');
+  rEl._wh=function(e){
+    var st=aR[sid];
+    if(!st)return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.deltaY>0?goTo(sid,st.cur+1):goTo(sid,st.cur-1);
+  };
+  // Listen on the feed column to completely prevent background scrolling
+  document.getElementById('feed-col').addEventListener('wheel',rEl._wh,{passive:false});
+}
+function disengage(){
+  if(engEl){
+    engEl.classList.remove('engaged');
+    if(engEl._wh){
+      document.getElementById('feed-col').removeEventListener('wheel',engEl._wh);
+      delete engEl._wh;
+    }
+  }
+  engSid=null;
+  engEl=null;
+}
 
 // ── GHOST OVERLAYS ────────────────────────────────────────────────────────
 var NGD={all:{pip:'#c8902a',eyebrow:'All Categories',title:'Full Dispatch',desc:'Every crafted story across all wolfie.love verticals.',tag:'wolfie.love · All Stories'},dispatch:{pip:'#2ecc60',eyebrow:'Dispatch · Data',title:'Data Intelligence',desc:'Stories powered by the Dispatch analytical layer.',tag:'wolfie.love/dash'},commerce:{pip:'#e8a830',eyebrow:'Commerce',title:'Commerce Layer',desc:'Product and revenue stories from wolfie.love/shop.',tag:'wolfie.love/shop'},property:{pip:'#5898d4',eyebrow:'Property',title:'Place Intelligence',desc:'Real estate and hospitality data from wolfie.love/real.',tag:'wolfie.love/real'},culture:{pip:'#d46080',eyebrow:'Culture',title:'Platform Design',desc:'How wolfie.love is rethinking the interface.',tag:'wolfie.love · Platform'},frank:{pip:'#c8902a',eyebrow:'Frank · Manifesto',title:'If I May Be Frank',desc:'Editorial conviction from ifimaybefrank.com.',tag:'ifimaybefrank.com'}};
