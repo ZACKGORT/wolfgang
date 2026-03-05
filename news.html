@@ -265,67 +265,180 @@ header{grid-column:1/-1;height:var(--header-h);display:flex;align-items:center;j
 /* ── MOBILE STORY SHEET ── */
 #mob-story-scrim{position:fixed;inset:0;z-index:900;background:rgba(9,8,11,.72);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease;touch-action:none}
 #mob-story-scrim.scrim-open{opacity:1;visibility:visible}
-#mob-story-sheet{position:fixed;left:0;right:0;bottom:0;z-index:910;height:92vh;background:var(--bg-2);border-top:1px solid var(--border);border-radius:16px 16px 0 0;box-shadow:0 -8px 48px rgba(0,0,0,.48);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .36s cubic-bezier(.25,1,.5,1);overflow:hidden;touch-action:pan-y;visibility:hidden}
+#mob-story-sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:910;
+  height:94vh;
+  background:var(--bg-2);
+  border-top:1px solid var(--border);
+  border-radius:16px 16px 0 0;
+  box-shadow:0 -8px 48px rgba(0,0,0,.48);
+  display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .36s cubic-bezier(.25,1,.5,1);
+  overflow:hidden;
+  visibility:hidden;
+}
 #mob-story-sheet.sheet-open{transform:translateY(0);visibility:visible}
-.mob-sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--ink-3);margin:10px auto 0;flex-shrink:0;position:relative;z-index:2}
 
-/* ── MOBILE CINEMATIC HERO IMAGE ── */
-.mob-sheet-hero{position:relative;width:100%;height:210px;flex-shrink:0;overflow:hidden;margin-top:-14px}
-.mob-hero-a,.mob-hero-b{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .85s ease}
+/* drag handle */
+.mob-sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--ink-3);margin:10px auto 4px;flex-shrink:0;position:relative;z-index:2}
+
+/* ── CINEMATIC HERO (collapses as user scrolls) ── */
+.mob-sheet-hero{
+  position:relative;width:100%;
+  height:200px;
+  flex-shrink:0;overflow:hidden;
+}
+.mob-hero-a,.mob-hero-b{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:opacity .85s ease;
+}
 .mob-hero-a{opacity:1}
 .mob-hero-b{opacity:0}
 .mob-hero-a.fading{opacity:0}
 .mob-hero-b.fading-in{opacity:1}
-/* ken burns subtle zoom on active image */
-.mob-hero-a:not(.fading){animation:kenBurns 12s ease-in-out infinite alternate}
-@keyframes kenBurns{from{transform:scale(1.0)}to{transform:scale(1.06)}}
+.mob-hero-a:not(.fading){animation:kenBurns 14s ease-in-out infinite alternate}
+@keyframes kenBurns{from{transform:scale(1.0)}to{transform:scale(1.07)}}
+.mob-hero-grad{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(9,8,11,.05) 0%,rgba(9,8,11,.30) 40%,rgba(15,14,18,1) 100%)}
+.mob-hero-titles{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 20px 16px}
+.mob-hero-eyebrow{font-family:var(--ui);font-size:6.5px;letter-spacing:.22em;text-transform:uppercase;display:block;margin-bottom:5px}
+.mob-hero-hed{font-family:var(--disp);font-weight:900;font-size:clamp(20px,6vw,28px);line-height:1.0;text-transform:uppercase;color:var(--ink);letter-spacing:-.01em}
+.mob-hero-progress{position:absolute;bottom:0;left:0;right:0;height:2px;z-index:3;background:rgba(255,255,255,.06)}
+.mob-hero-progress-fill{height:100%;width:0%;transition:width .3s ease}
 
-/* gradient that bleeds hero into sheet */
-.mob-hero-grad{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(9,8,11,.10) 0%,rgba(9,8,11,.35) 45%,rgba(15,14,18,1) 100%)}
+/* ── STICKY MINI-HEADER (appears once user scrolls past hero) ── */
+.mob-mini-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  height:40px;flex-shrink:0;
+  background:var(--bg-2);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:4;
+  /* hidden by default, shown via JS when scroll > hero height */
+  opacity:0;
+  transition:opacity .2s ease;
+  pointer-events:none;
+}
+.mob-mini-header.mini-visible{opacity:1;pointer-events:auto}
+.mob-mini-eyebrow{font-family:var(--ui);font-size:6.5px;letter-spacing:.18em;text-transform:uppercase}
+.mob-mini-hed{font-family:var(--disp);font-weight:700;font-size:13px;text-transform:uppercase;color:var(--ink);flex:1;margin:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mob-mini-close{font-family:var(--ui);font-size:9px;color:var(--ink-3);background:none;border:1px solid var(--border);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.mob-mini-close:active{transform:scale(.88)}
 
-/* title overlaid on hero */
-.mob-hero-titles{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 20px 14px}
-.mob-hero-eyebrow{font-family:var(--ui);font-size:6.5px;letter-spacing:.22em;text-transform:uppercase;display:block;margin-bottom:4px}
-.mob-hero-hed{font-family:var(--disp);font-weight:900;font-size:clamp(18px,5.5vw,26px);line-height:1.0;text-transform:uppercase;color:var(--ink);letter-spacing:-.01em}
+/* ── SCROLLABLE ARTICLE BODY ── */
+.mob-article-scroll{
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:smooth;
+  position:relative;
+  touch-action:pan-y;
+}
+.mob-article-scroll::-webkit-scrollbar{display:none}
 
-/* progress bar at bottom of hero */
-.mob-hero-progress{position:absolute;bottom:0;left:0;right:0;height:2px;z-index:3;background:rgba(255,255,255,.07)}
-.mob-hero-progress-fill{height:100%;width:0%;transition:width .25s ease}
+/* inner padding gives breathing room */
+.mob-article-inner{
+  padding:24px 22px 80px;
+}
 
-/* sentence display */
-.mob-sheet-content{flex:1;display:flex;flex-direction:column;justify-content:center;padding:18px 22px 14px;overflow:hidden;min-height:0;position:relative}
-.mob-sentence-label{font-family:var(--ui);font-size:7px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px;opacity:.7;display:none}
-.mob-sentence-card{width:100%;animation:mobIn .22s ease forwards}
-@keyframes mobIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* ── SENTENCE STYLES in mobile article view ── */
+/* All sentences rendered, dimmed by default, active highlighted */
+.mob-sent{
+  display:block;
+  padding:6px 0 6px 18px;
+  position:relative;
+  opacity:.22;
+  transition:opacity .35s ease, color .35s ease;
+  border-left:2px solid transparent;
+  margin-bottom:2px;
+}
+.mob-sent.ms-past{opacity:.55}
+.mob-sent.ms-active{
+  opacity:1;
+  border-left-color:var(--mob-accent,var(--accent));
+}
 
-.mob-sentence-card.type-poster{font-family:var(--disp);font-weight:900;font-size:clamp(26px,7.5vw,40px);line-height:.95;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink)}
-.mob-sentence-card.type-body{font-family:var(--body);font-size:16px;line-height:1.72;color:var(--ink)}
-.mob-sentence-card.type-pull{font-family:var(--disp);font-weight:300;font-style:italic;font-size:clamp(18px,5.5vw,26px);line-height:1.3;color:var(--ink);border-left:2px solid var(--mob-accent,var(--accent));padding-left:16px}
-.mob-sentence-card.type-spec{font-family:var(--ui);font-size:11px;letter-spacing:.06em;color:var(--ink-2);display:flex;flex-direction:column;gap:4px}
-.mob-sentence-card.type-spec .spec-key{text-transform:uppercase;letter-spacing:.14em;font-size:8px;color:var(--ink-3)}
-.mob-sentence-card.type-spec .spec-val{color:var(--ink);font-size:14px}
-.mob-sentence-card .ac{color:var(--mob-accent,var(--accent))}
-.mob-sentence-card .em{font-style:italic;font-weight:500}
+/* sentence type variations */
+.mob-sent.ms-label{
+  font-family:var(--ui);font-size:7px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--mob-accent,var(--accent));
+  padding-top:20px;padding-bottom:4px;padding-left:18px;
+  margin-bottom:0;opacity:.6;border-left-color:transparent!important;
+}
+.mob-sent.ms-label.ms-past,.mob-sent.ms-label.ms-active{opacity:.8}
 
-/* image caption */
-.mob-img-cap{font-family:var(--ui);font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:12px;opacity:0;transition:opacity .3s ease;display:block}
-.mob-img-cap.cap-show{opacity:.75}
+.mob-sent.ms-poster{
+  font-family:var(--disp);font-weight:900;
+  font-size:clamp(28px,8vw,42px);
+  line-height:.95;letter-spacing:-.02em;text-transform:uppercase;
+  color:var(--ink);padding:14px 0 10px 18px;
+}
+.mob-sent.ms-poster.ms-active{color:var(--ink)}
 
-/* dots */
-.mob-dots{display:flex;gap:5px;flex-wrap:wrap;padding:0 22px 8px;flex-shrink:0}
-.mob-dot{width:4px;height:4px;border-radius:50%;background:var(--ink-3);transition:background .2s ease,transform .2s ease;flex-shrink:0}
-.mob-dot.dot-on{background:var(--mob-accent,var(--accent));transform:scale(1.4)}
-.mob-dot.dot-past{background:var(--ink-2)}
+.mob-sent.ms-body{
+  font-family:var(--body);font-size:16px;line-height:1.72;color:var(--ink-2);
+}
+.mob-sent.ms-body.ms-active{color:var(--ink)}
 
-/* HUD */
-.mob-hud{display:flex;align-items:center;gap:10px;padding:10px 20px 22px;border-top:1px solid var(--border);flex-shrink:0}
-.mob-hud-count{font-family:var(--ui);font-size:8px;letter-spacing:.08em;color:var(--ink-3);min-width:52px}
+.mob-sent.ms-pull{
+  font-family:var(--disp);font-weight:300;font-style:italic;
+  font-size:clamp(19px,5.5vw,26px);line-height:1.3;
+  color:var(--ink-2);
+  border-left:2px solid var(--mob-accent,var(--accent))!important;
+  padding-left:18px;margin:10px 0;
+}
+.mob-sent.ms-pull.ms-active{color:var(--ink)}
+
+.mob-sent.ms-spec{
+  font-family:var(--ui);font-size:11px;letter-spacing:.06em;
+  color:var(--ink-3);padding:4px 0 4px 18px;
+  display:flex;gap:12px;align-items:baseline;
+}
+.mob-sent.ms-spec .mspec-key{text-transform:uppercase;letter-spacing:.14em;font-size:8px;color:var(--ink-3);min-width:100px;flex-shrink:0}
+.mob-sent.ms-spec .mspec-val{color:var(--ink-2)}
+.mob-sent.ms-spec.ms-active .mspec-val{color:var(--ink)}
+
+.mob-sent.ms-break{
+  padding:8px 0;opacity:.2;border-left-color:transparent!important;
+}
+.mob-sent.ms-break::before{content:'';display:block;width:24px;height:1px;background:var(--ink-3);margin-left:18px}
+
+/* accent / em spans within sentences */
+.mob-sent .ac{color:var(--mob-accent,var(--accent))}
+.mob-sent .em{font-style:italic;font-weight:500;color:var(--ink)}
+
+/* image caption inline under sentence */
+.mob-sent-img-cap{
+  display:block;
+  font-family:var(--ui);font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;
+  margin-top:8px;padding-left:0;
+  opacity:0;transition:opacity .3s ease;
+}
+.mob-sent.ms-active .mob-sent-img-cap{opacity:.75}
+.mob-sent.ms-past .mob-sent-img-cap{opacity:.4}
+
+/* ── FIXED BOTTOM HUD ── */
+.mob-hud{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 18px 20px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--bg-2);
+  position:relative;z-index:3;
+}
+.mob-hud-count{font-family:var(--ui);font-size:8px;letter-spacing:.08em;color:var(--ink-3);min-width:48px}
 .mob-hud-bar{flex:1;height:1px;background:var(--border);position:relative;overflow:hidden}
-.mob-hud-fill{position:absolute;left:0;top:0;bottom:0;width:0%;transition:width .25s ease}
-.mob-hud-btn{font-family:var(--ui);font-size:16px;color:var(--ink-3);background:none;border:1px solid var(--border);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.mob-hud-fill{position:absolute;left:0;top:0;bottom:0;width:0%;transition:width .3s ease}
+.mob-hud-btn{
+  font-family:var(--ui);font-size:16px;color:var(--ink-3);
+  background:none;border:1px solid var(--border);
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s,color .15s;flex-shrink:0;
+}
 .mob-hud-btn:active{transform:scale(.88)}
-.mob-swipe-hint{font-family:var(--ui);font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);text-align:center;padding:0 20px 6px;flex-shrink:0;opacity:0;transition:opacity .4s ease}
-.mob-swipe-hint.hint-show{opacity:1}
 </style>
 </head>
 <body>
@@ -350,23 +463,32 @@ header{grid-column:1/-1;height:var(--header-h);display:flex;align-items:center;j
 <div id="mob-story-scrim"></div>
 <div id="mob-story-sheet" role="dialog" aria-modal="true">
   <div class="mob-sheet-handle"></div>
-  <div class="mob-sheet-hero">
-    <div class="mob-hero-a" id="mob-hero-a"></div>
-    <div class="mob-hero-b" id="mob-hero-b"></div>
-    <div class="mob-hero-grad"></div>
-    <div class="mob-hero-titles">
-      <span class="mob-hero-eyebrow" id="mob-hero-eyebrow"></span>
-      <div class="mob-hero-hed" id="mob-hero-hed"></div>
+
+  <!-- sticky mini-header: appears once user scrolls past the hero -->
+  <div class="mob-mini-header" id="mob-mini-header">
+    <span class="mob-mini-eyebrow" id="mob-mini-eyebrow"></span>
+    <div class="mob-mini-hed" id="mob-mini-hed"></div>
+    <button class="mob-mini-close" id="mob-mini-close" aria-label="Close">✕</button>
+  </div>
+
+  <!-- scrollable area: hero + full article -->
+  <div class="mob-article-scroll" id="mob-article-scroll">
+    <!-- cinematic hero -->
+    <div class="mob-sheet-hero" id="mob-sheet-hero">
+      <div class="mob-hero-a" id="mob-hero-a"></div>
+      <div class="mob-hero-b" id="mob-hero-b"></div>
+      <div class="mob-hero-grad"></div>
+      <div class="mob-hero-titles">
+        <span class="mob-hero-eyebrow" id="mob-hero-eyebrow"></span>
+        <div class="mob-hero-hed" id="mob-hero-hed"></div>
+      </div>
+      <div class="mob-hero-progress"><div class="mob-hero-progress-fill" id="mob-hero-fill"></div></div>
     </div>
-    <div class="mob-hero-progress"><div class="mob-hero-progress-fill" id="mob-hero-fill"></div></div>
+    <!-- full article sentences -->
+    <div class="mob-article-inner" id="mob-article-inner"></div>
   </div>
-  <div class="mob-swipe-hint" id="mob-swipe-hint">Tap or swipe to advance</div>
-  <div class="mob-sheet-content" id="mob-sheet-content">
-    <div class="mob-sentence-label" id="mob-sent-label"></div>
-    <div class="mob-sentence-card" id="mob-sent-card"></div>
-    <div class="mob-img-cap" id="mob-img-cap"></div>
-  </div>
-  <div class="mob-dots" id="mob-dots"></div>
+
+  <!-- fixed bottom HUD -->
   <div class="mob-hud">
     <div class="mob-hud-count" id="mob-hud-count">1 / 1</div>
     <div class="mob-hud-bar"><div class="mob-hud-fill" id="mob-hud-fill"></div></div>
@@ -593,7 +715,7 @@ function scN(f){if(!nstSh)return;var w=nstSh.offsetWidth||240,h=nstSh.offsetHeig
 function showNst(c){if(!c||!nstEl||nstDis.has(c.url))return;nstCU=c.url;document.getElementById('nst-label').textContent=c.label;document.getElementById('nst-url').textContent=c.urlDisplay;document.getElementById('nst-visit').href=c.url;document.getElementById('nst-desc').textContent=c.desc;Object.values(nstFr).forEach(function(f){f.style.display='none';});if(nstFr[c.url]){nstFr[c.url].style.display='block';}else{var f=document.createElement('iframe');f.src=c.url;f.setAttribute('loading','lazy');f.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation');f.onload=function(){f.classList.add('nst-loaded');scN(f);};nstSh.appendChild(f);nstFr[c.url]=f;scN(f);}nstEl.style.display='block';requestAnimationFrame(function(){requestAnimationFrame(function(){nstEl.classList.add('nst-open');});});clearTimeout(nstT);nstT=setTimeout(function(){hideNst(false);},14000);}
 function hideNst(d){clearTimeout(nstT);if(nstEl){nstEl.classList.remove('nst-open');if(d&&nstCU)nstDis.add(nstCU);setTimeout(function(){nstEl.style.display='none';},400);}}
 document.getElementById('nst-close').addEventListener('click',function(){hideNst(true);});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){hideNst(false);mobClose();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){hideNst(false);if(mS&&mS.story)mobClose();}});
 
 // ── IMAGE CROSSFADER ──────────────────────────────────────────────────────
 function makeFader(elA,elB){
@@ -651,82 +773,216 @@ function initReader(story,rEl){
 }
 
 // ── MOBILE SHEET ──────────────────────────────────────────────────────────
-var mobScrim=document.getElementById('mob-story-scrim'),mobSheet=document.getElementById('mob-story-sheet');
-var mobContent=document.getElementById('mob-sheet-content'),mobCard=document.getElementById('mob-sent-card');
-var mobLbl=document.getElementById('mob-sent-label'),mobCapEl=document.getElementById('mob-img-cap');
-var mobDots=document.getElementById('mob-dots'),mobHeroEy=document.getElementById('mob-hero-eyebrow');
-var mobHeroHed=document.getElementById('mob-hero-hed'),mobHeroFill=document.getElementById('mob-hero-fill');
-var mobHeroA=document.getElementById('mob-hero-a'),mobHeroB=document.getElementById('mob-hero-b');
-var mobCount=document.getElementById('mob-hud-count'),mobFill=document.getElementById('mob-hud-fill');
-var mobPrev=document.getElementById('mob-prev'),mobNext=document.getElementById('mob-next');
-var mobHint=document.getElementById('mob-swipe-hint');
-var mS={story:null,sents:[],lblFor:{},cur:0,hintShown:false,fader:null};
+var mobScrim    = document.getElementById('mob-story-scrim');
+var mobSheet    = document.getElementById('mob-story-sheet');
+var mobScroll   = document.getElementById('mob-article-scroll');
+var mobInner    = document.getElementById('mob-article-inner');
+var mobHeroEl   = document.getElementById('mob-sheet-hero');
+var mobHeroEy   = document.getElementById('mob-hero-eyebrow');
+var mobHeroHed  = document.getElementById('mob-hero-hed');
+var mobHeroFill = document.getElementById('mob-hero-fill');
+var mobHeroA    = document.getElementById('mob-hero-a');
+var mobHeroB    = document.getElementById('mob-hero-b');
+var mobMiniHdr  = document.getElementById('mob-mini-header');
+var mobMiniEy   = document.getElementById('mob-mini-eyebrow');
+var mobMiniHed  = document.getElementById('mob-mini-hed');
+var mobMiniClose= document.getElementById('mob-mini-close');
+var mobCount    = document.getElementById('mob-hud-count');
+var mobFill     = document.getElementById('mob-hud-fill');
+var mobPrev     = document.getElementById('mob-prev');
+var mobNext     = document.getElementById('mob-next');
 
-function mobRender(n){
-  var nav=mS.sents;if(!nav.length)return;
-  n=Math.max(0,Math.min(nav.length-1,n));mS.cur=n;
-  var s=nav[n];
-  // label
-  var lbl=mS.lblFor[n]||'';mobLbl.textContent=lbl;mobLbl.style.color=mS.story.accent;mobLbl.style.display=lbl?'block':'none';
-  // card
-  mobCard.className='mob-sentence-card type-'+s.type;mobCard.style.setProperty('--mob-accent',mS.story.accent);
-  if(s.type==='spec'){mobCard.innerHTML='<div class="spec-key">'+(s.key||'')+'</div><div class="spec-val">'+md(s.val||'',mS.story.accent)+'</div>';}
-  else{mobCard.innerHTML=md(s.text||'',mS.story.accent);}
-  mobCard.style.animation='none';mobCard.offsetHeight;mobCard.style.animation='';
-  // image cap + hero crossfade
-  if(s.img){
-    mobCapEl.textContent=s.imgCap||'';mobCapEl.style.color=mS.story.accent;mobCapEl.classList.add('cap-show');
-    if(mS.fader)mS.fader.set(s.img);
-  }else{mobCapEl.classList.remove('cap-show');}
-  // progress
-  var pct=nav.length>1?Math.round(n/(nav.length-1)*100):100;
-  mobFill.style.width=pct+'%';mobFill.style.background=mS.story.accent;
-  mobHeroFill.style.width=pct+'%';mobHeroFill.style.background=mS.story.accent;
-  mobCount.textContent=(n+1)+' / '+nav.length;
-  document.getElementById('read-progress').style.width=pct+'%';
-  // dots
-  mobDots.querySelectorAll('.mob-dot').forEach(function(d,i){d.classList.remove('dot-on','dot-past');if(i===n)d.classList.add('dot-on');else if(i<n)d.classList.add('dot-past');});
-  // button tints
-  mobPrev.style.borderColor=n>0?mS.story.accent:'';mobPrev.style.color=n>0?mS.story.accent:'';
-  mobNext.style.borderColor=n<nav.length-1?mS.story.accent:'';mobNext.style.color=n<nav.length-1?mS.story.accent:'';
+var mS = { story:null, nav:[], cur:0, fader:null };
+
+// Build a sentence element for the mobile article stream
+function mkMobSent(s, ac) {
+  var el = document.createElement('div');
+  el.className = 'mob-sent ms-' + s.type;
+  el.style.setProperty('--mob-accent', ac);
+
+  if (s.type === 'spec') {
+    el.innerHTML =
+      '<span class="mspec-key">' + (s.key||'') + '</span>' +
+      '<span class="mspec-val">' + md(s.val||'', ac) + '</span>';
+  } else if (s.type === 'break') {
+    // decorative only, not navigable
+  } else if (s.type === 'label') {
+    el.innerHTML = md(s.text||'', ac);
+  } else {
+    el.innerHTML = md(s.text||'', ac);
+  }
+
+  // image caption appended inline
+  if (s.img) {
+    el.dataset.img = s.img;
+    var cap = document.createElement('span');
+    cap.className = 'mob-sent-img-cap';
+    cap.textContent = s.imgCap || '';
+    cap.style.color = ac;
+    el.appendChild(cap);
+  }
+
+  return el;
 }
-function mobOpen(story){
-  if(!story)return;
-  mS.story=story;mS.cur=0;mS.sents=[];mS.lblFor={};
-  mobSheet.style.setProperty('--mob-accent',story.accent);
-  mobHeroEy.style.color=story.accent;mobHeroEy.textContent=story.catLabel;
-  mobHeroHed.textContent=story.hed;
-  mS.fader=makeFader(mobHeroA,mobHeroB);mS.fader.init(story.coverImg);
-  var curLbl='';
-  story.sentences.forEach(function(s){
-    if(s.type==='label'){curLbl=s.text||'';}
-    else if(s.type!=='break'){var idx=mS.sents.length;if(curLbl){mS.lblFor[idx]=curLbl;curLbl='';}mS.sents.push(s);}
+
+// Navigate to sentence n in the mobile article
+function mobGoTo(n, skipScroll) {
+  var nav = mS.nav;
+  if (!nav.length) return;
+  n = Math.max(0, Math.min(nav.length - 1, n));
+  mS.cur = n;
+
+  // Update dimmed states on all sentence elements
+  nav.forEach(function(el, i) {
+    el.classList.remove('ms-active', 'ms-past', 'ms-dim');
+    if      (i < n)  el.classList.add('ms-past');
+    else if (i === n) el.classList.add('ms-active');
+    // future: default opacity via CSS (no extra class needed)
   });
-  mobDots.innerHTML='';
-  mS.sents.forEach(function(){var d=document.createElement('div');d.className='mob-dot';mobDots.appendChild(d);});
-  if(!mS.hintShown&&mobHint){mS.hintShown=true;setTimeout(function(){mobHint.classList.add('hint-show');setTimeout(function(){mobHint.classList.remove('hint-show');},2800);},600);}
-  mobRender(0);
-  document.body.style.overflow='hidden';
-  mobSheet.style.visibility='visible';
-  document.body.className='cat-'+story.cat;
-  requestAnimationFrame(function(){requestAnimationFrame(function(){mobScrim.classList.add('scrim-open');mobSheet.classList.add('sheet-open');});});
+
+  // Progress
+  var pct = nav.length > 1 ? Math.round(n / (nav.length - 1) * 100) : 100;
+  mobFill.style.width = pct + '%';
+  mobFill.style.background = mS.story.accent;
+  mobHeroFill.style.width = pct + '%';
+  mobHeroFill.style.background = mS.story.accent;
+  mobCount.textContent = (n + 1) + ' / ' + nav.length;
+  document.getElementById('read-progress').style.width = pct + '%';
+
+  // Button tints
+  mobPrev.style.borderColor = n > 0 ? mS.story.accent : '';
+  mobPrev.style.color       = n > 0 ? mS.story.accent : '';
+  mobNext.style.borderColor = n < nav.length - 1 ? mS.story.accent : '';
+  mobNext.style.color       = n < nav.length - 1 ? mS.story.accent : '';
+
+  // Image crossfade on hero
+  var ae = nav[n];
+  if (ae && ae.dataset.img && mS.fader) {
+    mS.fader.set(ae.dataset.img);
+  }
+
+  // Scroll the active sentence into the readable zone
+  // Target: active sentence sits ~30% from top of the scroll container
+  if (!skipScroll && ae) {
+    var heroH = mobHeroEl ? mobHeroEl.offsetHeight : 200;
+    var elTop = ae.offsetTop + heroH; // offset within scroll container
+    var targetScroll = elTop - (mobScroll.clientHeight * 0.30);
+    mobScroll.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+  }
 }
-function mobClose(){
-  mobScrim.classList.remove('scrim-open');mobSheet.classList.remove('sheet-open');
-  document.body.style.overflow='';document.body.className='';
-  document.getElementById('read-progress').style.width='0%';
+
+function mobOpen(story) {
+  if (!story) return;
+  mS.story = story;
+  mS.cur   = 0;
+  mS.nav   = [];
+
+  // Sheet accent
+  mobSheet.style.setProperty('--mob-accent', story.accent);
+
+  // Hero
+  mobHeroEy.style.color = story.accent;
+  mobHeroEy.textContent = story.catLabel;
+  mobHeroHed.textContent = story.hed;
+  mS.fader = makeFader(mobHeroA, mobHeroB);
+  mS.fader.init(story.coverImg);
+
+  // Mini-header
+  mobMiniEy.textContent  = story.catLabel;
+  mobMiniEy.style.color  = story.accent;
+  mobMiniHed.textContent = story.hed;
+
+  // Build article
+  mobInner.innerHTML = '';
+  story.sentences.forEach(function(s) {
+    var el = mkMobSent(s, story.accent);
+    mobInner.appendChild(el);
+    // Only navigable types go into nav[]
+    if (s.type !== 'label' && s.type !== 'break') {
+      el.dataset.navIdx = mS.nav.length;
+      mS.nav.push(el);
+      // Tap any sentence to jump to it
+      el.addEventListener('click', function() {
+        mobGoTo(parseInt(el.dataset.navIdx));
+      });
+    }
+  });
+
+  // Reset scroll
+  mobScroll.scrollTop = 0;
+  mobMiniHdr.classList.remove('mini-visible');
+
+  // Open sheet
+  document.body.style.overflow = 'hidden';
+  mobSheet.style.visibility = 'visible';
+  document.body.className = 'cat-' + story.cat;
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      mobScrim.classList.add('scrim-open');
+      mobSheet.classList.add('sheet-open');
+      mobGoTo(0, true); // set initial states, no scroll jump
+    });
+  });
+}
+
+function mobClose() {
+  mobScrim.classList.remove('scrim-open');
+  mobSheet.classList.remove('sheet-open');
+  mobMiniHdr.classList.remove('mini-visible');
+  document.body.style.overflow = '';
+  document.body.className = '';
+  document.getElementById('read-progress').style.width = '0%';
   hideNst(false);
-  document.querySelectorAll('.feed-item.expanded').forEach(function(el){el.classList.remove('expanded');});
-  expId=null;mS.story=null;
-  setTimeout(function(){mobSheet.style.visibility='hidden';},380);
+  document.querySelectorAll('.feed-item.expanded').forEach(function(el) {
+    el.classList.remove('expanded');
+  });
+  expId = null;
+  mS.story = null;
+  setTimeout(function() { mobSheet.style.visibility = 'hidden'; }, 380);
 }
-mobPrev.addEventListener('click',function(e){e.stopPropagation();mobRender(mS.cur-1);});
-mobNext.addEventListener('click',function(e){e.stopPropagation();mobRender(mS.cur+1);});
-mobScrim.addEventListener('click',mobClose);
-mobContent.addEventListener('click',function(){mobRender(mS.cur+1);});
-// swipe
-(function(){var ty=0,tx=0;mobSheet.addEventListener('touchstart',function(e){ty=e.touches[0].clientY;tx=e.touches[0].clientX;},{passive:true});mobSheet.addEventListener('touchend',function(e){var dy=ty-e.changedTouches[0].clientY,dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>Math.abs(dy)*1.5)return;if(Math.abs(dy)<28)return;if(dy<-90){mobClose();return;}dy>0?mobRender(mS.cur+1):mobRender(mS.cur-1);},{passive:true});})();
-document.addEventListener('keydown',function(e){if(mS.story){if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();mobRender(mS.cur+1);}if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();mobRender(mS.cur-1);}}});
+
+// Mini-header appears once scrolled past hero
+mobScroll.addEventListener('scroll', function() {
+  var heroH = mobHeroEl ? mobHeroEl.offsetHeight : 200;
+  if (mobScroll.scrollTop > heroH - 48) {
+    mobMiniHdr.classList.add('mini-visible');
+  } else {
+    mobMiniHdr.classList.remove('mini-visible');
+  }
+}, { passive: true });
+
+// HUD buttons
+mobPrev.addEventListener('click', function(e) { e.stopPropagation(); mobGoTo(mS.cur - 1); });
+mobNext.addEventListener('click', function(e) { e.stopPropagation(); mobGoTo(mS.cur + 1); });
+
+// Scrim + mini-header close
+mobScrim.addEventListener('click', mobClose);
+mobMiniClose.addEventListener('click', mobClose);
+
+// Swipe-down-to-close on the handle / hero area only (not the scroll area)
+(function() {
+  var ty = 0, tx = 0, onHandle = false;
+  mobSheet.addEventListener('touchstart', function(e) {
+    ty = e.touches[0].clientY;
+    tx = e.touches[0].clientX;
+    // Only flag as handle swipe if touch starts in top 60px (handle + hero top)
+    onHandle = (ty - mobSheet.getBoundingClientRect().top) < 60;
+  }, { passive: true });
+  mobSheet.addEventListener('touchend', function(e) {
+    if (!onHandle) return;
+    var dy = ty - e.changedTouches[0].clientY;
+    var dx = tx - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > Math.abs(dy) * 1.5) return;
+    if (dy < -60) { mobClose(); }
+  }, { passive: true });
+})();
+
+// Keyboard
+document.addEventListener('keydown', function(e) {
+  if (!mS.story) return;
+  if (e.key === 'ArrowDown' || e.key === 'j') { e.preventDefault(); mobGoTo(mS.cur + 1); }
+  if (e.key === 'ArrowUp'   || e.key === 'k') { e.preventDefault(); mobGoTo(mS.cur - 1); }
+});
 
 // ── FEED BUILDER ──────────────────────────────────────────────────────────
 function buildFeed(filter){
