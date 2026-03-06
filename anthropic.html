@@ -2144,6 +2144,30 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 #panel:hover .rp-ref-name { color: #999; }
 #panel:hover .rp-footer { color: #bbb; border-color: rgba(0,0,0,0.08); }
 
+/* ── Panel hover: pg-* elements — fix readability on light bg ── */
+#panel:hover .pg-title { color: #111; }
+#panel:hover .pg-sub { color: #d97757; }
+#panel:hover .pg-header { border-bottom-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-ch-item { opacity: 0.55; }
+#panel:hover .pg-ch-item:hover { background: rgba(217,119,87,0.07); opacity: 0.9; }
+#panel:hover .pg-ch-item.active { background: rgba(217,119,87,0.10); opacity: 1; }
+#panel:hover .pg-ch-num { color: #d97757; }
+#panel:hover .pg-ch-name { color: #444; }
+#panel:hover .pg-ch-item.active .pg-ch-name { color: #111; }
+#panel:hover .pg-preview-section { border-top-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-preview-label { color: #999; }
+#panel:hover .pg-preview-wrap { border-color: rgba(0,0,0,0.12); background: #e8e4dc; }
+#panel:hover .pg-preview-wrap:hover { border-color: #d97757; }
+#panel:hover .pg-tab { border-color: rgba(0,0,0,0.12); color: #666; }
+#panel:hover .pg-tab:hover { border-color: #d97757; color: #d97757; }
+#panel:hover .pg-tab.active { border-color: #d97757; color: #d97757; background: rgba(217,119,87,0.08); }
+#panel:hover .pg-preview-mode-btn { border-color: rgba(0,0,0,0.10); color: #888; }
+#panel:hover .pg-preview-mode-btn:hover { border-color: #d97757; color: #d97757; }
+#panel:hover .pg-preview-mode-btn.active { background: rgba(217,119,87,0.10); border-color: #d97757; color: #d97757; }
+#panel:hover .pg-footer { color: #bbb; border-top-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-footer a { color: #d97757; }
+#panel:hover .pg-preview-img { background: #e0dbd2; }
+
 #detail-ghost {
   position: fixed; pointer-events: none; z-index: 9100;
   opacity: 0; transition: opacity .18s ease; will-change: left,top;
@@ -2983,8 +3007,47 @@ body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
 .pg-tab:hover { border-color: var(--accent); color: var(--accent); }
 .pg-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
 
-/* footer */
-.pg-footer {
+/* ── Preview mode switcher (iframe / image) ── */
+.pg-preview-mode-row {
+  display: flex; gap: 4px; margin-bottom: 8px; flex-shrink: 0;
+}
+.pg-preview-mode-btn {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 2px;
+  background: none; color: var(--ink-3); cursor: none;
+  transition: all 0.15s ease;
+}
+.pg-preview-mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pg-preview-mode-btn.active {
+  background: var(--accent-l); border-color: var(--accent); color: var(--accent);
+}
+
+/* Image pane — shows narrative-paired image */
+.pg-preview-img {
+  position: absolute; inset: 0;
+  background: #0a0908;
+  display: none;
+}
+.pg-preview-img img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
+  opacity: 0; transition: opacity 0.45s ease;
+}
+.pg-preview-img img.vis { opacity: 0.88; }
+.pg-preview-img .pg-img-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 10px 12px 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+}
+/* Show/hide panes based on mode */
+.pg-preview-wrap.mode-iframe .pg-preview-frame-shell,
+.pg-preview-wrap.mode-iframe .pg-preview-overlay { display: block; }
+.pg-preview-wrap.mode-iframe .pg-preview-img { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-frame-shell { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-overlay { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-img { display: block; }
   font-family: var(--ui); font-size: 7px; letter-spacing: 0.10em;
   color: var(--ink-3); border-top: 1px solid var(--border);
   padding-top: 12px; margin-top: auto; flex-shrink: 0; transition: color 0.4s;
@@ -3283,7 +3346,7 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
         <span class="h-studio-icon">&#9670;</span>
         <span class="h-studio-label">Studio</span>
       </button>
-      <a href="https://wolfie.love" target="_blank" class="h-btn cta">wolfie.love &rarr;</a>
+      <a href="https://wolfie.life" target="_blank" class="h-btn cta">wolfie.life &rarr;</a>
     </div>
     <div id="header-overlay">
       <div class="ho-cell">
@@ -3317,7 +3380,7 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
 
   <!-- ── CHAPTER GUIDE HEADER ── -->
   <div class="pg-header">
-    <div class="pg-title">wolfie.life</div>
+    <div class="pg-title">RSP v3 &middot; Case Study</div>
     <div class="pg-sub">For Anthropic &middot; 6 chapters</div>
   </div>
 
@@ -3329,9 +3392,17 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
   <!-- ── SITE PREVIEW ── -->
   <div class="pg-preview-section">
     <div class="pg-preview-label" id="pg-preview-label">The Platform</div>
-    <div class="pg-preview-wrap" id="pg-preview-wrap">
+    <div class="pg-preview-mode-row">
+      <button class="pg-preview-mode-btn active" id="pg-mode-iframe" onclick="setPgMode('iframe')">&#9654; Live</button>
+      <button class="pg-preview-mode-btn" id="pg-mode-image" onclick="setPgMode('image')">&#9672; Image</button>
+    </div>
+    <div class="pg-preview-wrap mode-iframe" id="pg-preview-wrap">
       <div class="pg-preview-frame-shell" id="pg-preview-frame-shell">
         <!-- iframe injected by JS -->
+      </div>
+      <div class="pg-preview-img" id="pg-preview-img">
+        <img id="pg-preview-img-el" src="" alt="">
+        <div class="pg-img-caption" id="pg-img-caption"></div>
       </div>
       <div class="pg-preview-overlay" id="pg-preview-overlay">
         <a class="pg-preview-visit" id="pg-preview-visit" href="#" target="_blank" rel="noopener">
@@ -3485,16 +3556,16 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
   <button class="cw-trigger" id="cw-trigger" aria-haspopup="true" aria-expanded="false">
     <span class="cw-trigger-label">Chapter</span>
     <span class="cw-trigger-sep">&middot;</span>
-    <span class="cw-trigger-name" id="cw-current-name">What It Feels Like</span>
+    <span class="cw-trigger-name" id="cw-current-name">Policy Documents</span>
     <span class="cw-trigger-arrow">&#9662;</span>
   </button>
   <div class="cw-dropdown" role="menu" id="cw-dropdown">
-    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">What It Feels Like</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">The Engine</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">Further Than the Screen</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">What It Looks Like</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">The Studio</span><span class="cw-item-dot"></span></button>
-    <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">A First Sentence</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item active" data-ch="1" role="menuitem"><span class="cw-item-num">01</span><span class="cw-item-name">Policy Documents</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="2" role="menuitem"><span class="cw-item-num">02</span><span class="cw-item-name">The Original Commitment</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="3" role="menuitem"><span class="cw-item-num">03</span><span class="cw-item-name">What Actually Happened</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="4" role="menuitem"><span class="cw-item-num">04</span><span class="cw-item-name">The Structural Revision</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="5" role="menuitem"><span class="cw-item-num">05</span><span class="cw-item-name">What the Medium Does</span><span class="cw-item-dot"></span></button>
+    <button class="cw-item" data-ch="6" role="menuitem"><span class="cw-item-num">06</span><span class="cw-item-name">A First Conversation</span><span class="cw-item-dot"></span></button>
   </div>
 </div>
 
@@ -3843,6 +3914,7 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
     });
   }
   wireHoverables();
+  window.wireHoverables = wireHoverables;
 })();
 
 </script><script>
@@ -4248,7 +4320,7 @@ function updatePanelService(ch) {
   });
 }
 
-var CH_NAMES = ['', 'Introduction', 'GNC', 'BNY Mellon', 'The Work', 'Who I Am', 'wolfie.life', 'Connect'];
+var CH_NAMES = ['', 'Policy Documents', 'The Original Commitment', 'What Actually Happened', 'The Structural Revision', 'What the Medium Does', 'A First Conversation'];
 var CH_FIRST = {};
 navigable.forEach(function(el, i) {
   var ch = parseInt(el.dataset.ch || 1);
@@ -6699,20 +6771,35 @@ document.addEventListener('keydown', function(e) {
 (function initChapterGuidePanel() {
 
   var PANEL_SITES = [
-    { url: 'https://wolfie.love',        label: 'wolfie.love',       tag: 'Platform'            },
-    { url: 'https://wolfie.love/claude', label: 'wolfie.love/chat',  tag: 'Prompt Craft'        },
-    { url: 'https://wolfie.life',        label: 'wolfie.life',       tag: 'Studio'              },
-    { url: 'https://wolfie.love/shop',   label: 'wolfie.love/shop',  tag: 'E-commerce'          },
-    { url: 'https://wolfie.love/job',    label: 'wolfie.love/job',   tag: 'Engagement'          },
-    { url: 'https://wolfie.love/real',   label: 'wolfie.love/real',  tag: 'Professional'        },
-    { url: 'https://wolfie.love/dash',   label: 'wolfie.love/dash',  tag: 'Analytics'           },
-    { url: 'https://intoview.pro/home',  label: 'intoview.pro',      tag: 'Creative Sandbox'    },
-    { url: 'https://emdash.click',       label: 'emdash.click',      tag: 'Writing Tool'        },
+    { url: 'https://www.anthropic.com/news/responsible-scaling-policy-v3', label: 'anthropic.com/rsp',    tag: 'This Document',
+      ghost: [{"k":"Document","v":"RSP v3 Announcement"},{"k":"Published","v":"Feb 24, 2026"},{"k":"Author","v":"Anthropic"},{"k":"Type","v":"Policy · Public"}] },
+    { url: 'https://anthropic.com/responsible-scaling-policy/rsp-v3-0',    label: 'RSP Full Text',        tag: 'Policy',
+      ghost: [{"k":"Document","v":"Full RSP v3.0 Text"},{"k":"Framework","v":"Conditional · If-then"},{"k":"Covers","v":"ASL-2 through ASL-5"},{"k":"Status","v":"Active · Feb 2026"}] },
+    { url: 'https://anthropic.com/responsible-scaling-policy/roadmap',     label: 'Safety Roadmap',       tag: 'Frontier Goals',
+      ghost: [{"k":"Document","v":"Frontier Safety Roadmap"},{"k":"Areas","v":"Security · Alignment · Safeguards"},{"k":"Format","v":"Public goals · self-graded"},{"k":"Cadence","v":"Ongoing updates"}] },
+    { url: 'https://anthropic.com/feb-2026-risk-report',                   label: 'Risk Report',          tag: 'Feb 2026',
+      ghost: [{"k":"Document","v":"Feb 2026 Risk Report"},{"k":"First","v":"External risk publication"},{"k":"Covers","v":"Capabilities · Threats · Mitigations"},{"k":"Review","v":"External audit piloting"}] },
+    { url: 'https://wolfie.love',                                           label: 'wolfie.love',          tag: 'This Engine',
+      ghost: [{"k":"Platform","v":"wolfie.love"},{"k":"What","v":"Sentence-progressive narrative"},{"k":"Built by","v":"Zack Gort · wolfie.life"},{"k":"This page","v":"Built in one day"}] },
+    { url: 'https://wolfie.life',                                           label: 'wolfie.life',          tag: 'Studio',
+      ghost: [{"k":"Studio","v":"wolfie.life"},{"k":"Founder","v":"Zack Gort · Designer"},{"k":"Practice","v":"UX · Narrative · Front-end"},{"k":"Contact","v":"zack@wolfie.love"}] },
+    { url: 'https://www.ifimaybefrank.com',                                 label: 'ifimaybefrank.com',    tag: 'The Broader Idea',
+      ghost: [{"k":"Site","v":"ifimaybefrank.com"},{"k":"Idea","v":"Honesty as design philosophy"},{"k":"Relevance","v":"Anthropic values alignment"},{"k":"Built by","v":"Zack Gort"}] },
   ];
 
   var activeSiteIdx = 0;
   var iframeCache = {};
   var activeChIdx = 0;
+
+  // Ghost data per chapter for right-rail hover overlays
+  var CHAPTER_GHOSTS = {
+    1: [{"k":"Chapter","v":"01 · Policy Documents"},{"k":"Argument","v":"The format is the first failure"},{"k":"Key idea","v":"Dense PDFs signal 'for experts only'"},{"k":"Opens with","v":"The problem no one names"}],
+    2: [{"k":"Chapter","v":"02 · The Original Commitment"},{"k":"Published","v":"September 2023"},{"k":"Framework","v":"If-then · conditional safety · ASL"},{"k":"Core idea","v":"Safeguards tied to capability thresholds"}],
+    3: [{"k":"Chapter","v":"03 · What Actually Happened"},{"k":"Tone","v":"Honest · self-critical · specific"},{"k":"Worked","v":"Internal forcing function · industry adoption"},{"k":"Didn't","v":"Zone of ambiguity · government action stalled"}],
+    4: [{"k":"Chapter","v":"04 · The Structural Revision"},{"k":"Published","v":"February 24, 2026"},{"k":"Changes","v":"Unilateral vs. multilateral split"},{"k":"New","v":"Frontier Safety Roadmap · Risk Reports every 3-6mo"}],
+    5: [{"k":"Chapter","v":"05 · What the Medium Does"},{"k":"The point","v":"Same argument · different vessel"},{"k":"Proof","v":"You've been reading it"},{"k":"Engine","v":"wolfie.love · sentence-progressive narrative"}],
+    6: [{"k":"Chapter","v":"06 · A First Conversation"},{"k":"Contact","v":"zack@wolfie.love"},{"k":"Studio","v":"wolfie.life"},{"k":"Built","v":"One day · for this application"}],
+  };
 
   function buildChapterList() {
     var list = document.getElementById('pg-chapter-list');
@@ -6720,10 +6807,12 @@ document.addEventListener('keydown', function(e) {
     list.innerHTML = '';
     CHAPTERS.forEach(function(ch, i) {
       var btn = document.createElement('button');
-      btn.className = 'pg-ch-item' + (i === 0 ? ' active' : '');
+      btn.className = 'pg-ch-item hoverable-stat' + (i === 0 ? ' active' : '');
       btn.innerHTML =
         '<span class="pg-ch-num">' + ch.num + '</span>' +
         '<span class="pg-ch-name">' + ch.title + '</span>';
+      btn.dataset.ghostLabel = ch.num + ' · ' + ch.title;
+      btn.dataset.ghost = JSON.stringify(CHAPTER_GHOSTS[ch.ch] || [{"k":"Chapter","v":ch.title},{"k":"Sub","v":ch.sub}]);
       btn.addEventListener('click', function() {
         // Find the first navigable sentence (has data-idx) in this chapter
         var candidates = document.querySelectorAll('[data-ch="' + ch.ch + '"][data-idx]');
@@ -6777,9 +6866,11 @@ document.addEventListener('keydown', function(e) {
     tabs.innerHTML = '';
     PANEL_SITES.forEach(function(site, i) {
       var btn = document.createElement('button');
-      btn.className = 'pg-tab' + (i === 0 ? ' active' : '');
+      btn.className = 'pg-tab hoverable-stat' + (i === 0 ? ' active' : '');
       btn.textContent = site.tag;
       btn.title = site.label;
+      btn.dataset.ghostLabel = site.label;
+      btn.dataset.ghost = JSON.stringify(site.ghost || []);
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
         loadSitePreview(i);
@@ -6849,6 +6940,8 @@ document.addEventListener('keydown', function(e) {
     buildChapterList();
     buildSiteTabs();
     loadSitePreview(0);
+    // Re-wire ghost overlays now that dynamic items exist
+    if (typeof wireHoverables === 'function') wireHoverables();
     // Sync chapter list when narrative progresses — poll on animationframe is too heavy
     // Instead, hook via a custom event dispatched by the engine after each goTo
     document.addEventListener('narrativeStep', function() { syncChapterFromCurrent(); });
@@ -6865,6 +6958,56 @@ document.addEventListener('keydown', function(e) {
     });
   });
 
+  // ── Image pairings: one editorial image per chapter ──
+  var CHAPTER_IMAGES = {
+    1: { src: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=900&q=80', caption: 'Ch 01 · The Problem · Dense documents that go unread' },
+    2: { src: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=900&q=80', caption: 'Ch 02 · The Original Commitment · If-then · conditional safety' },
+    3: { src: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&q=80', caption: 'Ch 03 · What Actually Happened · Honest reckoning' },
+    4: { src: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80', caption: 'Ch 04 · The Structural Revision · RSP v3 · February 2026' },
+    5: { src: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=900&q=80', caption: 'Ch 05 · What the Medium Does · wolfie.love' },
+    6: { src: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=900&q=80', caption: 'Ch 06 · A First Conversation · zack@wolfie.love' },
+  };
+
+  var currentPgMode = 'iframe';
+  var currentImgCh  = 1;
+
+  window.setPgMode = function(mode) {
+    currentPgMode = mode;
+    var wrap   = document.getElementById('pg-preview-wrap');
+    var btnI   = document.getElementById('pg-mode-iframe');
+    var btnImg = document.getElementById('pg-mode-image');
+    if (!wrap) return;
+    wrap.classList.toggle('mode-iframe', mode === 'iframe');
+    wrap.classList.toggle('mode-image',  mode === 'image');
+    if (btnI)   btnI.classList.toggle('active',  mode === 'iframe');
+    if (btnImg) btnImg.classList.toggle('active', mode === 'image');
+    if (mode === 'image') updatePanelImage(currentImgCh);
+  };
+
+  function updatePanelImage(ch) {
+    currentImgCh = ch;
+    if (currentPgMode !== 'image') return;
+    var data  = CHAPTER_IMAGES[ch] || CHAPTER_IMAGES[1];
+    var imgEl = document.getElementById('pg-preview-img-el');
+    var cap   = document.getElementById('pg-img-caption');
+    if (!imgEl) return;
+    imgEl.classList.remove('vis');
+    imgEl.onload = function() { imgEl.classList.add('vis'); };
+    imgEl.src = data.src;
+    if (cap) cap.textContent = data.caption;
+  }
+
+  document.addEventListener('narrativeStep', function() {
+    setTimeout(function() {
+      var active = document.querySelector('.pg-ch-item.active');
+      if (active) {
+        var label = active.dataset.ghostLabel || '';
+        var m = label.match(/^0?(\d)/);
+        if (m) updatePanelImage(parseInt(m[1]));
+      }
+    }, 60);
+  });
+
 })();
 
 
@@ -6876,13 +7019,12 @@ document.addEventListener('keydown', function(e) {
   // Map: chapter number → site to surface when that chapter activates.
   // Fires once on first entry to each chapter; user dismiss suppresses repeat.
   var CHAPTER_TRIGGERS = {
-    1: { url: 'https://wolfie.love',       label: 'Platform',       urlDisplay: 'wolfie.love',       desc: 'The engine behind this page — sentence-progressive narrative for every vertical.' },
-    2: { url: 'https://wolfie.love/shop',  label: 'Commerce',       urlDisplay: 'wolfie.love/shop',  desc: 'The same engine applied to e-commerce — GNC\'s domain, wolfie\'s medium.' },
-    3: { url: 'https://wolfie.love/dash',  label: 'Analytics',      urlDisplay: 'wolfie.love/dash',  desc: 'Dispatch — narrative analytics. Data made legible, delivered as story.' },
-    4: { url: 'https://intoview.pro/home', label: 'Creative Work',  urlDisplay: 'intoview.pro',      desc: 'A live product built on the same conviction: the medium should earn the idea.' },
-    5: { url: 'https://wolfie.love/real',  label: 'Real Estate',    urlDisplay: 'wolfie.love/real',  desc: 'The placemaking arm — presentation built for property, development, and hospitality.' },
-    6: { url: 'https://wolfie.life',       label: 'Studio',         urlDisplay: 'wolfie.life',       desc: 'wolfie.life — the studio behind all of it. Products built with conviction.' },
-    7: { url: 'https://wolfie.love',       label: 'Say Hello',      urlDisplay: 'wolfie.love',       desc: 'The complete platform. Every chapter leads here.' },
+    1: { url: 'https://www.anthropic.com/news/responsible-scaling-policy-v3',  label: 'The Source',      urlDisplay: 'anthropic.com/rsp-v3',      desc: 'The original document — a wall of text that carries one of the most important arguments in technology.' },
+    2: { url: 'https://anthropic.com/responsible-scaling-policy/rsp-v3-0',    label: 'Full Policy',     urlDisplay: 'RSP v3.0',                  desc: 'The complete Responsible Scaling Policy — the if-then framework governing when and how Anthropic trains more capable models.' },
+    3: { url: 'https://anthropic.com/feb-2026-risk-report',                   label: 'Risk Report',     urlDisplay: 'Feb 2026 Risk Report',      desc: 'The first Risk Report — Anthropic\'s honest accounting of what current models can and can\'t do, and the active mitigations in place.' },
+    4: { url: 'https://anthropic.com/responsible-scaling-policy/roadmap',     label: 'Safety Roadmap',  urlDisplay: 'Frontier Safety Roadmap',   desc: 'The Frontier Safety Roadmap — concrete, public goals Anthropic will grade itself against across security, alignment, and safeguards.' },
+    5: { url: 'https://wolfie.love',                                           label: 'The Engine',      urlDisplay: 'wolfie.love',               desc: 'The same sentence-progressive engine running this experience — built for credentials, policy, property, and client reporting.' },
+    6: { url: 'https://wolfie.life',                                           label: 'The Studio',      urlDisplay: 'wolfie.life',               desc: 'wolfie.life — the studio behind the engine. One designer. Two years. Built with conviction.' },
   };
 
   var nstPanel   = document.getElementById('nst-panel');
