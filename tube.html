@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>wolfie.life · media</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
-/* ═══════════════════════════════════════════════
-   WOLFIE.LIFE · MEDIA DASHBOARD
-   Powered by the intoview narrative engine
-   ─ nav by card, not sentence
-   ─ image layer fades behind text column
-   ─ right rail dominates (video first)
-═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   WOLFIE.LIFE · MEDIA DASHBOARD v2
+   Narrative engine mechanics · intoview ethos
+   ─ card-by-card navigation
+   ─ atmospheric image layer
+   ─ right rail: tabbed utility panel
+   ─ HUD: grid overlay + nav widget
+═══════════════════════════════════════════════════════════════ */
 
 :root {
   --bg:        #07060a;
@@ -25,12 +25,14 @@
   --ink-3:     #3a3028;
   --accent:    #c8902a;
   --accent-l:  rgba(200,144,42,0.10);
+  --accent-m:  rgba(200,144,42,0.22);
   --border:    rgba(255,255,255,0.06);
-  --border-2:  rgba(255,255,255,0.10);
+  --border-2:  rgba(255,255,255,0.11);
   --ui:        'Space Mono', monospace;
   --disp:      'Barlow Condensed', sans-serif;
-  --panel-w:   460px;
+  --panel-w:   480px;
   --header-h:  52px;
+  --filter-h:  42px;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -49,158 +51,195 @@ body::after {
   content:'';
   position:fixed; inset:0;
   pointer-events:none; z-index:900;
-  opacity:.04;
+  opacity:.045;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px;
   pointer-events:none;
 }
 
 /* ── CURSOR ── */
 #cursor {
-  position:fixed;
-  width:9px; height:9px;
-  background: var(--accent);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:9999;
+  position:fixed; width:9px; height:9px;
+  background:var(--accent); border-radius:50%;
+  pointer-events:none; z-index:9999;
   left:-20px; top:-20px;
   transform:translate(-50%,-50%);
-  transition: width .14s, height .14s, background .3s ease, border-radius .14s;
-  mix-blend-mode: screen;
+  transition:width .14s, height .14s, background .3s, border-radius .14s, opacity .2s;
+  mix-blend-mode:screen;
 }
-#cursor.big   { width:36px; height:36px; opacity:.3; }
-#cursor.watch { width:40px; height:40px; border-radius:4px; opacity:.45; }
+#cursor.big   { width:34px; height:34px; opacity:.28; }
+#cursor.watch { width:38px; height:38px; border-radius:4px; opacity:.4; }
+#cursor.upload{ width:44px; height:44px; border-radius:50%; opacity:.5; background:#5b9bd5; }
 
-/* ── IMAGE LAYER — full-screen atmospheric ── */
+/* ── IMAGE LAYER ── */
 #image-layer {
-  position:fixed; inset:0; z-index:0; overflow:hidden;
+  position:fixed; inset:0; z-index:1; overflow:hidden;
   pointer-events:none;
 }
 #image-layer img {
-  position:absolute; inset:0;
-  width:100%; height:100%;
+  position:absolute; inset:0; width:100%; height:100%;
   object-fit:cover; object-position:center 35%;
   opacity:0; transform:scale(1.035);
-  transition: opacity .6s ease, transform 9s ease;
-  will-change: opacity, transform;
+  transition:opacity .7s ease, transform 9s ease;
+  will-change:opacity, transform;
 }
-#image-layer img.visible { opacity:.32; transform:scale(1); }
+#image-layer img.visible { opacity:.30; transform:scale(1); }
 #image-layer::after {
-  content:''; position:absolute; inset:0; z-index:1;
+  content:''; position:absolute; inset:0; z-index:2;
+  pointer-events:none;
   background:
-    linear-gradient(to right,  rgba(7,6,10,.97) 0%,  rgba(7,6,10,.72) 42%, rgba(7,6,10,.10) 100%),
-    linear-gradient(to bottom, rgba(7,6,10,.60) 0%,  transparent       30%, transparent       70%, rgba(7,6,10,.60) 100%);
+    linear-gradient(to right, rgba(7,6,10,.97) 0%, rgba(7,6,10,.74) 44%, rgba(7,6,10,.08) 100%),
+    linear-gradient(to bottom, rgba(7,6,10,.65) 0%, transparent 28%, transparent 72%, rgba(7,6,10,.65) 100%);
 }
 
-/* ── PROGRESS ── */
+/* ── PROGRESS BAR ── */
 #progress {
   position:fixed; bottom:0; left:0; height:2px;
-  background: var(--accent);
-  z-index:800; width:0%;
-  transition: width .3s ease, background .5s ease;
-  right: var(--panel-w);
+  background:var(--accent); z-index:800; width:0%;
+  transition:width .35s ease;
+  right:var(--panel-w);
 }
 
 /* ── LAYOUT SHELL ── */
 #shell {
   position:relative; z-index:10;
   display:grid;
-  grid-template-columns: 1fr var(--panel-w);
-  grid-template-rows: var(--header-h) 1fr;
+  grid-template-columns:1fr var(--panel-w);
+  grid-template-rows:var(--header-h) var(--filter-h) 1fr;
   height:100vh;
 }
 
-/* ── HEADER ── */
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
 header {
-  grid-column:1/-1;
+  grid-column:1/-1; grid-row:1;
   height:var(--header-h);
   display:flex; align-items:center;
-  padding:0 28px;
+  padding:0 24px 0 22px;
   border-bottom:1px solid var(--border);
-  background:rgba(7,6,10,.88);
-  backdrop-filter:blur(18px);
+  background:rgba(7,6,10,.90);
+  backdrop-filter:blur(22px);
   position:sticky; top:0; z-index:200;
-  transition: background .3s ease;
+  gap:0;
 }
-header:hover { background:rgba(248,245,238,.96); border-bottom-color:rgba(0,0,0,.08); }
-header:hover .h-logo         { color:#111; }
-header:hover .h-logo em      { color:var(--accent); }
-header:hover .h-tagline      { color:var(--accent); }
-header:hover .h-crumb        { color:#aaa; }
-header:hover .h-crumb span   { color:#555; }
-header:hover .h-btn          { border-color:rgba(0,0,0,.15); color:#666; }
-header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); }
-
 .h-logo {
-  font-family:var(--disp);
-  font-weight:900; font-size:17px;
-  letter-spacing:.04em; text-transform:uppercase;
-  color:var(--ink);
-  transition:color .3s;
-  user-select:none;
+  font-family:var(--disp); font-weight:900; font-size:17px;
+  letter-spacing:.04em; text-transform:uppercase; color:var(--ink);
+  user-select:none; flex-shrink:0;
 }
-.h-logo em { font-style:normal; color:var(--accent); transition:color .3s; }
-
+.h-logo em { font-style:normal; color:var(--accent); }
+.h-sep { width:1px; height:18px; background:var(--border-2); margin:0 16px; flex-shrink:0; }
 .h-tagline {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.14em; color:var(--ink-2);
-  margin-left:14px;
-  transition:color .3s;
+  font-family:var(--ui); font-size:7px; letter-spacing:.16em;
+  color:var(--ink-3); flex-shrink:0;
 }
 
-.h-crumb {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.10em; color:var(--ink-3);
-  margin-left:20px; display:flex; gap:5px; align-items:center;
-  transition:color .3s;
+/* Search bar in header */
+.h-search {
+  margin-left:18px;
+  display:flex; align-items:center; gap:8px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:3px; padding:0 10px;
+  height:28px; width:180px;
+  transition:border-color .2s, background .2s, width .3s;
 }
-.h-crumb span {
-  color:var(--ink-2);
-  transition:color .3s;
+.h-search:focus-within {
+  border-color:var(--accent); background:rgba(200,144,42,.05);
+  width:240px;
 }
+.h-search-icon { font-size:10px; color:var(--ink-3); flex-shrink:0; }
+.h-search input {
+  background:none; border:none; outline:none;
+  font-family:var(--ui); font-size:8px; letter-spacing:.06em;
+  color:var(--ink); width:100%; cursor:none;
+}
+.h-search input::placeholder { color:var(--ink-3); }
 
-.h-actions {
-  margin-left:auto;
-  display:flex; gap:8px; align-items:center;
-}
-.h-btn {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.14em; text-transform:uppercase;
+.h-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.h-pill {
+  font-family:var(--ui); font-size:7px; letter-spacing:.14em; text-transform:uppercase;
   background:none; border:1px solid var(--border);
-  color:var(--ink-3); padding:5px 12px;
-  border-radius:2px;
-  transition:all .15s;
-  cursor:none;
+  color:var(--ink-3); padding:4px 11px; border-radius:2px;
+  transition:all .15s; cursor:none; display:flex; align-items:center; gap:5px;
 }
-.h-btn:hover { border-color:var(--accent); color:var(--accent); }
-
+.h-pill:hover { border-color:var(--accent); color:var(--accent); }
+.h-pill.primary { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
+.h-pill.primary:hover { background:var(--accent-m); }
 #h-card-num {
-  font-family:var(--ui); font-size:8px;
-  letter-spacing:.12em; color:var(--ink-3);
-  transition:color .3s;
+  font-family:var(--ui); font-size:8px; letter-spacing:.12em; color:var(--ink-3);
 }
 #h-card-num strong { color:var(--ink-2); }
 
-/* ── STREAM COLUMN ── */
-#stream-col {
+/* ══════════════════════════════════════════
+   FILTER BAR
+══════════════════════════════════════════ */
+#filter-bar {
   grid-column:1; grid-row:2;
-  padding: clamp(40px,6vh,72px) clamp(28px,5vw,72px);
+  height:var(--filter-h);
+  display:flex; align-items:center;
+  padding:0 clamp(18px,4vw,60px);
+  gap:6px;
+  border-bottom:1px solid var(--border);
+  background:rgba(7,6,10,.85);
+  backdrop-filter:blur(16px);
+  overflow-x:auto; scrollbar-width:none;
+}
+#filter-bar::-webkit-scrollbar { display:none; }
+#panel-filter-header {
+  grid-column:2; grid-row:2;
+  height:var(--filter-h);
+  display:flex; align-items:center;
+  padding:0 16px;
+  border-bottom:1px solid var(--border);
+  border-left:1px solid var(--border);
+  background:rgba(7,6,10,.85);
+  backdrop-filter:blur(16px);
+  gap:6px;
+}
+
+.filter-pill {
+  font-family:var(--ui); font-size:7px; letter-spacing:.14em; text-transform:uppercase;
+  background:none; border:1px solid var(--border);
+  color:var(--ink-3); padding:4px 12px; border-radius:20px;
+  transition:all .15s; cursor:none; white-space:nowrap; flex-shrink:0;
+}
+.filter-pill:hover { border-color:var(--border-2); color:var(--ink-2); }
+.filter-pill.active {
+  border-color:var(--accent); color:var(--accent);
+  background:var(--accent-l);
+}
+
+/* View toggle */
+.view-toggle {
+  display:flex; gap:3px; margin-left:auto; flex-shrink:0;
+}
+.vt-btn {
+  width:26px; height:26px; border-radius:3px;
+  background:none; border:1px solid var(--border);
+  color:var(--ink-3); font-size:10px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s; cursor:none;
+}
+.vt-btn.active { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
+.vt-btn:hover:not(.active) { border-color:var(--border-2); color:var(--ink-2); }
+
+/* ══════════════════════════════════════════
+   STREAM COLUMN
+══════════════════════════════════════════ */
+#stream-col {
+  grid-column:1; grid-row:3;
+  padding:clamp(36px,5.5vh,68px) clamp(28px,5vw,72px);
   display:flex; flex-direction:column; justify-content:center;
-  min-height:calc(100vh - var(--header-h));
+  min-height:calc(100vh - var(--header-h) - var(--filter-h));
   position:relative; overflow:hidden;
 }
 
-/* ── SENTENCE STATES ─────────────────────────────────────
-   Faithful to intoview.html mechanics:
-   opacity .08 = unread/future
-   opacity .30 = revealed (has been seen, not active)  ← ".revealed"
-   opacity .77 = past (receding from active)           ← ".past"
-   opacity 1   = active                                ← ".active"
-──────────────────────────────────────────────────── */
+/* ── SENTENCE STATES ── */
 .sentence {
   display:block; position:relative;
   padding:4px 0;
   opacity:.08;
-  transition: opacity .42s ease, color .42s ease, transform .42s ease;
+  transition:opacity .42s ease, color .42s ease, transform .42s ease;
   transform:translateY(3px);
 }
 .sentence.revealed  { opacity:.30; transform:translateY(0); }
@@ -213,71 +252,54 @@ header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); 
   font-family:var(--ui); font-size:7px;
   letter-spacing:.28em; text-transform:uppercase;
   color:var(--accent); padding:12px 0 3px;
-  transition:opacity .42s, color .4s;
 }
-
 .sentence.poster {
   font-family:var(--disp); font-weight:900;
-  font-size:clamp(46px,7vw,88px);
+  font-size:clamp(44px,6.5vw,84px);
   line-height:.89; letter-spacing:-.03em; text-transform:uppercase;
   padding:4px 0;
 }
-.sentence.poster .ac  { color:var(--accent); transition:color .4s; }
+.sentence.poster .ac  { color:var(--accent); }
 .sentence.poster .dim { color:var(--ink-2); font-weight:300; font-style:italic; }
 .sentence.poster.active::before {
-  content:''; position:absolute;
-  left:-22px; top:0; bottom:0; width:3px;
-  background:var(--accent); border-radius:2px;
-  transition:background .4s;
+  content:''; position:absolute; left:-22px; top:0; bottom:0; width:3px;
+  background:var(--accent); border-radius:2px; transition:background .4s;
 }
-
 .sentence.body {
   font-family:var(--disp); font-weight:300;
-  font-size:clamp(15px,1.9vw,22px);
-  line-height:1.48; letter-spacing:.005em;
+  font-size:clamp(14px,1.8vw,20px); line-height:1.48; letter-spacing:.005em;
   color:var(--ink-2); max-width:500px;
 }
 .sentence.body .em  { font-style:italic; font-weight:700; color:var(--ink); }
 .sentence.body .ac  { color:var(--accent); }
 .sentence.active.body { color:var(--ink); }
-
 .sentence.pull {
   font-family:var(--disp); font-weight:300; font-style:italic;
-  font-size:clamp(17px,2.2vw,28px);
-  line-height:1.25; letter-spacing:.01em;
+  font-size:clamp(16px,2vw,26px); line-height:1.25; letter-spacing:.01em;
   color:var(--ink-2); max-width:460px; padding:7px 0 7px 18px;
   border-left:1px solid var(--ink-3);
 }
 .sentence.pull .ac { color:var(--accent); }
 .sentence.active.pull { color:var(--ink); border-left-color:var(--accent); }
 
-/* Spec block — grouped, auto-flows as a table within the card */
 .spec-group {
-  display:flex; flex-direction:column; gap:0;
-  margin:6px 0;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  opacity:.08;
-  transition: opacity .42s ease;
+  display:flex; flex-direction:column; gap:0; margin:6px 0;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  opacity:.08; transition:opacity .42s ease;
 }
-.spec-group.revealed  { opacity:.30; }
-.spec-group.past      { opacity:.77; }
-.spec-group.active    { opacity:1; }
-
+.spec-group.revealed { opacity:.30; }
+.spec-group.past     { opacity:.77; }
+.spec-group.active   { opacity:1; }
 .sentence.spec {
-  /* individual spec row — always inside .spec-group, never standalone */
   display:flex; align-items:baseline; gap:14px;
-  font-family:var(--ui); font-size:9px;
-  letter-spacing:.05em; padding:5px 0;
-  opacity:1 !important; /* group controls opacity */
-  transform:none !important;
+  font-family:var(--ui); font-size:9px; letter-spacing:.05em; padding:5px 0;
+  opacity:1 !important; transform:none !important;
   border-bottom:1px solid var(--border);
 }
 .sentence.spec:last-child { border-bottom:none; }
 .sentence.spec .spec-key {
   text-transform:uppercase; letter-spacing:.14em; font-size:7px;
-  color:var(--ink-3); min-width:88px; flex-shrink:0;
-  transition:color .4s;
+  color:var(--ink-3); min-width:88px; flex-shrink:0; transition:color .4s;
 }
 .sentence.spec .spec-val { color:var(--ink-2); flex:1; transition:color .4s; }
 .spec-group.active .sentence.spec .spec-key { color:var(--accent); }
@@ -293,318 +315,648 @@ header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); 
 /* ── CATEGORY HEADER ── */
 .cat-header {
   display:flex; align-items:baseline; gap:14px;
-  padding:40px 0 14px;
-  opacity:.08;
-  transition: opacity .55s ease;
+  padding:40px 0 14px; opacity:.08; transition:opacity .55s ease;
 }
-.cat-header.revealed, .cat-header.past, .cat-header.active { opacity:.7; }
+.cat-header.revealed, .cat-header.past, .cat-header.active { opacity:.65; }
 .cat-num {
   font-family:var(--disp); font-weight:900;
-  font-size:clamp(52px,8vw,96px);
-  line-height:.82; letter-spacing:-.04em;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(255,255,255,.10);
+  font-size:clamp(52px,8vw,96px); line-height:.82; letter-spacing:-.04em;
+  color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.10);
   user-select:none; flex-shrink:0;
 }
 .cat-meta { display:flex; flex-direction:column; gap:4px; }
-.cat-rule { width:20px; height:1px; background:var(--accent); margin-bottom:6px; transition:background .4s; }
+.cat-rule { width:20px; height:1px; background:var(--accent); margin-bottom:6px; }
 .cat-label {
   font-family:var(--ui); font-size:7px; letter-spacing:.28em;
   text-transform:uppercase; color:rgba(200,144,42,.75);
 }
 .cat-title {
   font-family:var(--disp); font-weight:900;
-  font-size:clamp(14px,1.8vw,22px);
-  letter-spacing:-.015em; text-transform:uppercase;
+  font-size:clamp(14px,1.7vw,20px); letter-spacing:-.015em; text-transform:uppercase;
   color:rgba(240,236,228,.80);
 }
 
-/* ── RIGHT PANEL ── */
+/* ── UPLOAD CARD ── */
+.upload-card {
+  border:1px dashed rgba(255,255,255,.12);
+  border-radius:4px; padding:20px 24px;
+  margin:16px 0; cursor:none;
+  transition:border-color .2s, background .2s;
+  background:rgba(255,255,255,.01);
+}
+.upload-card:hover {
+  border-color:var(--accent); background:rgba(200,144,42,.04);
+}
+.upload-card.drag-over {
+  border-color:var(--accent); background:rgba(200,144,42,.08);
+  border-style:solid;
+}
+.uc-icon { font-size:22px; color:var(--ink-3); margin-bottom:10px; transition:color .2s; }
+.upload-card:hover .uc-icon { color:var(--accent); }
+.uc-title {
+  font-family:var(--disp); font-weight:700; font-size:18px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2); margin-bottom:4px;
+  transition:color .2s;
+}
+.upload-card:hover .uc-title { color:var(--ink); }
+.uc-sub {
+  font-family:var(--ui); font-size:7px; letter-spacing:.12em;
+  color:var(--ink-3); text-transform:uppercase;
+}
+
+/* ══════════════════════════════════════════
+   RIGHT PANEL
+══════════════════════════════════════════ */
 #panel {
-  grid-column:2; grid-row:2;
+  grid-column:2; grid-row:2/4;
   border-left:1px solid var(--border);
-  display:flex; flex-direction:column;
-  overflow:hidden;
+  display:flex; flex-direction:column; overflow:hidden;
   background:rgba(7,6,10,.40);
   backdrop-filter:blur(2px);
   transition:border-color .3s;
 }
 #panel:hover { background:rgba(8,7,11,.88); border-left-color:var(--border-2); }
 
-/* Video player — takes majority of panel */
+/* Video player */
 #panel-video {
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#000;
-  flex-shrink:0;
-  overflow:hidden;
-  cursor:none;
+  position:relative; width:100%; aspect-ratio:16/9;
+  background:#000; flex-shrink:0; overflow:hidden; cursor:none;
 }
 #panel-video iframe {
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  border:none;
-  opacity:0;
-  transition:opacity .4s ease;
+  position:absolute; inset:0; width:100%; height:100%;
+  border:none; opacity:0; transition:opacity .4s ease;
 }
 #panel-video iframe.loaded { opacity:1; }
-
-/* Placeholder shown before a video is loaded */
 #video-placeholder {
-  position:absolute; inset:0;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:10px;
-  background:rgba(0,0,0,.5);
-  transition:opacity .3s ease;
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:10px;
+  background:rgba(0,0,0,.4); transition:opacity .3s;
 }
 #video-placeholder.hidden { opacity:0; pointer-events:none; }
-.vph-icon { font-size:28px; color:rgba(255,255,255,.15); }
+.vph-icon { font-size:26px; color:rgba(255,255,255,.12); }
 .vph-label {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.22em; text-transform:uppercase;
-  color:rgba(255,255,255,.2);
+  font-family:var(--ui); font-size:7px; letter-spacing:.22em; text-transform:uppercase;
+  color:rgba(255,255,255,.18);
 }
 
-/* Video meta below player */
+/* Video meta */
 #panel-meta {
-  flex-shrink:0;
-  padding:14px 18px 12px;
+  flex-shrink:0; padding:12px 16px 10px;
   border-bottom:1px solid var(--border);
 }
 .pm-eyebrow {
-  font-family:var(--ui); font-size:6px;
-  letter-spacing:.28em; text-transform:uppercase;
-  color:var(--ink-3); margin-bottom:7px;
+  font-family:var(--ui); font-size:6px; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:6px;
 }
 #pm-title {
   font-family:var(--disp); font-weight:700;
-  font-size:clamp(15px,1.6vw,21px);
-  line-height:1.02; letter-spacing:-.015em; text-transform:uppercase;
-  color:var(--ink); margin-bottom:5px;
-  min-height:42px;
-  transition:color .3s;
+  font-size:clamp(14px,1.5vw,19px); line-height:1.02; letter-spacing:-.015em;
+  text-transform:uppercase; color:var(--ink); margin-bottom:4px;
+  min-height:38px; transition:color .3s;
 }
 #pm-channel {
-  font-family:var(--ui); font-size:8px;
-  letter-spacing:.08em; color:var(--accent);
-  transition:color .3s;
+  font-family:var(--ui); font-size:8px; letter-spacing:.08em; color:var(--accent);
 }
 
 /* Stat strip */
 #panel-stats {
-  display:flex; flex-shrink:0;
-  border-bottom:1px solid var(--border);
+  display:flex; flex-shrink:0; border-bottom:1px solid var(--border);
 }
 .ps-cell {
-  flex:1; padding:9px 14px; text-align:center;
+  flex:1; padding:8px 12px; text-align:center;
   border-right:1px solid var(--border);
 }
 .ps-cell:last-child { border-right:none; }
 .ps-val {
-  font-family:var(--disp); font-weight:700;
-  font-size:16px; letter-spacing:-.02em;
-  color:var(--ink); display:block;
-  transition:color .3s;
+  font-family:var(--disp); font-weight:700; font-size:15px;
+  letter-spacing:-.02em; color:var(--ink); display:block; transition:color .3s;
 }
 .ps-key {
-  font-family:var(--ui); font-size:6px;
-  letter-spacing:.18em; text-transform:uppercase;
+  font-family:var(--ui); font-size:6px; letter-spacing:.18em; text-transform:uppercase;
   color:var(--ink-3); margin-top:1px; display:block;
 }
 
-/* Scrollable card list — remainder of panel */
-#panel-feed {
-  flex:1;
-  overflow-y:auto; overscroll-behavior:contain;
-}
-#panel-feed::-webkit-scrollbar { width:2px; }
-#panel-feed::-webkit-scrollbar-thumb { background:var(--border); }
-
-.pf-section-label {
-  font-family:var(--ui); font-size:6px;
-  letter-spacing:.28em; text-transform:uppercase;
-  color:var(--ink-3);
-  padding:10px 16px 5px;
-  position:sticky; top:0;
-  background:rgba(7,6,10,.94);
-  backdrop-filter:blur(8px);
+/* ══════════════════════════════════════════
+   PANEL TABS
+══════════════════════════════════════════ */
+#panel-tabs {
+  display:flex; flex-shrink:0;
   border-bottom:1px solid var(--border);
-  transition:background .3s;
+  background:rgba(0,0,0,.2);
 }
-
-.pf-card {
-  display:flex; gap:10px;
-  padding:10px 16px;
-  border-bottom:1px solid var(--border);
-  cursor:none;
-  transition:background .15s;
-  position:relative;
+.panel-tab {
+  flex:1; padding:8px 4px;
+  font-family:var(--ui); font-size:6.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); background:none; border:none; border-right:1px solid var(--border);
+  cursor:none; transition:all .15s; position:relative;
 }
-.pf-card:hover { background:rgba(255,255,255,.025); }
-.pf-card.active::before {
-  content:''; position:absolute;
-  left:0; top:0; bottom:0; width:2px;
+.panel-tab:last-child { border-right:none; }
+.panel-tab:hover { color:var(--ink-2); background:rgba(255,255,255,.02); }
+.panel-tab.active { color:var(--accent); background:var(--accent-l); }
+.panel-tab.active::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
   background:var(--accent);
-  transition:background .4s;
+}
+
+/* Tab panel bodies */
+#panel-body { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+.tab-body { display:none; flex:1; flex-direction:column; overflow:hidden; }
+.tab-body.active { display:flex; }
+
+/* ── Feed tab controls (grid/list toggle) ── */
+.feed-controls {
+  display:flex; align-items:center; padding:8px 14px 6px;
+  border-bottom:1px solid var(--border); flex-shrink:0; gap:8px;
+}
+.feed-label {
+  font-family:var(--ui); font-size:6px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-3); flex:1;
+}
+.feed-count {
+  font-family:var(--ui); font-size:7px; letter-spacing:.08em; color:var(--ink-3);
+}
+.pf-scroll {
+  flex:1; overflow-y:auto; overscroll-behavior:contain;
+}
+.pf-scroll::-webkit-scrollbar { width:2px; }
+.pf-scroll::-webkit-scrollbar-thumb { background:var(--border); }
+
+/* ── List view ── */
+.pf-list-view .pf-card-list {
+  display:block;
+}
+.pf-card-list {
+  display:flex; gap:10px; padding:9px 14px;
+  border-bottom:1px solid var(--border);
+  cursor:none; transition:background .15s; position:relative;
+}
+.pf-card-list:hover { background:rgba(255,255,255,.025); }
+.pf-card-list.active::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:var(--accent);
 }
 .pf-thumb {
-  width:80px; height:45px;
+  width:74px; height:42px;
   background:var(--ink-3); border-radius:2px;
   flex-shrink:0; overflow:hidden; position:relative;
 }
 .pf-thumb img { width:100%; height:100%; object-fit:cover; opacity:.7; transition:opacity .2s; }
-.pf-card:hover .pf-thumb img { opacity:.9; }
+.pf-card-list:hover .pf-thumb img { opacity:.9; }
 .pf-thumb-dur {
-  position:absolute; bottom:3px; right:3px;
+  position:absolute; bottom:2px; right:3px;
   font-family:var(--ui); font-size:6px; letter-spacing:.03em;
-  color:#fff; background:rgba(0,0,0,.75);
-  padding:1px 4px; border-radius:1px;
+  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
 }
 .pf-info { flex:1; min-width:0; }
 .pf-title {
   font-family:var(--disp); font-weight:700;
-  font-size:12px; line-height:1.08;
-  letter-spacing:-.01em; text-transform:uppercase;
-  color:rgba(240,236,228,.7);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-bottom:3px;
+  font-size:11px; line-height:1.08; letter-spacing:-.01em; text-transform:uppercase;
+  color:rgba(240,236,228,.65);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px;
   transition:color .15s;
 }
-.pf-card:hover .pf-title { color:var(--ink); }
-.pf-card.active .pf-title { color:var(--ink); }
-.pf-meta {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.04em; color:var(--ink-3);
-}
+.pf-card-list:hover .pf-title, .pf-card-list.active .pf-title { color:var(--ink); }
+.pf-meta { font-family:var(--ui); font-size:7px; letter-spacing:.04em; color:var(--ink-3); }
 .pf-cat {
-  font-family:var(--ui); font-size:6px;
-  letter-spacing:.14em; text-transform:uppercase;
+  font-family:var(--ui); font-size:6px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--accent); margin-top:2px;
-  transition:color .4s;
 }
 
-/* ── HUD NAV WIDGET ── */
-#nav-widget {
+/* ── Grid view ── */
+.pf-grid-view .pf-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:1px;
+  background:var(--border);
+}
+.pf-grid { display:none; }
+.pf-card-grid {
+  background:var(--bg); cursor:none; position:relative;
+  transition:background .15s; overflow:hidden;
+}
+.pf-card-grid:hover { background:rgba(255,255,255,.03); }
+.pf-card-grid.active::after {
+  content:''; position:absolute; inset:0;
+  border:1px solid var(--accent); pointer-events:none; z-index:2;
+}
+.pf-grid-thumb {
+  width:100%; aspect-ratio:16/9; overflow:hidden; position:relative;
+}
+.pf-grid-thumb img {
+  width:100%; height:100%; object-fit:cover; opacity:.6; transition:opacity .2s;
+  display:block;
+}
+.pf-card-grid:hover .pf-grid-thumb img { opacity:.85; }
+.pf-grid-thumb-dur {
+  position:absolute; bottom:3px; right:4px;
+  font-family:var(--ui); font-size:6px;
+  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
+}
+.pf-grid-info { padding:7px 8px 9px; }
+.pf-grid-title {
+  font-family:var(--disp); font-weight:700; font-size:10px;
+  letter-spacing:-.01em; text-transform:uppercase; line-height:1.1;
+  color:rgba(240,236,228,.65); margin-bottom:2px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  transition:color .15s;
+}
+.pf-card-grid:hover .pf-grid-title { color:var(--ink); }
+.pf-grid-meta { font-family:var(--ui); font-size:6px; letter-spacing:.04em; color:var(--ink-3); }
+
+/* ── Recently Watched tab ── */
+.rw-item {
+  display:flex; gap:9px; padding:9px 14px;
+  border-bottom:1px solid var(--border); cursor:none;
+  transition:background .15s;
+}
+.rw-item:hover { background:rgba(255,255,255,.025); }
+.rw-thumb {
+  width:60px; height:34px; border-radius:2px; overflow:hidden;
+  background:var(--ink-3); flex-shrink:0; position:relative;
+}
+.rw-thumb img { width:100%; height:100%; object-fit:cover; opacity:.65; }
+.rw-progress {
+  position:absolute; bottom:0; left:0; height:2px;
+  background:var(--accent); border-radius:0 1px 1px 0;
+}
+.rw-info { flex:1; min-width:0; }
+.rw-title {
+  font-family:var(--disp); font-weight:700; font-size:10px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
+}
+.rw-sub { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
+.rw-badge {
+  font-family:var(--ui); font-size:6px; letter-spacing:.1em; text-transform:uppercase;
+  background:var(--accent-l); color:var(--accent); padding:2px 6px; border-radius:1px;
+  align-self:flex-start; margin-top:2px; flex-shrink:0;
+}
+
+/* ── Favorites tab ── */
+.fav-item {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  border-bottom:1px solid var(--border); cursor:none; transition:background .15s;
+}
+.fav-item:hover { background:rgba(255,255,255,.025); }
+.fav-star { color:var(--accent); font-size:12px; flex-shrink:0; }
+.fav-info { flex:1; min-width:0; }
+.fav-title {
+  font-family:var(--disp); font-weight:700; font-size:11px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
+}
+.fav-sub { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
+
+/* ── Playlists tab ── */
+.pl-item {
+  padding:10px 14px; border-bottom:1px solid var(--border);
+  cursor:none; transition:background .15s;
+}
+.pl-item:hover { background:rgba(255,255,255,.025); }
+.pl-header { display:flex; align-items:center; gap:10px; margin-bottom:5px; }
+.pl-icon { font-size:16px; color:var(--ink-3); flex-shrink:0; }
+.pl-name {
+  font-family:var(--disp); font-weight:700; font-size:12px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2); flex:1;
+}
+.pl-count {
+  font-family:var(--ui); font-size:6.5px; letter-spacing:.1em; color:var(--ink-3);
+}
+.pl-thumbs { display:flex; gap:2px; }
+.pl-mini-thumb {
+  width:34px; height:19px; border-radius:1px; overflow:hidden; background:var(--ink-3);
+}
+.pl-mini-thumb img { width:100%; height:100%; object-fit:cover; opacity:.55; }
+
+/* ── Studio tab ── */
+.studio-header {
+  padding:14px 16px 10px; border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.studio-h-title {
+  font-family:var(--disp); font-weight:900; font-size:16px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink); margin-bottom:2px;
+}
+.studio-h-sub {
+  font-family:var(--ui); font-size:6.5px; letter-spacing:.12em; color:var(--ink-3);
+}
+.studio-upload-zone {
+  margin:12px 14px; padding:18px;
+  border:1px dashed rgba(255,255,255,.12); border-radius:4px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  cursor:none; transition:all .2s;
+}
+.studio-upload-zone:hover {
+  border-color:var(--accent); background:rgba(200,144,42,.04);
+}
+.studio-upload-zone.drag-over {
+  border-color:var(--accent); background:rgba(200,144,42,.08); border-style:solid;
+}
+.suz-icon { font-size:24px; color:var(--ink-3); transition:color .2s; }
+.studio-upload-zone:hover .suz-icon { color:var(--accent); }
+.suz-label {
+  font-family:var(--disp); font-weight:700; font-size:14px;
+  text-transform:uppercase; letter-spacing:-.01em; color:var(--ink-2);
+  transition:color .2s;
+}
+.studio-upload-zone:hover .suz-label { color:var(--ink); }
+.suz-sub {
+  font-family:var(--ui); font-size:6.5px; letter-spacing:.1em; color:var(--ink-3);
+  text-transform:uppercase; text-align:center;
+}
+.studio-formats {
+  display:flex; gap:4px; flex-wrap:wrap; justify-content:center; margin-top:4px;
+}
+.sf-tag {
+  font-family:var(--ui); font-size:6px; letter-spacing:.1em;
+  border:1px solid var(--border); color:var(--ink-3);
+  padding:2px 7px; border-radius:10px; text-transform:uppercase;
+}
+.studio-section-label {
+  font-family:var(--ui); font-size:6px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--ink-3); padding:10px 14px 5px;
+  border-bottom:1px solid var(--border);
+}
+.studio-project {
+  display:flex; gap:10px; padding:9px 14px;
+  border-bottom:1px solid var(--border); cursor:none; transition:background .15s;
+}
+.studio-project:hover { background:rgba(255,255,255,.025); }
+.sp-thumb {
+  width:54px; height:30px; border-radius:2px; background:var(--ink-3);
+  flex-shrink:0; overflow:hidden; position:relative; display:flex;
+  align-items:center; justify-content:center;
+}
+.sp-thumb img { width:100%; height:100%; object-fit:cover; opacity:.5; }
+.sp-thumb-label {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--ui); font-size:6px; letter-spacing:.08em; color:rgba(255,255,255,.4);
+}
+.sp-info { flex:1; min-width:0; }
+.sp-title {
+  font-family:var(--disp); font-weight:700; font-size:11px;
+  text-transform:uppercase; letter-spacing:-.01em; color:var(--ink-2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
+}
+.sp-meta { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
+.sp-status {
+  font-family:var(--ui); font-size:6px; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 6px; border-radius:1px; align-self:flex-start; margin-top:1px; flex-shrink:0;
+}
+.sp-status.draft   { background:rgba(255,255,255,.06); color:var(--ink-3); }
+.sp-status.pub     { background:rgba(80,180,100,.12); color:#5cb870; }
+.sp-status.process { background:var(--accent-l); color:var(--accent); }
+
+/* ══════════════════════════════════════════
+   HUD NAV WIDGET
+══════════════════════════════════════════ */
+#hud {
   position:fixed;
   top:50%; right:calc(var(--panel-w) + 18px);
   transform:translateY(-50%);
   z-index:300;
+  display:flex; flex-direction:column; gap:8px;
   transition:opacity .3s, right .3s;
 }
-#panel:hover ~ #nav-widget { opacity:0; pointer-events:none; }
+#panel:hover ~ #hud { opacity:0; pointer-events:none; }
 
 .nw-shell {
   display:flex; flex-direction:column; align-items:center;
   background:rgba(242,238,230,.96);
   border:1px solid rgba(0,0,0,.10);
-  backdrop-filter:blur(20px);
-  border-radius:10px; padding:5px 4px;
-  box-shadow:0 4px 28px rgba(0,0,0,.20), 0 1px 4px rgba(0,0,0,.10);
+  backdrop-filter:blur(20px); border-radius:10px; padding:5px 4px;
+  box-shadow:0 4px 28px rgba(0,0,0,.22), 0 1px 4px rgba(0,0,0,.10);
   min-width:52px; gap:0;
 }
 .nw-pip {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.12em; text-transform:uppercase;
+  font-family:var(--ui); font-size:7px; letter-spacing:.12em; text-transform:uppercase;
   color:rgba(0,0,0,.4); padding:4px 0 6px;
-  border-bottom:1px solid rgba(0,0,0,.08);
-  width:100%; text-align:center;
+  border-bottom:1px solid rgba(0,0,0,.08); width:100%; text-align:center;
 }
 .nw-pip strong { color:var(--accent); }
 .nw-btn {
-  height:38px; width:100%; border-radius:7px;
-  background:rgba(0,0,0,.04);
-  border:1px solid rgba(0,0,0,.08);
+  height:38px; width:100%; border-radius:4px;
+  background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.08);
   display:flex; align-items:center; justify-content:center;
-  color:rgba(0,0,0,.5); font-size:15px;
-  transition:background .12s, color .12s;
-  cursor:none;
-  flex-shrink:0;
+  color:rgba(0,0,0,.5); font-size:14px;
+  transition:background .12s, color .12s; cursor:none; flex-shrink:0;
 }
-.nw-btn:hover { background:rgba(0,0,0,.08); color:#111; }
+.nw-btn:hover { background:rgba(0,0,0,.09); color:#111; }
 .nw-btn-prev { border-radius:7px 7px 4px 4px; margin-top:4px; }
 .nw-btn-next { border-radius:4px 4px 7px 7px; margin-top:2px; }
 .nw-divider { height:1px; width:70%; background:rgba(0,0,0,.08); margin:3px auto; }
 
-/* ── WATCH OVERLAY ── */
-#watch-overlay {
+/* Grid overlay toggle button in HUD */
+.hud-grid-btn {
+  width:52px; height:34px; border-radius:8px;
+  background:rgba(242,238,230,.92);
+  border:1px solid rgba(0,0,0,.10);
+  backdrop-filter:blur(20px);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(0,0,0,.4); font-size:13px;
+  transition:all .15s; cursor:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.18);
+}
+.hud-grid-btn:hover, .hud-grid-btn.active {
+  background:rgba(200,144,42,.92);
+  border-color:rgba(200,144,42,.4); color:#fff;
+}
+
+/* ══════════════════════════════════════════
+   GRID OVERLAY
+══════════════════════════════════════════ */
+#grid-overlay {
   position:fixed; inset:0;
-  background:rgba(0,0,0,.95);
-  z-index:500;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
+  background:rgba(7,6,10,.96);
+  z-index:400;
   opacity:0; pointer-events:none;
   transition:opacity .3s ease;
+  overflow-y:auto;
+}
+#grid-overlay.open { opacity:1; pointer-events:all; }
+.go-header {
+  display:flex; align-items:center; padding:20px 28px 14px;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; background:rgba(7,6,10,.96);
+  backdrop-filter:blur(12px); z-index:2;
+}
+.go-title {
+  font-family:var(--disp); font-weight:900; font-size:20px;
+  letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); flex:1;
+}
+.go-sub {
+  font-family:var(--ui); font-size:7px; letter-spacing:.14em; color:var(--ink-3);
+  margin-top:2px;
+}
+.go-close {
+  font-family:var(--ui); font-size:7px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-2); background:none; border:1px solid var(--border);
+  padding:6px 13px; border-radius:2px; cursor:none; transition:all .15s;
+}
+.go-close:hover { color:var(--accent); border-color:var(--accent); }
+.go-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1px; background:var(--border);
+  padding:0; margin:0;
+}
+.go-card {
+  background:var(--bg); cursor:none;
+  transition:background .15s; position:relative; overflow:hidden;
+}
+.go-card:hover { background:rgba(255,255,255,.04); }
+.go-card.active { background:rgba(200,144,42,.06); }
+.go-card.active::after {
+  content:''; position:absolute; inset:0;
+  border:1px solid var(--accent); pointer-events:none;
+}
+.go-thumb {
+  width:100%; aspect-ratio:16/9; overflow:hidden; background:#111;
+}
+.go-thumb img { width:100%; height:100%; object-fit:cover; opacity:.55; transition:opacity .2s; }
+.go-card:hover .go-thumb img { opacity:.8; }
+.go-dur {
+  position:absolute; top:0; left:0; right:0;
+  aspect-ratio:16/9; display:flex; align-items:flex-end; justify-content:flex-end;
+  padding:4px 6px;
+}
+.go-dur span {
+  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
+  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
+}
+.go-info { padding:8px 10px 10px; }
+.go-cat {
+  font-family:var(--ui); font-size:6px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:4px;
+}
+.go-card-title {
+  font-family:var(--disp); font-weight:700; font-size:12px;
+  letter-spacing:-.01em; text-transform:uppercase; line-height:1.1;
+  color:rgba(240,236,228,.7); margin-bottom:3px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  transition:color .15s;
+}
+.go-card:hover .go-card-title { color:var(--ink); }
+.go-channel {
+  font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3);
+}
+
+/* ══════════════════════════════════════════
+   GHOST PREVIEW
+══════════════════════════════════════════ */
+#ghost-preview {
+  position:fixed; z-index:350;
+  width:200px; pointer-events:none;
+  opacity:0; transform:translateY(8px) scale(.97);
+  transition:opacity .2s ease, transform .2s ease;
+  border-radius:3px; overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);
+}
+#ghost-preview.visible { opacity:1; transform:translateY(0) scale(1); }
+.gp-thumb { width:100%; aspect-ratio:16/9; background:#111; position:relative; }
+.gp-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.gp-dur {
+  position:absolute; bottom:4px; right:5px;
+  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
+  color:#fff; background:rgba(0,0,0,.82); padding:2px 5px; border-radius:1px;
+}
+.gp-body {
+  background:rgba(20,18,24,.97);
+  border:1px solid rgba(255,255,255,.1);
+  border-top:none; padding:8px 10px 9px;
+}
+.gp-title {
+  font-family:var(--disp); font-weight:700; font-size:11px;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink);
+  margin-bottom:3px; line-height:1.1;
+}
+.gp-channel { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--accent); }
+.gp-stats {
+  display:flex; gap:8px; margin-top:5px; padding-top:5px;
+  border-top:1px solid var(--border);
+}
+.gp-stat {
+  font-family:var(--ui); font-size:6px; letter-spacing:.08em;
+  color:var(--ink-3); text-transform:uppercase;
+}
+.gp-stat strong { color:var(--ink-2); display:block; font-size:8px; letter-spacing:.03em; }
+
+/* ══════════════════════════════════════════
+   WATCH OVERLAY
+══════════════════════════════════════════ */
+#watch-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.95);
+  z-index:500; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s ease;
 }
 #watch-overlay.open { opacity:1; pointer-events:all; }
-#watch-frame {
-  width:min(940px,90vw); aspect-ratio:16/9;
-  background:#000; border:none;
-}
+#watch-frame { width:min(940px,90vw); aspect-ratio:16/9; background:#000; border:none; }
 .wo-close {
   position:absolute; top:22px; right:26px;
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-2); background:none;
-  border:1px solid var(--border); padding:7px 13px;
-  border-radius:2px; cursor:none;
-  transition:all .15s;
+  font-family:var(--ui); font-size:7px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-2); background:none; border:1px solid var(--border);
+  padding:7px 13px; border-radius:2px; cursor:none; transition:all .15s;
 }
 .wo-close:hover { color:var(--accent); border-color:var(--accent); }
 #wo-title {
   margin-top:18px;
-  font-family:var(--disp); font-weight:700;
-  font-size:20px; letter-spacing:-.02em; text-transform:uppercase;
-  color:var(--ink-2);
+  font-family:var(--disp); font-weight:700; font-size:20px;
+  letter-spacing:-.02em; text-transform:uppercase; color:var(--ink-2);
   width:min(940px,90vw);
 }
 
-/* ── KEYBOARD HINT FOOTER ── */
+/* ══════════════════════════════════════════
+   KEYBOARD HINTS
+══════════════════════════════════════════ */
 #key-hints {
   position:fixed; bottom:18px; left:32px;
-  display:flex; gap:18px; align-items:center;
-  z-index:200; pointer-events:none;
-  opacity:.55;
-  transition:opacity .3s;
+  display:flex; gap:16px; align-items:center;
+  z-index:200; pointer-events:none; opacity:.5; transition:opacity .3s;
 }
 #key-hints:hover { opacity:1; }
 .kh-pair {
-  display:flex; align-items:center; gap:6px;
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.10em; color:var(--ink-3);
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--ui); font-size:7px; letter-spacing:.10em; color:var(--ink-3);
 }
 .kh-key {
   display:inline-flex; align-items:center; justify-content:center;
-  width:18px; height:16px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:3px; font-size:9px;
-  color:rgba(255,255,255,.4);
+  width:18px; height:16px; border:1px solid rgba(255,255,255,.14);
+  border-radius:3px; font-size:9px; color:rgba(255,255,255,.35);
   background:rgba(255,255,255,.04);
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  :root { --panel-w:360px; }
-}
-@media (max-width: 680px) {
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width:960px) { :root { --panel-w:380px; } }
+@media (max-width:700px) {
   #shell { grid-template-columns:1fr; }
   #panel { display:none; }
-  #nav-widget { right:16px; }
+  #hud   { right:16px; }
   #stream-col { padding:36px 22px 100px; justify-content:flex-start; }
-  #key-hints { display:none; }
+  #key-hints  { display:none; }
+  #filter-bar { grid-column:1/-1; }
+  #panel-filter-header { display:none; }
 }
 </style>
 </head>
 
 <body>
-
 <div id="cursor"></div>
 <div id="progress"></div>
 
 <!-- ── ATMOSPHERIC IMAGE LAYER ── -->
-<div id="image-layer">
-  <!-- images injected by JS -->
+<div id="image-layer"></div>
+
+<!-- ── GHOST PREVIEW ── -->
+<div id="ghost-preview">
+  <div class="gp-thumb"><img id="gp-img" src="" alt=""><div class="gp-dur" id="gp-dur">—</div></div>
+  <div class="gp-body">
+    <div class="gp-title" id="gp-title">—</div>
+    <div class="gp-channel" id="gp-channel">—</div>
+    <div class="gp-stats">
+      <div class="gp-stat"><strong id="gp-views">—</strong>Views</div>
+      <div class="gp-stat"><strong id="gp-len">—</strong>Duration</div>
+      <div class="gp-stat"><strong id="gp-year">—</strong>Year</div>
+    </div>
+  </div>
 </div>
 
 <div id="shell">
@@ -612,16 +964,37 @@ header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); 
   <!-- ── HEADER ── -->
   <header>
     <div class="h-logo">wolfie<em>.life</em></div>
-    <div class="h-tagline">media dashboard</div>
-    <div class="h-crumb">
-      narrative engine <span>·</span>
-      <span id="h-cat-label">Loading…</span>
+    <div class="h-sep"></div>
+    <div class="h-tagline">media</div>
+    <div class="h-search">
+      <span class="h-search-icon">⌕</span>
+      <input type="text" id="search-input" placeholder="Search cards…" autocomplete="off" spellcheck="false">
     </div>
     <div class="h-actions">
-      <div id="h-card-num"><strong>01</strong> / <span id="h-total">—</span></div>
-      <button class="h-btn" onclick="openWatch()">▶ watch</button>
+      <div id="h-card-num"><strong id="h-cur">01</strong>&thinsp;/&thinsp;<span id="h-total">—</span></div>
+      <button class="h-pill" id="h-studio-btn" onclick="openStudio()">⬆ Studio</button>
+      <button class="h-pill primary" onclick="openWatch()">▶ Watch</button>
     </div>
   </header>
+
+  <!-- ── FILTER BAR (stream side) ── -->
+  <div id="filter-bar">
+    <button class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-pill" data-filter="studio"  onclick="setFilter('studio',this)">Studio Work</button>
+    <button class="filter-pill" data-filter="craft"   onclick="setFilter('craft',this)">Craft &amp; Process</button>
+    <button class="filter-pill" data-filter="culture" onclick="setFilter('culture',this)">Culture &amp; Ideas</button>
+    <button class="filter-pill" data-filter="ambient" onclick="setFilter('ambient',this)">Ambient &amp; Focus</button>
+    <button class="filter-pill" data-filter="tech"    onclick="setFilter('tech',this)">Tech &amp; Build</button>
+  </div>
+
+  <!-- ── PANEL FILTER HEADER (panel side filter row) ── -->
+  <div id="panel-filter-header">
+    <span style="font-family:var(--ui);font-size:6px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);flex:1;">Queue</span>
+    <div class="view-toggle">
+      <button class="vt-btn active" id="vt-list" onclick="setView('list')" title="List view">≡</button>
+      <button class="vt-btn" id="vt-grid" onclick="setView('grid')" title="Grid view">⊞</button>
+    </div>
+  </div>
 
   <!-- ── NARRATIVE STREAM ── -->
   <div id="stream-col">
@@ -630,39 +1003,119 @@ header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); 
 
   <!-- ── RIGHT PANEL ── -->
   <div id="panel">
+    <!-- Video -->
     <div id="panel-video">
       <div id="video-placeholder">
         <div class="vph-icon">▶</div>
         <div class="vph-label">Select a card to preview</div>
       </div>
-      <!-- iframe injected dynamically -->
     </div>
+    <!-- Meta -->
     <div id="panel-meta">
       <div class="pm-eyebrow">Now Selected</div>
       <div id="pm-title">—</div>
       <div id="pm-channel">—</div>
     </div>
+    <!-- Stats -->
     <div id="panel-stats">
       <div class="ps-cell"><span class="ps-val" id="ps-views">—</span><span class="ps-key">Views</span></div>
       <div class="ps-cell"><span class="ps-val" id="ps-dur">—</span><span class="ps-key">Duration</span></div>
       <div class="ps-cell"><span class="ps-val" id="ps-year">—</span><span class="ps-key">Year</span></div>
     </div>
-    <div id="panel-feed">
-      <div class="pf-section-label">All Cards</div>
-      <div id="pf-list"></div>
+    <!-- Tabs -->
+    <div id="panel-tabs">
+      <button class="panel-tab active" data-tab="queue"   onclick="setTab('queue',this)">Queue</button>
+      <button class="panel-tab"        data-tab="watched" onclick="setTab('watched',this)">Watched</button>
+      <button class="panel-tab"        data-tab="favs"    onclick="setTab('favs',this)">Favorites</button>
+      <button class="panel-tab"        data-tab="plists"  onclick="setTab('plists',this)">Playlists</button>
+      <button class="panel-tab"        data-tab="studio"  onclick="setTab('studio',this)">Studio</button>
     </div>
-  </div>
+    <!-- Tab bodies -->
+    <div id="panel-body">
+
+      <!-- QUEUE TAB -->
+      <div class="tab-body active" data-body="queue">
+        <div class="feed-controls">
+          <span class="feed-label">All Cards</span>
+          <span class="feed-count" id="feed-count">—</span>
+        </div>
+        <div class="pf-scroll pf-list-view" id="pf-scroll">
+          <div id="pf-list" class="pf-list-inner"></div>
+          <div id="pf-grid" class="pf-grid"></div>
+        </div>
+      </div>
+
+      <!-- WATCHED TAB -->
+      <div class="tab-body" data-body="watched">
+        <div class="feed-controls"><span class="feed-label">Recently Watched</span></div>
+        <div class="pf-scroll" id="watched-list"></div>
+      </div>
+
+      <!-- FAVORITES TAB -->
+      <div class="tab-body" data-body="favs">
+        <div class="feed-controls"><span class="feed-label">Your Favorites</span></div>
+        <div class="pf-scroll" id="favs-list"></div>
+      </div>
+
+      <!-- PLAYLISTS TAB -->
+      <div class="tab-body" data-body="plists">
+        <div class="feed-controls"><span class="feed-label">Playlists</span></div>
+        <div class="pf-scroll" id="plists-list"></div>
+      </div>
+
+      <!-- STUDIO TAB -->
+      <div class="tab-body" data-body="studio">
+        <div class="studio-header">
+          <div class="studio-h-title">Studio</div>
+          <div class="studio-h-sub">Upload · Edit · Publish</div>
+        </div>
+        <div class="pf-scroll">
+          <div class="studio-upload-zone" id="studio-zone"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="handleStudioDrop(event)">
+            <div class="suz-icon">⬆</div>
+            <div class="suz-label">Drop files here</div>
+            <div class="suz-sub">or click to browse</div>
+            <div class="studio-formats">
+              <span class="sf-tag">MP4</span>
+              <span class="sf-tag">MOV</span>
+              <span class="sf-tag">WebM</span>
+              <span class="sf-tag">MKV</span>
+              <span class="sf-tag">MP3</span>
+            </div>
+          </div>
+          <div class="studio-section-label">Recent Projects</div>
+          <div id="studio-projects"></div>
+        </div>
+      </div>
+
+    </div><!-- /panel-body -->
+  </div><!-- /panel -->
 
 </div><!-- /shell -->
 
-<!-- ── HUD NAV ── -->
-<div id="nav-widget">
+<!-- ── HUD ── -->
+<div id="hud">
+  <button class="hud-grid-btn" id="hud-grid-btn" onclick="toggleGridOverlay()" title="Grid view">⊞</button>
   <div class="nw-shell">
     <div class="nw-pip"><strong id="nw-cur">1</strong>&thinsp;/&thinsp;<span id="nw-tot">—</span></div>
     <div class="nw-divider"></div>
     <button class="nw-btn nw-btn-prev" onclick="prevCard()">↑</button>
     <button class="nw-btn nw-btn-next" onclick="nextCard()">↓</button>
   </div>
+</div>
+
+<!-- ── GRID OVERLAY ── -->
+<div id="grid-overlay">
+  <div class="go-header">
+    <div>
+      <div class="go-title">All Cards</div>
+      <div class="go-sub" id="go-sub">— items</div>
+    </div>
+    <button class="go-close" onclick="toggleGridOverlay()">✕ Close</button>
+  </div>
+  <div class="go-grid" id="go-grid"></div>
 </div>
 
 <!-- ── FULLSCREEN WATCH ── -->
@@ -676,224 +1129,340 @@ header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); 
 <div id="key-hints">
   <div class="kh-pair"><span class="kh-key">↑</span><span class="kh-key">↓</span> navigate</div>
   <div class="kh-pair"><span class="kh-key">↵</span> watch</div>
+  <div class="kh-pair"><span class="kh-key">G</span> grid</div>
   <div class="kh-pair"><span class="kh-key">esc</span> back</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-//  WOLFIE.LIFE MEDIA DASHBOARD
-//  Powered by the intoview narrative engine
-//
-//  Node model:
-//    A CARD = { label, poster, body[], pull?, specs[], img, videoId, channel, views, dur, year }
-//    Navigation steps through CARDS, not sentences.
-//    All sentences within a card auto-reveal when the card is active.
-//    spec rows are grouped into a single .spec-group element.
-//    Image layer swaps on card change (faithful to intoview img: system).
-// ═══════════════════════════════════════════════════════════════════
+'use strict';
 
-// ── CARD DATA ───────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════
 const CATEGORIES = [
-  { id:'studio',  label:'Studio Work',     num:'01' },
-  { id:'craft',   label:'Craft & Process', num:'02' },
-  { id:'culture', label:'Culture & Ideas', num:'03' },
-  { id:'ambient', label:'Ambient & Focus', num:'04' },
+  { id:'studio',  label:'Studio Work',      num:'01' },
+  { id:'craft',   label:'Craft & Process',  num:'02' },
+  { id:'culture', label:'Culture & Ideas',  num:'03' },
+  { id:'ambient', label:'Ambient & Focus',  num:'04' },
+  { id:'tech',    label:'Tech & Build',     num:'05' },
 ];
 
 const CARDS = [
+  // ── STUDIO WORK ──────────────────────────────────────
   {
     cat:'studio',
-    label:'WOLFIE · PLATFORM DEMO',
-    poster:'The engine behind **everything.**',
+    label:'WOLFIE.LOVE · PLATFORM DEMO',
+    poster:'Sentences that **move.**',
     body:[
-      'wolfie.love is a sentence-progressive narrative platform built to make ideas move the way they deserve to. This is the product that made this dashboard.',
+      'wolfie.love is a sentence-progressive narrative platform — built to make ideas move the way they deserve to.',
+      'This dashboard is the media layer of the same engine. Every card is a story. Every story is a world.',
     ],
-    pull:'*"How something is communicated is part of what it is."*',
     specs:[
-      { key:'Platform',  val:'wolfie.love' },
-      { key:'Category',  val:'Narrative Engine · Product' },
-      { key:'Built',     val:'2024 — ongoing' },
+      { key:'Platform',   val:'wolfie.love' },
+      { key:'Type',       val:'Interactive Demo' },
+      { key:'Engine',     val:'intoview.pro' },
     ],
-    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
-    videoId:'dQw4w9WgXcQ',
-    channel:'wolfie.love',
-    views:'—', dur:'—', year:'2024',
-    thumb:`https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&q=80',
+    videoId:'dQw4w9WgXcQ', channel:'wolfie.love',
+    views:'12.4K', dur:'4:22', year:'2024',
+    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
   },
+  {
+    cat:'studio',
+    label:'INTOVIEW · NARRATIVE ENGINE',
+    poster:'The **engine** behind the curtain.',
+    body:[
+      'intoview.pro is the public demo of the wolfie narrative engine — sentence-by-sentence revelation with atmospheric image layers.',
+      'Built in a single HTML file. No frameworks. No build step. Just the medium and the message.',
+    ],
+    pull:'The *best* interfaces disappear. What remains is pure content.',
+    specs:[
+      { key:'Project',  val:'intoview.pro' },
+      { key:'Stack',    val:'Vanilla HTML/CSS/JS' },
+      { key:'Lines',    val:'7,430' },
+    ],
+    img:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1600&q=80',
+    videoId:'dQw4w9WgXcQ', channel:'wolfie.studio',
+    views:'8.1K', dur:'6:14', year:'2024',
+    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
+  },
+  // ── CRAFT & PROCESS ──────────────────────────────────
   {
     cat:'craft',
     label:'DESIGN · SENTENCE AS UNIT',
     poster:'One sentence. One **idea.**',
     body:[
-      'The discipline of writing one sentence at a time is also the discipline of thinking one idea at a time. This talk explores why constraint is the precondition of clarity.',
+      'The discipline of writing one sentence at a time forces you to commit to exactly one thought before moving to the next.',
+      'Most presentations fail because they try to say everything at once. The constraint is the gift.',
     ],
     pull:'The *best* presentations are the ones where every sentence could stand alone.',
     specs:[
-      { key:'Channel',   val:'Like Stories of Old' },
-      { key:'Duration',  val:'22 min' },
-      { key:'Theme',     val:'Design · Writing · Clarity' },
+      { key:'Channel',  val:'Like Stories of Old' },
+      { key:'Duration', val:'22 min' },
+      { key:'Views',    val:'2.4M' },
     ],
-    img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1600&q=80',
-    videoId:'eqnFBvNMCyQ',
-    channel:'Like Stories of Old',
+    img:'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=1600&q=80',
+    videoId:'eqnFBvNMCyQ', channel:'Like Stories of Old',
     views:'2.4M', dur:'22:18', year:'2023',
-    thumb:`https://img.youtube.com/vi/eqnFBvNMCyQ/mqdefault.jpg`,
-  },
-  {
-    cat:'culture',
-    label:'HISTORY · COLLAPSE AS NARRATIVE',
-    poster:'The night **Constantinople** forgot its name.',
-    body:[
-      '1453, told entirely through the letters of a single Venetian merchant who watched the city fall from his window. The letters were written in three sessions — you can see where his handwriting changed.',
-    ],
-    pull:'The *medium* of the letter is inseparable from the weight of what it says.',
-    specs:[
-      { key:'Channel',   val:'Historia Civilis' },
-      { key:'Duration',  val:'1 hr 12 min' },
-      { key:'Views',     val:'6.7M' },
-    ],
-    img: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1600&q=80',
-    videoId:'3JZ_D3ELwOQ',
-    channel:'Historia Civilis',
-    views:'6.7M', dur:'1:12:04', year:'2022',
-    thumb:`https://img.youtube.com/vi/3JZ_D3ELwOQ/mqdefault.jpg`,
+    thumb:'https://img.youtube.com/vi/eqnFBvNMCyQ/mqdefault.jpg',
   },
   {
     cat:'craft',
-    label:'FILM · WHY TARKOVSKY FILMED WATER',
-    poster:'Every film contains **water.**',
+    label:'TARKOVSKY · ON CINEMA',
+    poster:'Time **sculpted** in light.',
     body:[
-      'Tarkovsky said he did not know what water means — only that he could not make a film without it. This essay finally asks why.',
-      'The answer has something to do with time, and something to do with memory, and something to do with the fact that both flow in one direction only.',
+      'Andrei Tarkovsky described filmmaking as sculpting in time. Not arranging images — sculpting the texture of time itself.',
+      'Water appears in nearly every film he made. Not as symbol, but as rhythm. As the breath of the film.',
     ],
-    pull:'*"The essential cinematic gesture is not movement. It is duration."*',
+    pull:'*Rhythm* is not the metronome. It is the pressure of time within a shot.',
     specs:[
-      { key:'Channel',   val:'Like Stories of Old' },
-      { key:'Duration',  val:'22 min 18 sec' },
-      { key:'Theme',     val:'Film · Philosophy' },
+      { key:'Subject',  val:'Andrei Tarkovsky' },
+      { key:'Duration', val:'18 min' },
+      { key:'Essay by', val:'kogonada' },
     ],
-    img: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?w=1600&q=80',
-    videoId:'2Xc9gXyf2G4',
-    channel:'Like Stories of Old',
-    views:'2.4M', dur:'22:18', year:'2023',
-    thumb:`https://img.youtube.com/vi/2Xc9gXyf2G4/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1518281420975-50db6e5d0a97?w=1600&q=80',
+    videoId:'yTqDIr8MjGQ', channel:'kogonada',
+    views:'1.1M', dur:'17:44', year:'2013',
+    thumb:'https://img.youtube.com/vi/yTqDIr8MjGQ/mqdefault.jpg',
+  },
+  {
+    cat:'craft',
+    label:'TYPOGRAPHY · THE INVISIBLE ART',
+    poster:'Type you **feel**, not read.',
+    body:[
+      'The best typographers are invisible. Their work succeeds precisely because you never notice the decisions being made.',
+      'Leading, tracking, measure — the three variables that determine whether reading is a pleasure or a labor.',
+    ],
+    specs:[
+      { key:'Channel',   val:'Seb Kay' },
+      { key:'Duration',  val:'14 min' },
+      { key:'Topic',     val:'Type Design' },
+    ],
+    img:'https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=1600&q=80',
+    videoId:'pZ5gJ_QM5dI', channel:'Seb Kay Design',
+    views:'445K', dur:'14:02', year:'2022',
+    thumb:'https://img.youtube.com/vi/pZ5gJ_QM5dI/mqdefault.jpg',
+  },
+  // ── CULTURE & IDEAS ───────────────────────────────────
+  {
+    cat:'culture',
+    label:'HISTORY · THE FALL OF CONSTANTINOPLE',
+    poster:'1453. The world **split.**',
+    body:[
+      'On May 29, 1453, the Ottoman Empire breached the walls of Constantinople after 53 days of siege. An empire that had lasted 1,000 years ended in a single morning.',
+      'The last Byzantine emperor, Constantine XI, died on the walls. His body was never found.',
+    ],
+    pull:'*Every* era believes it is invincible. Every era is wrong.',
+    specs:[
+      { key:'Date',     val:'May 29, 1453' },
+      { key:'Duration', val:'24 min' },
+      { key:'Channel',  val:'Toldinstone' },
+    ],
+    img:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1600&q=80',
+    videoId:'q76bMs-NwRk', channel:'Toldinstone',
+    views:'3.2M', dur:'23:51', year:'2022',
+    thumb:'https://img.youtube.com/vi/q76bMs-NwRk/mqdefault.jpg',
   },
   {
     cat:'culture',
-    label:'TECHNOLOGY · ALGORITHM AS ACTOR',
-    poster:'The machine that broke **attention.**',
+    label:'PHILOSOPHY · THE ALGORITHM AS ACTOR',
+    poster:'Who **decides** what you see?',
     body:[
-      'Recommendation engines were not designed to maximize engagement at the expense of everything else. That was a side effect that became the product.',
+      'The recommendation algorithm is not a neutral tool. It has preferences, tendencies, and — in a functional sense — desires.',
+      'When the algorithm promotes outrage over nuance, it is not failing. It is succeeding at its actual objective: engagement.',
     ],
-    pull:'*At some point the map became more real than the territory.*',
+    pull:'*Attention* is not a metric. It is the substance of a human life.',
     specs:[
-      { key:'Channel',   val:'Kurzgesagt' },
-      { key:'Duration',  val:'18 min 42 sec' },
-      { key:'Views',     val:'14.2M' },
+      { key:'Channel',  val:'The Atlantic' },
+      { key:'Duration', val:'28 min' },
+      { key:'Topic',    val:'Media Theory' },
     ],
-    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600&q=80',
-    videoId:'dQw4w9WgXcQ',
-    channel:'Kurzgesagt',
-    views:'14.2M', dur:'18:42', year:'2024',
-    thumb:`https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80',
+    videoId:'dQw4w9WgXcQ', channel:'The Atlantic',
+    views:'4.7M', dur:'28:09', year:'2021',
+    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
   },
   {
-    cat:'ambient',
-    label:'AMBIENT · VICTORIAN LIBRARY IN RAIN',
-    poster:'Ten hours. No **commentary.**',
+    cat:'culture',
+    label:'SCIENCE · TIME AS ILLUSION',
+    poster:'The **now** does not exist.',
     body:[
-      'A Victorian reading room. Rain on leaded glass. Distant page turns. Nothing else for ten hours.',
-      'At hour three, a clock somewhere in the building chimes. Then nothing again.',
+      'According to special relativity, there is no universal "now." Two observers moving at different speeds experience the present moment at different times.',
+      'Carlo Rovelli calls this the most disturbing idea in modern physics: the present is not a moment — it is a perspective.',
+    ],
+    pull:'We are not in time. *Time* is in us.',
+    specs:[
+      { key:'Channel',  val:'PBS Space Time' },
+      { key:'Duration', val:'19 min' },
+      { key:'Topic',    val:'Theoretical Physics' },
+    ],
+    img:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1600&q=80',
+    videoId:'wwSzpaTHyS8', channel:'PBS Space Time',
+    views:'5.1M', dur:'19:33', year:'2020',
+    thumb:'https://img.youtube.com/vi/wwSzpaTHyS8/mqdefault.jpg',
+  },
+  {
+    cat:'culture',
+    label:'ECONOMICS · THE ATTENTION ECONOMY',
+    poster:'Your **focus** is the product.',
+    body:[
+      'Herbert Simon first named it in 1971: information consumes attention. The scarce resource is not data — it is the human capacity to process it.',
+      'Every app, every platform, every notification is a bid for a piece of a finite resource. The economy of attention has no off switch.',
+    ],
+    specs:[
+      { key:'Channel',  val:'Wendover Productions' },
+      { key:'Duration', val:'16 min' },
+      { key:'Views',    val:'6.2M' },
+    ],
+    img:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1600&q=80',
+    videoId:'tczJDe5Iylo', channel:'Wendover Productions',
+    views:'6.2M', dur:'16:22', year:'2023',
+    thumb:'https://img.youtube.com/vi/tczJDe5Iylo/mqdefault.jpg',
+  },
+  // ── AMBIENT & FOCUS ───────────────────────────────────
+  {
+    cat:'ambient',
+    label:'AMBIENT · VICTORIAN LIBRARY',
+    poster:'3 hours of **deep** focus.',
+    body:[
+      'A rain-soaked Victorian library at night. The fire crackles. The gas lamps flicker. Outside, London sleeps.',
+      'Designed for deep work: steady texture, no melodic hooks, long enough to lose yourself in.',
     ],
     pull:'The best ambient recordings don\'t try to be music. They try to be *a place.*',
     specs:[
-      { key:'Channel',   val:'Ambience Archives' },
-      { key:'Duration',  val:'10 hours' },
-      { key:'Views',     val:'21.4M' },
+      { key:'Duration', val:'3 hr 12 min' },
+      { key:'Channel',  val:'Ambient Worlds' },
+      { key:'Type',     val:'Study / Focus' },
     ],
-    img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1600&q=80',
-    videoId:'q76bMs-NwRk',
-    channel:'Ambience Archives',
-    views:'21.4M', dur:'10:00:00', year:'2021',
-    thumb:`https://img.youtube.com/vi/q76bMs-NwRk/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80',
+    videoId:'nMfPqeZjc2c', channel:'Ambient Worlds',
+    views:'18.4M', dur:'3:12:00', year:'2019',
+    thumb:'https://img.youtube.com/vi/nMfPqeZjc2c/mqdefault.jpg',
   },
   {
-    cat:'culture',
-    label:'PHYSICS · TIME AS ILLUSION',
-    poster:'Time does not flow. **It exists.**',
+    cat:'ambient',
+    label:'AMBIENT · JAPANESE CITY RAIN',
+    poster:'Rain on a **Tokyo** roof.',
     body:[
-      'Carlo Rovelli makes the case that past, present, and future are equally real — and that "now" is an illusion peculiar to organisms like us, here, briefly.',
+      'The sound of city rain at night — traffic murmur, distant trains, water on glass.',
+      'Best listened to through headphones at a volume just below audible. Let the city in without inviting the city.',
     ],
-    pull:'*"The present moment does not exist everywhere. Only locally, around us, briefly."*',
     specs:[
-      { key:'Channel',   val:'Closer to Truth' },
-      { key:'Duration',  val:'58 min 12 sec' },
-      { key:'Views',     val:'5.5M' },
+      { key:'Duration', val:'8 hr 00 min' },
+      { key:'Channel',  val:'Relaxation Hub' },
+      { key:'Type',     val:'Sleep / Relax' },
     ],
-    img: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1600&q=80',
-    videoId:'GdTTqBf6Fio',
-    channel:'Closer to Truth',
-    views:'5.5M', dur:'58:12', year:'2022',
-    thumb:`https://img.youtube.com/vi/GdTTqBf6Fio/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&q=80',
+    videoId:'euxhlOIVKqo', channel:'Relaxation Hub',
+    views:'22.1M', dur:'8:00:00', year:'2021',
+    thumb:'https://img.youtube.com/vi/euxhlOIVKqo/mqdefault.jpg',
+  },
+  // ── TECH & BUILD ──────────────────────────────────────
+  {
+    cat:'tech',
+    label:'ENGINEERING · HOW BROWSERS RENDER',
+    poster:'Paint, **layout**, composite.',
+    body:[
+      'The critical rendering path: DOM construction, CSSOM, render tree, layout, paint, composite. Miss any step and you feel it.',
+      'Understanding the browser pipeline is the difference between a UI that feels instant and one that feels like it\'s thinking.',
+    ],
+    specs:[
+      { key:'Channel',  val:'Google Chrome Developers' },
+      { key:'Duration', val:'12 min' },
+      { key:'Topic',    val:'Web Performance' },
+    ],
+    img:'https://images.unsplash.com/photo-1484417894907-623942c8ee29?w=1600&q=80',
+    videoId:'SmE4OwHztCc', channel:'Google Chrome Dev',
+    views:'890K', dur:'12:04', year:'2020',
+    thumb:'https://img.youtube.com/vi/SmE4OwHztCc/mqdefault.jpg',
   },
   {
-    cat:'studio',
-    label:'WOLFIE · INTOVIEW ENGINE',
-    poster:'A sentence-progressive **experience.**',
+    cat:'tech',
+    label:'AI · HOW TRANSFORMERS WORK',
+    poster:'Attention is **all** you need.',
     body:[
-      'intoview.pro is the public demo of the wolfie narrative engine. This dashboard is built on the same mechanics.',
-      'The ethos: the way ideas move should be as good as the ideas themselves.',
+      'The 2017 paper "Attention Is All You Need" proposed a radical simplification: replace recurrence with pure attention mechanisms.',
+      'The transformer architecture it introduced now underlies every major language model. It was not just a new technique — it was a new paradigm.',
     ],
-    pull:'*"The digital should feel as considered as the physical."*',
+    pull:'*Every* technological revolution looks obvious in retrospect. None of them felt obvious at the time.',
     specs:[
-      { key:'Platform',  val:'intoview.pro' },
-      { key:'Engine',    val:'wolfie.love narrative system' },
-      { key:'Status',    val:'Live · Ongoing' },
+      { key:'Channel',  val:'3Blue1Brown' },
+      { key:'Duration', val:'27 min' },
+      { key:'Views',    val:'9.3M' },
     ],
-    img: 'https://images.unsplash.com/photo-1550439062-609e1531270e?w=1600&q=80',
-    videoId:'OpLU__bhu2w',
-    channel:'wolfie.life',
-    views:'—', dur:'—', year:'2024',
-    thumb:`https://img.youtube.com/vi/OpLU__bhu2w/mqdefault.jpg`,
+    img:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1600&q=80',
+    videoId:'wjZofJX0v4M', channel:'3Blue1Brown',
+    views:'9.3M', dur:'26:50', year:'2024',
+    thumb:'https://img.youtube.com/vi/wjZofJX0v4M/mqdefault.jpg',
+  },
+  {
+    cat:'tech',
+    label:'CODE · THE ART OF READABLE CODE',
+    poster:'Code is read more than **written.**',
+    body:[
+      'Robert Martin\'s Clean Code calculates that the ratio of reading to writing is well over 10:1. We read old code to write new code.',
+      'This is not an argument for elaborate documentation. It is an argument for code that explains itself without needing any.',
+    ],
+    specs:[
+      { key:'Channel',  val:'Fireship' },
+      { key:'Duration', val:'11 min' },
+      { key:'Views',    val:'2.8M' },
+    ],
+    img:'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1600&q=80',
+    videoId:'Bf7vDBBOBUA', channel:'Fireship',
+    views:'2.8M', dur:'10:58', year:'2022',
+    thumb:'https://img.youtube.com/vi/Bf7vDBBOBUA/mqdefault.jpg',
   },
 ];
 
-// ── STATE ────────────────────────────────────────────────────────────
-let current = 0;            // index into CARDS
-let cardEls = [];           // array of { el, specGroupEl, catHeaderEl, card, startIdx }
-let imgEls  = [];           // image-layer img elements
-let iframeCache = {};       // videoId → iframe el
-let watchOpen = false;
+// Static data for watched / favorites / playlists
+const WATCHED = [
+  { ci:2, progress:82 },
+  { ci:5, progress:100 },
+  { ci:9, progress:41 },
+  { ci:11,progress:100 },
+  { ci:3, progress:67 },
+];
+const FAVORITES = [4,7,1,10,12];
+const PLAYLISTS = [
+  { name:'Design Thinking',  cards:[0,1,2,4],  icon:'◈' },
+  { name:'Philosophy',       cards:[5,6,7,8],  icon:'◉' },
+  { name:'Deep Focus',       cards:[9,10],     icon:'◎' },
+  { name:'Tech Essentials',  cards:[11,12,13], icon:'◇' },
+];
+const STUDIO_PROJECTS = [
+  { title:'Wolfie Platform Demo',  status:'pub',     meta:'Published · Apr 2024',    img:'' },
+  { title:'Narrative Engine V2',   status:'process', meta:'Processing · 87% done',   img:'' },
+  { title:'User Research Reel',    status:'draft',   meta:'Draft · Last edited 2d ago',img:'' },
+  { title:'Studio Walkthrough',    status:'draft',   meta:'Draft · Last edited 5d ago',img:'' },
+];
 
-// ── INLINE MARKDOWN ─────────────────────────────────────────────────
-function md(text) {
-  return (text||'')
-    .replace(/\*\*(.*?)\*\*/g, '<span class="ac">$1</span>')
-    .replace(/\*(.*?)\*/g, '<span class="em">$1</span>');
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let current      = 0;
+let watchOpen    = false;
+let gridOpen     = false;
+let activeFilter = 'all';
+let activeView   = 'list';  // 'list' | 'grid'
+let activeTab    = 'queue';
+let cardEls      = [];       // { wrap, specGroupEl, ci, card }
+let ghostTarget  = null;
+let ghostTimer   = null;
+
+// ═══════════════════════════════════════════
+//  MARKDOWN INLINE PARSER
+// ═══════════════════════════════════════════
+function md(str) {
+  return str
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="em">$1</strong>')
+    .replace(/\*(.*?)\*/g,     '<em class="em">$1</em>')
+    .replace(/~~(.*?)~~/g,     '<span style="opacity:.45">$1</span>');
 }
 
-// ── BUILD IMAGE LAYER ─────────────────────────────────────────────────
-function buildImageLayer() {
-  const layer = document.getElementById('image-layer');
-  CARDS.forEach((card, i) => {
-    if (!card.img) return;
-    const img = document.createElement('img');
-    img.src = card.img;
-    img.dataset.cardIdx = i;
-    img.alt = '';
-    layer.insertBefore(img, layer.lastElementChild); // before ::after pseudo
-    imgEls[i] = img;
-  });
-}
-
-// ── SWITCH IMAGE ──────────────────────────────────────────────────────
-function switchImage(idx) {
-  imgEls.forEach((img, i) => {
-    img.classList.toggle('visible', i === idx);
-  });
-}
-
-// ── BUILD NARRATIVE ROOT ──────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  BUILD NARRATIVE STREAM
+// ═══════════════════════════════════════════
 function buildNarrative() {
   const root = document.getElementById('narrative-root');
   root.innerHTML = '';
@@ -902,109 +1471,121 @@ function buildNarrative() {
   let lastCat = null;
 
   CARDS.forEach((card, ci) => {
-    // ── Category header on category change ──
+    // Category divider
     if (card.cat !== lastCat) {
-      const catMeta = CATEGORIES.find(c => c.id === card.cat) || { label: card.cat, num: '0?' };
-      const hdr = document.createElement('div');
-      hdr.className = 'cat-header';
-      hdr.dataset.cat = card.cat;
-      hdr.innerHTML = `
-        <div class="cat-num">${catMeta.num}</div>
-        <div class="cat-meta">
-          <div class="cat-rule"></div>
-          <div class="cat-label">${catMeta.label}</div>
-          <div class="cat-title">${card.cat.charAt(0).toUpperCase()+card.cat.slice(1)}</div>
-        </div>`;
-      root.appendChild(hdr);
+      const catMeta = CATEGORIES.find(c => c.id === card.cat);
+      if (catMeta) {
+        const hdr = document.createElement('div');
+        hdr.className = 'cat-header';
+        hdr.dataset.cat = card.cat;
+        hdr.innerHTML = `
+          <div class="cat-num">${catMeta.num}</div>
+          <div class="cat-meta">
+            <div class="cat-rule"></div>
+            <div class="cat-label">${catMeta.label}</div>
+            <div class="cat-title">${catMeta.label}</div>
+          </div>`;
+        root.appendChild(hdr);
+      }
       lastCat = card.cat;
     }
 
-    // ── Card wrapper (for targeting) ──
-    const cardWrap = document.createElement('div');
-    cardWrap.className = 'card-block';
-    cardWrap.dataset.cardIdx = ci;
-    cardWrap.style.cssText = 'padding-bottom:8px;';
+    const wrap = document.createElement('div');
+    wrap.className = 'card-wrap';
+    wrap.dataset.ci = ci;
+    wrap.style.paddingLeft = '26px';
 
-    // ── Label ──
-    const labelEl = document.createElement('span');
-    labelEl.className = 'sentence label';
-    labelEl.innerHTML = md(card.label);
-    cardWrap.appendChild(labelEl);
+    // Label
+    const lbl = document.createElement('span');
+    lbl.className = 'sentence label';
+    lbl.textContent = card.label;
+    wrap.appendChild(lbl);
 
-    // ── Poster ──
-    const posterEl = document.createElement('span');
-    posterEl.className = 'sentence poster';
-    posterEl.innerHTML = md(card.poster);
-    posterEl.addEventListener('click', () => { goToCard(ci); openWatch(); });
-    cardWrap.appendChild(posterEl);
+    // Poster
+    const post = document.createElement('span');
+    post.className = 'sentence poster';
+    post.innerHTML = md(card.poster);
+    post.addEventListener('click', openWatch);
+    wrap.appendChild(post);
 
-    // ── Body sentences ──
-    (card.body || []).forEach(bText => {
-      const bodyEl = document.createElement('span');
-      bodyEl.className = 'sentence body';
-      bodyEl.innerHTML = md(bText);
-      cardWrap.appendChild(bodyEl);
+    // Body sentences
+    (card.body || []).forEach(txt => {
+      const b = document.createElement('span');
+      b.className = 'sentence body';
+      b.innerHTML = md(txt);
+      wrap.appendChild(b);
     });
 
-    // ── Pull ──
+    // Pull quote
     if (card.pull) {
-      const pullEl = document.createElement('span');
-      pullEl.className = 'sentence pull';
-      pullEl.innerHTML = md(card.pull);
-      cardWrap.appendChild(pullEl);
+      const p = document.createElement('span');
+      p.className = 'sentence pull';
+      p.innerHTML = md(card.pull);
+      wrap.appendChild(p);
     }
 
-    // ── Spec group ──
+    // Spec group
     let specGroupEl = null;
     if (card.specs && card.specs.length) {
       specGroupEl = document.createElement('div');
       specGroupEl.className = 'spec-group';
       card.specs.forEach(s => {
-        const specEl = document.createElement('span');
-        specEl.className = 'sentence spec';
-        specEl.innerHTML = `<span class="spec-key">${s.key}</span><span class="spec-val">${md(s.val)}</span>`;
-        specGroupEl.appendChild(specEl);
+        const row = document.createElement('div');
+        row.className = 'sentence spec';
+        row.innerHTML = `<span class="spec-key">${s.key}</span><span class="spec-val">${s.val}</span>`;
+        specGroupEl.appendChild(row);
       });
-      cardWrap.appendChild(specGroupEl);
+      wrap.appendChild(specGroupEl);
     }
 
-    root.appendChild(cardWrap);
-    cardEls.push({ wrap: cardWrap, specGroupEl, card: card, ci });
+    // Break
+    const brk = document.createElement('span');
+    brk.className = 'sentence break';
+    wrap.appendChild(brk);
 
-    // ── Break between cards (except last) ──
-    if (ci < CARDS.length - 1) {
-      const brk = document.createElement('span');
-      brk.className = 'sentence break';
-      root.appendChild(brk);
-    }
-  });
+    root.appendChild(wrap);
+    cardEls.push({ wrap, specGroupEl, ci, card });
 
-  // Wire click on card wraps for navigation
-  cardEls.forEach(({ wrap, ci }) => {
+    // Hover → ghost preview
+    wrap.addEventListener('mouseenter', () => showGhost(ci, wrap));
+    wrap.addEventListener('mouseleave', () => hideGhost());
     wrap.addEventListener('click', (e) => {
       if (!e.target.classList.contains('poster')) goToCard(ci);
     });
   });
 
   document.getElementById('h-total').textContent  = String(CARDS.length).padStart(2,'0');
-  document.getElementById('nw-tot').textContent   = CARDS.length;
+  document.getElementById('nw-tot').textContent    = CARDS.length;
+  document.getElementById('feed-count').textContent= CARDS.length + ' items';
 
-  buildPanelFeed();
+  buildPanelQueue();
   buildImageLayer();
+  buildWatched();
+  buildFavorites();
+  buildPlaylists();
+  buildStudio();
+  buildGridOverlay();
   goToCard(0, true);
 }
 
-// ── SENTENCE STATE APPLICATION ────────────────────────────────────────
-// For each card: past | active | revealed | (none=opacity .08)
+// ═══════════════════════════════════════════
+//  SENTENCE STATES
+// ═══════════════════════════════════════════
 function applyStates(idx) {
+  // Filter: which cards are visible?
+  const visible = getVisibleIndices();
+
   cardEls.forEach(({ wrap, specGroupEl, ci }) => {
+    const isVisible = visible.includes(ci);
+    wrap.style.display = isVisible ? '' : 'none';
+
     const sentences = wrap.querySelectorAll('.sentence:not(.spec)');
     const sg = specGroupEl;
     let state;
-    if (ci < idx)      state = 'past';
-    else if (ci === idx) state = 'active';
-    else if (ci < idx + 3) state = 'revealed'; // peek at next few
-    else                 state = '';
+    if (ci < idx)         state = 'past';
+    else if (ci === idx)  state = 'active';
+    else if (ci < idx+3)  state = 'revealed';
+    else                  state = '';
 
     sentences.forEach(el => {
       el.classList.remove('active','past','revealed');
@@ -1016,156 +1597,499 @@ function applyStates(idx) {
     }
   });
 
-  // Category headers — reveal if any card in that cat has been visited
+  // Category headers
   document.querySelectorAll('.cat-header').forEach(hdr => {
     const cat = hdr.dataset.cat;
     const firstInCat = cardEls.findIndex(c => c.card.cat === cat);
     hdr.classList.remove('active','past','revealed');
-    if (firstInCat < idx)       hdr.classList.add('past');
+    if (firstInCat < idx)        hdr.classList.add('past');
     else if (firstInCat === idx) hdr.classList.add('active');
     else if (firstInCat < idx+3) hdr.classList.add('revealed');
+
+    // Show/hide cat header based on filter
+    const catVisible = activeFilter === 'all' || activeFilter === cat;
+    hdr.style.display = catVisible ? '' : 'none';
   });
 
-  // Progress bar
+  // Progress
   const pct = CARDS.length > 1 ? (idx / (CARDS.length - 1)) * 100 : 0;
-  document.getElementById('progress').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('progress').style.width = Math.min(pct,100) + '%';
 
-  // Header
-  document.querySelector('#h-card-num strong').textContent = String(idx+1).padStart(2,'0');
+  // Header counter
+  document.querySelector('#h-cur').textContent = String(idx+1).padStart(2,'0');
   const catMeta = CATEGORIES.find(c => c.id === CARDS[idx].cat);
-  document.getElementById('h-cat-label').textContent = catMeta ? catMeta.label : CARDS[idx].cat;
-
   // HUD
   document.getElementById('nw-cur').textContent = idx + 1;
 }
 
-// ── SCROLL CARD INTO VIEW ────────────────────────────────────────────
-function scrollToCard(idx, instant) {
-  const { wrap } = cardEls[idx];
-  if (!wrap) return;
-  wrap.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block: 'center' });
+// ═══════════════════════════════════════════
+//  FILTER
+// ═══════════════════════════════════════════
+function getVisibleIndices() {
+  if (activeFilter === 'all') return CARDS.map((_,i) => i);
+  return CARDS.map((_,i) => i).filter(i => CARDS[i].cat === activeFilter);
 }
 
-// ── PANEL FEED UPDATE ────────────────────────────────────────────────
-function updatePanelFeed(idx) {
-  document.querySelectorAll('.pf-card').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
-  });
-  // Scroll active into view in panel feed
-  const activeCard = document.querySelector(`.pf-card[data-ci="${idx}"]`);
-  if (activeCard) activeCard.scrollIntoView({ behavior:'smooth', block:'nearest' });
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  // Jump to first visible card
+  const vis = getVisibleIndices();
+  if (vis.length) {
+    const target = vis.includes(current) ? current : vis[0];
+    goToCard(target);
+  }
+  applyStates(current);
 }
 
-// ── UPDATE PANEL META ────────────────────────────────────────────────
-function updatePanelMeta(card) {
-  document.getElementById('pm-title').textContent    = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-  document.getElementById('pm-channel').textContent  = card.channel || '—';
-  document.getElementById('ps-views').textContent    = card.views   || '—';
-  document.getElementById('ps-dur').textContent      = card.dur ? card.dur.split(':').slice(0,2).join(':') : '—';
-  document.getElementById('ps-year').textContent     = card.year    || '—';
-
-  // Load iframe into panel (not autoplay)
-  loadPanelVideo(card.videoId, false);
+// ═══════════════════════════════════════════
+//  VIEW TOGGLE
+// ═══════════════════════════════════════════
+function setView(v) {
+  activeView = v;
+  const scroll = document.getElementById('pf-scroll');
+  const list   = document.getElementById('pf-list');
+  const grid   = document.getElementById('pf-grid');
+  document.getElementById('vt-list').classList.toggle('active', v === 'list');
+  document.getElementById('vt-grid').classList.toggle('active', v === 'grid');
+  if (v === 'list') {
+    scroll.classList.add('pf-list-view');
+    scroll.classList.remove('pf-grid-view');
+    list.style.display = '';
+    grid.style.display = 'none';
+  } else {
+    scroll.classList.remove('pf-list-view');
+    scroll.classList.add('pf-grid-view');
+    list.style.display = 'none';
+    grid.style.display = 'grid';
+  }
+  updateQueueActive(current);
 }
 
-// ── PANEL VIDEO LOADING ─────────────────────────────────────────────
-let currentPanelVideoId = null;
-function loadPanelVideo(videoId, autoplay) {
-  if (!videoId) return;
-  const container = document.getElementById('panel-video');
-  const placeholder = document.getElementById('video-placeholder');
-
-  // Remove old iframes
-  container.querySelectorAll('iframe').forEach(f => f.remove());
-
-  const src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0${autoplay?'&autoplay=1':''}`;
-  const frame = document.createElement('iframe');
-  frame.src = src;
-  frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-  frame.allowFullscreen = true;
-  frame.setAttribute('frameborder','0');
-  frame.onload = () => {
-    frame.classList.add('loaded');
-    placeholder.classList.add('hidden');
-  };
-  container.appendChild(frame);
-  currentPanelVideoId = videoId;
+// ═══════════════════════════════════════════
+//  PANEL TABS
+// ═══════════════════════════════════════════
+function setTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector(`.tab-body[data-body="${tab}"]`).classList.add('active');
 }
 
-// ── GO TO CARD ───────────────────────────────────────────────────────
-function goToCard(idx, instant) {
-  idx = Math.max(0, Math.min(CARDS.length - 1, idx));
-  current = idx;
-  const card = CARDS[idx];
+function openStudio() { setTab('studio', document.querySelector('.panel-tab[data-tab="studio"]')); }
 
-  applyStates(idx);
-  scrollToCard(idx, instant);
-  updatePanelFeed(idx);
-  updatePanelMeta(card);
-  switchImage(idx);
-}
-
-function prevCard() { goToCard(current - 1); }
-function nextCard() { goToCard(current + 1); }
-
-// ── BUILD PANEL FEED ─────────────────────────────────────────────────
-function buildPanelFeed() {
+// ═══════════════════════════════════════════
+//  BUILD PANEL QUEUE (list + grid)
+// ═══════════════════════════════════════════
+function buildPanelQueue() {
   const list = document.getElementById('pf-list');
+  const grid = document.getElementById('pf-grid');
   list.innerHTML = '';
+  grid.innerHTML = '';
+
   CARDS.forEach((card, ci) => {
-    const el = document.createElement('div');
-    el.className = 'pf-card';
-    el.dataset.ci = ci;
+    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
     const catMeta = CATEGORIES.find(c => c.id === card.cat);
-    el.innerHTML = `
+
+    // — LIST item —
+    const li = document.createElement('div');
+    li.className = 'pf-card-list'; li.dataset.ci = ci;
+    li.innerHTML = `
       <div class="pf-thumb">
         <img src="${card.thumb}" loading="lazy" alt="">
         <div class="pf-thumb-dur">${card.dur||'—'}</div>
       </div>
       <div class="pf-info">
-        <div class="pf-title">${card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1')}</div>
+        <div class="pf-title">${titleClean}</div>
         <div class="pf-meta">${card.channel||'—'} · ${card.year||'—'}</div>
         <div class="pf-cat">${catMeta ? catMeta.label : card.cat}</div>
+      </div>`;
+    li.addEventListener('click', () => goToCard(ci));
+    li.addEventListener('mouseenter', () => showGhost(ci, li));
+    li.addEventListener('mouseleave', () => hideGhost());
+    list.appendChild(li);
+
+    // — GRID item —
+    const gi = document.createElement('div');
+    gi.className = 'pf-card-grid'; gi.dataset.ci = ci;
+    gi.innerHTML = `
+      <div class="pf-grid-thumb">
+        <img src="${card.thumb}" loading="lazy" alt="">
+        <div class="pf-grid-thumb-dur">${card.dur||'—'}</div>
       </div>
+      <div class="pf-grid-info">
+        <div class="pf-grid-title">${titleClean}</div>
+        <div class="pf-grid-meta">${card.channel||'—'}</div>
+      </div>`;
+    gi.addEventListener('click', () => goToCard(ci));
+    gi.addEventListener('mouseenter', () => showGhost(ci, gi));
+    gi.addEventListener('mouseleave', () => hideGhost());
+    grid.appendChild(gi);
+  });
+
+  grid.style.display = 'none';
+}
+
+function updateQueueActive(idx) {
+  document.querySelectorAll('.pf-card-list').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
+  });
+  document.querySelectorAll('.pf-card-grid').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
+  });
+  // Scroll list active into view
+  const activeEl = document.querySelector(`.pf-card-list.active, .pf-card-grid.active`);
+  if (activeEl) activeEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ═══════════════════════════════════════════
+//  BUILD WATCHED TAB
+// ═══════════════════════════════════════════
+function buildWatched() {
+  const list = document.getElementById('watched-list');
+  list.innerHTML = '';
+  WATCHED.forEach(({ ci, progress }) => {
+    if (ci >= CARDS.length) return;
+    const card = CARDS[ci];
+    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    const el = document.createElement('div');
+    el.className = 'rw-item';
+    el.innerHTML = `
+      <div class="rw-thumb">
+        <img src="${card.thumb}" loading="lazy" alt="">
+        <div class="rw-progress" style="width:${progress}%"></div>
+      </div>
+      <div class="rw-info">
+        <div class="rw-title">${titleClean}</div>
+        <div class="rw-sub">${card.channel} · ${card.dur}</div>
+      </div>
+      ${progress === 100 ? '<div class="rw-badge">Done</div>' : `<div class="rw-badge" style="background:var(--accent-l);color:var(--accent)">${progress}%</div>`}
     `;
     el.addEventListener('click', () => goToCard(ci));
     list.appendChild(el);
   });
 }
 
-// ── WATCH OVERLAY ────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  BUILD FAVORITES TAB
+// ═══════════════════════════════════════════
+function buildFavorites() {
+  const list = document.getElementById('favs-list');
+  list.innerHTML = '';
+  FAVORITES.forEach(ci => {
+    if (ci >= CARDS.length) return;
+    const card = CARDS[ci];
+    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    const el = document.createElement('div');
+    el.className = 'fav-item';
+    el.innerHTML = `
+      <div class="fav-star">★</div>
+      <div class="fav-info">
+        <div class="fav-title">${titleClean}</div>
+        <div class="fav-sub">${card.channel} · ${card.dur}</div>
+      </div>`;
+    el.addEventListener('click', () => goToCard(ci));
+    list.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  BUILD PLAYLISTS TAB
+// ═══════════════════════════════════════════
+function buildPlaylists() {
+  const list = document.getElementById('plists-list');
+  list.innerHTML = '';
+  PLAYLISTS.forEach(pl => {
+    const el = document.createElement('div');
+    el.className = 'pl-item';
+    const thumbs = pl.cards.slice(0,4).map(ci => {
+      const card = CARDS[ci] || {};
+      return `<div class="pl-mini-thumb"><img src="${card.thumb||''}" loading="lazy" alt=""></div>`;
+    }).join('');
+    el.innerHTML = `
+      <div class="pl-header">
+        <div class="pl-icon">${pl.icon}</div>
+        <div class="pl-name">${pl.name}</div>
+        <div class="pl-count">${pl.cards.length} items</div>
+      </div>
+      <div class="pl-thumbs">${thumbs}</div>`;
+    el.addEventListener('click', () => { if(pl.cards.length) goToCard(pl.cards[0]); });
+    list.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  BUILD STUDIO TAB
+// ═══════════════════════════════════════════
+function buildStudio() {
+  const list = document.getElementById('studio-projects');
+  list.innerHTML = '';
+  STUDIO_PROJECTS.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'studio-project';
+    el.innerHTML = `
+      <div class="sp-thumb">
+        <div class="sp-thumb-label">◈</div>
+      </div>
+      <div class="sp-info">
+        <div class="sp-title">${p.title}</div>
+        <div class="sp-meta">${p.meta}</div>
+      </div>
+      <div class="sp-status ${p.status}">${p.status === 'pub' ? 'Live' : p.status === 'process' ? 'Processing' : 'Draft'}</div>`;
+    list.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  BUILD GRID OVERLAY
+// ═══════════════════════════════════════════
+function buildGridOverlay() {
+  const grid = document.getElementById('go-grid');
+  const sub  = document.getElementById('go-sub');
+  grid.innerHTML = '';
+  sub.textContent = CARDS.length + ' items';
+
+  CARDS.forEach((card, ci) => {
+    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    const catMeta = CATEGORIES.find(c => c.id === card.cat);
+    const el = document.createElement('div');
+    el.className = 'go-card'; el.dataset.ci = ci;
+    el.innerHTML = `
+      <div class="go-thumb">
+        <img src="${card.thumb}" loading="lazy" alt="">
+        <div class="go-dur"><span>${card.dur||'—'}</span></div>
+      </div>
+      <div class="go-info">
+        <div class="go-cat">${catMeta ? catMeta.label : card.cat}</div>
+        <div class="go-card-title">${titleClean}</div>
+        <div class="go-channel">${card.channel||'—'}</div>
+      </div>`;
+    el.addEventListener('click', () => {
+      goToCard(ci);
+      toggleGridOverlay();
+    });
+    el.addEventListener('mouseenter', () => showGhost(ci, el));
+    el.addEventListener('mouseleave', () => hideGhost());
+    grid.appendChild(el);
+  });
+}
+
+function updateGridOverlayActive(idx) {
+  document.querySelectorAll('.go-card').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  GHOST PREVIEW
+// ═══════════════════════════════════════════
+function showGhost(ci, anchorEl) {
+  clearTimeout(ghostTimer);
+  const card = CARDS[ci];
+  if (!card) return;
+
+  ghostTimer = setTimeout(() => {
+    const ghost = document.getElementById('ghost-preview');
+    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+    document.getElementById('gp-img').src       = card.thumb || '';
+    document.getElementById('gp-dur').textContent = card.dur || '—';
+    document.getElementById('gp-title').textContent   = titleClean;
+    document.getElementById('gp-channel').textContent = card.channel || '—';
+    document.getElementById('gp-views').textContent   = card.views || '—';
+    document.getElementById('gp-len').textContent     = card.dur || '—';
+    document.getElementById('gp-year').textContent    = card.year || '—';
+
+    // Position near anchor
+    const rect = anchorEl.getBoundingClientRect();
+    let left = rect.left - 214;
+    let top  = rect.top;
+    if (left < 8) left = rect.right + 8;
+    if (top + 160 > window.innerHeight) top = window.innerHeight - 168;
+    ghost.style.left = left + 'px';
+    ghost.style.top  = top + 'px';
+    ghost.classList.add('visible');
+    ghostTarget = ci;
+  }, 320);
+}
+
+function hideGhost() {
+  clearTimeout(ghostTimer);
+  document.getElementById('ghost-preview').classList.remove('visible');
+  ghostTarget = null;
+}
+
+// ═══════════════════════════════════════════
+//  IMAGE LAYER
+// ═══════════════════════════════════════════
+function buildImageLayer() {
+  const layer = document.getElementById('image-layer');
+  layer.innerHTML = '';
+  CARDS.forEach((card, ci) => {
+    const img = document.createElement('img');
+    img.src = card.img || '';
+    img.dataset.cardIdx = ci;
+    img.loading = ci === 0 ? 'eager' : 'lazy';
+    layer.appendChild(img);
+  });
+}
+
+function switchImage(idx) {
+  document.querySelectorAll('#image-layer img').forEach((img, i) => {
+    img.classList.toggle('visible', i === idx);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  PANEL META + VIDEO
+// ═══════════════════════════════════════════
+function updatePanelMeta(card) {
+  const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+  document.getElementById('pm-title').textContent   = titleClean;
+  document.getElementById('pm-channel').textContent = card.channel || '—';
+  document.getElementById('ps-views').textContent   = card.views   || '—';
+  document.getElementById('ps-dur').textContent     = card.dur ? card.dur.split(':').slice(0,2).join(':') : '—';
+  document.getElementById('ps-year').textContent    = card.year    || '—';
+  loadPanelVideo(card.videoId, false);
+}
+
+let currentPanelVideoId = null;
+function loadPanelVideo(videoId, autoplay) {
+  if (!videoId) return;
+  const container   = document.getElementById('panel-video');
+  const placeholder = document.getElementById('video-placeholder');
+  container.querySelectorAll('iframe').forEach(f => f.remove());
+  const src   = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0${autoplay?'&autoplay=1':''}`;
+  const frame = document.createElement('iframe');
+  frame.src   = src;
+  frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  frame.allowFullscreen = true;
+  frame.setAttribute('frameborder','0');
+  frame.onload = () => { frame.classList.add('loaded'); placeholder.classList.add('hidden'); };
+  container.appendChild(frame);
+  currentPanelVideoId = videoId;
+}
+
+// ═══════════════════════════════════════════
+//  GO TO CARD
+// ═══════════════════════════════════════════
+function goToCard(idx, instant) {
+  idx = Math.max(0, Math.min(CARDS.length - 1, idx));
+  current = idx;
+  applyStates(idx);
+  scrollToCard(idx, instant);
+  updateQueueActive(idx);
+  updateGridOverlayActive(idx);
+  updatePanelMeta(CARDS[idx]);
+  switchImage(idx);
+}
+
+function scrollToCard(idx, instant) {
+  const { wrap } = cardEls[idx];
+  if (!wrap) return;
+  wrap.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block:'center' });
+}
+
+function prevCard() {
+  const vis = getVisibleIndices();
+  const pos = vis.indexOf(current);
+  if (pos > 0) goToCard(vis[pos - 1]);
+}
+function nextCard() {
+  const vis = getVisibleIndices();
+  const pos = vis.indexOf(current);
+  if (pos < vis.length - 1) goToCard(vis[pos + 1]);
+}
+
+// ═══════════════════════════════════════════
+//  GRID OVERLAY TOGGLE
+// ═══════════════════════════════════════════
+function toggleGridOverlay() {
+  gridOpen = !gridOpen;
+  document.getElementById('grid-overlay').classList.toggle('open', gridOpen);
+  document.getElementById('hud-grid-btn').classList.toggle('active', gridOpen);
+  if (gridOpen) updateGridOverlayActive(current);
+}
+
+// ═══════════════════════════════════════════
+//  WATCH OVERLAY
+// ═══════════════════════════════════════════
 function openWatch() {
   const card = CARDS[current];
   if (!card || !card.videoId) return;
-  const ov = document.getElementById('watch-overlay');
-  const fr = document.getElementById('watch-frame');
-  document.getElementById('wo-title').textContent = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-  fr.src = `https://www.youtube.com/embed/${card.videoId}?autoplay=1&rel=0`;
-  ov.classList.add('open');
+  const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+  document.getElementById('wo-title').textContent = titleClean;
+  document.getElementById('watch-frame').src =
+    `https://www.youtube.com/embed/${card.videoId}?autoplay=1&rel=0`;
+  document.getElementById('watch-overlay').classList.add('open');
   watchOpen = true;
 }
 function closeWatch() {
-  const ov = document.getElementById('watch-overlay');
-  const fr = document.getElementById('watch-frame');
-  fr.src = '';
-  ov.classList.remove('open');
+  document.getElementById('watch-frame').src = '';
+  document.getElementById('watch-overlay').classList.remove('open');
   watchOpen = false;
 }
 
-// ── CURSOR ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  STUDIO DRAG & DROP
+// ═══════════════════════════════════════════
+function handleStudioDrop(e) {
+  e.preventDefault();
+  const zone = document.getElementById('studio-zone');
+  zone.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    zone.innerHTML = `
+      <div class="suz-icon" style="color:var(--accent)">✓</div>
+      <div class="suz-label" style="color:var(--ink)">${files.length} file${files.length>1?'s':''} ready</div>
+      <div class="suz-sub">${Array.from(files).map(f=>f.name).join(', ').slice(0,60)}…</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) {
+    cardEls.forEach(({wrap}) => wrap.style.display = '');
+    return;
+  }
+  cardEls.forEach(({wrap, card}) => {
+    const text = (card.poster + ' ' + card.label + ' ' + (card.body||[]).join(' ') + ' ' + card.channel).toLowerCase();
+    wrap.style.display = text.includes(q) ? '' : 'none';
+  });
+});
+
+// ═══════════════════════════════════════════
+//  CURSOR
+// ═══════════════════════════════════════════
 document.addEventListener('mousemove', e => {
   const cur = document.getElementById('cursor');
   cur.style.left = e.clientX + 'px';
   cur.style.top  = e.clientY + 'px';
   const t = e.target;
   cur.className = '';
-  if (t.classList.contains('poster') || t.closest('#panel-video')) cur.classList.add('watch');
-  else if (t.tagName === 'BUTTON' || t.classList.contains('pf-card') || t.classList.contains('h-btn')) cur.classList.add('big');
+  if (t.classList.contains('poster') || t.closest('#panel-video'))
+    cur.classList.add('watch');
+  else if (t.closest('#studio-zone') || t.closest('.upload-card'))
+    cur.classList.add('upload');
+  else if (t.tagName === 'BUTTON' || t.classList.contains('pf-card-list') ||
+           t.classList.contains('pf-card-grid') || t.classList.contains('h-pill') ||
+           t.closest('.go-card') || t.closest('.rw-item') || t.closest('.fav-item'))
+    cur.classList.add('big');
 });
 
-// ── KEYBOARD ─────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (gridOpen) {
+    if (e.key === 'Escape' || e.key === 'g' || e.key === 'G') { e.preventDefault(); toggleGridOverlay(); }
+    return;
+  }
   if (watchOpen) {
     if (e.key === 'Escape') { e.preventDefault(); closeWatch(); }
     return;
@@ -1174,33 +2098,36 @@ document.addEventListener('keydown', e => {
     case 'ArrowDown': case 'j': case ' ': e.preventDefault(); nextCard(); break;
     case 'ArrowUp':   case 'k':           e.preventDefault(); prevCard(); break;
     case 'Enter':                          e.preventDefault(); openWatch(); break;
+    case 'g': case 'G':                   e.preventDefault(); toggleGridOverlay(); break;
     case 'Escape':                         closeWatch(); break;
   }
 });
 
-// ── WHEEL (throttled) ───────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  WHEEL + TOUCH
+// ═══════════════════════════════════════════
 let wheelLock = false;
 document.getElementById('stream-col').addEventListener('wheel', e => {
   e.preventDefault();
   if (wheelLock) return;
   wheelLock = true;
-  setTimeout(() => { wheelLock = false; }, 300);
+  setTimeout(() => { wheelLock = false; }, 280);
   if (e.deltaY > 0) nextCard(); else prevCard();
-}, { passive: false });
+}, { passive:false });
 
-// ── TOUCH ────────────────────────────────────────────────────────────
 let touchY0 = 0;
 document.getElementById('stream-col').addEventListener('touchstart', e => {
   touchY0 = e.touches[0].clientY;
-}, { passive: true });
+}, { passive:true });
 document.getElementById('stream-col').addEventListener('touchend', e => {
   const dy = touchY0 - e.changedTouches[0].clientY;
   if (Math.abs(dy) > 30) { if (dy > 0) nextCard(); else prevCard(); }
-}, { passive: true });
+}, { passive:true });
 
-// ── INIT ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
 buildNarrative();
 </script>
-
 </body>
 </html>
