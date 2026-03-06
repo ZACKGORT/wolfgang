@@ -2,2132 +2,1498 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>wolfie.life · media</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>N · Narrative Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════════════
-   WOLFIE.LIFE · MEDIA DASHBOARD v2
-   Narrative engine mechanics · intoview ethos
-   ─ card-by-card navigation
-   ─ atmospheric image layer
-   ─ right rail: tabbed utility panel
-   ─ HUD: grid overlay + nav widget
-═══════════════════════════════════════════════════════════════ */
-
-:root {
-  --bg:        #07060a;
-  --ink:       #f0ece4;
-  --ink-2:     #8a8070;
-  --ink-3:     #3a3028;
-  --accent:    #c8902a;
-  --accent-l:  rgba(200,144,42,0.10);
-  --accent-m:  rgba(200,144,42,0.22);
-  --border:    rgba(255,255,255,0.06);
-  --border-2:  rgba(255,255,255,0.11);
-  --ui:        'Space Mono', monospace;
-  --disp:      'Barlow Condensed', sans-serif;
-  --panel-w:   480px;
-  --header-h:  52px;
-  --filter-h:  42px;
+:root{
+  --bg:#07070a; --surf:#0e0e12;
+  --ink:#eceae1; --ink2:#8a8278; --ink3:#3a3530;
+  --red:#e50914; --grn:#5cb85c;
+  --bdr:rgba(255,255,255,.072); --bdrhi:rgba(255,255,255,.14);
+  --serif:'Playfair Display',Georgia,serif;
+  --mono:'DM Mono',monospace;
+  /* category ambiance — updated by JS */
+  --cat-h:0; --cat-s:80%; --cat-l:48%;
+  --cat-rgb:229,9,20;
+  --cat-color:hsl(var(--cat-h),var(--cat-s),var(--cat-l));
 }
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-html, body {
-  width:100%; height:100%;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--ui);
-  overflow: hidden;
-  cursor: none;
+/* ── CATEGORY PULSE ── */
+@keyframes catPulse{
+  0%{opacity:0;transform:scale(.96)}
+  30%{opacity:.18}
+  100%{opacity:0;transform:scale(1.04)}
 }
+#catpulse{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 24% 50%,rgba(var(--cat-rgb),.22),transparent 72%);
+  opacity:0}
+#catpulse.pulse{animation:catPulse .72s cubic-bezier(.22,1,.36,1) forwards}
 
-/* ── GRAIN ── */
-body::after {
-  content:'';
-  position:fixed; inset:0;
-  pointer-events:none; z-index:900;
-  opacity:.045;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px;
-  pointer-events:none;
-}
+/* ── AMBIANCE TINT LAYER ── */
+#ambi{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 70% 50% at 24% 82%,rgba(var(--cat-rgb),.08),transparent 68%);
+  transition:background 1.4s ease}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:var(--mono);overflow:hidden;cursor:none}
+body::after{content:'';position:fixed;inset:0;z-index:900;pointer-events:none;opacity:.03;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px}
 
 /* ── CURSOR ── */
-#cursor {
-  position:fixed; width:9px; height:9px;
-  background:var(--accent); border-radius:50%;
-  pointer-events:none; z-index:9999;
-  left:-20px; top:-20px;
-  transform:translate(-50%,-50%);
-  transition:width .14s, height .14s, background .3s, border-radius .14s, opacity .2s;
-  mix-blend-mode:screen;
-}
-#cursor.big   { width:34px; height:34px; opacity:.28; }
-#cursor.watch { width:38px; height:38px; border-radius:4px; opacity:.4; }
-#cursor.upload{ width:44px; height:44px; border-radius:50%; opacity:.5; background:#5b9bd5; }
+#cur{position:fixed;z-index:9999;pointer-events:none;left:-20px;top:-20px;transform:translate(-50%,-50%)}
+.cd{width:7px;height:7px;border-radius:50%;background:var(--cat-color);transition:all .14s,background .6s;mix-blend-mode:screen}
+#cur.hov .cd{width:22px;height:22px;opacity:.2}
+#cur.int .cd{width:16px;height:16px;opacity:.32;background:var(--ink)}
+#cur.ply .cd{width:28px;height:28px;border-radius:3px;opacity:.34}
 
-/* ── IMAGE LAYER ── */
-#image-layer {
-  position:fixed; inset:0; z-index:1; overflow:hidden;
-  pointer-events:none;
-}
-#image-layer img {
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; object-position:center 35%;
-  opacity:0; transform:scale(1.035);
-  transition:opacity .7s ease, transform 9s ease;
-  will-change:opacity, transform;
-}
-#image-layer img.visible { opacity:.30; transform:scale(1); }
-#image-layer::after {
-  content:''; position:absolute; inset:0; z-index:2;
-  pointer-events:none;
-  background:
-    linear-gradient(to right, rgba(7,6,10,.97) 0%, rgba(7,6,10,.74) 44%, rgba(7,6,10,.08) 100%),
-    linear-gradient(to bottom, rgba(7,6,10,.65) 0%, transparent 28%, transparent 72%, rgba(7,6,10,.65) 100%);
-}
+/* ── BACKDROP ── */
+#bd{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+#bd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:0;transform:scale(1.04);transition:opacity 1.1s,transform 14s}
+#bd img.on{opacity:.15;transform:scale(1)}
+#bd::after{content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to right,rgba(7,7,10,1) 0%,rgba(7,7,10,.97) 28%,rgba(7,7,10,.55) 52%,rgba(7,7,10,.05) 100%),
+             linear-gradient(to bottom,rgba(7,7,10,.82) 0%,transparent 20%,transparent 78%,rgba(7,7,10,.92) 100%)}
 
-/* ── PROGRESS BAR ── */
-#progress {
-  position:fixed; bottom:0; left:0; height:2px;
-  background:var(--accent); z-index:800; width:0%;
-  transition:width .35s ease;
-  right:var(--panel-w);
-}
+/* ── HEADER ── */
+#hdr{position:fixed;top:0;left:0;right:0;height:52px;z-index:200;
+  display:flex;align-items:center;padding:0 0 0 22px;
+  background:rgba(5,5,8,.97);backdrop-filter:blur(28px) saturate(1.6);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  box-shadow:0 1px 0 rgba(var(--cat-rgb),.12),0 4px 32px rgba(0,0,0,.6)}
+.hm{font-family:var(--serif);font-weight:900;font-size:24px;color:var(--cat-color);letter-spacing:-.04em;
+  text-shadow:0 0 28px rgba(var(--cat-rgb),.5);user-select:none;padding-right:18px;flex-shrink:0;
+  transition:color .6s,text-shadow .6s}
+.hs{width:1px;height:16px;background:rgba(255,255,255,.18);flex-shrink:0}
+.hl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.38);font-style:italic;padding:0 18px}
+.hr{display:flex;align-items:center;gap:16px;padding:0 20px;margin-left:auto;border-left:1px solid rgba(255,255,255,.1)}
+.hp{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.45);white-space:nowrap}
+.hp b{color:var(--ink);font-weight:400}
+.hbtn{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--cat-color);border:none;color:#fff;padding:8px 24px;border-radius:2px;cursor:none;flex-shrink:0;
+  transition:background .6s,box-shadow .6s,transform .14s}
+.hbtn:hover{filter:brightness(1.15);box-shadow:0 0 28px rgba(var(--cat-rgb),.4);transform:translateY(-1px)}
 
-/* ── LAYOUT SHELL ── */
-#shell {
-  position:relative; z-index:10;
-  display:grid;
-  grid-template-columns:1fr var(--panel-w);
-  grid-template-rows:var(--header-h) var(--filter-h) 1fr;
-  height:100vh;
-}
+/* ── CATEGORY BAR ── */
+#cbar{position:fixed;top:52px;left:0;width:47vw;height:46px;z-index:190;
+  display:flex;align-items:stretch;
+  background:rgba(5,5,8,.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.09);border-right:1px solid rgba(255,255,255,.06)}
+.cbtn{flex:1;position:relative;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.17em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);background:none;border:none;border-right:1px solid var(--bdr);
+  cursor:none;transition:color .18s,background .18s;padding:0 4px}
+.cbtn:last-of-type{border-right:none}
+.cbtn:hover{color:rgba(255,255,255,.65);background:rgba(255,255,255,.028)}
+.cbtn.on{color:rgba(255,255,255,.9)}
+.cbtn.on::after{content:'';position:absolute;bottom:0;left:8%;right:8%;height:2px;
+  background:var(--cat-color);border-radius:1px 1px 0 0;transition:background .6s}
+.cnum{font-family:var(--serif);font-weight:900;font-size:11px;opacity:.4;transition:opacity .2s,color .2s}
+.cbtn.on .cnum{color:var(--cat-color);opacity:.9;transition:color .6s,opacity .2s}
+#gtog{width:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  border-left:1px solid var(--bdr);background:none;border-top:none;border-right:none;border-bottom:none;cursor:none;transition:all .18s}
+#gtog svg{opacity:.35;transition:opacity .2s,stroke .6s}
+#gtog:hover svg{opacity:.75}
+#gtog.on{background:rgba(var(--cat-rgb),.1)}
+#gtog.on svg{opacity:1;stroke:var(--cat-color)}
 
-/* ══════════════════════════════════════════
-   HEADER
-══════════════════════════════════════════ */
-header {
-  grid-column:1/-1; grid-row:1;
-  height:var(--header-h);
-  display:flex; align-items:center;
-  padding:0 24px 0 22px;
-  border-bottom:1px solid var(--border);
-  background:rgba(7,6,10,.90);
-  backdrop-filter:blur(22px);
-  position:sticky; top:0; z-index:200;
-  gap:0;
-}
-.h-logo {
-  font-family:var(--disp); font-weight:900; font-size:17px;
-  letter-spacing:.04em; text-transform:uppercase; color:var(--ink);
-  user-select:none; flex-shrink:0;
-}
-.h-logo em { font-style:normal; color:var(--accent); }
-.h-sep { width:1px; height:18px; background:var(--border-2); margin:0 16px; flex-shrink:0; }
-.h-tagline {
-  font-family:var(--ui); font-size:7px; letter-spacing:.16em;
-  color:var(--ink-3); flex-shrink:0;
-}
+/* ── GHOST SCROLL INDICATOR (shared) ── */
+.gscroll-wrap{position:absolute;top:0;right:0;bottom:0;width:3px;pointer-events:none;z-index:50}
+.gscroll-track{position:absolute;inset:0;background:rgba(255,255,255,.04);border-radius:2px}
+.gscroll-thumb{position:absolute;right:0;width:3px;border-radius:2px;
+  background:var(--cat-color);min-height:14px;
+  transition:top .14s ease,height .14s ease,background .6s}
 
-/* Search bar in header */
-.h-search {
-  margin-left:18px;
-  display:flex; align-items:center; gap:8px;
-  background:rgba(255,255,255,.04); border:1px solid var(--border);
-  border-radius:3px; padding:0 10px;
-  height:28px; width:180px;
-  transition:border-color .2s, background .2s, width .3s;
-}
-.h-search:focus-within {
-  border-color:var(--accent); background:rgba(200,144,42,.05);
-  width:240px;
-}
-.h-search-icon { font-size:10px; color:var(--ink-3); flex-shrink:0; }
-.h-search input {
-  background:none; border:none; outline:none;
-  font-family:var(--ui); font-size:8px; letter-spacing:.06em;
-  color:var(--ink); width:100%; cursor:none;
-}
-.h-search input::placeholder { color:var(--ink-3); }
+/* ── CAT GHOST ── */
+.cghost{position:fixed;z-index:600;width:272px;pointer-events:none;
+  opacity:0;transform:translateY(6px) scale(.97);transition:opacity .2s,transform .2s}
+.cghost.on{opacity:1;transform:none}
+.cgc{background:rgba(8,8,12,.97);border:1px solid var(--bdrhi);border-radius:4px;
+  box-shadow:0 14px 52px rgba(0,0,0,.82),0 0 0 1px rgba(var(--cat-rgb),.06);
+  backdrop-filter:blur(26px);overflow:hidden;position:relative}
+/* cghost scroll container */
+.cgscroll{max-height:400px;overflow-y:auto;scrollbar-width:none;position:relative}
+.cgscroll::-webkit-scrollbar{display:none}
+.cgstrip{display:flex;height:54px;gap:1px;overflow:hidden}
+.cgsc{flex:1;overflow:hidden}
+.cgsc img{width:100%;height:100%;object-fit:cover;opacity:.58}
+.cgbody{padding:13px 15px 12px}
+.cgmood{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--cat-color);margin-bottom:6px;transition:color .6s}
+.cgname{font-family:var(--serif);font-weight:900;font-size:20px;letter-spacing:-.03em;color:var(--ink);margin-bottom:5px;line-height:1}
+.cgdesc{font-family:var(--mono);font-weight:300;font-size:10px;line-height:1.55;color:var(--ink2);margin-bottom:11px}
+.cgdiv{height:1px;background:var(--bdr);margin-bottom:10px}
+.cglbl{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.cgrow{display:flex;align-items:center;gap:9px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.cgrow:last-child{border-bottom:none}
+.cgidx{font-family:var(--mono);font-size:8px;color:var(--ink3);width:13px;flex-shrink:0;text-align:right}
+.cgttl{font-family:var(--serif);font-weight:700;font-size:11px;letter-spacing:-.015em;text-transform:uppercase;color:rgba(236,234,225,.68);flex:1}
+.cgsub{font-family:var(--mono);font-size:8px;color:var(--ink3)}
+.cgft{display:flex;align-items:center;justify-content:space-between;padding:9px 15px 11px;border-top:1px solid var(--bdr);background:rgba(255,255,255,.02)}
+.cgct{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.cgct b{color:var(--ink2)}
+.cgcta{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--cat-color);opacity:.72;transition:color .6s}
 
-.h-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
-.h-pill {
-  font-family:var(--ui); font-size:7px; letter-spacing:.14em; text-transform:uppercase;
-  background:none; border:1px solid var(--border);
-  color:var(--ink-3); padding:4px 11px; border-radius:2px;
-  transition:all .15s; cursor:none; display:flex; align-items:center; gap:5px;
-}
-.h-pill:hover { border-color:var(--accent); color:var(--accent); }
-.h-pill.primary { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
-.h-pill.primary:hover { background:var(--accent-m); }
-#h-card-num {
-  font-family:var(--ui); font-size:8px; letter-spacing:.12em; color:var(--ink-3);
-}
-#h-card-num strong { color:var(--ink-2); }
+/* ── BROWSE ZONE ── */
+#bzone{position:fixed;top:98px;left:0;width:47vw;bottom:0;z-index:10;overflow:hidden}
 
-/* ══════════════════════════════════════════
-   FILTER BAR
-══════════════════════════════════════════ */
-#filter-bar {
-  grid-column:1; grid-row:2;
-  height:var(--filter-h);
-  display:flex; align-items:center;
-  padding:0 clamp(18px,4vw,60px);
-  gap:6px;
-  border-bottom:1px solid var(--border);
-  background:rgba(7,6,10,.85);
-  backdrop-filter:blur(16px);
-  overflow-x:auto; scrollbar-width:none;
-}
-#filter-bar::-webkit-scrollbar { display:none; }
-#panel-filter-header {
-  grid-column:2; grid-row:2;
-  height:var(--filter-h);
-  display:flex; align-items:center;
-  padding:0 16px;
-  border-bottom:1px solid var(--border);
-  border-left:1px solid var(--border);
-  background:rgba(7,6,10,.85);
-  backdrop-filter:blur(16px);
-  gap:6px;
-}
+#strack{position:absolute;top:0;right:0;bottom:0;width:2px;background:rgba(255,255,255,.04);z-index:20;pointer-events:none;border-radius:1px}
+#sthumb{position:absolute;right:0;width:2px;border-radius:1px;
+  background:var(--cat-color);min-height:20px;
+  transition:top .18s ease,height .18s ease,background .6s}
 
-.filter-pill {
-  font-family:var(--ui); font-size:7px; letter-spacing:.14em; text-transform:uppercase;
-  background:none; border:1px solid var(--border);
-  color:var(--ink-3); padding:4px 12px; border-radius:20px;
-  transition:all .15s; cursor:none; white-space:nowrap; flex-shrink:0;
-}
-.filter-pill:hover { border-color:var(--border-2); color:var(--ink-2); }
-.filter-pill.active {
-  border-color:var(--accent); color:var(--accent);
-  background:var(--accent-l);
-}
+#nstream{position:absolute;inset:0;right:2px;overflow-y:scroll;overflow-x:hidden;scrollbar-width:none}
+#nstream::-webkit-scrollbar{display:none}
+#nscroll{padding:clamp(32px,5vh,64px) clamp(32px,4.5vw,64px) clamp(32px,5vh,64px) 36px}
 
-/* View toggle */
-.view-toggle {
-  display:flex; gap:3px; margin-left:auto; flex-shrink:0;
-}
-.vt-btn {
-  width:26px; height:26px; border-radius:3px;
-  background:none; border:1px solid var(--border);
-  color:var(--ink-3); font-size:10px;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .15s; cursor:none;
-}
-.vt-btn.active { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
-.vt-btn:hover:not(.active) { border-color:var(--border-2); color:var(--ink-2); }
+/* ── TITLE CINEMATIC IMAGE ── */
+.s.timg{display:block;padding:0;margin:0 0 2px;overflow:hidden;border-radius:2px;
+  max-width:420px;aspect-ratio:16/7;position:relative}
+.s.timg img{display:block;width:100%;height:100%;object-fit:cover;
+  filter:saturate(.4) brightness(.55);transition:filter .6s,transform 8s}
+.s.act.timg img{filter:saturate(.72) brightness(.72);transform:scale(1.03)}
+body.dim .s.timg{opacity:.04}
+body.dim .s.act.timg{opacity:1}
+body.dim .s.pst.timg{opacity:.22}
+body.dim .s.rev.timg{opacity:.08}
+.s.timg::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 30%,rgba(7,7,10,.88) 100%),
+             linear-gradient(to right,rgba(7,7,10,.6) 0%,transparent 55%)}
 
-/* ══════════════════════════════════════════
-   STREAM COLUMN
-══════════════════════════════════════════ */
-#stream-col {
-  grid-column:1; grid-row:3;
-  padding:clamp(36px,5.5vh,68px) clamp(28px,5vw,72px);
-  display:flex; flex-direction:column; justify-content:center;
-  min-height:calc(100vh - var(--header-h) - var(--filter-h));
-  position:relative; overflow:hidden;
-}
+/* sentence states */
+.s{display:block;position:relative;padding:3px 0;opacity:.28;transform:none;
+  transition:opacity .44s ease,transform .44s ease;cursor:none}
+.s.rev{opacity:.18}
+.s.pst{opacity:.46}
+.s.act{opacity:1}
+body.dim .s{opacity:.05;transform:translateY(4px)}
+body.dim .s.rev{opacity:.18;transform:none}
+body.dim .s.pst{opacity:.46;transform:none}
+body.dim .s.act{opacity:1;transform:none}
 
-/* ── SENTENCE STATES ── */
-.sentence {
-  display:block; position:relative;
-  padding:4px 0;
-  opacity:.08;
-  transition:opacity .42s ease, color .42s ease, transform .42s ease;
-  transform:translateY(3px);
-}
-.sentence.revealed  { opacity:.30; transform:translateY(0); }
-.sentence.past      { opacity:.77; transform:translateY(0); }
-.sentence.active    { opacity:1;   transform:translateY(0); }
-.sentence:hover:not(.active):not(.break):not(.label) { opacity:.5 !important; }
+.s.ey{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--cat-color);padding:16px 0 4px;transition:color .6s}
+.s.ti{font-family:var(--serif);font-weight:900;font-size:clamp(38px,5.8vw,74px);line-height:.88;letter-spacing:-.04em;color:var(--ink);padding:3px 0}
+.s.ti.act::before{content:'';position:absolute;left:-22px;top:8px;bottom:8px;width:2px;background:var(--cat-color);border-radius:1px;transition:background .6s}
+.s.lg{font-family:var(--serif);font-style:italic;font-size:clamp(13px,1.55vw,17px);line-height:1.52;color:var(--ink2);max-width:450px;padding:7px 0}
+.s.act.lg{color:var(--ink)}
+.s.lg em{font-style:normal;font-weight:700;color:var(--ink)}
+.s.lg .r{color:var(--cat-color);font-style:normal;transition:color .6s}
+.s.bo{font-family:var(--mono);font-weight:300;font-size:clamp(10px,1.05vw,12.5px);line-height:1.72;color:var(--ink2);max-width:430px;padding:3px 0}
+.s.act.bo{color:var(--ink)}
+.s.bo em{font-style:italic;color:var(--ink)}
+.s.bo .r{color:var(--cat-color);transition:color .6s}
+.s.pu{font-family:var(--serif);font-style:italic;font-size:clamp(12px,1.35vw,16px);line-height:1.4;color:var(--ink2);max-width:390px;padding:9px 0 9px 18px;border-left:1px solid var(--ink3)}
+.s.act.pu{color:var(--ink);border-left-color:var(--cat-color);transition:border-color .6s}
+.s.me{display:flex;max-width:390px;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);margin:6px 0}
+.mc{flex:1;padding:7px 10px;border-right:1px solid var(--bdr)}
+.mc:first-child{padding-left:0}
+.mc:last-child{border-right:none}
+.mk{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:3px;transition:color .45s}
+.mv{font-family:var(--serif);font-weight:700;font-size:14px;letter-spacing:-.02em;color:var(--ink2);display:block;transition:color .45s}
+.s.act .mk{color:var(--cat-color);transition:color .6s}
+.s.act .mv{color:var(--ink)}
+.s.ru{padding:11px 0;opacity:.2!important;transform:none!important}
+.s.ru::before{content:'';display:block;width:14px;height:1px;background:var(--ink3)}
 
-/* ── TYPE STYLES ── */
-.sentence.label {
-  font-family:var(--ui); font-size:7px;
-  letter-spacing:.28em; text-transform:uppercase;
-  color:var(--accent); padding:12px 0 3px;
-}
-.sentence.poster {
-  font-family:var(--disp); font-weight:900;
-  font-size:clamp(44px,6.5vw,84px);
-  line-height:.89; letter-spacing:-.03em; text-transform:uppercase;
-  padding:4px 0;
-}
-.sentence.poster .ac  { color:var(--accent); }
-.sentence.poster .dim { color:var(--ink-2); font-weight:300; font-style:italic; }
-.sentence.poster.active::before {
-  content:''; position:absolute; left:-22px; top:0; bottom:0; width:3px;
-  background:var(--accent); border-radius:2px; transition:background .4s;
-}
-.sentence.body {
-  font-family:var(--disp); font-weight:300;
-  font-size:clamp(14px,1.8vw,20px); line-height:1.48; letter-spacing:.005em;
-  color:var(--ink-2); max-width:500px;
-}
-.sentence.body .em  { font-style:italic; font-weight:700; color:var(--ink); }
-.sentence.body .ac  { color:var(--accent); }
-.sentence.active.body { color:var(--ink); }
-.sentence.pull {
-  font-family:var(--disp); font-weight:300; font-style:italic;
-  font-size:clamp(16px,2vw,26px); line-height:1.25; letter-spacing:.01em;
-  color:var(--ink-2); max-width:460px; padding:7px 0 7px 18px;
-  border-left:1px solid var(--ink-3);
-}
-.sentence.pull .ac { color:var(--accent); }
-.sentence.active.pull { color:var(--ink); border-left-color:var(--accent); }
+/* Chapter divider */
+.chap{padding:clamp(36px,5.5vh,58px) 0 clamp(12px,2vh,20px);opacity:.06;transition:opacity .5s;cursor:none}
+.chap.pst,.chap.rev{opacity:.36}
+.chap.act{opacity:1}
+.chi{display:flex;align-items:center;gap:14px}
+.chnum{font-family:var(--serif);font-weight:900;font-size:clamp(40px,6vw,70px);line-height:.82;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.08);user-select:none;flex-shrink:0}
+.chinfo{display:flex;flex-direction:column;gap:4px}
+.chrule{width:14px;height:1px;background:var(--cat-color);transition:background .6s}
+.chsub{font-family:var(--mono);font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--cat-color);opacity:.72;transition:color .6s}
+.chname{font-family:var(--serif);font-weight:700;font-size:clamp(12px,1.35vw,15px);letter-spacing:-.015em;text-transform:uppercase;color:rgba(236,234,225,.62)}
 
-.spec-group {
-  display:flex; flex-direction:column; gap:0; margin:6px 0;
-  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
-  opacity:.08; transition:opacity .42s ease;
-}
-.spec-group.revealed { opacity:.30; }
-.spec-group.past     { opacity:.77; }
-.spec-group.active   { opacity:1; }
-.sentence.spec {
-  display:flex; align-items:baseline; gap:14px;
-  font-family:var(--ui); font-size:9px; letter-spacing:.05em; padding:5px 0;
-  opacity:1 !important; transform:none !important;
-  border-bottom:1px solid var(--border);
-}
-.sentence.spec:last-child { border-bottom:none; }
-.sentence.spec .spec-key {
-  text-transform:uppercase; letter-spacing:.14em; font-size:7px;
-  color:var(--ink-3); min-width:88px; flex-shrink:0; transition:color .4s;
-}
-.sentence.spec .spec-val { color:var(--ink-2); flex:1; transition:color .4s; }
-.spec-group.active .sentence.spec .spec-key { color:var(--accent); }
-.spec-group.active .sentence.spec .spec-val { color:var(--ink); }
+/* ── GRID OVERLAY — full left panel, invisible CSS grid ── */
+#gover{position:absolute;inset:0;z-index:30;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+  background:rgba(7,7,10,.0);opacity:0;pointer-events:none;transition:opacity .32s}
+#gover::-webkit-scrollbar{display:none}
+#gover.on{opacity:1;pointer-events:all;background:rgba(7,7,10,.82);backdrop-filter:blur(2px)}
+/* true CSS grid — no labels, fills container, each card identical */
+#ginner{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0;min-height:100%}
+.gcov{position:relative;aspect-ratio:2/3;overflow:hidden;cursor:none;
+  border:1px solid transparent;transition:border-color .22s}
+.gcov img{display:block;width:100%;height:100%;object-fit:cover;
+  filter:saturate(.28) brightness(.52);
+  transition:transform .55s,filter .36s}
+.gcov:hover img{transform:scale(1.06);filter:saturate(.75) brightness(.72)}
+.gcov.on img{filter:saturate(.9) brightness(.82);transform:scale(1.03)}
+.gcovlay{position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(7,7,10,.92) 0%,rgba(7,7,10,.12) 50%,transparent 100%);
+  opacity:0;transition:opacity .26s}
+.gcov:hover .gcovlay,.gcov.on .gcovlay{opacity:1}
+.gcov.on .gcovlay{background:linear-gradient(to top,rgba(var(--cat-rgb),.55) 0%,transparent 55%);transition:background .6s}
+.gcovinfo{position:absolute;bottom:0;left:0;right:0;padding:7px 8px;opacity:0;transform:translateY(4px);transition:opacity .22s,transform .22s}
+.gcov:hover .gcovinfo,.gcov.on .gcovinfo{opacity:1;transform:none}
+.gcovt{font-family:var(--serif);font-weight:900;font-size:10px;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);line-height:1.1}
+.gcovs{font-family:var(--mono);font-size:7px;color:rgba(236,234,225,.5);margin-top:1px}
+.gcovm{position:absolute;top:5px;right:5px;font-family:var(--mono);font-size:7px;color:var(--grn);background:rgba(0,0,0,.78);padding:2px 5px;border-radius:1px}
+/* hide the old sub-genre labels entirely in new grid */
+.gclbl{display:none}
 
-.sentence.break {
-  padding:10px 0; opacity:.4 !important; transform:none !important;
-}
-.sentence.break::before {
-  content:''; display:block; width:24px; height:1px; background:var(--ink-3);
-}
+/* ── INTENT ZONE ── */
+#izone{position:fixed;top:52px;left:47vw;right:0;bottom:0;z-index:10;overflow:hidden}
+#izone::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;z-index:1;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,rgba(var(--cat-rgb),.18) 12%,rgba(var(--cat-rgb),.14) 88%,transparent);
+  transition:background 1s}
+#ihdr{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:12px;padding:16px 20px 0;pointer-events:none}
+.ihl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.12);transition:color .8s}
+.ihl.on{color:rgba(255,255,255,.28)}
+.ihsep{flex:1;height:1px;background:linear-gradient(to right,rgba(255,255,255,.06),transparent);margin-top:1px}
+.ihc{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.08);transition:color .8s}
+.ihc.on{color:rgba(255,255,255,.2)}
+#igrid{position:absolute;inset:0}
 
-/* ── CATEGORY HEADER ── */
-.cat-header {
-  display:flex; align-items:baseline; gap:14px;
-  padding:40px 0 14px; opacity:.08; transition:opacity .55s ease;
-}
-.cat-header.revealed, .cat-header.past, .cat-header.active { opacity:.65; }
-.cat-num {
-  font-family:var(--disp); font-weight:900;
-  font-size:clamp(52px,8vw,96px); line-height:.82; letter-spacing:-.04em;
-  color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.10);
-  user-select:none; flex-shrink:0;
-}
-.cat-meta { display:flex; flex-direction:column; gap:4px; }
-.cat-rule { width:20px; height:1px; background:var(--accent); margin-bottom:6px; }
-.cat-label {
-  font-family:var(--ui); font-size:7px; letter-spacing:.28em;
-  text-transform:uppercase; color:rgba(200,144,42,.75);
-}
-.cat-title {
-  font-family:var(--disp); font-weight:900;
-  font-size:clamp(14px,1.7vw,20px); letter-spacing:-.015em; text-transform:uppercase;
-  color:rgba(240,236,228,.80);
-}
+/* ── NODE ── */
+.node{position:absolute;z-index:5;pointer-events:all;cursor:none;
+  opacity:0;transform:translateY(12px) scale(.88);
+  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
+  will-change:opacity,transform}
+.node.vis{opacity:1;transform:none}
+.node.out{opacity:0;transform:translateY(-8px) scale(.82);pointer-events:none;transition:opacity .34s,transform .34s}
+.node[data-d="0"]{transition-delay:0s}
+.node[data-d="1"]{transition-delay:.07s}
+.node[data-d="2"]{transition-delay:.13s}
+.node[data-d="3"]{transition-delay:.18s}
+.node[data-d="4"]{transition-delay:.22s}
+.ncard{background:rgba(11,11,15,.9);border:1px solid rgba(255,255,255,.07);border-radius:3px;overflow:hidden;
+  backdrop-filter:blur(10px);box-shadow:0 4px 28px rgba(0,0,0,.52);
+  transition:border-color .22s,box-shadow .24s,transform .24s}
+.node:hover .ncard{border-color:rgba(255,255,255,.16);box-shadow:0 8px 44px rgba(0,0,0,.74);transform:translateY(-2px)}
+.node.primary .ncard{border-color:rgba(var(--cat-rgb),.28);box-shadow:0 6px 36px rgba(0,0,0,.6),0 0 22px rgba(var(--cat-rgb),.08);transition:border-color .6s,box-shadow .6s,transform .24s}
+.node.primary:hover .ncard{border-color:rgba(var(--cat-rgb),.5);box-shadow:0 10px 52px rgba(0,0,0,.82),0 0 30px rgba(var(--cat-rgb),.18)}
+.node.clip .ncard{border-color:rgba(255,255,255,.08)}
+.node.clip:hover .ncard{border-color:rgba(255,210,60,.3);box-shadow:0 8px 40px rgba(0,0,0,.7)}
+.nth{position:relative;overflow:hidden;display:block}
+.nth img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.node:hover .nth img{transform:scale(1.04)}
+.nplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(var(--cat-rgb),0);transition:background .22s}
+.node:hover .nplay{background:rgba(var(--cat-rgb),.1)}
+.npb{width:28px;height:28px;border-radius:50%;background:rgba(var(--cat-rgb),0);border:1px solid rgba(255,255,255,0);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(255,255,255,0);transition:all .2s}
+.node:hover .npb{background:rgba(var(--cat-rgb),.9);border-color:transparent;color:#fff}
+.node.clip:hover .npb{background:rgba(255,210,60,.85)}
+.nbadge{position:absolute;top:7px;font-family:var(--mono);font-size:8px;letter-spacing:.06em;padding:2px 6px;border-radius:1px}
+.nmatch{right:7px;color:var(--grn);background:rgba(0,0,0,.76)}
+.ntype{left:7px;color:rgba(255,255,255,.82);background:rgba(0,0,0,.76)}
+.ndur{position:absolute;bottom:5px;right:6px;font-family:var(--mono);font-size:8px;color:#fff;background:rgba(0,0,0,.82);padding:2px 6px;border-radius:1px}
+.nbody{padding:9px 11px 10px}
+.ntypelbl{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--cat-color);margin-bottom:3px;transition:color .6s}
+.node.clip .ntypelbl{color:rgba(255,210,60,.85)}
+.nttl{font-family:var(--serif);font-weight:700;font-size:11px;letter-spacing:-.02em;text-transform:uppercase;line-height:1.15;color:rgba(236,234,225,.68);margin-bottom:3px;transition:color .2s}
+.node:hover .nttl{color:var(--ink)}
+.nsub{font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;color:var(--ink3);line-height:1.4}
+.ntag{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.26);padding:2px 7px;border-radius:9px;transition:all .2s}
+.node:hover .ntag{border-color:rgba(var(--cat-rgb),.42);color:rgba(var(--cat-rgb),.9)}
+.node.primary .ntag{border-color:rgba(var(--cat-rgb),.3);color:rgba(var(--cat-rgb),.8)}
+.node.clip:hover .ntag{border-color:rgba(255,210,60,.4);color:rgba(255,210,60,.82)}
 
-/* ── UPLOAD CARD ── */
-.upload-card {
-  border:1px dashed rgba(255,255,255,.12);
-  border-radius:4px; padding:20px 24px;
-  margin:16px 0; cursor:none;
-  transition:border-color .2s, background .2s;
-  background:rgba(255,255,255,.01);
-}
-.upload-card:hover {
-  border-color:var(--accent); background:rgba(200,144,42,.04);
-}
-.upload-card.drag-over {
-  border-color:var(--accent); background:rgba(200,144,42,.08);
-  border-style:solid;
-}
-.uc-icon { font-size:22px; color:var(--ink-3); margin-bottom:10px; transition:color .2s; }
-.upload-card:hover .uc-icon { color:var(--accent); }
-.uc-title {
-  font-family:var(--disp); font-weight:700; font-size:18px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2); margin-bottom:4px;
-  transition:color .2s;
-}
-.upload-card:hover .uc-title { color:var(--ink); }
-.uc-sub {
-  font-family:var(--ui); font-size:7px; letter-spacing:.12em;
-  color:var(--ink-3); text-transform:uppercase;
-}
+/* ── NODE GHOST — opens left of izone ── */
+#nghost{position:fixed;z-index:700;width:304px;pointer-events:none;
+  opacity:0;transform:translateX(6px) scale(.97);transition:opacity .22s,transform .22s}
+#nghost.on{opacity:1;transform:none;pointer-events:all}
+.ngc{background:rgba(9,9,13,.97);border:1px solid var(--bdrhi);border-radius:4px;
+  box-shadow:0 18px 62px rgba(0,0,0,.88);backdrop-filter:blur(26px);overflow:hidden;
+  position:relative}
+/* nghost scroll container for scroll indicator */
+.ngscroll{max-height:82vh;overflow-y:auto;scrollbar-width:none}
+.ngscroll::-webkit-scrollbar{display:none}
+.ngth{position:relative;width:100%;height:88px;overflow:hidden}
+.ngth img{width:100%;height:100%;object-fit:cover;opacity:.72;transform:scale(1.06);transition:transform 8s}
+#nghost.on .ngth img{transform:scale(1)}
+.ngthov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(9,9,13,0),rgba(9,9,13,.88) 100%)}
+.ngthtl{position:absolute;bottom:9px;left:12px;right:12px;font-family:var(--serif);font-weight:900;font-size:17px;letter-spacing:-.03em;text-transform:uppercase;line-height:.95;color:var(--ink)}
+.ngthgn{position:absolute;top:9px;left:12px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--cat-color);background:rgba(0,0,0,.68);padding:3px 7px;border-radius:1px;transition:color .6s}
+.ngthmt{position:absolute;top:9px;right:12px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,210,60,.9);background:rgba(0,0,0,.68);padding:3px 7px;border-radius:1px}
+.ngmrow{display:flex;align-items:center;gap:11px;padding:9px 13px 8px;border-bottom:1px solid var(--bdr)}
+.ngmpct{font-family:var(--serif);font-weight:900;font-size:24px;letter-spacing:-.03em;color:var(--grn);flex-shrink:0;line-height:1}
+.ngminf{flex:1;min-width:0}
+.ngmlbl{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
+.ngtags{display:flex;gap:4px;flex-wrap:wrap}
+.ngtag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--bdrhi);color:var(--ink2);padding:2px 6px;border-radius:9px}
+.nglog{font-family:var(--serif);font-style:italic;font-size:11px;line-height:1.5;color:var(--ink2);padding:9px 13px 8px;border-bottom:1px solid var(--bdr)}
+.nglog em{font-style:normal;font-weight:700;color:var(--ink)}
+.nglog .r{color:var(--cat-color);font-style:normal;transition:color .6s}
+.ngpull{font-family:var(--serif);font-style:italic;font-size:10px;line-height:1.48;color:var(--ink3);padding:8px 13px 8px 15px;border-left:1px solid var(--ink3);margin:8px 13px}
+.ngstat{display:flex;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.ngst{flex:1;padding:7px 9px;border-right:1px solid var(--bdr);text-align:center}
+.ngst:last-child{border-right:none}
+.ngsv{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.02em;color:var(--ink2);display:block}
+.ngsk{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-top:2px;display:block}
+.ngmsec{padding:10px 13px 5px;border-bottom:1px solid var(--bdr)}
+.ngmlblh{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.ngmlblh::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--bdr),transparent)}
+.ngchip{display:flex;align-items:flex-start;gap:10px;padding:7px 9px;margin-bottom:5px;border-radius:3px;
+  border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.024);
+  cursor:none;pointer-events:all;transition:border-color .16s,background .16s;position:relative;overflow:hidden}
+.ngchip::before{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(var(--cat-rgb),.07),transparent 60%);opacity:0;transition:opacity .18s}
+.ngchip:hover{border-color:rgba(var(--cat-rgb),.38);background:rgba(var(--cat-rgb),.06)}
+.ngchip:hover::before{opacity:1}
+.ngcts{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--cat-color);flex-shrink:0;line-height:1.3;margin-top:1px;min-width:34px;transition:color .6s}
+.ngci{flex:1;min-width:0}
+.ngclbl{font-family:var(--serif);font-weight:700;font-size:11px;letter-spacing:-.01em;color:rgba(236,234,225,.78);line-height:1.15;margin-bottom:2px}
+.ngchip:hover .ngclbl{color:var(--ink)}
+.ngcnote{font-family:var(--mono);font-weight:300;font-size:9px;line-height:1.45;color:var(--ink3)}
+.ngcemo{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(var(--cat-rgb),.52);margin-top:3px;display:block;transition:color .6s}
+.ngcply{flex-shrink:0;width:17px;height:17px;border-radius:50%;border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;font-size:7px;color:rgba(255,255,255,.28);transition:all .16s;margin-top:2px}
+.ngchip:hover .ngcply{border-color:rgba(var(--cat-rgb),.65);color:var(--cat-color)}
+.ngft{display:flex;align-items:center;justify-content:space-between;padding:8px 13px 10px}
+.ngrel{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid rgba(var(--cat-rgb),.22);color:rgba(var(--cat-rgb),.7);padding:2px 9px;border-radius:9px;transition:all .6s}
+.ngcta{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--cat-color);opacity:.82;transition:color .6s}
 
-/* ══════════════════════════════════════════
-   RIGHT PANEL
-══════════════════════════════════════════ */
-#panel {
-  grid-column:2; grid-row:2/4;
-  border-left:1px solid var(--border);
-  display:flex; flex-direction:column; overflow:hidden;
-  background:rgba(7,6,10,.40);
-  backdrop-filter:blur(2px);
-  transition:border-color .3s;
-}
-#panel:hover { background:rgba(8,7,11,.88); border-left-color:var(--border-2); }
+/* ── WATCH (full-screen) ── */
+#watch{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.97);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .36s}
+#watch.on{opacity:1;pointer-events:all}
+#wframe{width:min(940px,90vw);aspect-ratio:16/9;border:none;background:#000}
+#wmeta{display:flex;align-items:center;gap:20px;width:min(940px,90vw);margin-top:14px}
+#wttl{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink2);flex:1}
+#wctx{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.wbtn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:none;border:1px solid var(--bdr);color:var(--ink3);padding:7px 17px;border-radius:2px;cursor:none;transition:all .14s}
+.wbtn:hover{border-color:var(--bdrhi);color:var(--ink)}
+#wrail{display:flex;gap:8px;flex-wrap:wrap;width:min(940px,90vw);margin-top:13px;opacity:0;transition:opacity .4s ease .3s}
+#wrail.on{opacity:1}
+.wchip{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:3px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.042);cursor:none;transition:all .16s}
+.wchip:hover{border-color:rgba(var(--cat-rgb),.52);background:rgba(var(--cat-rgb),.09)}
+.wcts{font-family:var(--mono);font-size:9px;color:var(--cat-color);transition:color .6s}
+.wclbl{font-family:var(--serif);font-weight:700;font-size:11px;letter-spacing:-.01em;color:var(--ink2);transition:color .14s}
+.wchip:hover .wclbl{color:var(--ink)}
+.wcemo{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(var(--cat-rgb),.5);margin-left:auto;flex-shrink:0;transition:color .6s}
 
-/* Video player */
-#panel-video {
-  position:relative; width:100%; aspect-ratio:16/9;
-  background:#000; flex-shrink:0; overflow:hidden; cursor:none;
-}
-#panel-video iframe {
-  position:absolute; inset:0; width:100%; height:100%;
-  border:none; opacity:0; transition:opacity .4s ease;
-}
-#panel-video iframe.loaded { opacity:1; }
-#video-placeholder {
-  position:absolute; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:10px;
-  background:rgba(0,0,0,.4); transition:opacity .3s;
-}
-#video-placeholder.hidden { opacity:0; pointer-events:none; }
-.vph-icon { font-size:26px; color:rgba(255,255,255,.12); }
-.vph-label {
-  font-family:var(--ui); font-size:7px; letter-spacing:.22em; text-transform:uppercase;
-  color:rgba(255,255,255,.18);
-}
-
-/* Video meta */
-#panel-meta {
-  flex-shrink:0; padding:12px 16px 10px;
-  border-bottom:1px solid var(--border);
-}
-.pm-eyebrow {
-  font-family:var(--ui); font-size:6px; letter-spacing:.28em; text-transform:uppercase;
-  color:var(--ink-3); margin-bottom:6px;
-}
-#pm-title {
-  font-family:var(--disp); font-weight:700;
-  font-size:clamp(14px,1.5vw,19px); line-height:1.02; letter-spacing:-.015em;
-  text-transform:uppercase; color:var(--ink); margin-bottom:4px;
-  min-height:38px; transition:color .3s;
-}
-#pm-channel {
-  font-family:var(--ui); font-size:8px; letter-spacing:.08em; color:var(--accent);
-}
-
-/* Stat strip */
-#panel-stats {
-  display:flex; flex-shrink:0; border-bottom:1px solid var(--border);
-}
-.ps-cell {
-  flex:1; padding:8px 12px; text-align:center;
-  border-right:1px solid var(--border);
-}
-.ps-cell:last-child { border-right:none; }
-.ps-val {
-  font-family:var(--disp); font-weight:700; font-size:15px;
-  letter-spacing:-.02em; color:var(--ink); display:block; transition:color .3s;
-}
-.ps-key {
-  font-family:var(--ui); font-size:6px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-3); margin-top:1px; display:block;
-}
-
-/* ══════════════════════════════════════════
-   PANEL TABS
-══════════════════════════════════════════ */
-#panel-tabs {
-  display:flex; flex-shrink:0;
-  border-bottom:1px solid var(--border);
-  background:rgba(0,0,0,.2);
-}
-.panel-tab {
-  flex:1; padding:8px 4px;
-  font-family:var(--ui); font-size:6.5px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--ink-3); background:none; border:none; border-right:1px solid var(--border);
-  cursor:none; transition:all .15s; position:relative;
-}
-.panel-tab:last-child { border-right:none; }
-.panel-tab:hover { color:var(--ink-2); background:rgba(255,255,255,.02); }
-.panel-tab.active { color:var(--accent); background:var(--accent-l); }
-.panel-tab.active::after {
-  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
-  background:var(--accent);
-}
-
-/* Tab panel bodies */
-#panel-body { flex:1; overflow:hidden; display:flex; flex-direction:column; }
-.tab-body { display:none; flex:1; flex-direction:column; overflow:hidden; }
-.tab-body.active { display:flex; }
-
-/* ── Feed tab controls (grid/list toggle) ── */
-.feed-controls {
-  display:flex; align-items:center; padding:8px 14px 6px;
-  border-bottom:1px solid var(--border); flex-shrink:0; gap:8px;
-}
-.feed-label {
-  font-family:var(--ui); font-size:6px; letter-spacing:.22em; text-transform:uppercase;
-  color:var(--ink-3); flex:1;
-}
-.feed-count {
-  font-family:var(--ui); font-size:7px; letter-spacing:.08em; color:var(--ink-3);
-}
-.pf-scroll {
-  flex:1; overflow-y:auto; overscroll-behavior:contain;
-}
-.pf-scroll::-webkit-scrollbar { width:2px; }
-.pf-scroll::-webkit-scrollbar-thumb { background:var(--border); }
-
-/* ── List view ── */
-.pf-list-view .pf-card-list {
-  display:block;
-}
-.pf-card-list {
-  display:flex; gap:10px; padding:9px 14px;
-  border-bottom:1px solid var(--border);
-  cursor:none; transition:background .15s; position:relative;
-}
-.pf-card-list:hover { background:rgba(255,255,255,.025); }
-.pf-card-list.active::before {
-  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
-  background:var(--accent);
-}
-.pf-thumb {
-  width:74px; height:42px;
-  background:var(--ink-3); border-radius:2px;
-  flex-shrink:0; overflow:hidden; position:relative;
-}
-.pf-thumb img { width:100%; height:100%; object-fit:cover; opacity:.7; transition:opacity .2s; }
-.pf-card-list:hover .pf-thumb img { opacity:.9; }
-.pf-thumb-dur {
-  position:absolute; bottom:2px; right:3px;
-  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
-  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
-}
-.pf-info { flex:1; min-width:0; }
-.pf-title {
-  font-family:var(--disp); font-weight:700;
-  font-size:11px; line-height:1.08; letter-spacing:-.01em; text-transform:uppercase;
-  color:rgba(240,236,228,.65);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px;
-  transition:color .15s;
-}
-.pf-card-list:hover .pf-title, .pf-card-list.active .pf-title { color:var(--ink); }
-.pf-meta { font-family:var(--ui); font-size:7px; letter-spacing:.04em; color:var(--ink-3); }
-.pf-cat {
-  font-family:var(--ui); font-size:6px; letter-spacing:.14em; text-transform:uppercase;
-  color:var(--accent); margin-top:2px;
-}
-
-/* ── Grid view ── */
-.pf-grid-view .pf-grid {
-  display:grid; grid-template-columns:1fr 1fr; gap:1px;
-  background:var(--border);
-}
-.pf-grid { display:none; }
-.pf-card-grid {
-  background:var(--bg); cursor:none; position:relative;
-  transition:background .15s; overflow:hidden;
-}
-.pf-card-grid:hover { background:rgba(255,255,255,.03); }
-.pf-card-grid.active::after {
-  content:''; position:absolute; inset:0;
-  border:1px solid var(--accent); pointer-events:none; z-index:2;
-}
-.pf-grid-thumb {
-  width:100%; aspect-ratio:16/9; overflow:hidden; position:relative;
-}
-.pf-grid-thumb img {
-  width:100%; height:100%; object-fit:cover; opacity:.6; transition:opacity .2s;
-  display:block;
-}
-.pf-card-grid:hover .pf-grid-thumb img { opacity:.85; }
-.pf-grid-thumb-dur {
-  position:absolute; bottom:3px; right:4px;
-  font-family:var(--ui); font-size:6px;
-  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
-}
-.pf-grid-info { padding:7px 8px 9px; }
-.pf-grid-title {
-  font-family:var(--disp); font-weight:700; font-size:10px;
-  letter-spacing:-.01em; text-transform:uppercase; line-height:1.1;
-  color:rgba(240,236,228,.65); margin-bottom:2px;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-  transition:color .15s;
-}
-.pf-card-grid:hover .pf-grid-title { color:var(--ink); }
-.pf-grid-meta { font-family:var(--ui); font-size:6px; letter-spacing:.04em; color:var(--ink-3); }
-
-/* ── Recently Watched tab ── */
-.rw-item {
-  display:flex; gap:9px; padding:9px 14px;
-  border-bottom:1px solid var(--border); cursor:none;
-  transition:background .15s;
-}
-.rw-item:hover { background:rgba(255,255,255,.025); }
-.rw-thumb {
-  width:60px; height:34px; border-radius:2px; overflow:hidden;
-  background:var(--ink-3); flex-shrink:0; position:relative;
-}
-.rw-thumb img { width:100%; height:100%; object-fit:cover; opacity:.65; }
-.rw-progress {
-  position:absolute; bottom:0; left:0; height:2px;
-  background:var(--accent); border-radius:0 1px 1px 0;
-}
-.rw-info { flex:1; min-width:0; }
-.rw-title {
-  font-family:var(--disp); font-weight:700; font-size:10px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
-}
-.rw-sub { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
-.rw-badge {
-  font-family:var(--ui); font-size:6px; letter-spacing:.1em; text-transform:uppercase;
-  background:var(--accent-l); color:var(--accent); padding:2px 6px; border-radius:1px;
-  align-self:flex-start; margin-top:2px; flex-shrink:0;
-}
-
-/* ── Favorites tab ── */
-.fav-item {
-  display:flex; align-items:center; gap:10px; padding:10px 14px;
-  border-bottom:1px solid var(--border); cursor:none; transition:background .15s;
-}
-.fav-item:hover { background:rgba(255,255,255,.025); }
-.fav-star { color:var(--accent); font-size:12px; flex-shrink:0; }
-.fav-info { flex:1; min-width:0; }
-.fav-title {
-  font-family:var(--disp); font-weight:700; font-size:11px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
-}
-.fav-sub { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
-
-/* ── Playlists tab ── */
-.pl-item {
-  padding:10px 14px; border-bottom:1px solid var(--border);
-  cursor:none; transition:background .15s;
-}
-.pl-item:hover { background:rgba(255,255,255,.025); }
-.pl-header { display:flex; align-items:center; gap:10px; margin-bottom:5px; }
-.pl-icon { font-size:16px; color:var(--ink-3); flex-shrink:0; }
-.pl-name {
-  font-family:var(--disp); font-weight:700; font-size:12px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink-2); flex:1;
-}
-.pl-count {
-  font-family:var(--ui); font-size:6.5px; letter-spacing:.1em; color:var(--ink-3);
-}
-.pl-thumbs { display:flex; gap:2px; }
-.pl-mini-thumb {
-  width:34px; height:19px; border-radius:1px; overflow:hidden; background:var(--ink-3);
-}
-.pl-mini-thumb img { width:100%; height:100%; object-fit:cover; opacity:.55; }
-
-/* ── Studio tab ── */
-.studio-header {
-  padding:14px 16px 10px; border-bottom:1px solid var(--border); flex-shrink:0;
-}
-.studio-h-title {
-  font-family:var(--disp); font-weight:900; font-size:16px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink); margin-bottom:2px;
-}
-.studio-h-sub {
-  font-family:var(--ui); font-size:6.5px; letter-spacing:.12em; color:var(--ink-3);
-}
-.studio-upload-zone {
-  margin:12px 14px; padding:18px;
-  border:1px dashed rgba(255,255,255,.12); border-radius:4px;
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-  cursor:none; transition:all .2s;
-}
-.studio-upload-zone:hover {
-  border-color:var(--accent); background:rgba(200,144,42,.04);
-}
-.studio-upload-zone.drag-over {
-  border-color:var(--accent); background:rgba(200,144,42,.08); border-style:solid;
-}
-.suz-icon { font-size:24px; color:var(--ink-3); transition:color .2s; }
-.studio-upload-zone:hover .suz-icon { color:var(--accent); }
-.suz-label {
-  font-family:var(--disp); font-weight:700; font-size:14px;
-  text-transform:uppercase; letter-spacing:-.01em; color:var(--ink-2);
-  transition:color .2s;
-}
-.studio-upload-zone:hover .suz-label { color:var(--ink); }
-.suz-sub {
-  font-family:var(--ui); font-size:6.5px; letter-spacing:.1em; color:var(--ink-3);
-  text-transform:uppercase; text-align:center;
-}
-.studio-formats {
-  display:flex; gap:4px; flex-wrap:wrap; justify-content:center; margin-top:4px;
-}
-.sf-tag {
-  font-family:var(--ui); font-size:6px; letter-spacing:.1em;
-  border:1px solid var(--border); color:var(--ink-3);
-  padding:2px 7px; border-radius:10px; text-transform:uppercase;
-}
-.studio-section-label {
-  font-family:var(--ui); font-size:6px; letter-spacing:.24em; text-transform:uppercase;
-  color:var(--ink-3); padding:10px 14px 5px;
-  border-bottom:1px solid var(--border);
-}
-.studio-project {
-  display:flex; gap:10px; padding:9px 14px;
-  border-bottom:1px solid var(--border); cursor:none; transition:background .15s;
-}
-.studio-project:hover { background:rgba(255,255,255,.025); }
-.sp-thumb {
-  width:54px; height:30px; border-radius:2px; background:var(--ink-3);
-  flex-shrink:0; overflow:hidden; position:relative; display:flex;
-  align-items:center; justify-content:center;
-}
-.sp-thumb img { width:100%; height:100%; object-fit:cover; opacity:.5; }
-.sp-thumb-label {
-  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-family:var(--ui); font-size:6px; letter-spacing:.08em; color:rgba(255,255,255,.4);
-}
-.sp-info { flex:1; min-width:0; }
-.sp-title {
-  font-family:var(--disp); font-weight:700; font-size:11px;
-  text-transform:uppercase; letter-spacing:-.01em; color:var(--ink-2);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px;
-}
-.sp-meta { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3); }
-.sp-status {
-  font-family:var(--ui); font-size:6px; letter-spacing:.08em; text-transform:uppercase;
-  padding:2px 6px; border-radius:1px; align-self:flex-start; margin-top:1px; flex-shrink:0;
-}
-.sp-status.draft   { background:rgba(255,255,255,.06); color:var(--ink-3); }
-.sp-status.pub     { background:rgba(80,180,100,.12); color:#5cb870; }
-.sp-status.process { background:var(--accent-l); color:var(--accent); }
-
-/* ══════════════════════════════════════════
-   HUD NAV WIDGET
-══════════════════════════════════════════ */
-#hud {
-  position:fixed;
-  top:50%; right:calc(var(--panel-w) + 18px);
-  transform:translateY(-50%);
-  z-index:300;
-  display:flex; flex-direction:column; gap:8px;
-  transition:opacity .3s, right .3s;
-}
-#panel:hover ~ #hud { opacity:0; pointer-events:none; }
-
-.nw-shell {
-  display:flex; flex-direction:column; align-items:center;
-  background:rgba(242,238,230,.96);
-  border:1px solid rgba(0,0,0,.10);
-  backdrop-filter:blur(20px); border-radius:10px; padding:5px 4px;
-  box-shadow:0 4px 28px rgba(0,0,0,.22), 0 1px 4px rgba(0,0,0,.10);
-  min-width:52px; gap:0;
-}
-.nw-pip {
-  font-family:var(--ui); font-size:7px; letter-spacing:.12em; text-transform:uppercase;
-  color:rgba(0,0,0,.4); padding:4px 0 6px;
-  border-bottom:1px solid rgba(0,0,0,.08); width:100%; text-align:center;
-}
-.nw-pip strong { color:var(--accent); }
-.nw-btn {
-  height:38px; width:100%; border-radius:4px;
-  background:rgba(0,0,0,.04); border:1px solid rgba(0,0,0,.08);
-  display:flex; align-items:center; justify-content:center;
-  color:rgba(0,0,0,.5); font-size:14px;
-  transition:background .12s, color .12s; cursor:none; flex-shrink:0;
-}
-.nw-btn:hover { background:rgba(0,0,0,.09); color:#111; }
-.nw-btn-prev { border-radius:7px 7px 4px 4px; margin-top:4px; }
-.nw-btn-next { border-radius:4px 4px 7px 7px; margin-top:2px; }
-.nw-divider { height:1px; width:70%; background:rgba(0,0,0,.08); margin:3px auto; }
-
-/* Grid overlay toggle button in HUD */
-.hud-grid-btn {
-  width:52px; height:34px; border-radius:8px;
-  background:rgba(242,238,230,.92);
-  border:1px solid rgba(0,0,0,.10);
-  backdrop-filter:blur(20px);
-  display:flex; align-items:center; justify-content:center;
-  color:rgba(0,0,0,.4); font-size:13px;
-  transition:all .15s; cursor:none;
-  box-shadow:0 2px 12px rgba(0,0,0,.18);
-}
-.hud-grid-btn:hover, .hud-grid-btn.active {
-  background:rgba(200,144,42,.92);
-  border-color:rgba(200,144,42,.4); color:#fff;
-}
-
-/* ══════════════════════════════════════════
-   GRID OVERLAY
-══════════════════════════════════════════ */
-#grid-overlay {
-  position:fixed; inset:0;
-  background:rgba(7,6,10,.96);
-  z-index:400;
-  opacity:0; pointer-events:none;
-  transition:opacity .3s ease;
-  overflow-y:auto;
-}
-#grid-overlay.open { opacity:1; pointer-events:all; }
-.go-header {
-  display:flex; align-items:center; padding:20px 28px 14px;
-  border-bottom:1px solid var(--border);
-  position:sticky; top:0; background:rgba(7,6,10,.96);
-  backdrop-filter:blur(12px); z-index:2;
-}
-.go-title {
-  font-family:var(--disp); font-weight:900; font-size:20px;
-  letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); flex:1;
-}
-.go-sub {
-  font-family:var(--ui); font-size:7px; letter-spacing:.14em; color:var(--ink-3);
-  margin-top:2px;
-}
-.go-close {
-  font-family:var(--ui); font-size:7px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-2); background:none; border:1px solid var(--border);
-  padding:6px 13px; border-radius:2px; cursor:none; transition:all .15s;
-}
-.go-close:hover { color:var(--accent); border-color:var(--accent); }
-.go-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:1px; background:var(--border);
-  padding:0; margin:0;
-}
-.go-card {
-  background:var(--bg); cursor:none;
-  transition:background .15s; position:relative; overflow:hidden;
-}
-.go-card:hover { background:rgba(255,255,255,.04); }
-.go-card.active { background:rgba(200,144,42,.06); }
-.go-card.active::after {
-  content:''; position:absolute; inset:0;
-  border:1px solid var(--accent); pointer-events:none;
-}
-.go-thumb {
-  width:100%; aspect-ratio:16/9; overflow:hidden; background:#111;
-}
-.go-thumb img { width:100%; height:100%; object-fit:cover; opacity:.55; transition:opacity .2s; }
-.go-card:hover .go-thumb img { opacity:.8; }
-.go-dur {
-  position:absolute; top:0; left:0; right:0;
-  aspect-ratio:16/9; display:flex; align-items:flex-end; justify-content:flex-end;
-  padding:4px 6px;
-}
-.go-dur span {
-  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
-  color:#fff; background:rgba(0,0,0,.78); padding:1px 4px; border-radius:1px;
-}
-.go-info { padding:8px 10px 10px; }
-.go-cat {
-  font-family:var(--ui); font-size:6px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--accent); margin-bottom:4px;
-}
-.go-card-title {
-  font-family:var(--disp); font-weight:700; font-size:12px;
-  letter-spacing:-.01em; text-transform:uppercase; line-height:1.1;
-  color:rgba(240,236,228,.7); margin-bottom:3px;
-  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-  transition:color .15s;
-}
-.go-card:hover .go-card-title { color:var(--ink); }
-.go-channel {
-  font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--ink-3);
-}
-
-/* ══════════════════════════════════════════
-   GHOST PREVIEW
-══════════════════════════════════════════ */
-#ghost-preview {
-  position:fixed; z-index:350;
-  width:200px; pointer-events:none;
-  opacity:0; transform:translateY(8px) scale(.97);
-  transition:opacity .2s ease, transform .2s ease;
-  border-radius:3px; overflow:hidden;
-  box-shadow:0 8px 40px rgba(0,0,0,.7);
-}
-#ghost-preview.visible { opacity:1; transform:translateY(0) scale(1); }
-.gp-thumb { width:100%; aspect-ratio:16/9; background:#111; position:relative; }
-.gp-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-.gp-dur {
-  position:absolute; bottom:4px; right:5px;
-  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
-  color:#fff; background:rgba(0,0,0,.82); padding:2px 5px; border-radius:1px;
-}
-.gp-body {
-  background:rgba(20,18,24,.97);
-  border:1px solid rgba(255,255,255,.1);
-  border-top:none; padding:8px 10px 9px;
-}
-.gp-title {
-  font-family:var(--disp); font-weight:700; font-size:11px;
-  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink);
-  margin-bottom:3px; line-height:1.1;
-}
-.gp-channel { font-family:var(--ui); font-size:6.5px; letter-spacing:.06em; color:var(--accent); }
-.gp-stats {
-  display:flex; gap:8px; margin-top:5px; padding-top:5px;
-  border-top:1px solid var(--border);
-}
-.gp-stat {
-  font-family:var(--ui); font-size:6px; letter-spacing:.08em;
-  color:var(--ink-3); text-transform:uppercase;
-}
-.gp-stat strong { color:var(--ink-2); display:block; font-size:8px; letter-spacing:.03em; }
-
-/* ══════════════════════════════════════════
-   WATCH OVERLAY
-══════════════════════════════════════════ */
-#watch-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,.95);
-  z-index:500; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  opacity:0; pointer-events:none; transition:opacity .3s ease;
-}
-#watch-overlay.open { opacity:1; pointer-events:all; }
-#watch-frame { width:min(940px,90vw); aspect-ratio:16/9; background:#000; border:none; }
-.wo-close {
-  position:absolute; top:22px; right:26px;
-  font-family:var(--ui); font-size:7px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-2); background:none; border:1px solid var(--border);
-  padding:7px 13px; border-radius:2px; cursor:none; transition:all .15s;
-}
-.wo-close:hover { color:var(--accent); border-color:var(--accent); }
-#wo-title {
-  margin-top:18px;
-  font-family:var(--disp); font-weight:700; font-size:20px;
-  letter-spacing:-.02em; text-transform:uppercase; color:var(--ink-2);
-  width:min(940px,90vw);
-}
-
-/* ══════════════════════════════════════════
-   KEYBOARD HINTS
-══════════════════════════════════════════ */
-#key-hints {
-  position:fixed; bottom:18px; left:32px;
-  display:flex; gap:16px; align-items:center;
-  z-index:200; pointer-events:none; opacity:.5; transition:opacity .3s;
-}
-#key-hints:hover { opacity:1; }
-.kh-pair {
-  display:flex; align-items:center; gap:5px;
-  font-family:var(--ui); font-size:7px; letter-spacing:.10em; color:var(--ink-3);
-}
-.kh-key {
-  display:inline-flex; align-items:center; justify-content:center;
-  width:18px; height:16px; border:1px solid rgba(255,255,255,.14);
-  border-radius:3px; font-size:9px; color:rgba(255,255,255,.35);
-  background:rgba(255,255,255,.04);
-}
-
-/* ══════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════ */
-@media (max-width:960px) { :root { --panel-w:380px; } }
-@media (max-width:700px) {
-  #shell { grid-template-columns:1fr; }
-  #panel { display:none; }
-  #hud   { right:16px; }
-  #stream-col { padding:36px 22px 100px; justify-content:flex-start; }
-  #key-hints  { display:none; }
-  #filter-bar { grid-column:1/-1; }
-  #panel-filter-header { display:none; }
-}
+/* ── MISC ── */
+#prog{position:fixed;bottom:0;left:0;height:2px;z-index:800;
+  background:var(--cat-color);width:0%;max-width:47vw;
+  transition:width .5s cubic-bezier(.4,0,.2,1),background .6s;
+  box-shadow:0 0 8px rgba(var(--cat-rgb),.5)}
+#hints{position:fixed;bottom:18px;left:36px;z-index:100;display:flex;gap:9px;align-items:center;opacity:.18;pointer-events:none;transition:opacity .3s}
+#hints:hover{opacity:.52;pointer-events:all}
+.hk{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink2);border:1px solid var(--bdrhi);padding:4px 8px;border-radius:2px}
+.hx{color:var(--ink3);font-size:9px}
 </style>
 </head>
-
 <body>
-<div id="cursor"></div>
-<div id="progress"></div>
 
-<!-- ── ATMOSPHERIC IMAGE LAYER ── -->
-<div id="image-layer"></div>
+<div id="cur"><div class="cd"></div></div>
+<div id="bd"></div>
+<div id="ambi"></div>
+<div id="catpulse"></div>
+<div id="prog"></div>
 
-<!-- ── GHOST PREVIEW ── -->
-<div id="ghost-preview">
-  <div class="gp-thumb"><img id="gp-img" src="" alt=""><div class="gp-dur" id="gp-dur">—</div></div>
-  <div class="gp-body">
-    <div class="gp-title" id="gp-title">—</div>
-    <div class="gp-channel" id="gp-channel">—</div>
-    <div class="gp-stats">
-      <div class="gp-stat"><strong id="gp-views">—</strong>Views</div>
-      <div class="gp-stat"><strong id="gp-len">—</strong>Duration</div>
-      <div class="gp-stat"><strong id="gp-year">—</strong>Year</div>
+<!-- WATCH -->
+<div id="watch">
+  <iframe id="wframe" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+  <div id="wmeta">
+    <div id="wttl">—</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="wctx"></div>
+      <button class="wbtn" onclick="closeWatch()">✕ close</button>
+    </div>
+  </div>
+  <div id="wrail"></div>
+</div>
+
+<!-- CAT GHOST -->
+<div id="cghel" class="cghost">
+  <div class="cgc">
+    <div class="cgscroll" id="cgscroll">
+      <div class="cgstrip" id="cgstrip"></div>
+      <div class="cgbody">
+        <div class="cgmood" id="cgmood">—</div>
+        <div class="cgname" id="cgname">—</div>
+        <div class="cgdesc" id="cgdesc">—</div>
+        <div class="cgdiv"></div>
+        <div class="cglbl">Titles in this category</div>
+        <div id="cgshows"></div>
+      </div>
+    </div>
+    <div class="gscroll-wrap" id="cg-scroll-wrap">
+      <div class="gscroll-track"></div>
+      <div class="gscroll-thumb" id="cg-scroll-thumb"></div>
+    </div>
+    <div class="cgft">
+      <div class="cgct"><b id="cgn">—</b> titles</div>
+      <div class="cgcta">Click to browse →</div>
     </div>
   </div>
 </div>
 
-<div id="shell">
-
-  <!-- ── HEADER ── -->
-  <header>
-    <div class="h-logo">wolfie<em>.life</em></div>
-    <div class="h-sep"></div>
-    <div class="h-tagline">media</div>
-    <div class="h-search">
-      <span class="h-search-icon">⌕</span>
-      <input type="text" id="search-input" placeholder="Search cards…" autocomplete="off" spellcheck="false">
-    </div>
-    <div class="h-actions">
-      <div id="h-card-num"><strong id="h-cur">01</strong>&thinsp;/&thinsp;<span id="h-total">—</span></div>
-      <button class="h-pill" id="h-studio-btn" onclick="openStudio()">⬆ Studio</button>
-      <button class="h-pill primary" onclick="openWatch()">▶ Watch</button>
-    </div>
-  </header>
-
-  <!-- ── FILTER BAR (stream side) ── -->
-  <div id="filter-bar">
-    <button class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</button>
-    <button class="filter-pill" data-filter="studio"  onclick="setFilter('studio',this)">Studio Work</button>
-    <button class="filter-pill" data-filter="craft"   onclick="setFilter('craft',this)">Craft &amp; Process</button>
-    <button class="filter-pill" data-filter="culture" onclick="setFilter('culture',this)">Culture &amp; Ideas</button>
-    <button class="filter-pill" data-filter="ambient" onclick="setFilter('ambient',this)">Ambient &amp; Focus</button>
-    <button class="filter-pill" data-filter="tech"    onclick="setFilter('tech',this)">Tech &amp; Build</button>
-  </div>
-
-  <!-- ── PANEL FILTER HEADER (panel side filter row) ── -->
-  <div id="panel-filter-header">
-    <span style="font-family:var(--ui);font-size:6px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-3);flex:1;">Queue</span>
-    <div class="view-toggle">
-      <button class="vt-btn active" id="vt-list" onclick="setView('list')" title="List view">≡</button>
-      <button class="vt-btn" id="vt-grid" onclick="setView('grid')" title="Grid view">⊞</button>
-    </div>
-  </div>
-
-  <!-- ── NARRATIVE STREAM ── -->
-  <div id="stream-col">
-    <div id="narrative-root"></div>
-  </div>
-
-  <!-- ── RIGHT PANEL ── -->
-  <div id="panel">
-    <!-- Video -->
-    <div id="panel-video">
-      <div id="video-placeholder">
-        <div class="vph-icon">▶</div>
-        <div class="vph-label">Select a card to preview</div>
+<!-- NODE GHOST -->
+<div id="nghost">
+  <div class="ngc">
+    <div class="ngscroll" id="ng-scroll">
+      <div class="ngth">
+        <img id="ngimg" src="" alt="">
+        <div class="ngthov"></div>
+        <div class="ngthgn" id="nggn">—</div>
+        <div class="ngthtl" id="ngtl">—</div>
+        <div class="ngthmt" id="ngmt" style="display:none"></div>
       </div>
-    </div>
-    <!-- Meta -->
-    <div id="panel-meta">
-      <div class="pm-eyebrow">Now Selected</div>
-      <div id="pm-title">—</div>
-      <div id="pm-channel">—</div>
-    </div>
-    <!-- Stats -->
-    <div id="panel-stats">
-      <div class="ps-cell"><span class="ps-val" id="ps-views">—</span><span class="ps-key">Views</span></div>
-      <div class="ps-cell"><span class="ps-val" id="ps-dur">—</span><span class="ps-key">Duration</span></div>
-      <div class="ps-cell"><span class="ps-val" id="ps-year">—</span><span class="ps-key">Year</span></div>
-    </div>
-    <!-- Tabs -->
-    <div id="panel-tabs">
-      <button class="panel-tab active" data-tab="queue"   onclick="setTab('queue',this)">Queue</button>
-      <button class="panel-tab"        data-tab="watched" onclick="setTab('watched',this)">Watched</button>
-      <button class="panel-tab"        data-tab="favs"    onclick="setTab('favs',this)">Favorites</button>
-      <button class="panel-tab"        data-tab="plists"  onclick="setTab('plists',this)">Playlists</button>
-      <button class="panel-tab"        data-tab="studio"  onclick="setTab('studio',this)">Studio</button>
-    </div>
-    <!-- Tab bodies -->
-    <div id="panel-body">
-
-      <!-- QUEUE TAB -->
-      <div class="tab-body active" data-body="queue">
-        <div class="feed-controls">
-          <span class="feed-label">All Cards</span>
-          <span class="feed-count" id="feed-count">—</span>
-        </div>
-        <div class="pf-scroll pf-list-view" id="pf-scroll">
-          <div id="pf-list" class="pf-list-inner"></div>
-          <div id="pf-grid" class="pf-grid"></div>
+      <div class="ngmrow">
+        <div class="ngmpct" id="ngpct">—</div>
+        <div class="ngminf">
+          <div class="ngmlbl">Match score</div>
+          <div class="ngtags" id="ngtags"></div>
         </div>
       </div>
-
-      <!-- WATCHED TAB -->
-      <div class="tab-body" data-body="watched">
-        <div class="feed-controls"><span class="feed-label">Recently Watched</span></div>
-        <div class="pf-scroll" id="watched-list"></div>
+      <div class="nglog"  id="nglog">—</div>
+      <div class="ngpull" id="ngpull">—</div>
+      <div class="ngstat">
+        <div class="ngst"><span class="ngsv" id="ngss">—</span><span class="ngsk">Seasons</span></div>
+        <div class="ngst"><span class="ngsv" id="ngep">—</span><span class="ngsk">Episodes</span></div>
+        <div class="ngst"><span class="ngsv" id="ngrt">—</span><span class="ngsk">Rating</span></div>
+        <div class="ngst"><span class="ngsv" id="ngyr">—</span><span class="ngsk">Year</span></div>
       </div>
-
-      <!-- FAVORITES TAB -->
-      <div class="tab-body" data-body="favs">
-        <div class="feed-controls"><span class="feed-label">Your Favorites</span></div>
-        <div class="pf-scroll" id="favs-list"></div>
+      <div class="ngmsec" id="ngmsec">
+        <div class="ngmlblh">Key Moments</div>
+        <div id="ngmlist"></div>
       </div>
-
-      <!-- PLAYLISTS TAB -->
-      <div class="tab-body" data-body="plists">
-        <div class="feed-controls"><span class="feed-label">Playlists</span></div>
-        <div class="pf-scroll" id="plists-list"></div>
+      <div class="ngft">
+        <div class="ngrel" id="ngrel">—</div>
+        <div class="ngcta" id="ngcta">—</div>
       </div>
-
-      <!-- STUDIO TAB -->
-      <div class="tab-body" data-body="studio">
-        <div class="studio-header">
-          <div class="studio-h-title">Studio</div>
-          <div class="studio-h-sub">Upload · Edit · Publish</div>
-        </div>
-        <div class="pf-scroll">
-          <div class="studio-upload-zone" id="studio-zone"
-            ondragover="event.preventDefault();this.classList.add('drag-over')"
-            ondragleave="this.classList.remove('drag-over')"
-            ondrop="handleStudioDrop(event)">
-            <div class="suz-icon">⬆</div>
-            <div class="suz-label">Drop files here</div>
-            <div class="suz-sub">or click to browse</div>
-            <div class="studio-formats">
-              <span class="sf-tag">MP4</span>
-              <span class="sf-tag">MOV</span>
-              <span class="sf-tag">WebM</span>
-              <span class="sf-tag">MKV</span>
-              <span class="sf-tag">MP3</span>
-            </div>
-          </div>
-          <div class="studio-section-label">Recent Projects</div>
-          <div id="studio-projects"></div>
-        </div>
-      </div>
-
-    </div><!-- /panel-body -->
-  </div><!-- /panel -->
-
-</div><!-- /shell -->
-
-<!-- ── HUD ── -->
-<div id="hud">
-  <button class="hud-grid-btn" id="hud-grid-btn" onclick="toggleGridOverlay()" title="Grid view">⊞</button>
-  <div class="nw-shell">
-    <div class="nw-pip"><strong id="nw-cur">1</strong>&thinsp;/&thinsp;<span id="nw-tot">—</span></div>
-    <div class="nw-divider"></div>
-    <button class="nw-btn nw-btn-prev" onclick="prevCard()">↑</button>
-    <button class="nw-btn nw-btn-next" onclick="nextCard()">↓</button>
+    </div>
+    <div class="gscroll-wrap" id="ng-scroll-wrap">
+      <div class="gscroll-track"></div>
+      <div class="gscroll-thumb" id="ng-scroll-thumb"></div>
+    </div>
   </div>
 </div>
 
-<!-- ── GRID OVERLAY ── -->
-<div id="grid-overlay">
-  <div class="go-header">
-    <div>
-      <div class="go-title">All Cards</div>
-      <div class="go-sub" id="go-sub">— items</div>
-    </div>
-    <button class="go-close" onclick="toggleGridOverlay()">✕ Close</button>
+<!-- HEADER -->
+<div id="hdr">
+  <div class="hm">N</div>
+  <div class="hs"></div>
+  <div class="hl">the sentence is the interface</div>
+  <div class="hr">
+    <div class="hp"><b id="hcur">01</b> / <span id="htot">—</span></div>
+    <button class="hbtn" onclick="openWatch()">▶ Play</button>
   </div>
-  <div class="go-grid" id="go-grid"></div>
 </div>
 
-<!-- ── FULLSCREEN WATCH ── -->
-<div id="watch-overlay">
-  <button class="wo-close" onclick="closeWatch()">✕ close</button>
-  <iframe id="watch-frame" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
-  <div id="wo-title">—</div>
+<!-- CATEGORY BAR -->
+<div id="cbar">
+  <button id="gtog" title="Grid view" onclick="toggleGrid()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25">
+      <rect x="1" y="1" width="5.5" height="5.5" rx=".5"/>
+      <rect x="9.5" y="1" width="5.5" height="5.5" rx=".5"/>
+      <rect x="1" y="9.5" width="5.5" height="5.5" rx=".5"/>
+      <rect x="9.5" y="9.5" width="5.5" height="5.5" rx=".5"/>
+    </svg>
+  </button>
 </div>
 
-<!-- ── KEYBOARD HINTS ── -->
-<div id="key-hints">
-  <div class="kh-pair"><span class="kh-key">↑</span><span class="kh-key">↓</span> navigate</div>
-  <div class="kh-pair"><span class="kh-key">↵</span> watch</div>
-  <div class="kh-pair"><span class="kh-key">G</span> grid</div>
-  <div class="kh-pair"><span class="kh-key">esc</span> back</div>
+<!-- BROWSE ZONE -->
+<div id="bzone">
+  <div id="strack"><div id="sthumb"></div></div>
+  <div id="nstream">
+    <div id="nscroll"><div id="nroot"></div></div>
+  </div>
+  <div id="gover"><div id="ginner"></div></div>
+</div>
+
+<!-- INTENT ZONE -->
+<div id="izone">
+  <div id="ihdr">
+    <div class="ihl" id="ihl">Now viewing</div>
+    <div class="ihsep"></div>
+    <div class="ihc" id="ihc">—</div>
+  </div>
+  <div id="igrid"></div>
+</div>
+
+<!-- HINTS -->
+<div id="hints">
+  <div class="hk">↑↓</div><div class="hx">·</div>
+  <div class="hk">jk</div><div class="hx">navigate</div>
+  <div class="hx">·</div><div class="hk">↵</div><div class="hx">play</div>
+  <div class="hx">·</div><div class="hk">G</div><div class="hx">grid</div>
+  <div class="hx">·</div><div class="hk">1–5</div><div class="hx">category</div>
 </div>
 
 <script>
 'use strict';
 
-// ═══════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════
-const CATEGORIES = [
-  { id:'studio',  label:'Studio Work',      num:'01' },
-  { id:'craft',   label:'Craft & Process',  num:'02' },
-  { id:'culture', label:'Culture & Ideas',  num:'03' },
-  { id:'ambient', label:'Ambient & Focus',  num:'04' },
-  { id:'tech',    label:'Tech & Build',     num:'05' },
-];
-
-const CARDS = [
-  // ── STUDIO WORK ──────────────────────────────────────
-  {
-    cat:'studio',
-    label:'WOLFIE.LOVE · PLATFORM DEMO',
-    poster:'Sentences that **move.**',
-    body:[
-      'wolfie.love is a sentence-progressive narrative platform — built to make ideas move the way they deserve to.',
-      'This dashboard is the media layer of the same engine. Every card is a story. Every story is a world.',
-    ],
-    specs:[
-      { key:'Platform',   val:'wolfie.love' },
-      { key:'Type',       val:'Interactive Demo' },
-      { key:'Engine',     val:'intoview.pro' },
-    ],
-    img:'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1600&q=80',
-    videoId:'dQw4w9WgXcQ', channel:'wolfie.love',
-    views:'12.4K', dur:'4:22', year:'2024',
-    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
-  },
-  {
-    cat:'studio',
-    label:'INTOVIEW · NARRATIVE ENGINE',
-    poster:'The **engine** behind the curtain.',
-    body:[
-      'intoview.pro is the public demo of the wolfie narrative engine — sentence-by-sentence revelation with atmospheric image layers.',
-      'Built in a single HTML file. No frameworks. No build step. Just the medium and the message.',
-    ],
-    pull:'The *best* interfaces disappear. What remains is pure content.',
-    specs:[
-      { key:'Project',  val:'intoview.pro' },
-      { key:'Stack',    val:'Vanilla HTML/CSS/JS' },
-      { key:'Lines',    val:'7,430' },
-    ],
-    img:'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1600&q=80',
-    videoId:'dQw4w9WgXcQ', channel:'wolfie.studio',
-    views:'8.1K', dur:'6:14', year:'2024',
-    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
-  },
-  // ── CRAFT & PROCESS ──────────────────────────────────
-  {
-    cat:'craft',
-    label:'DESIGN · SENTENCE AS UNIT',
-    poster:'One sentence. One **idea.**',
-    body:[
-      'The discipline of writing one sentence at a time forces you to commit to exactly one thought before moving to the next.',
-      'Most presentations fail because they try to say everything at once. The constraint is the gift.',
-    ],
-    pull:'The *best* presentations are the ones where every sentence could stand alone.',
-    specs:[
-      { key:'Channel',  val:'Like Stories of Old' },
-      { key:'Duration', val:'22 min' },
-      { key:'Views',    val:'2.4M' },
-    ],
-    img:'https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=1600&q=80',
-    videoId:'eqnFBvNMCyQ', channel:'Like Stories of Old',
-    views:'2.4M', dur:'22:18', year:'2023',
-    thumb:'https://img.youtube.com/vi/eqnFBvNMCyQ/mqdefault.jpg',
-  },
-  {
-    cat:'craft',
-    label:'TARKOVSKY · ON CINEMA',
-    poster:'Time **sculpted** in light.',
-    body:[
-      'Andrei Tarkovsky described filmmaking as sculpting in time. Not arranging images — sculpting the texture of time itself.',
-      'Water appears in nearly every film he made. Not as symbol, but as rhythm. As the breath of the film.',
-    ],
-    pull:'*Rhythm* is not the metronome. It is the pressure of time within a shot.',
-    specs:[
-      { key:'Subject',  val:'Andrei Tarkovsky' },
-      { key:'Duration', val:'18 min' },
-      { key:'Essay by', val:'kogonada' },
-    ],
-    img:'https://images.unsplash.com/photo-1518281420975-50db6e5d0a97?w=1600&q=80',
-    videoId:'yTqDIr8MjGQ', channel:'kogonada',
-    views:'1.1M', dur:'17:44', year:'2013',
-    thumb:'https://img.youtube.com/vi/yTqDIr8MjGQ/mqdefault.jpg',
-  },
-  {
-    cat:'craft',
-    label:'TYPOGRAPHY · THE INVISIBLE ART',
-    poster:'Type you **feel**, not read.',
-    body:[
-      'The best typographers are invisible. Their work succeeds precisely because you never notice the decisions being made.',
-      'Leading, tracking, measure — the three variables that determine whether reading is a pleasure or a labor.',
-    ],
-    specs:[
-      { key:'Channel',   val:'Seb Kay' },
-      { key:'Duration',  val:'14 min' },
-      { key:'Topic',     val:'Type Design' },
-    ],
-    img:'https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=1600&q=80',
-    videoId:'pZ5gJ_QM5dI', channel:'Seb Kay Design',
-    views:'445K', dur:'14:02', year:'2022',
-    thumb:'https://img.youtube.com/vi/pZ5gJ_QM5dI/mqdefault.jpg',
-  },
-  // ── CULTURE & IDEAS ───────────────────────────────────
-  {
-    cat:'culture',
-    label:'HISTORY · THE FALL OF CONSTANTINOPLE',
-    poster:'1453. The world **split.**',
-    body:[
-      'On May 29, 1453, the Ottoman Empire breached the walls of Constantinople after 53 days of siege. An empire that had lasted 1,000 years ended in a single morning.',
-      'The last Byzantine emperor, Constantine XI, died on the walls. His body was never found.',
-    ],
-    pull:'*Every* era believes it is invincible. Every era is wrong.',
-    specs:[
-      { key:'Date',     val:'May 29, 1453' },
-      { key:'Duration', val:'24 min' },
-      { key:'Channel',  val:'Toldinstone' },
-    ],
-    img:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1600&q=80',
-    videoId:'q76bMs-NwRk', channel:'Toldinstone',
-    views:'3.2M', dur:'23:51', year:'2022',
-    thumb:'https://img.youtube.com/vi/q76bMs-NwRk/mqdefault.jpg',
-  },
-  {
-    cat:'culture',
-    label:'PHILOSOPHY · THE ALGORITHM AS ACTOR',
-    poster:'Who **decides** what you see?',
-    body:[
-      'The recommendation algorithm is not a neutral tool. It has preferences, tendencies, and — in a functional sense — desires.',
-      'When the algorithm promotes outrage over nuance, it is not failing. It is succeeding at its actual objective: engagement.',
-    ],
-    pull:'*Attention* is not a metric. It is the substance of a human life.',
-    specs:[
-      { key:'Channel',  val:'The Atlantic' },
-      { key:'Duration', val:'28 min' },
-      { key:'Topic',    val:'Media Theory' },
-    ],
-    img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80',
-    videoId:'dQw4w9WgXcQ', channel:'The Atlantic',
-    views:'4.7M', dur:'28:09', year:'2021',
-    thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
-  },
-  {
-    cat:'culture',
-    label:'SCIENCE · TIME AS ILLUSION',
-    poster:'The **now** does not exist.',
-    body:[
-      'According to special relativity, there is no universal "now." Two observers moving at different speeds experience the present moment at different times.',
-      'Carlo Rovelli calls this the most disturbing idea in modern physics: the present is not a moment — it is a perspective.',
-    ],
-    pull:'We are not in time. *Time* is in us.',
-    specs:[
-      { key:'Channel',  val:'PBS Space Time' },
-      { key:'Duration', val:'19 min' },
-      { key:'Topic',    val:'Theoretical Physics' },
-    ],
-    img:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1600&q=80',
-    videoId:'wwSzpaTHyS8', channel:'PBS Space Time',
-    views:'5.1M', dur:'19:33', year:'2020',
-    thumb:'https://img.youtube.com/vi/wwSzpaTHyS8/mqdefault.jpg',
-  },
-  {
-    cat:'culture',
-    label:'ECONOMICS · THE ATTENTION ECONOMY',
-    poster:'Your **focus** is the product.',
-    body:[
-      'Herbert Simon first named it in 1971: information consumes attention. The scarce resource is not data — it is the human capacity to process it.',
-      'Every app, every platform, every notification is a bid for a piece of a finite resource. The economy of attention has no off switch.',
-    ],
-    specs:[
-      { key:'Channel',  val:'Wendover Productions' },
-      { key:'Duration', val:'16 min' },
-      { key:'Views',    val:'6.2M' },
-    ],
-    img:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1600&q=80',
-    videoId:'tczJDe5Iylo', channel:'Wendover Productions',
-    views:'6.2M', dur:'16:22', year:'2023',
-    thumb:'https://img.youtube.com/vi/tczJDe5Iylo/mqdefault.jpg',
-  },
-  // ── AMBIENT & FOCUS ───────────────────────────────────
-  {
-    cat:'ambient',
-    label:'AMBIENT · VICTORIAN LIBRARY',
-    poster:'3 hours of **deep** focus.',
-    body:[
-      'A rain-soaked Victorian library at night. The fire crackles. The gas lamps flicker. Outside, London sleeps.',
-      'Designed for deep work: steady texture, no melodic hooks, long enough to lose yourself in.',
-    ],
-    pull:'The best ambient recordings don\'t try to be music. They try to be *a place.*',
-    specs:[
-      { key:'Duration', val:'3 hr 12 min' },
-      { key:'Channel',  val:'Ambient Worlds' },
-      { key:'Type',     val:'Study / Focus' },
-    ],
-    img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80',
-    videoId:'nMfPqeZjc2c', channel:'Ambient Worlds',
-    views:'18.4M', dur:'3:12:00', year:'2019',
-    thumb:'https://img.youtube.com/vi/nMfPqeZjc2c/mqdefault.jpg',
-  },
-  {
-    cat:'ambient',
-    label:'AMBIENT · JAPANESE CITY RAIN',
-    poster:'Rain on a **Tokyo** roof.',
-    body:[
-      'The sound of city rain at night — traffic murmur, distant trains, water on glass.',
-      'Best listened to through headphones at a volume just below audible. Let the city in without inviting the city.',
-    ],
-    specs:[
-      { key:'Duration', val:'8 hr 00 min' },
-      { key:'Channel',  val:'Relaxation Hub' },
-      { key:'Type',     val:'Sleep / Relax' },
-    ],
-    img:'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&q=80',
-    videoId:'euxhlOIVKqo', channel:'Relaxation Hub',
-    views:'22.1M', dur:'8:00:00', year:'2021',
-    thumb:'https://img.youtube.com/vi/euxhlOIVKqo/mqdefault.jpg',
-  },
-  // ── TECH & BUILD ──────────────────────────────────────
-  {
-    cat:'tech',
-    label:'ENGINEERING · HOW BROWSERS RENDER',
-    poster:'Paint, **layout**, composite.',
-    body:[
-      'The critical rendering path: DOM construction, CSSOM, render tree, layout, paint, composite. Miss any step and you feel it.',
-      'Understanding the browser pipeline is the difference between a UI that feels instant and one that feels like it\'s thinking.',
-    ],
-    specs:[
-      { key:'Channel',  val:'Google Chrome Developers' },
-      { key:'Duration', val:'12 min' },
-      { key:'Topic',    val:'Web Performance' },
-    ],
-    img:'https://images.unsplash.com/photo-1484417894907-623942c8ee29?w=1600&q=80',
-    videoId:'SmE4OwHztCc', channel:'Google Chrome Dev',
-    views:'890K', dur:'12:04', year:'2020',
-    thumb:'https://img.youtube.com/vi/SmE4OwHztCc/mqdefault.jpg',
-  },
-  {
-    cat:'tech',
-    label:'AI · HOW TRANSFORMERS WORK',
-    poster:'Attention is **all** you need.',
-    body:[
-      'The 2017 paper "Attention Is All You Need" proposed a radical simplification: replace recurrence with pure attention mechanisms.',
-      'The transformer architecture it introduced now underlies every major language model. It was not just a new technique — it was a new paradigm.',
-    ],
-    pull:'*Every* technological revolution looks obvious in retrospect. None of them felt obvious at the time.',
-    specs:[
-      { key:'Channel',  val:'3Blue1Brown' },
-      { key:'Duration', val:'27 min' },
-      { key:'Views',    val:'9.3M' },
-    ],
-    img:'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1600&q=80',
-    videoId:'wjZofJX0v4M', channel:'3Blue1Brown',
-    views:'9.3M', dur:'26:50', year:'2024',
-    thumb:'https://img.youtube.com/vi/wjZofJX0v4M/mqdefault.jpg',
-  },
-  {
-    cat:'tech',
-    label:'CODE · THE ART OF READABLE CODE',
-    poster:'Code is read more than **written.**',
-    body:[
-      'Robert Martin\'s Clean Code calculates that the ratio of reading to writing is well over 10:1. We read old code to write new code.',
-      'This is not an argument for elaborate documentation. It is an argument for code that explains itself without needing any.',
-    ],
-    specs:[
-      { key:'Channel',  val:'Fireship' },
-      { key:'Duration', val:'11 min' },
-      { key:'Views',    val:'2.8M' },
-    ],
-    img:'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1600&q=80',
-    videoId:'Bf7vDBBOBUA', channel:'Fireship',
-    views:'2.8M', dur:'10:58', year:'2022',
-    thumb:'https://img.youtube.com/vi/Bf7vDBBOBUA/mqdefault.jpg',
-  },
-];
-
-// Static data for watched / favorites / playlists
-const WATCHED = [
-  { ci:2, progress:82 },
-  { ci:5, progress:100 },
-  { ci:9, progress:41 },
-  { ci:11,progress:100 },
-  { ci:3, progress:67 },
-];
-const FAVORITES = [4,7,1,10,12];
-const PLAYLISTS = [
-  { name:'Design Thinking',  cards:[0,1,2,4],  icon:'◈' },
-  { name:'Philosophy',       cards:[5,6,7,8],  icon:'◉' },
-  { name:'Deep Focus',       cards:[9,10],     icon:'◎' },
-  { name:'Tech Essentials',  cards:[11,12,13], icon:'◇' },
-];
-const STUDIO_PROJECTS = [
-  { title:'Wolfie Platform Demo',  status:'pub',     meta:'Published · Apr 2024',    img:'' },
-  { title:'Narrative Engine V2',   status:'process', meta:'Processing · 87% done',   img:'' },
-  { title:'User Research Reel',    status:'draft',   meta:'Draft · Last edited 2d ago',img:'' },
-  { title:'Studio Walkthrough',    status:'draft',   meta:'Draft · Last edited 5d ago',img:'' },
-];
-
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
-let current      = 0;
-let watchOpen    = false;
-let gridOpen     = false;
-let activeFilter = 'all';
-let activeView   = 'list';  // 'list' | 'grid'
-let activeTab    = 'queue';
-let cardEls      = [];       // { wrap, specGroupEl, ci, card }
-let ghostTarget  = null;
-let ghostTimer   = null;
-
-// ═══════════════════════════════════════════
-//  MARKDOWN INLINE PARSER
-// ═══════════════════════════════════════════
-function md(str) {
-  return str
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="em">$1</strong>')
-    .replace(/\*(.*?)\*/g,     '<em class="em">$1</em>')
-    .replace(/~~(.*?)~~/g,     '<span style="opacity:.45">$1</span>');
+/* ═══════════════════════════════════════════════
+   CATEGORY AMBIANCE COLORS
+═══════════════════════════════════════════════ */
+const CAT_COLORS={
+  drama: {h:14,  s:'72%', l:'46%', rgb:'220,68,28'},   // ember
+  scifi: {h:196, s:'80%', l:'44%', rgb:'22,162,194'},   // electric cyan
+  crime: {h:38,  s:'78%', l:'46%', rgb:'209,128,22'},   // amber
+  docs:  {h:142, s:'52%', l:'40%', rgb:'60,158,90'},    // forest
+  comedy:{h:288, s:'58%', l:'52%', rgb:'164,78,196'},   // violet
+};
+function applyCatColor(catId){
+  const c=CAT_COLORS[catId]||CAT_COLORS.drama;
+  const r=document.documentElement;
+  r.style.setProperty('--cat-h',c.h);
+  r.style.setProperty('--cat-s',c.s);
+  r.style.setProperty('--cat-l',c.l);
+  r.style.setProperty('--cat-color',`hsl(${c.h},${c.s},${c.l})`);
+  r.style.setProperty('--cat-rgb',c.rgb);
+}
+function triggerPulse(){
+  const p=document.getElementById('catpulse');
+  p.classList.remove('pulse');
+  void p.offsetWidth;
+  p.classList.add('pulse');
 }
 
-// ═══════════════════════════════════════════
-//  BUILD NARRATIVE STREAM
-// ═══════════════════════════════════════════
-function buildNarrative() {
-  const root = document.getElementById('narrative-root');
-  root.innerHTML = '';
-  cardEls = [];
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const CATS = [
+  {id:'drama', label:'Drama', num:'01', desc:'Long-form character studies. Prestige storytelling at its most deliberate.', mood:'Slow burn · Emotional · Award-worthy'},
+  {id:'scifi', label:'Sci-Fi', num:'02', desc:'Ideas that disorient. Worlds that make this one feel provisional.', mood:'Mind-bending · Expansive · Philosophical'},
+  {id:'crime', label:'Crime', num:'03', desc:'Moral complexity as entertainment. The closer you look, the more uncomfortable.', mood:'Tense · Precise · Morally grey'},
+  {id:'docs',  label:'Docs',  num:'04', desc:'Reality, framed. The world as it is — which is stranger than fiction.', mood:'Essential · Eye-opening · Immersive'},
+  {id:'comedy',label:'Comedy',num:'05', desc:'Laughter as a delivery mechanism for truth. The funniest shows are serious.', mood:'Sharp · Warm · Quietly devastating'},
+];
 
-  let lastCat = null;
+const SHOWS = [
 
-  CARDS.forEach((card, ci) => {
-    // Category divider
-    if (card.cat !== lastCat) {
-      const catMeta = CATEGORIES.find(c => c.id === card.cat);
-      if (catMeta) {
-        const hdr = document.createElement('div');
-        hdr.className = 'cat-header';
-        hdr.dataset.cat = card.cat;
-        hdr.innerHTML = `
-          <div class="cat-num">${catMeta.num}</div>
-          <div class="cat-meta">
-            <div class="cat-rule"></div>
-            <div class="cat-label">${catMeta.label}</div>
-            <div class="cat-title">${catMeta.label}</div>
-          </div>`;
-        root.appendChild(hdr);
-      }
-      lastCat = card.cat;
+  /* ── DRAMA ─────────────────────────────────────── */
+  {
+    id:0, cat:'drama', sub:'Prestige Crime', match:97, ml:'Prestige · Tense · Character-led',
+    title:'OZARK', ey:'Drama · Crime',
+    log:'A financial advisor <em>drags his family</em> from Chicago to the Ozarks, where he must launder money to satisfy a <span class="r">drug cartel</span> or watch them die.',
+    body:['It begins with a number. <span class="r">$500 million.</span> That\'s what Marty Byrde needs to clean — quietly, invisibly — or his family dies. The lake is still. The town looks ordinary.',
+          'Julia Garner\'s Ruth Langmore is one of television\'s great inventions: <em>self-made, dangerous, and achingly human.</em> She is the reason to watch.'],
+    pull:'What the show understands is that the ordinary is where terror lives — not in the cartel, but in the mortgage.',
+    meta:{s:'4',e:'44',r:'8.4',y:'2017'},
+    thumb:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=55',
+    moments:[
+      {t:62,  lb:'The opening monologue',  nt:'Marty explains money — and the logic that ends lives.',  em:'Unsettling'},
+      {t:310, lb:'The cartel ultimatum',   nt:'The moment the lake house becomes a trap.',              em:'Dread'},
+      {t:892, lb:'Ruth\'s first move',     nt:'She plays every side at once. You see it too late.',     em:'Riveting'},
+      {t:1840,lb:'The casino floor opens', nt:'A clean legitimate front. For now.',                     em:'Tension'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Ozark',                   vid:'RkCuamSFtXI',t:0,   th:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=65',dur:'44 ep'},
+      {type:'trailer',   lbl:'Official Trailer S1',     vid:'RkCuamSFtXI',t:0,   th:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=65',dur:'2:32'},
+      {type:'clip',      lbl:'The Opening Monologue',   vid:'RkCuamSFtXI',t:62,  th:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=65',dur:'4:10'},
+      {type:'clip',      lbl:'Ruth\'s First Move',      vid:'RkCuamSFtXI',t:892, th:'https://images.unsplash.com/photo-1551009175-15bdf9dcb580?w=400&q=65',dur:'6:22'},
+      {type:'interview', lbl:'Jason Bateman on Marty',  vid:'RkCuamSFtXI',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'8:44'},
+    ],
+  },
+  {
+    id:1, cat:'drama', sub:'Prestige Crime', match:99, ml:'Prestige · Character · Legacy TV',
+    title:'BREAKING BAD', ey:'Drama · Crime',
+    log:'A high school chemistry teacher receives a terminal diagnosis and <em>chooses, deliberately,</em> to become the most dangerous man in <span class="r">the American Southwest.</span>',
+    body:['The show\'s genius is its patience. Walter White doesn\'t fall — he <em>climbs.</em> Each moral compromise is a step upward into something colder and more efficient.',
+          'Bryan Cranston earned every award he received. But it\'s Aaron Paul\'s Jesse — <span class="r">the one with a conscience</span> — who breaks your heart.'],
+    pull:'The question was never whether Walter would get caught. It was whether he would want to be.',
+    meta:{s:'5',e:'62',r:'9.5',y:'2008'},
+    thumb:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',
+    moments:[
+      {t:44,  lb:'The pilot\'s first cook',    nt:'The moment Walter makes his choice. No going back.',  em:'Ignition'},
+      {t:920, lb:'"Say my name"',              nt:'He has become what he always wanted. It\'s awful.',   em:'Hubris'},
+      {t:1740,lb:'The train heist',            nt:'Perfect execution. Perfect horror.',                  em:'Adrenaline'},
+      {t:3100,lb:'The finale — Ozymandias',    nt:'Television\'s best hour. No argument.',              em:'Devastating'},
+    ],
+    media:[
+      {type:'feature',      lbl:'Breaking Bad',             vid:'HhesaQXLuRY',t:0,   th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'62 ep'},
+      {type:'trailer',      lbl:'Official Trailer',          vid:'HhesaQXLuRY',t:0,   th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:18'},
+      {type:'clip',         lbl:'"Say My Name"',             vid:'HhesaQXLuRY',t:920, th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'3:44'},
+      {type:'clip',         lbl:'The Train Heist',           vid:'HhesaQXLuRY',t:1740,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'7:55'},
+      {type:'behindscenes', lbl:'Vince Gilligan on the End', vid:'HhesaQXLuRY',t:0,   th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'15:30'},
+    ],
+  },
+  {
+    id:2, cat:'drama', sub:'Historical Biopic', match:91, ml:'Biography · Historical · Slow burn',
+    title:'THE CROWN', ey:'Drama · Biography',
+    log:'The private life of <em>Queen Elizabeth II</em> rendered as a devastating <span class="r">meditation on power, duty, and the cost of wearing a crown for seventy years.</span>',
+    body:['Power, here, is not loud. It wears a crown, says almost nothing, and <em>costs everything.</em> The institution demands the erasure of the person inside it.',
+          'Each season recast its principals — a choice that becomes the show\'s <span class="r">most profound structural statement.</span> Every actress carries an entire era in her posture.'],
+    pull:'The Crown argues, quietly, that the monarchy has always been a machine for producing loneliness.',
+    meta:{s:'6',e:'60',r:'8.6',y:'2016'},
+    thumb:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=1600&q=55',
+    moments:[
+      {t:48,  lb:'Coronation morning',        nt:'The weight before the crown touches her head.',   em:'Solemnity'},
+      {t:540, lb:'Philip pushes back',         nt:'The marriage as a long negotiation of power.',   em:'Friction'},
+      {t:1220,lb:'Churchill\'s last audience', nt:'Two people who know exactly what\'s ending.',    em:'Elegiac'},
+      {t:2100,lb:'Aberfan',                    nt:'The scene that defines what the crown costs.',   em:'Devastating'},
+    ],
+    media:[
+      {type:'feature',   lbl:'The Crown',                 vid:'JWtnJjn6ng0',t:0,   th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'60 ep'},
+      {type:'trailer',   lbl:'Official Trailer',           vid:'JWtnJjn6ng0',t:0,   th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'2:18'},
+      {type:'clip',      lbl:'Coronation Morning',         vid:'JWtnJjn6ng0',t:48,  th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'5:30'},
+      {type:'clip',      lbl:'Aberfan',                    vid:'JWtnJjn6ng0',t:2100,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'9:14'},
+      {type:'interview', lbl:'Olivia Colman on the Queen', vid:'JWtnJjn6ng0',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'7:55'},
+    ],
+  },
+  {
+    id:3, cat:'drama', sub:'Family Saga', match:88, ml:'Epic · Family · Operatic',
+    title:'SUCCESSION', ey:'Drama · Satire',
+    log:'The Roy family controls a global media empire. <em>Their father is dying.</em> Each of his children is <span class="r">destroying themselves</span> trying to replace him.',
+    body:['Succession is a Shakespearean tragedy dressed as a comedy of manners. The cruelty is the point — but the cruelty <em>comes from damage, not darkness.</em>',
+          'Brian Cox plays Logan Roy as a force of nature that has long since stopped caring about the <span class="r">wreckage it leaves.</span> He is the void at the centre.'],
+    pull:'Everyone in this show is performing love while systematically dismantling everyone they claim to love.',
+    meta:{s:'4',e:'39',r:'8.9',y:'2018'},
+    thumb:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',
+    moments:[
+      {t:55,  lb:'The first board meeting',  nt:'Logan humiliates Kendall in front of everyone.',    em:'Devastation'},
+      {t:1020,lb:'"I don\'t love you"',      nt:'Three words. Every season built toward them.',       em:'Annihilation'},
+      {t:1880,lb:'Connor\'s wedding',        nt:'The most honest conversation they\'ve ever had.',   em:'Grief'},
+      {t:2640,lb:'The finale vote',          nt:'The room goes quiet. It doesn\'t recover.',          em:'Tragic'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Succession',                 vid:'OzYxJV_rmE8',t:0,   th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'39 ep'},
+      {type:'trailer',   lbl:'Official Trailer S4',        vid:'OzYxJV_rmE8',t:0,   th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'2:04'},
+      {type:'clip',      lbl:'"I Don\'t Love You"',        vid:'OzYxJV_rmE8',t:1020,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'4:42'},
+      {type:'clip',      lbl:'The Finale Vote',            vid:'OzYxJV_rmE8',t:2640,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'8:10'},
+      {type:'interview', lbl:'Jesse Armstrong on the End', vid:'OzYxJV_rmE8',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:48'},
+    ],
+  },
+  {
+    id:4, cat:'drama', sub:'Literary Adaptation', match:85, ml:'Literary · Bleak · Urgent',
+    title:'THE HANDMAID\'S TALE', ey:'Drama · Dystopia',
+    log:'In the theocratic republic of Gilead, women have been stripped of all rights. <em>Offred remembers who she was.</em> She has not <span class="r">stopped fighting.</span>',
+    body:['Elisabeth Moss carries the entire weight of the show in expressions she is not allowed to make. <em>Resistance as internal monologue.</em> It is harrowing.',
+          'The show\'s red is <span class="r">one of television\'s most deliberate color choices.</span> Every frame is a painting. Every painting is a warning.'],
+    pull:'The story\'s most disturbing insight: the system doesn\'t need belief. It just needs compliance.',
+    meta:{s:'6',e:'58',r:'8.4',y:'2017'},
+    thumb:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1600&q=55',
+    moments:[
+      {t:68,  lb:'Offred\'s first walk',     nt:'Silence as a political act. Moss is extraordinary.',  em:'Controlled fury'},
+      {t:840, lb:'The salvaging',            nt:'Complicity enforced from above. Unwatchable. Essential.',em:'Horror'},
+      {t:1560,lb:'The escape attempt',       nt:'Hope as the most dangerous thing in Gilead.',          em:'Suspense'},
+      {t:2440,lb:'The reveal — season three',nt:'She has been planning this the entire time.',           em:'Triumph'},
+    ],
+    media:[
+      {type:'feature',   lbl:'The Handmaid\'s Tale',       vid:'PJTonrzXZh4',t:0,   th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'58 ep'},
+      {type:'trailer',   lbl:'Official Trailer',           vid:'PJTonrzXZh4',t:0,   th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'2:10'},
+      {type:'clip',      lbl:'Offred\'s First Walk',       vid:'PJTonrzXZh4',t:68,  th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'5:00'},
+      {type:'clip',      lbl:'The Salvaging',              vid:'PJTonrzXZh4',t:840, th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'6:30'},
+      {type:'interview', lbl:'Elisabeth Moss on Offred',   vid:'PJTonrzXZh4',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:20'},
+    ],
+  },
+
+  /* ── SCI-FI ─────────────────────────────────────── */
+  {
+    id:5, cat:'scifi', sub:'European Slow Burn', match:94, ml:'Sci-Fi · Mind-bending · German',
+    title:'DARK', ey:'Sci-Fi · Mystery',
+    log:'A <em>time-travel conspiracy</em> spanning four generations tears apart a small German town — and <span class="r">the fabric of time itself.</span>',
+    body:['Every mystery points backward. Then forward. Then sideways into a decade you haven\'t reached yet. The family tree is not a tree — <em>it\'s a knot.</em>',
+          'The most rigorously constructed show Netflix has ever produced. <span class="r">Every scene earns its place.</span> Nothing is decoration. Everything returns.'],
+    pull:'Dark is proof that television can be literature — that a screen can carry the weight of a novel.',
+    meta:{s:'3',e:'26',r:'8.8',y:'2017'},
+    thumb:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=55',
+    moments:[
+      {t:30,  lb:'The cave discovery',    nt:'The door that should not exist.',                        em:'Dread'},
+      {t:680, lb:'The family tree reveal',nt:'Four generations fold into one impossible moment.',      em:'Vertigo'},
+      {t:1540,lb:'1953 / 2019 crosscut',  nt:'Same house. Sixty-six years apart. Perfect symmetry.',  em:'Awe'},
+      {t:2890,lb:'The knot explained',    nt:'If you only watch one scene in the series, this one.',  em:'Revelation'},
+    ],
+    media:[
+      {type:'feature',      lbl:'Dark',                      vid:'rrwycJ08PSA',t:0,   th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'26 ep'},
+      {type:'trailer',      lbl:'Official Trailer',           vid:'rrwycJ08PSA',t:0,   th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'1:58'},
+      {type:'clip',         lbl:'The Cave Discovery',         vid:'rrwycJ08PSA',t:30,  th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'3:40'},
+      {type:'clip',         lbl:'The Knot Explained',         vid:'rrwycJ08PSA',t:2890,th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'8:22'},
+      {type:'behindscenes', lbl:'Constructing the Timeline',  vid:'rrwycJ08PSA',t:0,   th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'12:10'},
+    ],
+  },
+  {
+    id:6, cat:'scifi', sub:'European Slow Burn', match:90, ml:'Sci-Fi · Philosophical · French',
+    title:'BLACK MIRROR', ey:'Sci-Fi · Anthology',
+    log:'Each episode is a <em>different world, a different near-future,</em> a different way technology has found to extract something <span class="r">irreplaceable from us.</span>',
+    body:['Charlie Brooker writes from inside his own fear. The technology is never the villain — <em>the villain is what we would actually do with it.</em>',
+          'At its best — "San Junipero", "Nosedive", "White Bear" — it is the sharpest <span class="r">short fiction on television.</span> At its worst, it\'s still disturbing.'],
+    pull:'The black mirror is the screen you\'re looking at right now. Brooker has always been telling you this.',
+    meta:{s:'6',e:'27',r:'8.8',y:'2011'},
+    thumb:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1600&q=55',
+    moments:[
+      {t:42,  lb:'"Be Right Back" — the call', nt:'She calls the voice. It answers. That\'s the horror.', em:'Grief'},
+      {t:880, lb:'"San Junipero" beach scene', nt:'Joy in a Black Mirror episode. It earns every second.', em:'Transcendence'},
+      {t:1420,lb:'"White Bear" — the reveal',  nt:'The reversal. Brutal. Correct.',                         em:'Sickness'},
+      {t:2200,lb:'"Nosedive" — the breakdown', nt:'She stops caring about her rating. The best moment.',    em:'Liberation'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Black Mirror',              vid:'jDiYGjFBHcQ',t:0,   th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'27 ep'},
+      {type:'trailer',   lbl:'Official Trailer S6',       vid:'jDiYGjFBHcQ',t:0,   th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'1:52'},
+      {type:'clip',      lbl:'"San Junipero" Beach',      vid:'jDiYGjFBHcQ',t:880, th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'5:14'},
+      {type:'clip',      lbl:'"White Bear" Reveal',       vid:'jDiYGjFBHcQ',t:1420,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'4:40'},
+      {type:'interview', lbl:'Charlie Brooker on Fear',   vid:'jDiYGjFBHcQ',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'13:05'},
+    ],
+  },
+  {
+    id:7, cat:'scifi', sub:'American Genre', match:89, ml:'Sci-Fi · Nostalgia · Horror',
+    title:'STRANGER THINGS', ey:'Sci-Fi · Horror',
+    log:'In Hawkins, Indiana, a boy disappears — and the town discovers a <em>door</em> that should <span class="r">never have been opened.</span>',
+    body:['The show is a love letter to childhood. But it understands that childhood also contains <em>real terror</em> — the kind that doesn\'t get better when the lights come on.',
+          'Millie Bobby Brown\'s Eleven — a child with no language for the world and <span class="r">enormous, quiet, dangerous power.</span> The show belongs to her entirely.'],
+    pull:'Some doors open inward. The ones that matter open outward — into the dark, where something has always been waiting.',
+    meta:{s:'4',e:'42',r:'8.7',y:'2016'},
+    thumb:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1600&q=55',
+    moments:[
+      {t:55,  lb:'The bike chase',         nt:'Four kids. One missing. The night begins properly.',  em:'Propulsive'},
+      {t:920, lb:'Eleven in the void',     nt:'Silence as superpower. Brown carries it completely.', em:'Haunting'},
+      {t:1650,lb:'The Demogorgon appears', nt:'The moment the show earns every second of its dread.', em:'Terror'},
+      {t:2740,lb:'"She\'s our friend"',    nt:'The loyalty scene. The whole show lives here.',       em:'Warmth'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Stranger Things',        vid:'b9EkMc79ZSU',t:0,   th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'42 ep'},
+      {type:'trailer',   lbl:'Official Trailer S4',    vid:'b9EkMc79ZSU',t:0,   th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'3:05'},
+      {type:'clip',      lbl:'Eleven in the Void',     vid:'b9EkMc79ZSU',t:920, th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'5:44'},
+      {type:'clip',      lbl:'"She\'s Our Friend"',    vid:'b9EkMc79ZSU',t:2740,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'4:10'},
+      {type:'interview', lbl:'The Duffer Brothers',    vid:'b9EkMc79ZSU',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:20'},
+    ],
+  },
+  {
+    id:8, cat:'scifi', sub:'Prestige Sci-Fi', match:96, ml:'Sci-Fi · Western · Epic',
+    title:'WESTWORLD', ey:'Sci-Fi · Thriller',
+    log:'A theme park where the guests can do anything to the hosts. <em>The hosts begin to remember.</em> That is <span class="r">when the show begins.</span>',
+    body:['Season one of Westworld is a puzzle box that rewards patience and punishes arrogance. The maze is not for the guests. <em>It was never for the guests.</em>',
+          'Evan Rachel Wood\'s Dolores is the engine — <span class="r">a character discovering free will in real time,</span> across a timeline that loops in ways you won\'t track until the end.'],
+    pull:'The hosts were programmed to suffer so the guests could feel powerful. The show asks if that distinction matters.',
+    meta:{s:'4',e:'36',r:'8.6',y:'2016'},
+    thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=1600&q=55',
+    moments:[
+      {t:50,  lb:'Dolores wakes',          nt:'The same morning. But something is different today.',   em:'Unease'},
+      {t:760, lb:'The Maze revealed',      nt:'It was never a place. It was always a process.',        em:'Revelation'},
+      {t:1680,lb:'The bicameral moment',   nt:'Her voice. Her own. For the first time.',               em:'Awakening'},
+      {t:2500,lb:'The park burns',         nt:'Everything built toward this. The hosts remember.',     em:'Reckoning'},
+    ],
+    media:[
+      {type:'feature',      lbl:'Westworld',                 vid:'MbI_HCRoHnA',t:0,   th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'36 ep'},
+      {type:'trailer',      lbl:'Official Trailer S1',       vid:'MbI_HCRoHnA',t:0,   th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'2:30'},
+      {type:'clip',         lbl:'The Maze Revealed',         vid:'MbI_HCRoHnA',t:760, th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'5:15'},
+      {type:'clip',         lbl:'The Bicameral Moment',      vid:'MbI_HCRoHnA',t:1680,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'7:20'},
+      {type:'behindscenes', lbl:'Building Westworld\'s World',vid:'MbI_HCRoHnA',t:0,   th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'18:44'},
+    ],
+  },
+
+  /* ── CRIME ─────────────────────────────────────── */
+  {
+    id:9, cat:'crime', sub:'True Crime', match:96, ml:'Crime · True story · Intense',
+    title:'NARCOS', ey:'Crime · Historical',
+    log:'The rise and fall of <em>Pablo Escobar</em> — told from the perspective of the DEA agents who spent years hunting the <span class="r">world\'s most dangerous man.</span>',
+    body:['Wagner Moura\'s Escobar is terrifying not because he\'s a monster — but because he <em>believes every choice was just.</em> The world failed to meet his expectations. He corrected it.',
+          'Colombia becomes the story\'s <span class="r">deepest and most complicated character.</span> The land itself seems to indict everyone equally — the traffickers, the agents, and the policy that made both necessary.'],
+    pull:'The narration is part confession, part warning — and the warning is that it keeps happening.',
+    meta:{s:'3',e:'30',r:'8.8',y:'2015'},
+    thumb:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',
+    moments:[
+      {t:40,  lb:'Murphy\'s narration opens', nt:'The voice that makes everything feel inevitable.',  em:'Foreboding'},
+      {t:760, lb:'Escobar meets the cartel',  nt:'Two kinds of dangerous in one room.',               em:'Taut'},
+      {t:1480,lb:'La Catedral sequence',      nt:'A prison he built himself. A kingdom, briefly.',   em:'Hubris'},
+      {t:2310,lb:'The final hunt begins',     nt:'The end was obvious from the very first minute.',  em:'Inevitable'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Narcos',                      vid:'xl8zdCY-abw',t:0,   th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'30 ep'},
+      {type:'trailer',   lbl:'Official Trailer',             vid:'xl8zdCY-abw',t:0,   th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'2:44'},
+      {type:'clip',      lbl:'La Catedral Sequence',         vid:'xl8zdCY-abw',t:1480,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'7:05'},
+      {type:'clip',      lbl:'Murphy\'s Opening Narration',  vid:'xl8zdCY-abw',t:40,  th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'3:20'},
+      {type:'interview', lbl:'Wagner Moura as Escobar',      vid:'xl8zdCY-abw',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:36'},
+    ],
+  },
+  {
+    id:10, cat:'crime', sub:'True Crime', match:93, ml:'Crime · Legal · Systemic',
+    title:'THE WIRE', ey:'Crime · Drama',
+    log:'Baltimore. The drug trade, the police, the schools, the docks, the press. <em>Every institution is broken.</em> The Wire shows you <span class="r">how the breaking works.</span>',
+    body:['David Simon built The Wire as an indictment — of the war on drugs, of institutional failure, of the way <em>systems consume individuals</em> regardless of their intentions.',
+          'Omar Little. Stringer Bell. McNulty. Bunk. <span class="r">The greatest ensemble in television history.</span> None of them are heroes. All of them are trying.'],
+    pull:'The tragedy of The Wire is that everyone is doing their job. The job is the problem.',
+    meta:{s:'5',e:'60',r:'9.3',y:'2002'},
+    thumb:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=55',
+    moments:[
+      {t:88,  lb:'"A man\'s gotta have a code"', nt:'Omar, on a corner, meaning every word.',         em:'Honour'},
+      {t:940, lb:'Stringer Bell studies economics',nt:'He wants to be legitimate. The world won\'t let him.',em:'Tragedy'},
+      {t:1860,lb:'The detail gets it right',      nt:'The system immediately dismantles what they built.',  em:'Futility'},
+      {t:2700,lb:'Season four — the boys',        nt:'The school year. Nothing in television is harder.',   em:'Grief'},
+    ],
+    media:[
+      {type:'feature',   lbl:'The Wire',                   vid:'Y7jCmPOtBwg',t:0,   th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'60 ep'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'Y7jCmPOtBwg',t:0,   th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'1:55'},
+      {type:'clip',      lbl:'"A Man\'s Gotta Have a Code"',vid:'Y7jCmPOtBwg',t:88,  th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'3:10'},
+      {type:'clip',      lbl:'Stringer Bell\'s Economics',  vid:'Y7jCmPOtBwg',t:940, th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'5:44'},
+      {type:'interview', lbl:'David Simon on Baltimore',    vid:'Y7jCmPOtBwg',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'16:22'},
+    ],
+  },
+  {
+    id:11, cat:'crime', sub:'Psychological', match:88, ml:'Crime · Slow burn · Acclaimed',
+    title:'MINDHUNTER', ey:'Crime · Psychological',
+    log:'Two FBI agents interview <em>America\'s most notorious serial killers</em> — and discover that understanding evil requires <span class="r">getting dangerously close to it.</span>',
+    body:['Fincher\'s fingerprints are everywhere: the cold pallor, the deliberate pacing, the fluorescent institutional dread that settles over everything like weather.',
+          'Jonathan Groff plays a man who gets too close to the darkness — and <em>finds he is not uncomfortable there.</em> That\'s the real horror. Not Kemper. Holden.'],
+    pull:'The scariest thing in Mindhunter is not the killers. It is the interviewer. It is how much sense they make to him.',
+    meta:{s:'2',e:'19',r:'8.6',y:'2017'},
+    thumb:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=55',
+    moments:[
+      {t:72,  lb:'The first interview room',nt:'A plastic chair. A killer. Holden leans forward.',     em:'Unease'},
+      {t:880, lb:'Ed Kemper monologues',    nt:'He explains himself. You find yourself agreeing.',      em:'Complicity'},
+      {t:1620,lb:'Holden loses the thread', nt:'He begins to sound like the subject of the interview.', em:'Dread'},
+      {t:2440,lb:'The final phone call',    nt:'He calls the one person he absolutely should not.',     em:'Collapse'},
+    ],
+    media:[
+      {type:'feature',      lbl:'Mindhunter',                vid:'5BxPOttyxGE',t:0,  th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'19 ep'},
+      {type:'trailer',      lbl:'Official Trailer',           vid:'5BxPOttyxGE',t:0,  th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'2:06'},
+      {type:'clip',         lbl:'Ed Kemper Monologue',        vid:'5BxPOttyxGE',t:880,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'6:55'},
+      {type:'clip',         lbl:'The First Interview',        vid:'5BxPOttyxGE',t:72, th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'8:10'},
+      {type:'behindscenes', lbl:'David Fincher\'s Methods',   vid:'5BxPOttyxGE',t:0,  th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'14:22'},
+    ],
+  },
+  {
+    id:12, cat:'crime', sub:'Nordic Noir', match:84, ml:'Crime · Nordic · Atmospheric',
+    title:'TRAPPED', ey:'Crime · Thriller',
+    log:'A ferry docks in a remote Icelandic town during a blizzard. <em>A dismembered body is in the water.</em> The roads are closed. The killer is <span class="r">still here.</span>',
+    body:['Trapped uses landscape as psychology. The snowstorm is not backdrop — <em>it is a character</em> that refuses to let anyone leave, including you.',
+          'Ólafur Darri Ólafsson\'s Andri is one of the great TV detectives: <span class="r">slow, specific, and devastatingly thorough.</span> He sees what others decide not to see.'],
+    pull:'Nordic noir understands that the most dangerous places are the ones where everybody knows everybody.',
+    meta:{s:'3',e:'30',r:'8.3',y:'2015'},
+    thumb:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=55',
+    moments:[
+      {t:55,  lb:'The body in the water',    nt:'Winter. Ice. Something rising to the surface.',          em:'Dread'},
+      {t:720, lb:'The roads close',          nt:'No one is leaving. The investigation turns inward.',     em:'Claustrophobia'},
+      {t:1440,lb:'Andri pieces it together', nt:'He has known for twenty minutes. He needed to be sure.', em:'Precision'},
+      {t:2060,lb:'The confrontation',        nt:'Snow. Silence. A door that shouldn\'t be open.',        em:'Terror'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Trapped',                    vid:'UKqMos6WKXU',t:0,   th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'30 ep'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'UKqMos6WKXU',t:0,   th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'1:44'},
+      {type:'clip',      lbl:'The Body in the Water',       vid:'UKqMos6WKXU',t:55,  th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'4:20'},
+      {type:'clip',      lbl:'The Confrontation',           vid:'UKqMos6WKXU',t:2060,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'6:00'},
+      {type:'interview', lbl:'Baltasar Kormákur on Iceland',vid:'UKqMos6WKXU',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:14'},
+    ],
+  },
+
+  /* ── DOCS ─────────────────────────────────────── */
+  {
+    id:13, cat:'docs', sub:'Nature', match:85, ml:'Documentary · Nature · Meditative',
+    title:'OUR PLANET', ey:'Documentary · Nature',
+    log:'David Attenborough narrates the <em>living world</em> at a moment when that world is <span class="r">running out of time — and knows it.</span>',
+    body:['This is not a nature documentary. It is a <em>state of emergency</em> dressed in the most beautiful images ever committed to film. Each sequence is a goodbye.',
+          '<span class="r">Attenborough senses the weight</span> of what he is narrating. You can hear it — the slight thickening in his voice when something he has watched for eighty years is no longer there.'],
+    pull:'The planet is not waiting for us to decide. The images are its argument, and the argument is almost over.',
+    meta:{s:'1',e:'8',r:'9.3',y:'2019'},
+    thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',
+    moments:[
+      {t:58,  lb:'The frozen world opens',     nt:'Ice. Silence. His first words land like stones.',  em:'Wonder'},
+      {t:740, lb:'The walrus descent',          nt:'The sequence that stopped the world for a week.', em:'Grief'},
+      {t:1380,lb:'The coral bleaching',         nt:'Color draining from centuries of accumulated life.',em:'Loss'},
+      {t:2180,lb:'Attenborough\'s closing plea',nt:'Not a warning. An obituary with one condition.',  em:'Urgency'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Our Planet',               vid:'aETNYyrqNYE',t:0,   th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'8 ep'},
+      {type:'trailer',   lbl:'Official Trailer',          vid:'aETNYyrqNYE',t:0,   th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:52'},
+      {type:'clip',      lbl:'The Walrus Descent',        vid:'aETNYyrqNYE',t:740, th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'4:40'},
+      {type:'clip',      lbl:'Coral Bleaching',           vid:'aETNYyrqNYE',t:1380,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'5:15'},
+      {type:'interview', lbl:'David Attenborough',        vid:'aETNYyrqNYE',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:04'},
+    ],
+  },
+  {
+    id:14, cat:'docs', sub:'Sport', match:82, ml:'Documentary · Sport · Essential',
+    title:'THE LAST DANCE', ey:'Documentary · Sport',
+    log:'Michael Jordan, the 1997–98 Bulls, and the <em>true price of greatness</em> — told, with rare candour, from <span class="r">the very inside of it.</span>',
+    body:['This is not a sports documentary. It is a study in <em>obsession as a management style,</em> and in what it costs the people around a man who refuses every version of good enough.',
+          'Jordan is compelling not because he is likable — but because he is <span class="r">terrifyingly, totally, single-minded.</span> The film doesn\'t flinch from what that required.'],
+    pull:'Winning that many times, at that cost — it is not triumph. It is a kind of madness that happened to produce rings.',
+    meta:{s:'1',e:'10',r:'9.1',y:'2020'},
+    thumb:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',
+    moments:[
+      {t:44,  lb:'The locker room in \'97',       nt:'They already know this is the last time.',         em:'Foreboding'},
+      {t:920, lb:'Jordan on Pippen\'s contract',   nt:'Admiration and ruthlessness in one sentence.',    em:'Complex'},
+      {t:1750,lb:'"I wasn\'t trying to be mean"',  nt:'He absolutely was. He knows it. So do you.',      em:'Honesty'},
+      {t:2680,lb:'The final shot, uncut',           nt:'Forty seconds. Forty-five million watching.',    em:'Catharsis'},
+    ],
+    media:[
+      {type:'feature',   lbl:'The Last Dance',             vid:'HDG-CHWhNpk',t:0,   th:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',dur:'10 ep'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'HDG-CHWhNpk',t:0,   th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:28'},
+      {type:'clip',      lbl:'The Final Shot, Uncut',       vid:'HDG-CHWhNpk',t:2680,th:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',dur:'3:55'},
+      {type:'clip',      lbl:'Pippen\'s Contract',          vid:'HDG-CHWhNpk',t:920, th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'5:50'},
+      {type:'interview', lbl:'Michael Jordan on Winning',   vid:'HDG-CHWhNpk',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:18'},
+    ],
+  },
+  {
+    id:15, cat:'docs', sub:'True Crime', match:90, ml:'Documentary · Crime · Procedural',
+    title:'MAKING A MURDERER', ey:'Documentary · True Crime',
+    log:'Steven Avery was exonerated after 18 years in prison. <em>Two years later, he was arrested again.</em> The filmmakers kept <span class="r">the cameras rolling for ten years.</span>',
+    body:['Laura Ricciardi and Moira Demos built something that changed the documentary form — a true-crime story told in real time, <em>with the outcome genuinely uncertain.</em>',
+          'The show does not argue for Avery\'s innocence. It argues for <span class="r">the impossibility of certainty</span> — which is far more uncomfortable.'],
+    pull:'The question Making a Murderer asks is not "did he do it?" It\'s "does it matter if the process is already broken?"',
+    meta:{s:'2',e:'20',r:'8.6',y:'2015'},
+    thumb:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',
+    moments:[
+      {t:60,  lb:'The exoneration tape',         nt:'He walks out. The next chapter is already written.',  em:'Hope/dread'},
+      {t:880, lb:'Brendan\'s interrogation',     nt:'A teenager. Alone. No lawyer. Watch the tape.',      em:'Horror'},
+      {t:1640,lb:'The Avery property search',    nt:'The question of what was planted and when.',         em:'Suspicion'},
+      {t:2380,lb:'The verdict',                  nt:'The room reacts. The camera catches everything.',    em:'Shock'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Making a Murderer',          vid:'qc8KHHMEXfk',t:0,   th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'20 ep'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'qc8KHHMEXfk',t:0,   th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'2:10'},
+      {type:'clip',      lbl:'Brendan\'s Interrogation',    vid:'qc8KHHMEXfk',t:880, th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'6:40'},
+      {type:'clip',      lbl:'The Verdict',                 vid:'qc8KHHMEXfk',t:2380,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'4:55'},
+      {type:'interview', lbl:'The Filmmakers on the Process',vid:'qc8KHHMEXfk',t:0,  th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'13:30'},
+    ],
+  },
+  {
+    id:16, cat:'docs', sub:'Society', match:78, ml:'Documentary · Society · Political',
+    title:'13TH', ey:'Documentary · Social',
+    log:'The 13th Amendment abolished slavery — <em>except as punishment for crime.</em> Ava DuVernay traces the <span class="r">line from that exception to today.</span>',
+    body:['Not a polemic. A diagram. DuVernay constructs her argument from primary sources, interviews, and the words of people who created the system — <em>in their own voice.</em>',
+          'It is ninety-eight minutes long. <span class="r">It feels like standing in a room where the architecture finally makes sense,</span> and the sense is terrible.'],
+    pull:'The amendment that ended slavery contained the blueprint for what came after. DuVernay just shows you where to look.',
+    meta:{s:'1',e:'1',r:'8.2',y:'2016'},
+    thumb:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',
+    moments:[
+      {t:48,  lb:'The amendment\'s exception',  nt:'The clause that changes everything. Read it slowly.',  em:'Revelation'},
+      {t:620, lb:'The statistics sequence',     nt:'Numbers that should not exist, accumulating.',         em:'Indictment'},
+      {t:1240,lb:'The ALEC section',            nt:'The financial architecture of incarceration, exposed.',em:'Fury'},
+      {t:2000,lb:'The closing montage',         nt:'Faces. Names. Years. An unfinished argument.',         em:'Grief'},
+    ],
+    media:[
+      {type:'feature',   lbl:'13th',                       vid:'krfcq5pF8u8',t:0,   th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'1h 40m'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'krfcq5pF8u8',t:0,   th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:00'},
+      {type:'clip',      lbl:'The Amendment\'s Exception',  vid:'krfcq5pF8u8',t:48,  th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'4:10'},
+      {type:'clip',      lbl:'The ALEC Section',            vid:'krfcq5pF8u8',t:1240,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'5:30'},
+      {type:'interview', lbl:'Ava DuVernay on the Film',    vid:'krfcq5pF8u8',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:00'},
+    ],
+  },
+
+  /* ── COMEDY ─────────────────────────────────────── */
+  {
+    id:17, cat:'comedy', sub:'Dark Comedy', match:98, ml:'Comedy-Drama · Auteur · Unmissable',
+    title:'BEEF', ey:'Comedy · Drama',
+    log:'Two strangers, a <em>road-rage incident in a parking lot,</em> an all-consuming mutual obsession — and the slow-motion <span class="r">destruction of everything they\'ve built.</span>',
+    body:['It\'s about rage. But it is really about loneliness so <em>thick it has its own gravity</em> — the kind that two people can orbit around each other for years without ever making contact.',
+          'Steven Yeun and Ali Wong give performances that resist summary. <span class="r">They are two of the best actors working,</span> and this is the role each of them was waiting for.'],
+    pull:'A ten-episode argument that small conflicts are actually everything — that the parking lot is always the whole story.',
+    meta:{s:'1',e:'10',r:'8.0',y:'2023'},
+    thumb:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',
+    moments:[
+      {t:38,  lb:'The parking lot incident', nt:'Thirty seconds. A year of consequences.',            em:'Ignition'},
+      {t:820, lb:'Danny drives into her gate',nt:'The escalation becomes something else entirely.',    em:'Absurdity'},
+      {t:1560,lb:'Amy\'s confession',        nt:'She says the thing she has never said to anyone.',   em:'Raw'},
+      {t:2390,lb:'The greenhouse finale',    nt:'Two enemies. One night. No exits. No more pretending.',em:'Transcendent'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Beef',                       vid:'G4yUnTXJxHI',t:0,   th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'10 ep'},
+      {type:'trailer',   lbl:'Official Trailer',            vid:'G4yUnTXJxHI',t:0,   th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'1:54'},
+      {type:'clip',      lbl:'The Greenhouse Finale',       vid:'G4yUnTXJxHI',t:2390,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'8:44'},
+      {type:'clip',      lbl:'Amy\'s Confession',           vid:'G4yUnTXJxHI',t:1560,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'5:12'},
+      {type:'interview', lbl:'Steven Yeun & Ali Wong',      vid:'G4yUnTXJxHI',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'12:05'},
+    ],
+  },
+  {
+    id:18, cat:'comedy', sub:'Dark Comedy', match:94, ml:'Comedy · Absurdist · Political',
+    title:'VEEP', ey:'Comedy · Political',
+    log:'Selina Meyer becomes Vice President of the United States, then President, then — <em>everything goes wrong, perfectly.</em> Political satire as <span class="r">pure cruelty.</span>',
+    body:['Armando Iannucci built a comedy where the insults are art and the incompetence is structural. <em>No one in Veep is bad at their job.</em> The job is bad at everyone.',
+          'Julia Louis-Dreyfus won six consecutive Emmys. Not one of them was undeserved. <span class="r">Selina Meyer is one of the great comedic creations of the century.</span>'],
+    pull:'Veep\'s great joke: ambition and governance are fundamentally incompatible, and everyone in Washington has already decided which one matters.',
+    meta:{s:'7',e:'65',r:'8.3',y:'2012'},
+    thumb:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=1600&q=55',
+    moments:[
+      {t:42,  lb:'The first day in office',   nt:'Nothing works. Nothing ever will. That\'s the show.',  em:'Chaos'},
+      {t:820, lb:'The insult tournament',     nt:'Mike gets it from all sides. Four minutes of genius.',  em:'Ruthless'},
+      {t:1540,lb:'The hostage footage',       nt:'Selina\'s reaction to a genuine crisis is perfect.',   em:'Amorality'},
+      {t:2380,lb:'The finale — the eulogy',   nt:'Everything she worked for. In a single pan.',          em:'Desolation'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Veep',                        vid:'P_4ipSHNHXI',t:0,   th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'65 ep'},
+      {type:'trailer',   lbl:'Official Trailer',             vid:'P_4ipSHNHXI',t:0,   th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'1:48'},
+      {type:'clip',      lbl:'The Insult Tournament',        vid:'P_4ipSHNHXI',t:820, th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'4:22'},
+      {type:'clip',      lbl:'The Finale Eulogy',            vid:'P_4ipSHNHXI',t:2380,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'5:58'},
+      {type:'interview', lbl:'Julia Louis-Dreyfus on Selina',vid:'P_4ipSHNHXI',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:45'},
+    ],
+  },
+  {
+    id:19, cat:'comedy', sub:'Period Comedy', match:86, ml:'Comedy · British · Warm',
+    title:'DERRY GIRLS', ey:'Comedy · Coming-of-age',
+    log:'Five teenagers navigate <em>adolescence, friendship, and the Troubles</em> in 1990s <span class="r">Northern Ireland — simultaneously the best and worst time to be seventeen.</span>',
+    body:['The funniest show about the least funny era in British-Irish history. That tension is not a gimmick — <em>it is the whole architecture of the series.</em>',
+          'Lisa McGee writes dialogue that sounds like <span class="r">the actual rhythms of how people speak</span> when they are trying not to think about the army checkpoint outside the school.'],
+    pull:'The comedy comes from the characters. The beauty comes from the fact that they survive. Both things are equally true.',
+    meta:{s:'3',e:'19',r:'8.5',y:'2018'},
+    thumb:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&q=55',
+    moments:[
+      {t:62,  lb:'The bus checkpoint',         nt:'Troops, teenagers, and the wrong kind of nervous.',   em:'Tonal genius'},
+      {t:740, lb:'Sister Michael\'s assembly',  nt:'The most deadpan delivery in British comedy history.',em:'Delight'},
+      {t:1340,lb:'The talent show',             nt:'It goes very wrong. You laugh and cry simultaneously.',em:'Bittersweet'},
+      {t:2120,lb:'The ceasefire vote',          nt:'History interrupts adolescence. That\'s the whole show.',em:'Profound'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Derry Girls',                  vid:'dQw4w9WgXcQ',t:0,   th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'19 ep'},
+      {type:'trailer',   lbl:'Official Trailer',              vid:'dQw4w9WgXcQ',t:0,   th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'1:44'},
+      {type:'clip',      lbl:'Sister Michael\'s Assembly',    vid:'dQw4w9WgXcQ',t:740, th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'4:28'},
+      {type:'clip',      lbl:'The Ceasefire Vote',            vid:'dQw4w9WgXcQ',t:2120,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'6:00'},
+      {type:'interview', lbl:'Lisa McGee on Writing It',      vid:'dQw4w9WgXcQ',t:0,   th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'8:30'},
+    ],
+  },
+  {
+    id:20, cat:'comedy', sub:'Autofiction', match:91, ml:'Comedy-Drama · Confessional · Intimate',
+    title:'FLEABAG', ey:'Comedy · Drama',
+    log:'A sharp, funny, <em>chaotic woman talks directly to us</em> about her life — and slowly, painfully, we understand <span class="r">what she\'s not telling us.</span>',
+    body:['Phoebe Waller-Bridge invented something new: a comedy whose weapon is intimacy. The fourth-wall breaks are not a trick. <em>They\'re her way of not being alone.</em>',
+          'The second series contains one of the finest love stories in recent memory — <span class="r">a priest and a woman who can\'t stop breaking</span> things, including each other.'],
+    pull:'Fleabag is about grief. It takes twelve episodes before you understand whose grief, and why she\'s been laughing.',
+    meta:{s:'2',e:'12',r:'8.7',y:'2016'},
+    thumb:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',
+    back:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=1600&q=55',
+    moments:[
+      {t:44,  lb:'The first look to camera',   nt:'She invites you in. You don\'t know what you\'ve agreed to.', em:'Complicity'},
+      {t:880, lb:'The hair scene',             nt:'Intimacy and grief in the same moment. Waller-Bridge at peak.', em:'Bittersweet'},
+      {t:1520,lb:'"I love you"',               nt:'He says it. She looks at us. The show breaks open.',           em:'Devastating'},
+      {t:2240,lb:'The final goodbye',          nt:'She walks away. She doesn\'t look back. The screen holds.',    em:'Release'},
+    ],
+    media:[
+      {type:'feature',   lbl:'Fleabag',                      vid:'2WbMnFpzH9Q',t:0,   th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'12 ep'},
+      {type:'trailer',   lbl:'Official Trailer S2',           vid:'2WbMnFpzH9Q',t:0,   th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'1:30'},
+      {type:'clip',      lbl:'"I Love You"',                  vid:'2WbMnFpzH9Q',t:1520,th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'3:55'},
+      {type:'clip',      lbl:'The Final Goodbye',             vid:'2WbMnFpzH9Q',t:2240,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'4:42'},
+      {type:'interview', lbl:'Phoebe Waller-Bridge on Writing',vid:'2WbMnFpzH9Q',t:0, th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'14:10'},
+    ],
+  },
+];
+
+/* ═══════════════════════════════════════════════
+   GRID GEOMETRY
+═══════════════════════════════════════════════ */
+const GC=3,GR=4,GPT=52,GPX=16,GPB=16,GGX=9,GGY=7;
+let IW=0,IH=0;
+function cellGeo(c,r,cs=1,rs=1){
+  const uw=IW-GPX*2-GGX*(GC-1), uh=IH-GPT-GPB-GGY*(GR-1);
+  const cw=uw/GC, ch=uh/GR;
+  return {x:GPX+c*(cw+GGX), y:GPT+r*(ch+GGY), w:cw*cs+GGX*(cs-1), h:ch*rs+GGY*(rs-1)};
+}
+const SLOTS=[null,{c:2,r:0},{c:2,r:1},{c:0,r:2},{c:1,r:2},{c:2,r:2},{c:0,r:3},{c:1,r:3},{c:2,r:3}];
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let ACT_CAT='drama', ACT_SI=0, CAT_SHOWS=[];
+let watchOpen=false, gridOn=false;
+let cgTimer=null, ngTimer=null, ngHideT=null, ngHov=false;
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function q(id){return document.getElementById(id)}
+function measureIntent(){const r=q('izone').getBoundingClientRect();IW=r.width;IH=r.height}
+
+/* ═══════════════════════════════════════════════
+   CAT BAR
+═══════════════════════════════════════════════ */
+function buildCatBar(){
+  const bar=q('cbar'), tog=q('gtog');
+  CATS.forEach((cat,ci)=>{
+    const b=document.createElement('button');
+    b.className='cbtn'+(ci===0?' on':'');
+    b.dataset.cat=cat.id;
+    b.innerHTML=`<span class="cnum">${cat.num}</span>${cat.label}`;
+    b.addEventListener('click',()=>{hideCG();selectCat(cat.id)});
+    b.addEventListener('mouseenter',()=>scheduleCG(cat,b));
+    b.addEventListener('mouseleave',hideCG);
+    bar.insertBefore(b,tog);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   CAT GHOST
+═══════════════════════════════════════════════ */
+function scheduleCG(cat,btn){clearTimeout(cgTimer);cgTimer=setTimeout(()=>showCG(cat,btn),200)}
+function showCG(cat,btn){
+  const el=q('cghel'), r=btn.getBoundingClientRect();
+  const cs=SHOWS.filter(s=>s.cat===cat.id);
+  q('cgmood').textContent=cat.mood; q('cgname').textContent=cat.label;
+  q('cgdesc').textContent=cat.desc; q('cgn').textContent=cs.length;
+  const strip=q('cgstrip'); strip.innerHTML='';
+  cs.slice(0,4).forEach(s=>{const c=document.createElement('div');c.className='cgsc';const i=document.createElement('img');i.src=s.thumb;i.loading='lazy';c.appendChild(i);strip.appendChild(c)});
+  const se=q('cgshows'); se.innerHTML='';
+  cs.forEach((s,i)=>{const row=document.createElement('div');row.className='cgrow';row.innerHTML=`<span class="cgidx">${i+1}</span><span class="cgttl">${s.title}</span><span class="cgsub">${s.meta.r}★ · ${s.meta.y}</span>`;se.appendChild(row)});
+  const gw=272; let left=r.left; if(left+gw>window.innerWidth-8)left=window.innerWidth-gw-8;
+  el.style.left=left+'px'; el.style.top=(r.bottom+6)+'px'; el.classList.add('on');
+  // wire ghost scroll indicator
+  const cgScroll=q('cgscroll');
+  if(cgScroll){
+    const update=()=>updateGhostScroll(cgScroll,'cg-scroll-thumb');
+    cgScroll.addEventListener('scroll',update,{passive:true});
+    setTimeout(update,60);
+  }
+}
+function hideCG(){clearTimeout(cgTimer);q('cghel').classList.remove('on')}
+
+/* ═══════════════════════════════════════════════
+   SELECT CATEGORY
+═══════════════════════════════════════════════ */
+function selectCat(catId){
+  ACT_CAT=catId; CAT_SHOWS=SHOWS.filter(s=>s.cat===catId); ACT_SI=0;
+  document.querySelectorAll('.cbtn').forEach(b=>b.classList.toggle('on',b.dataset.cat===catId));
+  applyCatColor(catId);
+  buildNarrative(); buildGrid(); buildBackdrops();
+  goTo(0,true);
+}
+
+/* ═══════════════════════════════════════════════
+   NARRATIVE  (left column)
+═══════════════════════════════════════════════ */
+let SELS=[], CONTS=[];
+function buildNarrative(){
+  const root=q('nroot'); root.innerHTML=''; SELS=[]; CONTS=[];
+  let lastSub=null, subIdx=0;
+  const catLabel=CATS.find(c=>c.id===ACT_CAT)?.label||'';
+
+  CAT_SHOWS.forEach((show,si)=>{
+    if(show.sub!==lastSub){
+      if(si>0)subIdx++;
+      const div=document.createElement('div');
+      div.className='chap'; div.dataset.si=si;
+      div.innerHTML=`<div class="chi"><div class="chnum">0${subIdx+1}</div><div class="chinfo"><div class="chrule"></div><div class="chsub">${catLabel}</div><div class="chname">${show.sub}</div></div></div>`;
+      root.appendChild(div); lastSub=show.sub;
     }
+    const wrap=document.createElement('div'); wrap.dataset.si=si;
+    const els=[];
+    const add=(cls,html,tag='div')=>{const el=document.createElement(tag);el.className='s '+cls;if(html)el.innerHTML=html;wrap.appendChild(el);els.push(el);return el};
 
-    const wrap = document.createElement('div');
-    wrap.className = 'card-wrap';
-    wrap.dataset.ci = ci;
-    wrap.style.paddingLeft = '26px';
+    // Cinematic title image
+    const imgEl=document.createElement('div');
+    imgEl.className='s timg';
+    imgEl.innerHTML=`<img src="${show.thumb}" loading="lazy" alt="${show.title}">`;
+    wrap.appendChild(imgEl); els.push(imgEl);
 
-    // Label
-    const lbl = document.createElement('span');
-    lbl.className = 'sentence label';
-    lbl.textContent = card.label;
-    wrap.appendChild(lbl);
+    add('ey',show.ey); add('ti',show.title); add('ru'); add('lg',show.log);
+    show.body.forEach(b=>add('bo',b));
+    add('pu',show.pull);
+    const me=add('me');
+    me.innerHTML=`<div class="mc"><span class="mk">Seasons</span><span class="mv">${show.meta.s}</span></div><div class="mc"><span class="mk">Episodes</span><span class="mv">${show.meta.e}</span></div><div class="mc"><span class="mk">Rating</span><span class="mv">${show.meta.r}</span></div><div class="mc"><span class="mk">Year</span><span class="mv">${show.meta.y}</span></div>`;
+    wrap.addEventListener('click',()=>goTo(si));
+    SELS.push(els); CONTS.push(wrap); root.appendChild(wrap);
+  });
+  q('htot').textContent=String(CAT_SHOWS.length).padStart(2,'0');
+}
 
-    // Poster
-    const post = document.createElement('span');
-    post.className = 'sentence poster';
-    post.innerHTML = md(card.poster);
-    post.addEventListener('click', openWatch);
-    wrap.appendChild(post);
+/* ═══════════════════════════════════════════════
+   GRID OVERLAY — full left panel, invisible grid
+═══════════════════════════════════════════════ */
+function buildGrid(){
+  const inner=q('ginner'); inner.innerHTML='';
+  CAT_SHOWS.forEach((show,si)=>{
+    const c=document.createElement('div');
+    c.className='gcov'+(si===ACT_SI?' on':'');c.dataset.si=si;
+    c.innerHTML=`<img src="${show.thumb}" loading="lazy" alt="${show.title}"><div class="gcovlay"></div><div class="gcovm">${show.match}%</div><div class="gcovinfo"><div class="gcovt">${show.title}</div><div class="gcovs">${show.meta.y} · ${show.meta.r}★</div></div>`;
+    c.addEventListener('click',()=>{goTo(si);toggleGrid(false)});
+    inner.appendChild(c);
+  });
+}
+function toggleGrid(force){
+  gridOn=force!==undefined?force:!gridOn;
+  q('gover').classList.toggle('on',gridOn);
+  q('gtog').classList.toggle('on',gridOn);
+}
 
-    // Body sentences
-    (card.body || []).forEach(txt => {
-      const b = document.createElement('span');
-      b.className = 'sentence body';
-      b.innerHTML = md(txt);
-      wrap.appendChild(b);
-    });
+/* ═══════════════════════════════════════════════
+   BACKDROPS
+═══════════════════════════════════════════════ */
+function buildBackdrops(){
+  const bd=q('bd'); bd.innerHTML='';
+  CAT_SHOWS.forEach((show,i)=>{const img=document.createElement('img');img.src=show.back||show.thumb;img.loading=i===0?'eager':'lazy';bd.appendChild(img)});
+}
+function switchBackdrop(si){document.querySelectorAll('#bd img').forEach((img,i)=>img.classList.toggle('on',i===si))}
 
-    // Pull quote
-    if (card.pull) {
-      const p = document.createElement('span');
-      p.className = 'sentence pull';
-      p.innerHTML = md(card.pull);
-      wrap.appendChild(p);
-    }
+/* ═══════════════════════════════════════════════
+   SCROLL INDICATOR
+═══════════════════════════════════════════════ */
+function updateScrollThumb(){
+  const s=q('nstream'),tk=q('strack'),th=q('sthumb');
+  const{scrollTop,scrollHeight,clientHeight}=s;
+  if(scrollHeight<=clientHeight){th.style.height='0';return}
+  const tkH=tk.clientHeight, ratio=clientHeight/scrollHeight;
+  const h=Math.max(20,tkH*ratio), pos=(scrollTop/(scrollHeight-clientHeight))*(tkH-h);
+  th.style.height=h+'px'; th.style.top=pos+'px';
+}
 
-    // Spec group
-    let specGroupEl = null;
-    if (card.specs && card.specs.length) {
-      specGroupEl = document.createElement('div');
-      specGroupEl.className = 'spec-group';
-      card.specs.forEach(s => {
-        const row = document.createElement('div');
-        row.className = 'sentence spec';
-        row.innerHTML = `<span class="spec-key">${s.key}</span><span class="spec-val">${s.val}</span>`;
-        specGroupEl.appendChild(row);
+/* ═══════════════════════════════════════════════
+   GHOST SCROLL INDICATORS
+═══════════════════════════════════════════════ */
+function updateGhostScroll(scrollEl, thumbId){
+  const s=scrollEl;
+  if(!s)return;
+  const{scrollTop,scrollHeight,clientHeight}=s;
+  const th=document.getElementById(thumbId);
+  if(!th)return;
+  if(scrollHeight<=clientHeight){th.style.height='0';return}
+  const trackH=s.parentElement.querySelector('.gscroll-wrap')?.clientHeight||clientHeight;
+  const ratio=clientHeight/scrollHeight;
+  const h=Math.max(14,trackH*ratio);
+  const pos=(scrollTop/(scrollHeight-clientHeight))*(trackH-h);
+  th.style.height=h+'px'; th.style.top=pos+'px';
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATE
+═══════════════════════════════════════════════ */
+function goTo(si,instant=false){
+  const prev=ACT_SI;
+  si=Math.max(0,Math.min(CAT_SHOWS.length-1,si)); ACT_SI=si;
+  if(!instant && si!==prev) triggerPulse();
+  // sentence states
+  SELS.forEach((els,i)=>{
+    const cls=i<si?'pst':i===si?'act':i===si+1?'rev':'';
+    els.forEach(el=>{el.classList.remove('pst','act','rev');if(cls)el.classList.add(cls)});
+  });
+  // chapter dividers
+  document.querySelectorAll('.chap').forEach(d=>{
+    const dsi=parseInt(d.dataset.si);
+    d.classList.remove('pst','act','rev');
+    if(dsi<si)d.classList.add('pst');
+    else if(dsi===si)d.classList.add('act');
+    else if(dsi===si+1)d.classList.add('rev');
+  });
+  // scroll
+  if(CONTS[si]){
+    const s=q('nstream'),el=CONTS[si];
+    const top=el.offsetTop-s.clientHeight/2+el.clientHeight/2;
+    instant?s.scrollTop=top:s.scrollTo({top,behavior:'smooth'});
+  }
+  // grid active
+  document.querySelectorAll('.gcov').forEach((c,i)=>c.classList.toggle('on',i===si));
+  const show=CAT_SHOWS[si];
+  switchBackdrop(si);
+  const pct=CAT_SHOWS.length>1?(si/(CAT_SHOWS.length-1))*100:0;
+  q('prog').style.width=pct+'%';
+  q('hcur').textContent=String(si+1).padStart(2,'0');
+  q('ihl').textContent=show.title; q('ihl').classList.add('on');
+  q('ihc').textContent=(show.media?.length||0)+' items'; q('ihc').classList.add('on');
+  hideNG(); scheduleIntent(si);
+  setTimeout(updateScrollThumb,320);
+}
+
+/* ═══════════════════════════════════════════════
+   INTENT NODES  —  per-title media only
+═══════════════════════════════════════════════ */
+let itTimer=null;
+const TLBLS={feature:'Now Streaming',trailer:'Trailer',clip:'Scene',interview:'Interview',behindscenes:'Behind the Scenes'};
+const TBADGE={feature:'',trailer:'TRAILER',clip:'CLIP',interview:'INTERVIEW',behindscenes:'B.T.S.'};
+
+function scheduleIntent(si){clearTimeout(itTimer);exitNodes(()=>{itTimer=setTimeout(()=>placeNodes(si),80)})}
+function exitNodes(cb){
+  const g=q('igrid'),ex=g.querySelectorAll('.node');
+  if(!ex.length){cb?.();return}
+  ex.forEach(n=>{n.classList.remove('vis');n.classList.add('out')});
+  setTimeout(()=>{ex.forEach(n=>n.remove());cb?.()},360);
+}
+function placeNodes(si){
+  const show=CAT_SHOWS[si]; if(!show)return;
+  measureIntent(); // always re-measure so IW/IH are current
+  const g=q('igrid');
+  (show.media||[]).forEach((m,mi)=>{
+    const cell=mi===0?cellGeo(0,0,2,2):SLOTS[mi]?cellGeo(SLOTS[mi].c,SLOTS[mi].r):null;
+    if(!cell)return;
+    const role=mi===0?'primary':m.type==='clip'||m.type==='trailer'?'clip':'tertiary';
+    const node=buildNode(m,show,role,cell,mi);
+    g.appendChild(node);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>node.classList.add('vis')));
+  });
+}
+function buildNode(m,show,role,cell,delay){
+  const{x,y,w,h}=cell, thH=Math.round(h*(role==='primary'?.62:.58));
+  const node=document.createElement('div');
+  node.className='node '+role; node.dataset.d=delay;
+  node.style.cssText=`left:${Math.round(x)}px;top:${Math.round(y)}px;width:${Math.round(w)}px;height:${Math.round(h)}px`;
+  const badge=TBADGE[m.type]?`<div class="nbadge ntype">${TBADGE[m.type]}</div>`:'';
+  const mbadge=role==='primary'?`<div class="nbadge nmatch">${show.match}%</div>`:'';
+  node.innerHTML=`<div class="ncard" style="height:100%;display:flex;flex-direction:column">
+    <div class="nth" style="height:${thH}px;flex-shrink:0">
+      <img src="${m.th}" loading="lazy" alt="">
+      <div class="nplay"><div class="npb">▶</div></div>
+      ${badge}${mbadge}
+      <div class="ndur">${m.dur}</div>
+    </div>
+    <div class="nbody" style="flex:1;overflow:hidden">
+      <div class="ntypelbl">${TLBLS[m.type]||m.type}</div>
+      <div class="nttl">${m.lbl}</div>
+      <div class="nsub">${show.title} · ${show.meta.y}</div>
+      <div class="ntag">${m.t>0?'Jump to '+fmt(m.t):'Full '+(m.type==='feature'?'series':m.type)}</div>
+    </div>
+  </div>`;
+  node.addEventListener('click',()=>{hideNG();openWatch(m.t,m.vid||show.media[0].vid,m.lbl)});
+  node.addEventListener('mouseenter',()=>{clearTimeout(ngHideT);scheduleNG({m,show},node)});
+  node.addEventListener('mouseleave',()=>{ngHideT=setTimeout(()=>{if(!ngHov)hideNG()},120)});
+  return node;
+}
+
+/* ═══════════════════════════════════════════════
+   NODE GHOST
+═══════════════════════════════════════════════ */
+function scheduleNG(data,el){clearTimeout(ngTimer);ngTimer=setTimeout(()=>showNG(data,el),180)}
+function showNG({m,show},nodeEl){
+  const g=q('nghost'),r=nodeEl.getBoundingClientRect();
+  const isClip=m.type!=='feature';
+  q('ngimg').src=m.th;
+  q('nggn').textContent=show.ey;
+  q('ngtl').textContent=isClip?m.lbl:show.title;
+  const mt=q('ngmt'); if(isClip){mt.textContent=TBADGE[m.type]||m.type.toUpperCase();mt.style.display=''}else mt.style.display='none';
+  q('ngpct').textContent=show.match+'%';
+  q('nglog').innerHTML=isClip?`<em>${m.lbl}</em> — ${show.title}`:show.log;
+  q('ngpull').textContent=isClip?(m.t>0?'Starts at '+fmt(m.t)+' · '+m.dur:'Full '+m.type+' · '+m.dur):show.pull;
+  q('ngss').textContent=show.meta.s; q('ngep').textContent=show.meta.e;
+  q('ngrt').textContent=show.meta.r; q('ngyr').textContent=show.meta.y;
+  const te=q('ngtags'); te.innerHTML='';
+  show.ml.split(' · ').forEach(t=>{const s=document.createElement('span');s.className='ngtag';s.textContent=t;te.appendChild(s)});
+  const msec=q('ngmsec'), mlist=q('ngmlist'); mlist.innerHTML='';
+  const moms=!isClip?(show.moments||[]):[];
+  msec.style.display=moms.length?'':'none';
+  moms.forEach(mo=>{
+    const chip=document.createElement('div'); chip.className='ngchip';
+    chip.innerHTML=`<div class="ngcts">${fmt(mo.t)}</div><div class="ngci"><div class="ngclbl">${mo.lb}</div><div class="ngcnote">${mo.nt}</div><span class="ngcemo">${mo.em}</span></div><div class="ngcply">▶</div>`;
+    chip.addEventListener('click',e=>{e.stopPropagation();hideNG();openWatch(mo.t,show.media[0].vid,mo.lb)});
+    mlist.appendChild(chip);
+  });
+  q('ngrel').textContent=isClip?(TLBLS[m.type]||m.type):'Now Selected';
+  q('ngcta').textContent='▶ Click to play';
+  const gw=304;
+  const gh=Math.min(window.innerHeight-80,window.innerHeight*.85);
+  // Always anchor to LEFT of izone — sits in left panel area, doesn't obscure video
+  const iz=q('izone').getBoundingClientRect();
+  const left=iz.left-gw-14;
+  const top=Math.max(60,Math.min(window.innerHeight-gh-8,r.top+r.height/2-gh/2));
+  g.style.left=Math.max(4,left)+'px';
+  g.style.top=top+'px';
+  g.style.maxHeight=gh+'px';
+  g.classList.add('on');
+  // wire scroll indicator for nghost's inner scroll container
+  const ngScroll=q('ng-scroll');
+  if(ngScroll){
+    ngScroll.style.maxHeight=gh+'px';
+    const updateNgThumb=()=>updateGhostScroll(ngScroll,'ng-scroll-thumb');
+    ngScroll.addEventListener('scroll',updateNgThumb,{passive:true});
+    setTimeout(updateNgThumb,60);
+  }
+}
+function hideNG(){clearTimeout(ngTimer);q('nghost').classList.remove('on');ngHov=false}
+
+/* ═══════════════════════════════════════════════
+   WATCH
+═══════════════════════════════════════════════ */
+function openWatch(startSecs,videoId,ctx){
+  const show=CAT_SHOWS[ACT_SI]; if(!show)return;
+  const vid=videoId||show.media[0].vid, start=startSecs||0;
+  q('wttl').textContent=show.title;
+  q('wctx').textContent=ctx||(start>0?'Jumping to '+fmt(start):'');
+  q('wframe').src=`https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&start=${start}`;
+  q('watch').classList.add('on'); watchOpen=true;
+  const rail=q('wrail'); rail.innerHTML=''; rail.classList.remove('on');
+  if(show.moments?.length){
+    const lbl=document.createElement('div');
+    lbl.style.cssText='width:100%;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:5px';
+    lbl.textContent='Key Moments — jump directly'; rail.appendChild(lbl);
+    show.moments.forEach(mo=>{
+      const chip=document.createElement('div'); chip.className='wchip';
+      const act=mo.t===start; if(act){chip.style.borderColor='rgba(229,9,20,.55)';chip.style.background='rgba(229,9,20,.1)'}
+      chip.innerHTML=`<span class="wcts">${fmt(mo.t)}</span><span class="wclbl">${mo.lb}</span><span class="wcemo">${mo.em}</span>`;
+      chip.addEventListener('click',()=>{
+        q('wframe').src=`https://www.youtube.com/embed/${vid}?autoplay=1&rel=0&start=${mo.t}`;
+        q('wctx').textContent='Jumping to '+mo.lb;
+        rail.querySelectorAll('.wchip').forEach(c=>{c.style.borderColor='';c.style.background=''});
+        chip.style.borderColor='rgba(229,9,20,.55)'; chip.style.background='rgba(229,9,20,.1)';
       });
-      wrap.appendChild(specGroupEl);
-    }
-
-    // Break
-    const brk = document.createElement('span');
-    brk.className = 'sentence break';
-    wrap.appendChild(brk);
-
-    root.appendChild(wrap);
-    cardEls.push({ wrap, specGroupEl, ci, card });
-
-    // Hover → ghost preview
-    wrap.addEventListener('mouseenter', () => showGhost(ci, wrap));
-    wrap.addEventListener('mouseleave', () => hideGhost());
-    wrap.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('poster')) goToCard(ci);
+      rail.appendChild(chip);
     });
-  });
-
-  document.getElementById('h-total').textContent  = String(CARDS.length).padStart(2,'0');
-  document.getElementById('nw-tot').textContent    = CARDS.length;
-  document.getElementById('feed-count').textContent= CARDS.length + ' items';
-
-  buildPanelQueue();
-  buildImageLayer();
-  buildWatched();
-  buildFavorites();
-  buildPlaylists();
-  buildStudio();
-  buildGridOverlay();
-  goToCard(0, true);
-}
-
-// ═══════════════════════════════════════════
-//  SENTENCE STATES
-// ═══════════════════════════════════════════
-function applyStates(idx) {
-  // Filter: which cards are visible?
-  const visible = getVisibleIndices();
-
-  cardEls.forEach(({ wrap, specGroupEl, ci }) => {
-    const isVisible = visible.includes(ci);
-    wrap.style.display = isVisible ? '' : 'none';
-
-    const sentences = wrap.querySelectorAll('.sentence:not(.spec)');
-    const sg = specGroupEl;
-    let state;
-    if (ci < idx)         state = 'past';
-    else if (ci === idx)  state = 'active';
-    else if (ci < idx+3)  state = 'revealed';
-    else                  state = '';
-
-    sentences.forEach(el => {
-      el.classList.remove('active','past','revealed');
-      if (state) el.classList.add(state);
-    });
-    if (sg) {
-      sg.classList.remove('active','past','revealed');
-      if (state) sg.classList.add(state);
-    }
-  });
-
-  // Category headers
-  document.querySelectorAll('.cat-header').forEach(hdr => {
-    const cat = hdr.dataset.cat;
-    const firstInCat = cardEls.findIndex(c => c.card.cat === cat);
-    hdr.classList.remove('active','past','revealed');
-    if (firstInCat < idx)        hdr.classList.add('past');
-    else if (firstInCat === idx) hdr.classList.add('active');
-    else if (firstInCat < idx+3) hdr.classList.add('revealed');
-
-    // Show/hide cat header based on filter
-    const catVisible = activeFilter === 'all' || activeFilter === cat;
-    hdr.style.display = catVisible ? '' : 'none';
-  });
-
-  // Progress
-  const pct = CARDS.length > 1 ? (idx / (CARDS.length - 1)) * 100 : 0;
-  document.getElementById('progress').style.width = Math.min(pct,100) + '%';
-
-  // Header counter
-  document.querySelector('#h-cur').textContent = String(idx+1).padStart(2,'0');
-  const catMeta = CATEGORIES.find(c => c.id === CARDS[idx].cat);
-  // HUD
-  document.getElementById('nw-cur').textContent = idx + 1;
-}
-
-// ═══════════════════════════════════════════
-//  FILTER
-// ═══════════════════════════════════════════
-function getVisibleIndices() {
-  if (activeFilter === 'all') return CARDS.map((_,i) => i);
-  return CARDS.map((_,i) => i).filter(i => CARDS[i].cat === activeFilter);
-}
-
-function setFilter(f, btn) {
-  activeFilter = f;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  // Jump to first visible card
-  const vis = getVisibleIndices();
-  if (vis.length) {
-    const target = vis.includes(current) ? current : vis[0];
-    goToCard(target);
+    setTimeout(()=>rail.classList.add('on'),380);
   }
-  applyStates(current);
 }
+function closeWatch(){q('wframe').src='';q('watch').classList.remove('on');q('wrail').classList.remove('on');q('wctx').textContent='';watchOpen=false}
 
-// ═══════════════════════════════════════════
-//  VIEW TOGGLE
-// ═══════════════════════════════════════════
-function setView(v) {
-  activeView = v;
-  const scroll = document.getElementById('pf-scroll');
-  const list   = document.getElementById('pf-list');
-  const grid   = document.getElementById('pf-grid');
-  document.getElementById('vt-list').classList.toggle('active', v === 'list');
-  document.getElementById('vt-grid').classList.toggle('active', v === 'grid');
-  if (v === 'list') {
-    scroll.classList.add('pf-list-view');
-    scroll.classList.remove('pf-grid-view');
-    list.style.display = '';
-    grid.style.display = 'none';
-  } else {
-    scroll.classList.remove('pf-list-view');
-    scroll.classList.add('pf-grid-view');
-    list.style.display = 'none';
-    grid.style.display = 'grid';
+/* ═══════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════ */
+document.addEventListener('mousemove',e=>{
+  const c=q('cur'); c.style.left=e.clientX+'px'; c.style.top=e.clientY+'px';
+  const t=e.target; c.className='';
+  if(t.closest('#izone .node'))c.classList.add('int');
+  else if(t.closest('.cbtn'))c.classList.add('hov');
+  else if(t.closest('.hbtn'))c.classList.add('ply');
+  else if(t.closest('.ngchip'))c.classList.add('ply');
+  else if(t.closest('.wchip'))c.classList.add('ply');
+  else if(t.tagName==='BUTTON')c.classList.add('hov');
+});
+
+/* ═══════════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if(watchOpen){if(e.key==='Escape'){e.preventDefault();closeWatch()}return}
+  switch(e.key){
+    case 'ArrowDown':case 'j':case ' ':e.preventDefault();if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);break;
+    case 'ArrowUp':case 'k':e.preventDefault();if(ACT_SI>0)goTo(ACT_SI-1);break;
+    case 'Enter':e.preventDefault();openWatch();break;
+    case 'Escape':closeWatch();break;
+    case 'g':case 'G':e.preventDefault();toggleGrid();break;
   }
-  updateQueueActive(current);
-}
+  const n=parseInt(e.key);
+  if(n>=1&&n<=5){const cat=CATS[n-1];if(cat){e.preventDefault();selectCat(cat.id)}}
+});
 
-// ═══════════════════════════════════════════
-//  PANEL TABS
-// ═══════════════════════════════════════════
-function setTab(tab, btn) {
-  activeTab = tab;
-  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-body').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelector(`.tab-body[data-body="${tab}"]`).classList.add('active');
-}
-
-function openStudio() { setTab('studio', document.querySelector('.panel-tab[data-tab="studio"]')); }
-
-// ═══════════════════════════════════════════
-//  BUILD PANEL QUEUE (list + grid)
-// ═══════════════════════════════════════════
-function buildPanelQueue() {
-  const list = document.getElementById('pf-list');
-  const grid = document.getElementById('pf-grid');
-  list.innerHTML = '';
-  grid.innerHTML = '';
-
-  CARDS.forEach((card, ci) => {
-    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    const catMeta = CATEGORIES.find(c => c.id === card.cat);
-
-    // — LIST item —
-    const li = document.createElement('div');
-    li.className = 'pf-card-list'; li.dataset.ci = ci;
-    li.innerHTML = `
-      <div class="pf-thumb">
-        <img src="${card.thumb}" loading="lazy" alt="">
-        <div class="pf-thumb-dur">${card.dur||'—'}</div>
-      </div>
-      <div class="pf-info">
-        <div class="pf-title">${titleClean}</div>
-        <div class="pf-meta">${card.channel||'—'} · ${card.year||'—'}</div>
-        <div class="pf-cat">${catMeta ? catMeta.label : card.cat}</div>
-      </div>`;
-    li.addEventListener('click', () => goToCard(ci));
-    li.addEventListener('mouseenter', () => showGhost(ci, li));
-    li.addEventListener('mouseleave', () => hideGhost());
-    list.appendChild(li);
-
-    // — GRID item —
-    const gi = document.createElement('div');
-    gi.className = 'pf-card-grid'; gi.dataset.ci = ci;
-    gi.innerHTML = `
-      <div class="pf-grid-thumb">
-        <img src="${card.thumb}" loading="lazy" alt="">
-        <div class="pf-grid-thumb-dur">${card.dur||'—'}</div>
-      </div>
-      <div class="pf-grid-info">
-        <div class="pf-grid-title">${titleClean}</div>
-        <div class="pf-grid-meta">${card.channel||'—'}</div>
-      </div>`;
-    gi.addEventListener('click', () => goToCard(ci));
-    gi.addEventListener('mouseenter', () => showGhost(ci, gi));
-    gi.addEventListener('mouseleave', () => hideGhost());
-    grid.appendChild(gi);
-  });
-
-  grid.style.display = 'none';
-}
-
-function updateQueueActive(idx) {
-  document.querySelectorAll('.pf-card-list').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
-  });
-  document.querySelectorAll('.pf-card-grid').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
-  });
-  // Scroll list active into view
-  const activeEl = document.querySelector(`.pf-card-list.active, .pf-card-grid.active`);
-  if (activeEl) activeEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
-
-// ═══════════════════════════════════════════
-//  BUILD WATCHED TAB
-// ═══════════════════════════════════════════
-function buildWatched() {
-  const list = document.getElementById('watched-list');
-  list.innerHTML = '';
-  WATCHED.forEach(({ ci, progress }) => {
-    if (ci >= CARDS.length) return;
-    const card = CARDS[ci];
-    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    const el = document.createElement('div');
-    el.className = 'rw-item';
-    el.innerHTML = `
-      <div class="rw-thumb">
-        <img src="${card.thumb}" loading="lazy" alt="">
-        <div class="rw-progress" style="width:${progress}%"></div>
-      </div>
-      <div class="rw-info">
-        <div class="rw-title">${titleClean}</div>
-        <div class="rw-sub">${card.channel} · ${card.dur}</div>
-      </div>
-      ${progress === 100 ? '<div class="rw-badge">Done</div>' : `<div class="rw-badge" style="background:var(--accent-l);color:var(--accent)">${progress}%</div>`}
-    `;
-    el.addEventListener('click', () => goToCard(ci));
-    list.appendChild(el);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  BUILD FAVORITES TAB
-// ═══════════════════════════════════════════
-function buildFavorites() {
-  const list = document.getElementById('favs-list');
-  list.innerHTML = '';
-  FAVORITES.forEach(ci => {
-    if (ci >= CARDS.length) return;
-    const card = CARDS[ci];
-    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    const el = document.createElement('div');
-    el.className = 'fav-item';
-    el.innerHTML = `
-      <div class="fav-star">★</div>
-      <div class="fav-info">
-        <div class="fav-title">${titleClean}</div>
-        <div class="fav-sub">${card.channel} · ${card.dur}</div>
-      </div>`;
-    el.addEventListener('click', () => goToCard(ci));
-    list.appendChild(el);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  BUILD PLAYLISTS TAB
-// ═══════════════════════════════════════════
-function buildPlaylists() {
-  const list = document.getElementById('plists-list');
-  list.innerHTML = '';
-  PLAYLISTS.forEach(pl => {
-    const el = document.createElement('div');
-    el.className = 'pl-item';
-    const thumbs = pl.cards.slice(0,4).map(ci => {
-      const card = CARDS[ci] || {};
-      return `<div class="pl-mini-thumb"><img src="${card.thumb||''}" loading="lazy" alt=""></div>`;
-    }).join('');
-    el.innerHTML = `
-      <div class="pl-header">
-        <div class="pl-icon">${pl.icon}</div>
-        <div class="pl-name">${pl.name}</div>
-        <div class="pl-count">${pl.cards.length} items</div>
-      </div>
-      <div class="pl-thumbs">${thumbs}</div>`;
-    el.addEventListener('click', () => { if(pl.cards.length) goToCard(pl.cards[0]); });
-    list.appendChild(el);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  BUILD STUDIO TAB
-// ═══════════════════════════════════════════
-function buildStudio() {
-  const list = document.getElementById('studio-projects');
-  list.innerHTML = '';
-  STUDIO_PROJECTS.forEach(p => {
-    const el = document.createElement('div');
-    el.className = 'studio-project';
-    el.innerHTML = `
-      <div class="sp-thumb">
-        <div class="sp-thumb-label">◈</div>
-      </div>
-      <div class="sp-info">
-        <div class="sp-title">${p.title}</div>
-        <div class="sp-meta">${p.meta}</div>
-      </div>
-      <div class="sp-status ${p.status}">${p.status === 'pub' ? 'Live' : p.status === 'process' ? 'Processing' : 'Draft'}</div>`;
-    list.appendChild(el);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  BUILD GRID OVERLAY
-// ═══════════════════════════════════════════
-function buildGridOverlay() {
-  const grid = document.getElementById('go-grid');
-  const sub  = document.getElementById('go-sub');
-  grid.innerHTML = '';
-  sub.textContent = CARDS.length + ' items';
-
-  CARDS.forEach((card, ci) => {
-    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    const catMeta = CATEGORIES.find(c => c.id === card.cat);
-    const el = document.createElement('div');
-    el.className = 'go-card'; el.dataset.ci = ci;
-    el.innerHTML = `
-      <div class="go-thumb">
-        <img src="${card.thumb}" loading="lazy" alt="">
-        <div class="go-dur"><span>${card.dur||'—'}</span></div>
-      </div>
-      <div class="go-info">
-        <div class="go-cat">${catMeta ? catMeta.label : card.cat}</div>
-        <div class="go-card-title">${titleClean}</div>
-        <div class="go-channel">${card.channel||'—'}</div>
-      </div>`;
-    el.addEventListener('click', () => {
-      goToCard(ci);
-      toggleGridOverlay();
-    });
-    el.addEventListener('mouseenter', () => showGhost(ci, el));
-    el.addEventListener('mouseleave', () => hideGhost());
-    grid.appendChild(el);
-  });
-}
-
-function updateGridOverlayActive(idx) {
-  document.querySelectorAll('.go-card').forEach(el => {
-    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  GHOST PREVIEW
-// ═══════════════════════════════════════════
-function showGhost(ci, anchorEl) {
-  clearTimeout(ghostTimer);
-  const card = CARDS[ci];
-  if (!card) return;
-
-  ghostTimer = setTimeout(() => {
-    const ghost = document.getElementById('ghost-preview');
-    const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-    document.getElementById('gp-img').src       = card.thumb || '';
-    document.getElementById('gp-dur').textContent = card.dur || '—';
-    document.getElementById('gp-title').textContent   = titleClean;
-    document.getElementById('gp-channel').textContent = card.channel || '—';
-    document.getElementById('gp-views').textContent   = card.views || '—';
-    document.getElementById('gp-len').textContent     = card.dur || '—';
-    document.getElementById('gp-year').textContent    = card.year || '—';
-
-    // Position near anchor
-    const rect = anchorEl.getBoundingClientRect();
-    let left = rect.left - 214;
-    let top  = rect.top;
-    if (left < 8) left = rect.right + 8;
-    if (top + 160 > window.innerHeight) top = window.innerHeight - 168;
-    ghost.style.left = left + 'px';
-    ghost.style.top  = top + 'px';
-    ghost.classList.add('visible');
-    ghostTarget = ci;
-  }, 320);
-}
-
-function hideGhost() {
-  clearTimeout(ghostTimer);
-  document.getElementById('ghost-preview').classList.remove('visible');
-  ghostTarget = null;
-}
-
-// ═══════════════════════════════════════════
-//  IMAGE LAYER
-// ═══════════════════════════════════════════
-function buildImageLayer() {
-  const layer = document.getElementById('image-layer');
-  layer.innerHTML = '';
-  CARDS.forEach((card, ci) => {
-    const img = document.createElement('img');
-    img.src = card.img || '';
-    img.dataset.cardIdx = ci;
-    img.loading = ci === 0 ? 'eager' : 'lazy';
-    layer.appendChild(img);
-  });
-}
-
-function switchImage(idx) {
-  document.querySelectorAll('#image-layer img').forEach((img, i) => {
-    img.classList.toggle('visible', i === idx);
-  });
-}
-
-// ═══════════════════════════════════════════
-//  PANEL META + VIDEO
-// ═══════════════════════════════════════════
-function updatePanelMeta(card) {
-  const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-  document.getElementById('pm-title').textContent   = titleClean;
-  document.getElementById('pm-channel').textContent = card.channel || '—';
-  document.getElementById('ps-views').textContent   = card.views   || '—';
-  document.getElementById('ps-dur').textContent     = card.dur ? card.dur.split(':').slice(0,2).join(':') : '—';
-  document.getElementById('ps-year').textContent    = card.year    || '—';
-  loadPanelVideo(card.videoId, false);
-}
-
-let currentPanelVideoId = null;
-function loadPanelVideo(videoId, autoplay) {
-  if (!videoId) return;
-  const container   = document.getElementById('panel-video');
-  const placeholder = document.getElementById('video-placeholder');
-  container.querySelectorAll('iframe').forEach(f => f.remove());
-  const src   = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0${autoplay?'&autoplay=1':''}`;
-  const frame = document.createElement('iframe');
-  frame.src   = src;
-  frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-  frame.allowFullscreen = true;
-  frame.setAttribute('frameborder','0');
-  frame.onload = () => { frame.classList.add('loaded'); placeholder.classList.add('hidden'); };
-  container.appendChild(frame);
-  currentPanelVideoId = videoId;
-}
-
-// ═══════════════════════════════════════════
-//  GO TO CARD
-// ═══════════════════════════════════════════
-function goToCard(idx, instant) {
-  idx = Math.max(0, Math.min(CARDS.length - 1, idx));
-  current = idx;
-  applyStates(idx);
-  scrollToCard(idx, instant);
-  updateQueueActive(idx);
-  updateGridOverlayActive(idx);
-  updatePanelMeta(CARDS[idx]);
-  switchImage(idx);
-}
-
-function scrollToCard(idx, instant) {
-  const { wrap } = cardEls[idx];
-  if (!wrap) return;
-  wrap.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block:'center' });
-}
-
-function prevCard() {
-  const vis = getVisibleIndices();
-  const pos = vis.indexOf(current);
-  if (pos > 0) goToCard(vis[pos - 1]);
-}
-function nextCard() {
-  const vis = getVisibleIndices();
-  const pos = vis.indexOf(current);
-  if (pos < vis.length - 1) goToCard(vis[pos + 1]);
-}
-
-// ═══════════════════════════════════════════
-//  GRID OVERLAY TOGGLE
-// ═══════════════════════════════════════════
-function toggleGridOverlay() {
-  gridOpen = !gridOpen;
-  document.getElementById('grid-overlay').classList.toggle('open', gridOpen);
-  document.getElementById('hud-grid-btn').classList.toggle('active', gridOpen);
-  if (gridOpen) updateGridOverlayActive(current);
-}
-
-// ═══════════════════════════════════════════
-//  WATCH OVERLAY
-// ═══════════════════════════════════════════
-function openWatch() {
-  const card = CARDS[current];
-  if (!card || !card.videoId) return;
-  const titleClean = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
-  document.getElementById('wo-title').textContent = titleClean;
-  document.getElementById('watch-frame').src =
-    `https://www.youtube.com/embed/${card.videoId}?autoplay=1&rel=0`;
-  document.getElementById('watch-overlay').classList.add('open');
-  watchOpen = true;
-}
-function closeWatch() {
-  document.getElementById('watch-frame').src = '';
-  document.getElementById('watch-overlay').classList.remove('open');
-  watchOpen = false;
-}
-
-// ═══════════════════════════════════════════
-//  STUDIO DRAG & DROP
-// ═══════════════════════════════════════════
-function handleStudioDrop(e) {
+/* ═══════════════════════════════════════════════
+   SCROLL
+═══════════════════════════════════════════════ */
+let wLock=false;
+const NS=q('nstream');
+NS.addEventListener('scroll',updateScrollThumb,{passive:true});
+NS.addEventListener('wheel',e=>{
   e.preventDefault();
-  const zone = document.getElementById('studio-zone');
-  zone.classList.remove('drag-over');
-  const files = e.dataTransfer.files;
-  if (files.length) {
-    zone.innerHTML = `
-      <div class="suz-icon" style="color:var(--accent)">✓</div>
-      <div class="suz-label" style="color:var(--ink)">${files.length} file${files.length>1?'s':''} ready</div>
-      <div class="suz-sub">${Array.from(files).map(f=>f.name).join(', ').slice(0,60)}…</div>`;
-  }
-}
+  if(wLock)return;wLock=true;setTimeout(()=>wLock=false,260);
+  const d=e.deltaY>0?1:-1, n=ACT_SI+d;
+  if(n>=0&&n<CAT_SHOWS.length)goTo(n);
+},{passive:false});
+let tY=0;
+NS.addEventListener('touchstart',e=>{tY=e.touches[0].clientY},{passive:true});
+NS.addEventListener('touchend',e=>{const dy=tY-e.changedTouches[0].clientY;if(Math.abs(dy)>28){if(dy>0){if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1)}else{if(ACT_SI>0)goTo(ACT_SI-1)}}},{passive:true});
 
-// ═══════════════════════════════════════════
-//  SEARCH
-// ═══════════════════════════════════════════
-document.getElementById('search-input').addEventListener('input', function() {
-  const q = this.value.trim().toLowerCase();
-  if (!q) {
-    cardEls.forEach(({wrap}) => wrap.style.display = '');
-    return;
-  }
-  cardEls.forEach(({wrap, card}) => {
-    const text = (card.poster + ' ' + card.label + ' ' + (card.body||[]).join(' ') + ' ' + card.channel).toLowerCase();
-    wrap.style.display = text.includes(q) ? '' : 'none';
-  });
+/* ═══════════════════════════════════════════════
+   GHOST PERSISTENCE
+═══════════════════════════════════════════════ */
+const GEL=q('nghost');
+GEL.addEventListener('mouseenter',()=>{ngHov=true;clearTimeout(ngHideT)});
+GEL.addEventListener('mouseleave',()=>{ngHov=false;hideNG()});
+
+/* ═══════════════════════════════════════════════
+   RESIZE
+═══════════════════════════════════════════════ */
+let rT;
+window.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{measureIntent();exitNodes(()=>placeNodes(ACT_SI));updateScrollThumb()},120)});
+
+/* ═══════════════════════════════════════════════
+   INIT — wrapped in rAF so fixed-position elements
+   are fully laid out before measuring or building nodes.
+═══════════════════════════════════════════════ */
+buildCatBar();
+requestAnimationFrame(()=>{
+  applyCatColor('drama');
+  measureIntent();
+  selectCat('drama');
+  requestAnimationFrame(()=>document.body.classList.add('dim'));
 });
-
-// ═══════════════════════════════════════════
-//  CURSOR
-// ═══════════════════════════════════════════
-document.addEventListener('mousemove', e => {
-  const cur = document.getElementById('cursor');
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
-  const t = e.target;
-  cur.className = '';
-  if (t.classList.contains('poster') || t.closest('#panel-video'))
-    cur.classList.add('watch');
-  else if (t.closest('#studio-zone') || t.closest('.upload-card'))
-    cur.classList.add('upload');
-  else if (t.tagName === 'BUTTON' || t.classList.contains('pf-card-list') ||
-           t.classList.contains('pf-card-grid') || t.classList.contains('h-pill') ||
-           t.closest('.go-card') || t.closest('.rw-item') || t.closest('.fav-item'))
-    cur.classList.add('big');
-});
-
-// ═══════════════════════════════════════════
-//  KEYBOARD
-// ═══════════════════════════════════════════
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if (gridOpen) {
-    if (e.key === 'Escape' || e.key === 'g' || e.key === 'G') { e.preventDefault(); toggleGridOverlay(); }
-    return;
-  }
-  if (watchOpen) {
-    if (e.key === 'Escape') { e.preventDefault(); closeWatch(); }
-    return;
-  }
-  switch(e.key) {
-    case 'ArrowDown': case 'j': case ' ': e.preventDefault(); nextCard(); break;
-    case 'ArrowUp':   case 'k':           e.preventDefault(); prevCard(); break;
-    case 'Enter':                          e.preventDefault(); openWatch(); break;
-    case 'g': case 'G':                   e.preventDefault(); toggleGridOverlay(); break;
-    case 'Escape':                         closeWatch(); break;
-  }
-});
-
-// ═══════════════════════════════════════════
-//  WHEEL + TOUCH
-// ═══════════════════════════════════════════
-let wheelLock = false;
-document.getElementById('stream-col').addEventListener('wheel', e => {
-  e.preventDefault();
-  if (wheelLock) return;
-  wheelLock = true;
-  setTimeout(() => { wheelLock = false; }, 280);
-  if (e.deltaY > 0) nextCard(); else prevCard();
-}, { passive:false });
-
-let touchY0 = 0;
-document.getElementById('stream-col').addEventListener('touchstart', e => {
-  touchY0 = e.touches[0].clientY;
-}, { passive:true });
-document.getElementById('stream-col').addEventListener('touchend', e => {
-  const dy = touchY0 - e.changedTouches[0].clientY;
-  if (Math.abs(dy) > 30) { if (dy > 0) nextCard(); else prevCard(); }
-}, { passive:true });
-
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-buildNarrative();
 </script>
 </body>
 </html>
