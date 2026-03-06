@@ -25,6 +25,7 @@
 }
 
 /* chapter palettes */
+/* chapter palettes */
 body { transition: background-color 1.8s ease; }
 /* ch-2: early days — warm amber */
 body.ch-2 { --bg:#0a0804; --ink:#f4eedc; --ink-2:#a08858; --ink-3:#3a2c10; --accent:#c8902a; --border:rgba(244,238,220,0.07); }
@@ -996,6 +997,173 @@ body.li-theme::before {
   background-size: 48px 48px;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   DOCUMENT THEME — INTOVIEW SPECIFICATION v1.0
+   Rendering mode: all ornamentation removed. Structure carries full weight.
+   Anthropic variant: anchored to policy document register.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+body.doc-theme {
+  --bg:      #faf9f7;
+  --ink:     #111110;
+  --ink-2:   #444440;
+  --ink-3:   #999990;
+  --accent:  #111110;
+  --accent-l:rgba(17,17,16,0.05);
+  --border:  rgba(17,17,16,0.14);
+  --ui:      'Space Mono', monospace;
+  --disp:    'Barlow Condensed', sans-serif;
+  transition: background-color 0.5s ease;
+}
+
+/* Flatten all chapter palette shifts */
+body.doc-theme.ch-2, body.doc-theme.ch-3, body.doc-theme.ch-4,
+body.doc-theme.ch-5, body.doc-theme.ch-6, body.doc-theme.ch-7,
+body.doc-theme.ch-8, body.doc-theme.ch-9, body.doc-theme.ch-10,
+body.doc-theme.subch-160, body.doc-theme.subch-o3, body.doc-theme.subch-workarea {
+  --bg:      #faf9f7;
+  --ink:     #111110;
+  --ink-2:   #444440;
+  --ink-3:   #999990;
+  --accent:  #111110;
+  --border:  rgba(17,17,16,0.14);
+}
+
+/* Kill grain, images, scan lines */
+body.doc-theme::after  { opacity: 0 !important; }
+body.doc-theme::before { display: none !important; }
+body.doc-theme #image-layer { opacity: 0 !important; pointer-events: none; }
+body.doc-theme #li-img-layer { display: none !important; }
+
+/* ── Header — letterhead ── */
+body.doc-theme header {
+  background: #faf9f7 !important;
+  border-bottom: 2px solid #111110 !important;
+  box-shadow: none !important;
+}
+body.doc-theme header:hover { background: #faf9f7 !important; }
+body.doc-theme .h-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: #111110;
+}
+body.doc-theme .h-tagline { color: #555550; font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.06em; }
+body.doc-theme .mall-crumb { color: #999990; }
+body.doc-theme .mall-crumb .node { color: #555550; font-family: 'Space Mono', monospace; }
+body.doc-theme .mall-crumb .node:hover { color: #111110; }
+body.doc-theme .h-btn { border-color: rgba(17,17,16,0.28); color: #444440; border-radius: 0; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; }
+body.doc-theme .h-btn:hover { border-color: #111110; color: #111110; background: none; }
+body.doc-theme .h-btn.cta { background: #111110; border-color: #111110; color: #faf9f7; border-radius: 0; }
+body.doc-theme .h-btn.cta:hover { background: #333330; border-color: #333330; opacity: 1; }
+body.doc-theme #header-overlay { background: #f0efe9; border-bottom: 1px solid rgba(17,17,16,0.14); }
+body.doc-theme .ho-label { font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: #999990; }
+body.doc-theme .ho-value { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; color: #111110; line-height: 1.5; }
+
+/* ── li-toggle: "off" state ── */
+body.doc-theme #li-toggle {
+  background: #111110; border-color: #111110; color: #faf9f7; border-radius: 0; padding: 5px 10px 5px 8px;
+}
+body.doc-theme #li-toggle .li-mark { background: #faf9f7; color: #111110; border-radius: 1px; }
+body.doc-theme #li-toggle:hover { background: #333330; border-color: #333330; }
+
+/* ── Progress bar ── */
+body.doc-theme #progress { background: #111110 !important; height: 1px !important; }
+
+/* ── Chapter headers ── */
+body.doc-theme .ch-header { padding: 48px 0 24px; }
+body.doc-theme .ch-header-rule { background: #111110 !important; height: 2px !important; margin-bottom: 10px; }
+body.doc-theme .ch-header-label { font-family: 'Space Mono', monospace !important; font-size: 8px !important; letter-spacing: 0.22em; text-transform: uppercase; color: #999990 !important; font-weight: 400; }
+body.doc-theme .ch-header-title { font-family: 'Barlow Condensed', sans-serif !important; font-size: clamp(22px, 2.4vw, 32px) !important; font-weight: 400 !important; letter-spacing: 0.01em !important; line-height: 1.18 !important; text-transform: none !important; color: #111110 !important; }
+body.doc-theme .ch-header-num { -webkit-text-stroke: 0 !important; color: rgba(17,17,16,0.10) !important; }
+
+/* ── Sentence types ── */
+body.doc-theme .sentence.poster {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: clamp(22px, 2.8vw, 36px) !important;
+  font-weight: 400 !important; line-height: 1.22 !important;
+  letter-spacing: 0.01em !important; text-transform: none !important;
+  color: #111110 !important;
+}
+body.doc-theme .sentence.poster .ac { color: #111110 !important; }
+body.doc-theme .sentence.poster.active::before { background: #111110 !important; width: 2px !important; }
+
+body.doc-theme .sentence.body {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: clamp(14px, 1.5vw, 17px) !important;
+  font-weight: 400 !important; line-height: 1.75 !important;
+  letter-spacing: 0.005em !important; color: #333330 !important;
+  max-width: 640px !important;
+}
+body.doc-theme .sentence.body .em { color: #111110 !important; font-style: italic; font-weight: 400; }
+body.doc-theme .sentence.active.body { color: #111110 !important; }
+body.doc-theme .sentence.past.body { color: #555550 !important; }
+
+body.doc-theme .sentence.pull {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-style: italic !important; font-weight: 400 !important;
+  font-size: clamp(14px, 1.5vw, 17px) !important; line-height: 1.68 !important;
+  color: #333330 !important; border-left: 2px solid #111110 !important;
+  padding-left: 20px !important; max-width: 560px !important; opacity: 1 !important;
+}
+body.doc-theme .sentence.pull .ac { color: #111110 !important; }
+body.doc-theme .sentence.active.pull { color: #111110 !important; }
+
+body.doc-theme .sentence.label {
+  font-family: 'Space Mono', monospace !important; font-size: 7px !important;
+  letter-spacing: 0.26em !important; text-transform: uppercase !important;
+  color: #999990 !important; opacity: 1 !important; padding: 16px 0 4px !important;
+}
+
+body.doc-theme .sentence.spec {
+  font-family: 'Space Mono', monospace !important; font-size: 11px !important;
+  letter-spacing: 0.02em !important; color: #333330 !important;
+  border-top: 1px solid rgba(17,17,16,0.10); padding: 6px 0 !important;
+}
+body.doc-theme .sentence.spec .spec-key {
+  font-size: 9px !important; letter-spacing: 0.18em !important;
+  text-transform: uppercase !important; color: #999990 !important; min-width: 140px !important;
+}
+body.doc-theme .sentence.spec .spec-val { color: #111110 !important; font-family: 'Space Mono', monospace !important; }
+
+body.doc-theme .sentence.break { padding: 16px 0 !important; opacity: 1 !important; }
+body.doc-theme .sentence.break::before {
+  content: '— — —' !important; display: block !important;
+  width: auto !important; height: auto !important; background: none !important;
+  font-family: 'Barlow Condensed', sans-serif !important; font-size: 12px !important;
+  letter-spacing: 0.3em !important; color: #aaaaaa !important; text-align: center !important;
+  max-width: 640px !important;
+}
+
+/* Sentence opacity — document mode: everything readable at all times */
+body.doc-theme .sentence { opacity: 0.65 !important; }
+body.doc-theme .sentence.active { opacity: 1 !important; }
+body.doc-theme .sentence.past { opacity: 0.85 !important; }
+body.doc-theme .sentence.revealed { opacity: 0.5 !important; }
+body.doc-theme .sentence:hover:not(.active):not(.break):not(.label) { opacity: 0.82 !important; }
+
+/* ── Panel, nav, cursor ── */
+body.doc-theme #panel { background: #f0efe9 !important; border-left: 1px solid rgba(17,17,16,0.14) !important; }
+body.doc-theme #nav-widget .nw-shell { background: #f0efe9 !important; border: 1px solid rgba(17,17,16,0.18) !important; border-radius: 0 !important; }
+body.doc-theme #nav-widget .nw-nav-pip-fill { background: #111110 !important; }
+body.doc-theme #cursor { background: #111110 !important; }
+
+/* ── Links ── */
+body.doc-theme a { color: #111110 !important; text-decoration: underline !important; }
+body.doc-theme a:hover { color: #333330 !important; }
+
+/* ── Toast ── */
+body.doc-theme #toast { background: #111110 !important; border-color: #333330 !important; color: #faf9f7 !important; border-radius: 0 !important; }
+
+/* Suppress sub-chapter palette bleeds */
+body.doc-theme .sentence.pull { border-left-color: #111110 !important; }
+body.doc-theme .sentence.label { color: #999990 !important; }
+body.doc-theme .ch-header-rule { background: #111110 !important; }
+body.doc-theme #progress { background: #111110 !important; }
+
+/* ── Once-per-session spent marker ── */
+.sentence[data-dark-spent='true'].poster { opacity: 0.55 !important; }
+
 /* color transitions */
 #image-layer::after, header, #panel,
 #nav-widget .nw-shell, #nav-widget .nw-cell-value,
@@ -1049,6 +1217,7 @@ body.no-transitions .sentence * { transition: none !important; }
   font-family: var(--disp); font-weight: 900; font-size: clamp(20px,2.8vw,34px);
   letter-spacing: -0.02em; text-transform: uppercase; line-height: 1; color: var(--ink);
   transition: color 1.6s ease;
+  max-width: 560px;
 }
 .ch-header-sub {
   font-family: var(--ui); font-size: 7px;
@@ -1211,6 +1380,7 @@ header:hover #header-overlay { opacity: 1; pointer-events: auto; transform: tran
   font-family: var(--disp); font-weight: 900;
   font-size: clamp(52px,7.5vw,100px);
   line-height: 0.88; letter-spacing: -0.03em; text-transform: uppercase; padding: 4px 0;
+  max-width: 560px;
 }
 .sentence.poster .ac { color: var(--accent); }
 .sentence.poster .dim { color: var(--ink-2); font-weight: 300; font-style: italic; }
@@ -2145,6 +2315,30 @@ body.ch-7 { --hud-bg: rgba(248,236,240,0.97); --hud-ink: #200810; --hud-ink-2: #
 #panel:hover .rp-ref-name { color: #999; }
 #panel:hover .rp-footer { color: #bbb; border-color: rgba(0,0,0,0.08); }
 
+/* ── Panel hover: pg-* elements — fix readability on light bg ── */
+#panel:hover .pg-title { color: #111; }
+#panel:hover .pg-sub { color: #c8902a; }
+#panel:hover .pg-header { border-bottom-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-ch-item { opacity: 0.55; }
+#panel:hover .pg-ch-item:hover { background: rgba(200,144,42,0.07); opacity: 0.9; }
+#panel:hover .pg-ch-item.active { background: rgba(200,144,42,0.10); opacity: 1; }
+#panel:hover .pg-ch-num { color: #c8902a; }
+#panel:hover .pg-ch-name { color: #444; }
+#panel:hover .pg-ch-item.active .pg-ch-name { color: #111; }
+#panel:hover .pg-preview-section { border-top-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-preview-label { color: #999; }
+#panel:hover .pg-preview-wrap { border-color: rgba(0,0,0,0.12); background: #e8e4dc; }
+#panel:hover .pg-preview-wrap:hover { border-color: #c8902a; }
+#panel:hover .pg-tab { border-color: rgba(0,0,0,0.12); color: #666; }
+#panel:hover .pg-tab:hover { border-color: #c8902a; color: #c8902a; }
+#panel:hover .pg-tab.active { border-color: #c8902a; color: #c8902a; background: rgba(200,144,42,0.08); }
+#panel:hover .pg-preview-mode-btn { border-color: rgba(0,0,0,0.10); color: #888; }
+#panel:hover .pg-preview-mode-btn:hover { border-color: #c8902a; color: #c8902a; }
+#panel:hover .pg-preview-mode-btn.active { background: rgba(200,144,42,0.10); border-color: #c8902a; color: #c8902a; }
+#panel:hover .pg-footer { color: #bbb; border-top-color: rgba(0,0,0,0.08); }
+#panel:hover .pg-footer a { color: #c8902a; }
+#panel:hover .pg-preview-img { background: #e0dbd2; }
+
 #detail-ghost {
   position: fixed; pointer-events: none; z-index: 9100;
   opacity: 0; transition: opacity .18s ease; will-change: left,top;
@@ -2679,6 +2873,36 @@ body.li-theme.dark-moment #dark-spotlight .ds-inner .ac { color: #0a66c2; }
 body.li-theme.dark-moment #dark-spotlight .ds-inner .em { color: #555; }
 body.li-theme.dark-moment .ds-ch-label { color: #0a66c2; }
 body.li-theme.dark-moment .ds-ch-title { color: #555; }
+
+/* doc-theme dark moment — content column only, no full-screen veil */
+body.doc-theme.dark-moment #dark-veil { opacity: 0 !important; pointer-events: none !important; }
+body.doc-theme #dark-veil { opacity: 0 !important; pointer-events: none !important; transition: none !important; }
+body.doc-theme.dark-moment #dark-spotlight {
+  position: fixed; inset: auto; left: 0; right: 0; top: 0; bottom: 0;
+  display: flex; align-items: flex-start; justify-content: flex-start;
+  padding: 0; pointer-events: none; z-index: 10;
+}
+body.doc-theme.dark-moment #dark-spotlight::before {
+  content: ''; position: absolute; inset: 0; background: #faf9f7; z-index: -1;
+}
+body.doc-theme.dark-moment #dark-spotlight .ds-inner {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: clamp(22px, 2.8vw, 36px) !important; font-weight: 400 !important;
+  line-height: 1.22 !important; letter-spacing: 0.01em !important;
+  text-transform: none !important; color: #111110 !important;
+  text-align: left !important; max-width: 640px !important;
+}
+body.doc-theme.dark-moment #dark-spotlight .ds-inner .ac { color: #111110 !important; }
+body.doc-theme.dark-moment #dark-spotlight .ds-inner .em { color: #444440 !important; font-style: italic !important; font-weight: 400 !important; }
+body.doc-theme.dark-moment .ds-ch-label { font-family: 'Space Mono', monospace !important; color: #999990 !important; font-size: 7px !important; letter-spacing: 0.26em !important; }
+body.doc-theme.dark-moment .ds-ch-title { font-family: 'Barlow Condensed', sans-serif !important; font-weight: 400 !important; color: #444440 !important; font-size: clamp(13px, 1.4vw, 18px) !important; text-transform: none !important; letter-spacing: 0.01em !important; }
+body.doc-theme.dark-moment #nav-widget, body.doc-theme.dark-moment #chapter-widget,
+body.doc-theme.dark-moment #panel, body.doc-theme.dark-moment #progress,
+body.doc-theme.dark-moment #built-by, body.doc-theme.dark-moment #wolfie-credit,
+body.doc-theme.dark-moment #scroll-toggle { opacity: 1 !important; pointer-events: auto !important; }
+body.doc-theme.dark-moment .sentence,
+body.doc-theme.dark-moment .ch-header { opacity: 1 !important; }
+body.doc-theme.dark-moment #dark-escape-hint { color: rgba(17,17,16,0.35) !important; }
 body.li-theme.dark-moment #dark-escape-hint { color: rgba(0,0,0,0.25); }
 
 /* Escape hint */
@@ -2984,8 +3208,47 @@ body.dark-ask #ask-interstitial { opacity: 1; pointer-events: auto; }
 .pg-tab:hover { border-color: var(--accent); color: var(--accent); }
 .pg-tab.active { border-color: var(--accent); color: var(--accent); background: var(--accent-l); }
 
-/* footer */
-.pg-footer {
+/* ── Preview mode switcher (iframe / image) ── */
+.pg-preview-mode-row {
+  display: flex; gap: 4px; margin-bottom: 8px; flex-shrink: 0;
+}
+.pg-preview-mode-btn {
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 2px;
+  background: none; color: var(--ink-3); cursor: none;
+  transition: all 0.15s ease;
+}
+.pg-preview-mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+.pg-preview-mode-btn.active {
+  background: var(--accent-l); border-color: var(--accent); color: var(--accent);
+}
+
+/* Image pane — shows narrative-paired image */
+.pg-preview-img {
+  position: absolute; inset: 0;
+  background: #0a0908;
+  display: none;
+}
+.pg-preview-img img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
+  opacity: 0; transition: opacity 0.45s ease;
+}
+.pg-preview-img img.vis { opacity: 0.88; }
+.pg-preview-img .pg-img-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 10px 12px 8px;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  font-family: var(--ui); font-size: 7px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+}
+/* Show/hide panes based on mode */
+.pg-preview-wrap.mode-iframe .pg-preview-frame-shell,
+.pg-preview-wrap.mode-iframe .pg-preview-overlay { display: block; }
+.pg-preview-wrap.mode-iframe .pg-preview-img { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-frame-shell { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-overlay { display: none; }
+.pg-preview-wrap.mode-image .pg-preview-img { display: block; }
   font-family: var(--ui); font-size: 7px; letter-spacing: 0.10em;
   color: var(--ink-3); border-top: 1px solid var(--border);
   padding-top: 12px; margin-top: auto; flex-shrink: 0; transition: color 0.4s;
@@ -3272,8 +3535,8 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
       <span class="h-tagline">Narrative &middot; Ambient &middot; Physical</span>
     </div>
     <div class="h-actions">
-      <button id="li-toggle" aria-label="Toggle LinkedIn theme">
-        <span class="li-mark">in</span>
+      <button id="li-toggle" aria-label="Cycle theme" title="in → out → off">
+        <span class="li-mark" id="li-mark-logo">in</span>
         <span id="li-toggle-label">In</span>
       </button>
       <button id="h-compose-btn" class="h-btn h-compose-btn" aria-label="Toggle compose mode" title="Edit narrative (Cmd+E)">
@@ -3330,9 +3593,17 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
   <!-- ── SITE PREVIEW ── -->
   <div class="pg-preview-section">
     <div class="pg-preview-label" id="pg-preview-label">The Platform</div>
-    <div class="pg-preview-wrap" id="pg-preview-wrap">
+    <div class="pg-preview-mode-row">
+      <button class="pg-preview-mode-btn active" id="pg-mode-iframe" onclick="setPgMode('iframe')">&#9654; Live</button>
+      <button class="pg-preview-mode-btn" id="pg-mode-image" onclick="setPgMode('image')">&#9672; Image</button>
+    </div>
+    <div class="pg-preview-wrap mode-iframe" id="pg-preview-wrap">
       <div class="pg-preview-frame-shell" id="pg-preview-frame-shell">
         <!-- iframe injected by JS -->
+      </div>
+      <div class="pg-preview-img" id="pg-preview-img">
+        <img id="pg-preview-img-el" src="" alt="">
+        <div class="pg-img-caption" id="pg-img-caption"></div>
       </div>
       <div class="pg-preview-overlay" id="pg-preview-overlay">
         <a class="pg-preview-visit" id="pg-preview-visit" href="#" target="_blank" rel="noopener">
@@ -3503,7 +3774,7 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
   <div class="nw-shell">
 
     <button class="nw-action-btn" id="nw-cv-btn" title="View CV / Resume" onclick="openPanelSheet ? openPanelSheet() : focusPanel()">
-      <span class="nw-cell-value">&#9776;</span><span class="nw-action-label">Resume</span>
+      <span class="nw-cell-value">&#9776;</span><span class="nw-action-label">A/</span>
     </button>
 
     <div class="nw-handle" id="nw-handle"><div class="nw-drag-dots">&middot; &middot; &middot;</div></div>
@@ -3844,6 +4115,7 @@ body.li-theme .pg-preview-wrap:hover { border-color: #0a66c2; }
     });
   }
   wireHoverables();
+  window.wireHoverables = wireHoverables;
 })();
 
 </script><script>
@@ -4249,7 +4521,7 @@ function updatePanelService(ch) {
   });
 }
 
-var CH_NAMES = ['', 'Introduction', 'GNC', 'BNY Mellon', 'The Work', 'Who I Am', 'wolfie.life', 'Connect'];
+var CH_NAMES = ['', 'What It Feels Like', 'The Engine', 'Further Than the Screen', 'What It Looks Like', 'The Studio', 'A First Sentence'];
 var CH_FIRST = {};
 navigable.forEach(function(el, i) {
   var ch = parseInt(el.dataset.ch || 1);
@@ -5220,12 +5492,18 @@ function isGridOpen() { return document.getElementById('imageGridOverlay').class
   });
 })();
 
-// ── LINKEDIN THEME TOGGLE ─────────────────────────────────────────────────
-(function initLiTheme() {
-  var active = false;
-  var toastTimer = null;
+// ===================================
+// THEME CYCLE TOGGLE — in / out / off
+// ===================================
+// Single button, three states:
+//   default   → mark: "in"  / label: "In"   (no theme)
+//   li-theme  → mark: "out" / label: "Out"  (LinkedIn)
+//   doc-theme → mark: "off" / label: "Off"  (Document)
+(function() {
+  var state = 0; // 0=default, 1=li-theme, 2=doc-theme
+  var toastTimer;
 
-  function showLiToast(icon, title, sub, actionLabel, actionFn, duration) {
+  function showToast(icon, title, sub, actionLabel, actionFn, duration) {
     var ti = document.getElementById('toast-icon');
     var tt = document.getElementById('toast-title');
     var ts = document.getElementById('toast-sub');
@@ -5256,24 +5534,52 @@ function isGridOpen() { return document.getElementById('imageGridOverlay').class
     }, duration || 4000);
   }
 
-  function toggle() {
-    active = !active;
+  function applyState(newState, skipTransition) {
+    state = newState;
+    var mark  = document.getElementById('li-mark-logo');
     var label = document.getElementById('li-toggle-label');
-    if (active) {
-      document.body.classList.add('li-theme', 'no-transitions');
-      if (label) label.textContent = 'Out';
-      showLiToast('🔵', 'In Mode', 'Congratulations. You are open to work.', 'Escape →', toggle, 6000);
+
+    document.body.classList.remove('li-theme', 'doc-theme');
+    if (skipTransition) {
+      document.body.classList.add('no-transitions');
       setTimeout(function() { document.body.classList.remove('no-transitions'); }, 50);
-    } else {
-      document.body.classList.remove('li-theme');
+    }
+
+    if (state === 0) {
+      if (mark)  mark.textContent  = 'in';
       if (label) label.textContent = 'In';
-      showLiToast('✦', 'Back to Normal', 'Conviction restored.', null, null, 2800);
+      showToast('✦', 'Back to Normal', 'Conviction restored.', null, null, 2800);
+
+    } else if (state === 1) {
+      document.body.classList.add('li-theme');
+      if (mark)  mark.textContent  = 'out';
+      if (label) label.textContent = 'Out';
+      showToast('🔵', 'In Mode', 'Congratulations. You are open to work.', 'Escape →', function() { applyState(0); }, 6000);
+
+    } else if (state === 2) {
+      document.body.classList.add('doc-theme');
+      if (mark)  mark.textContent  = 'off';
+      if (label) label.textContent = 'Off';
+      showToast('§', 'Document Mode', 'All ornamentation removed. The sentence carries the weight.', 'Esc →', function() { applyState(0); }, 5000);
     }
   }
 
+  function cycle() { applyState((state + 1) % 3, true); }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && state !== 0) {
+      if (!document.body.classList.contains('dark-moment')) {
+        applyState(0, false);
+      }
+    }
+  });
+
   var btn = document.getElementById('li-toggle');
-  if (btn) btn.addEventListener('click', toggle);
+  if (btn) btn.addEventListener('click', cycle);
 })();
+
+// ── Once-per-session dark chapter tracking ──────────────────────────────────
+var _darkFiredIds = {};
 
 // ===================================
 // NARRATIVE ENGINE
@@ -6326,14 +6632,56 @@ renderNarrative();
 // ── Dark moment state ──────────────────────────────────────────────────────
 var darkMomentActive = false;
 var darkAskActive    = false;
-var darkSpotlightEl  = null; // the navigable sentence being spotlighted
+var darkSpotlightEl  = null;
+var _darkMomentTimer = null; // pending enterDarkMoment setTimeout
+
+function _scheduleDarkMoment(el) {
+  clearTimeout(_darkMomentTimer);
+  _darkMomentTimer = setTimeout(function() { enterDarkMoment(el); }, 60);
+}
+
+function _cancelDarkMoment() {
+  clearTimeout(_darkMomentTimer);
+  _darkMomentTimer = null;
+}
 
 function enterDarkMoment(posterEl) {
+  // ── Once-per-session guard (safety net — primary check is in goTo hook) ──
+  var sentId = posterEl ? (posterEl.dataset.sentId || posterEl.id || '') : '';
+  if (sentId && _darkFiredIds[sentId]) return;
+  if (sentId) {
+    _darkFiredIds[sentId] = true;
+    if (posterEl) posterEl.dataset.darkSpent = 'true';
+  }
+
   darkMomentActive = true;
   darkSpotlightEl = posterEl;
+  var spotlight = document.getElementById('dark-spotlight');
   var inner = document.getElementById('ds-inner');
+
+  // ── Doc-theme: anchor spotlight to content column only ─────────────────
+  var isDocTheme = document.body.classList.contains('doc-theme');
+  if (isDocTheme && posterEl && spotlight) {
+    var stream = posterEl.closest('#stream') || posterEl.closest('.stream') || posterEl.parentElement;
+    if (stream) {
+      var rect = stream.getBoundingClientRect();
+      spotlight.style.position       = 'fixed';
+      spotlight.style.left           = rect.left + 'px';
+      spotlight.style.width          = rect.width + 'px';
+      spotlight.style.top            = '0';
+      spotlight.style.bottom         = '0';
+      spotlight.style.right          = 'auto';
+      spotlight.style.alignItems     = 'center';
+      spotlight.style.justifyContent = 'flex-start';
+      spotlight.style.padding        = '0 clamp(20px,4vw,60px)';
+    }
+  } else if (spotlight) {
+    spotlight.style.position = spotlight.style.left = spotlight.style.width =
+    spotlight.style.top = spotlight.style.bottom = spotlight.style.right =
+    spotlight.style.alignItems = spotlight.style.justifyContent = spotlight.style.padding = '';
+  }
+
   if (inner && posterEl) {
-    // Find the nearest preceding ch-header
     var chHeader = null;
     var node = posterEl.previousElementSibling;
     while (node) {
@@ -6364,6 +6712,21 @@ function exitDarkMoment() {
   if (!darkMomentActive) return;
   darkMomentActive = false;
   darkSpotlightEl = null;
+  var spotlight = document.getElementById('dark-spotlight');
+  if (spotlight) {
+    spotlight.style.position = spotlight.style.left = spotlight.style.width =
+    spotlight.style.top = spotlight.style.bottom = spotlight.style.right =
+    spotlight.style.alignItems = spotlight.style.justifyContent = spotlight.style.padding = '';
+    // Cut transition so veil and spotlight disappear instantly, no lingering fade
+    spotlight.style.transition = 'none';
+    setTimeout(function() { spotlight.style.transition = ''; }, 50);
+  }
+  var veil = document.getElementById('dark-veil');
+  if (veil) {
+    veil.style.transition = 'none';
+    veil.style.opacity = '0';
+    setTimeout(function() { veil.style.transition = ''; veil.style.opacity = ''; }, 50);
+  }
   document.body.classList.remove('dark-moment');
 }
 
@@ -6475,6 +6838,9 @@ function exitDarkAsk() {
 // ── Hook into goTo ─────────────────────────────────────────────────────────
 var _goToOriginal = goTo;
 goTo = function(n, opts) {
+  // Cancel any pending dark moment that hasn't fired yet
+  _cancelDarkMoment();
+
   // Clamp n here so navigable[n] lookup below is always valid
   n = Math.max(0, Math.min(navigable.length - 1, n));
 
@@ -6496,7 +6862,14 @@ goTo = function(n, opts) {
   // @@darkchapter — spotlight this poster sentence
   if (el.dataset.darkChapter === 'true') {
     if (!isScrollFree) {
-      setTimeout(function() { enterDarkMoment(el); }, 60);
+      // Once-per-session: skip silently if already fired
+      var dcId = el.dataset.sentId || el.id || '';
+      if (dcId && _darkFiredIds[dcId]) {
+        _cancelDarkMoment();
+        goToSkipDark(current + 1, 1);
+      } else {
+        _scheduleDarkMoment(el);
+      }
     }
     return;
   }
@@ -6504,7 +6877,13 @@ goTo = function(n, opts) {
   // @@dark — spotlight this sentence (non-poster)
   if (el.dataset.dark === 'true') {
     if (!isScrollFree) {
-      setTimeout(function() { enterDarkMoment(el); }, 60);
+      var dId = el.dataset.sentId || el.id || '';
+      if (dId && _darkFiredIds[dId]) {
+        _cancelDarkMoment();
+        goToSkipDark(current + 1, 1);
+      } else {
+        _scheduleDarkMoment(el);
+      }
     }
     return;
   }
@@ -6592,6 +6971,9 @@ document.getElementById('dark-veil').addEventListener('click', function() {
     if (!stamp) return;
     if (stamp.dark)   el.dataset.dark          = 'true';
     if (stamp.darkCh) el.dataset.darkChapter   = 'true';
+    if (stamp.darkCh || stamp.dark) {
+      el.dataset.sentId = 'dark-' + (el.dataset.idx || si);
+    }
     if (stamp.ask)    el.dataset.ask           = stamp.ask;
   });
 })();
@@ -6706,16 +7088,28 @@ document.addEventListener('keydown', function(e) {
   var iframeCache = {};
   var activeChIdx = 0;
 
+  // Ghost data per chapter for right-rail hover overlays
+  var CHAPTER_GHOSTS = {
+    1: [{"k":"Chapter","v":"01 · What It Feels Like"},{"k":"Argument","v":"The medium is part of what it is"},{"k":"Key idea","v":"Space that has considered them"},{"k":"Opens with","v":"You already know this feeling"}],
+    2: [{"k":"Chapter","v":"02 · The Engine"},{"k":"Types","v":"poster · body · pull · label · spec"},{"k":"System","v":"Sentence nodes · ambient palettes"},{"k":"Navigation","v":"Scroll · swipe · keyboard · jump"}],
+    3: [{"k":"Chapter","v":"03 · Further Than the Screen"},{"k":"Territory","v":"Physically felt meets intellectually felt"},{"k":"Entro","v":"35 years in the overlap"},{"k":"Frontier","v":"Digital narrative becomes the room"}],
+    4: [{"k":"Chapter","v":"04 · What It Looks Like"},{"k":"Platforms","v":"wolfie.love · wolfie.real · wolfie.dash"},{"k":"Applied","v":"Credentials · placemaking · dispatch"},{"k":"Format","v":"Sequential · considered · arc"}],
+    5: [{"k":"Chapter","v":"05 · The Studio"},{"k":"Studio","v":"wolfie.life · Wolfgang & Co"},{"k":"Engine","v":"One system · every domain"},{"k":"Attention","v":"4–8 min vs 42 sec for a PDF"}],
+    6: [{"k":"Chapter","v":"06 · A First Sentence"},{"k":"Contact","v":"zack@reasonably.cc"},{"k":"Studio","v":"wolfie.life"},{"k":"This page","v":"A demonstration · not a proposal"}],
+  };
+
   function buildChapterList() {
     var list = document.getElementById('pg-chapter-list');
     if (!list || typeof CHAPTERS === 'undefined') return;
     list.innerHTML = '';
     CHAPTERS.forEach(function(ch, i) {
       var btn = document.createElement('button');
-      btn.className = 'pg-ch-item' + (i === 0 ? ' active' : '');
+      btn.className = 'pg-ch-item hoverable-stat' + (i === 0 ? ' active' : '');
       btn.innerHTML =
         '<span class="pg-ch-num">' + ch.num + '</span>' +
         '<span class="pg-ch-name">' + ch.title + '</span>';
+      btn.dataset.ghostLabel = ch.num + ' · ' + ch.title;
+      btn.dataset.ghost = JSON.stringify(CHAPTER_GHOSTS[ch.ch] || [{"k":"Chapter","v":ch.title},{"k":"Sub","v":ch.sub}]);
       btn.addEventListener('click', function() {
         // Find the first navigable sentence (has data-idx) in this chapter
         var candidates = document.querySelectorAll('[data-ch="' + ch.ch + '"][data-idx]');
@@ -6769,9 +7163,11 @@ document.addEventListener('keydown', function(e) {
     tabs.innerHTML = '';
     PANEL_SITES.forEach(function(site, i) {
       var btn = document.createElement('button');
-      btn.className = 'pg-tab' + (i === 0 ? ' active' : '');
+      btn.className = 'pg-tab hoverable-stat' + (i === 0 ? ' active' : '');
       btn.textContent = site.tag;
       btn.title = site.label;
+      btn.dataset.ghostLabel = site.label;
+      btn.dataset.ghost = JSON.stringify(site.ghost || []);
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
         loadSitePreview(i);
@@ -6841,6 +7237,8 @@ document.addEventListener('keydown', function(e) {
     buildChapterList();
     buildSiteTabs();
     loadSitePreview(0);
+    // Re-wire ghost overlays now that dynamic items exist
+    if (typeof wireHoverables === 'function') wireHoverables();
     // Sync chapter list when narrative progresses — poll on animationframe is too heavy
     // Instead, hook via a custom event dispatched by the engine after each goTo
     document.addEventListener('narrativeStep', function() { syncChapterFromCurrent(); });
@@ -6855,6 +7253,56 @@ document.addEventListener('keydown', function(e) {
         setTimeout(syncChapterFromCurrent, 80);
       }
     });
+  });
+
+  // ── Image pairings: one editorial image per chapter ──
+  var CHAPTER_IMAGES = {
+    1: { src: 'https://images.unsplash.com/photo-1545128485-c400e7702796?w=900&q=80', caption: 'Ch 01 · What It Feels Like · A space that has considered you' },
+    2: { src: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80', caption: 'Ch 02 · The Engine · Sentence nodes · ambient palettes · arc' },
+    3: { src: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&q=80', caption: 'Ch 03 · Further Than the Screen · The digital narrative becomes the room' },
+    4: { src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80', caption: 'Ch 04 · What It Looks Like · Credentials · placemaking · dispatch' },
+    5: { src: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80', caption: 'Ch 05 · The Studio · wolfie.life · built with conviction' },
+    6: { src: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80', caption: 'Ch 06 · A First Sentence · hello@wolfie.life' },
+  };
+
+  var currentPgMode = 'iframe';
+  var currentImgCh  = 1;
+
+  window.setPgMode = function(mode) {
+    currentPgMode = mode;
+    var wrap   = document.getElementById('pg-preview-wrap');
+    var btnI   = document.getElementById('pg-mode-iframe');
+    var btnImg = document.getElementById('pg-mode-image');
+    if (!wrap) return;
+    wrap.classList.toggle('mode-iframe', mode === 'iframe');
+    wrap.classList.toggle('mode-image',  mode === 'image');
+    if (btnI)   btnI.classList.toggle('active',  mode === 'iframe');
+    if (btnImg) btnImg.classList.toggle('active', mode === 'image');
+    if (mode === 'image') updatePanelImage(currentImgCh);
+  };
+
+  function updatePanelImage(ch) {
+    currentImgCh = ch;
+    if (currentPgMode !== 'image') return;
+    var data  = CHAPTER_IMAGES[ch] || CHAPTER_IMAGES[1];
+    var imgEl = document.getElementById('pg-preview-img-el');
+    var cap   = document.getElementById('pg-img-caption');
+    if (!imgEl) return;
+    imgEl.classList.remove('vis');
+    imgEl.onload = function() { imgEl.classList.add('vis'); };
+    imgEl.src = data.src;
+    if (cap) cap.textContent = data.caption;
+  }
+
+  document.addEventListener('narrativeStep', function() {
+    setTimeout(function() {
+      var active = document.querySelector('.pg-ch-item.active');
+      if (active) {
+        var label = active.dataset.ghostLabel || '';
+        var m = label.match(/^0?(\d)/);
+        if (m) updatePanelImage(parseInt(m[1]));
+      }
+    }, 60);
   });
 
 })();
