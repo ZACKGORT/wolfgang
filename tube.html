@@ -3,32 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>narrative·tube</title>
+<title>wolfie.life · media</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg:       #06050a;
-  --ink:      #f0ece4;
-  --ink-2:    #8a8070;
-  --ink-3:    #3a3028;
-  --accent:   #ff2d2d;
-  --accent-l: rgba(255,45,45,0.12);
-  --accent-d: rgba(255,45,45,0.06);
-  --border:   rgba(255,255,255,0.06);
-  --ui:       'Space Mono', monospace;
-  --disp:     'Barlow Condensed', sans-serif;
-}
+/* ═══════════════════════════════════════════════
+   WOLFIE.LIFE · MEDIA DASHBOARD
+   Powered by the intoview narrative engine
+   ─ nav by card, not sentence
+   ─ image layer fades behind text column
+   ─ right rail dominates (video first)
+═══════════════════════════════════════════════ */
 
-/* ── GENRE PALETTES ── */
-body.genre-tech    { --accent:#4a9eff; --accent-l:rgba(74,158,255,.12); --accent-d:rgba(74,158,255,.05); }
-body.genre-music   { --accent:#c060ff; --accent-l:rgba(192,96,255,.12); --accent-d:rgba(192,96,255,.05); }
-body.genre-nature  { --accent:#42c86a; --accent-l:rgba(66,200,106,.12); --accent-d:rgba(66,200,106,.05); }
-body.genre-history { --accent:#e8a830; --accent-l:rgba(232,168,48,.12); --accent-d:rgba(232,168,48,.05); }
-body.genre-art     { --accent:#ff8060; --accent-l:rgba(255,128,96,.12); --accent-d:rgba(255,128,96,.05); }
+:root {
+  --bg:        #07060a;
+  --ink:       #f0ece4;
+  --ink-2:     #8a8070;
+  --ink-3:     #3a3028;
+  --accent:    #c8902a;
+  --accent-l:  rgba(200,144,42,0.10);
+  --border:    rgba(255,255,255,0.06);
+  --border-2:  rgba(255,255,255,0.10);
+  --ui:        'Space Mono', monospace;
+  --disp:      'Barlow Condensed', sans-serif;
+  --panel-w:   460px;
+  --header-h:  52px;
+}
 
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
@@ -41,1316 +44,1162 @@ html, body {
   cursor: none;
 }
 
-/* ── GRAIN OVERLAY ── */
+/* ── GRAIN ── */
 body::after {
   content:'';
   position:fixed; inset:0;
   pointer-events:none; z-index:900;
-  opacity:.042;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px;
+  opacity:.04;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px;
+  pointer-events:none;
 }
 
-/* ── CUSTOM CURSOR ── */
+/* ── CURSOR ── */
 #cursor {
   position:fixed;
-  width:10px; height:10px;
+  width:9px; height:9px;
   background: var(--accent);
   border-radius:50%;
   pointer-events:none;
   z-index:9999;
+  left:-20px; top:-20px;
   transform:translate(-50%,-50%);
-  transition: width .15s ease, height .15s ease, background .3s ease, border-radius .15s ease;
+  transition: width .14s, height .14s, background .3s ease, border-radius .14s;
   mix-blend-mode: screen;
 }
-#cursor.big { width:40px; height:40px; opacity:.35; }
-#cursor.play { width:36px; height:36px; border-radius:4px; opacity:.5; }
+#cursor.big   { width:36px; height:36px; opacity:.3; }
+#cursor.watch { width:40px; height:40px; border-radius:4px; opacity:.45; }
 
-/* ── PROGRESS BAR ── */
-#progress {
-  position:fixed; top:0; left:0; right:0; height:2px;
-  z-index:800;
-  background: linear-gradient(to right, var(--accent), transparent);
-  width:0%;
-  transition: width .35s ease, background .6s ease;
+/* ── IMAGE LAYER — full-screen atmospheric ── */
+#image-layer {
+  position:fixed; inset:0; z-index:0; overflow:hidden;
+  pointer-events:none;
+}
+#image-layer img {
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; object-position:center 35%;
+  opacity:0; transform:scale(1.035);
+  transition: opacity .6s ease, transform 9s ease;
+  will-change: opacity, transform;
+}
+#image-layer img.visible { opacity:.32; transform:scale(1); }
+#image-layer::after {
+  content:''; position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(to right,  rgba(7,6,10,.97) 0%,  rgba(7,6,10,.72) 42%, rgba(7,6,10,.10) 100%),
+    linear-gradient(to bottom, rgba(7,6,10,.60) 0%,  transparent       30%, transparent       70%, rgba(7,6,10,.60) 100%);
 }
 
-/* ── LAYOUT ── */
-#app {
+/* ── PROGRESS ── */
+#progress {
+  position:fixed; bottom:0; left:0; height:2px;
+  background: var(--accent);
+  z-index:800; width:0%;
+  transition: width .3s ease, background .5s ease;
+  right: var(--panel-w);
+}
+
+/* ── LAYOUT SHELL ── */
+#shell {
+  position:relative; z-index:10;
   display:grid;
-  grid-template-columns: 1fr 320px;
-  grid-template-rows: 52px 1fr 64px;
+  grid-template-columns: 1fr var(--panel-w);
+  grid-template-rows: var(--header-h) 1fr;
   height:100vh;
-  max-width:1280px;
-  margin:0 auto;
 }
 
 /* ── HEADER ── */
 header {
   grid-column:1/-1;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  padding:0 40px;
+  height:var(--header-h);
+  display:flex; align-items:center;
+  padding:0 28px;
   border-bottom:1px solid var(--border);
-  position:relative;
-  transition:border-color .3s ease;
+  background:rgba(7,6,10,.88);
+  backdrop-filter:blur(18px);
+  position:sticky; top:0; z-index:200;
+  transition: background .3s ease;
 }
-header::after {
-  content:'';
-  position:absolute; bottom:-1px; left:0; right:0; height:1px;
-  background:linear-gradient(to right, transparent, var(--accent), transparent);
-  opacity:.3;
-  transition:opacity .3s ease;
-}
+header:hover { background:rgba(248,245,238,.96); border-bottom-color:rgba(0,0,0,.08); }
+header:hover .h-logo         { color:#111; }
+header:hover .h-logo em      { color:var(--accent); }
+header:hover .h-tagline      { color:var(--accent); }
+header:hover .h-crumb        { color:#aaa; }
+header:hover .h-crumb span   { color:#555; }
+header:hover .h-btn          { border-color:rgba(0,0,0,.15); color:#666; }
+header:hover .h-btn:hover    { border-color:var(--accent); color:var(--accent); }
 
-.logo {
+.h-logo {
   font-family:var(--disp);
-  font-weight:900;
-  font-size:18px;
-  letter-spacing:-.02em;
-  text-transform:uppercase;
+  font-weight:900; font-size:17px;
+  letter-spacing:.04em; text-transform:uppercase;
   color:var(--ink);
-  cursor:pointer;
-  transition:color .3s ease;
+  transition:color .3s;
   user-select:none;
 }
-.logo span { color:var(--accent); transition:color .3s ease; }
+.h-logo em { font-style:normal; color:var(--accent); transition:color .3s; }
 
-.h-genre-pills {
-  display:flex; gap:8px;
-  flex:1;
-  overflow:hidden;
+.h-tagline {
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.14em; color:var(--ink-2);
+  margin-left:14px;
+  transition:color .3s;
 }
-.h-pill {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
+
+.h-crumb {
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.10em; color:var(--ink-3);
+  margin-left:20px; display:flex; gap:5px; align-items:center;
+  transition:color .3s;
+}
+.h-crumb span {
   color:var(--ink-2);
-  padding:4px 10px;
-  border:1px solid var(--border);
-  border-radius:2px;
-  cursor:pointer;
-  transition:all .2s ease;
-  white-space:nowrap;
-  user-select:none;
-}
-.h-pill:hover, .h-pill.active {
-  color:var(--accent);
-  border-color:var(--accent);
-  background:var(--accent-l);
+  transition:color .3s;
 }
 
-.h-meta {
-  display:flex;
-  align-items:center;
-  gap:14px;
+.h-actions {
   margin-left:auto;
+  display:flex; gap:8px; align-items:center;
 }
-.h-count {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.1em;
-  color:var(--ink-3);
-}
-.h-count strong { color:var(--ink-2); }
 .h-btn {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--ink-2);
-  background:none;
-  border:1px solid var(--border);
-  padding:5px 10px;
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.14em; text-transform:uppercase;
+  background:none; border:1px solid var(--border);
+  color:var(--ink-3); padding:5px 12px;
   border-radius:2px;
-  cursor:pointer;
-  transition:all .2s ease;
+  transition:all .15s;
+  cursor:none;
 }
-.h-btn:hover { color:var(--accent); border-color:var(--accent); background:var(--accent-l); }
+.h-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-/* ── MAIN NARRATIVE STREAM ── */
-#stream-wrap {
-  grid-column:1;
-  position:relative;
-  overflow:hidden;
+#h-card-num {
+  font-family:var(--ui); font-size:8px;
+  letter-spacing:.12em; color:var(--ink-3);
+  transition:color .3s;
 }
-#stream-scroll {
-  position:absolute;
-  inset:0;
-  overflow-y:auto;
-  overflow-x:hidden;
-  scroll-behavior:smooth;
-  overscroll-behavior:contain;
-}
-#stream-scroll::-webkit-scrollbar { width:3px; }
-#stream-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-#stream-scroll::-webkit-scrollbar-thumb:hover { background:var(--ink-3); }
+#h-card-num strong { color:var(--ink-2); }
 
-#narrative-root {
-  max-width:580px;
-  margin:0 auto;
-  padding:60px 48px 120px;
+/* ── STREAM COLUMN ── */
+#stream-col {
+  grid-column:1; grid-row:2;
+  padding: clamp(40px,6vh,72px) clamp(28px,5vw,72px);
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:calc(100vh - var(--header-h));
+  position:relative; overflow:hidden;
 }
 
-/* ── SENTENCES ── */
+/* ── SENTENCE STATES ─────────────────────────────────────
+   Faithful to intoview.html mechanics:
+   opacity .08 = unread/future
+   opacity .30 = revealed (has been seen, not active)  ← ".revealed"
+   opacity .77 = past (receding from active)           ← ".past"
+   opacity 1   = active                                ← ".active"
+──────────────────────────────────────────────────── */
 .sentence {
-  display:block;
-  opacity:.22;
-  transform:translateY(4px);
-  transition:opacity .45s ease, transform .45s ease, color .4s ease;
-  user-select:none;
+  display:block; position:relative;
+  padding:4px 0;
+  opacity:.08;
+  transition: opacity .42s ease, color .42s ease, transform .42s ease;
+  transform:translateY(3px);
 }
-.sentence.revealed {
-  opacity:1;
-  transform:translateY(0);
-}
-.sentence.past {
-  opacity:.45;
-}
-.sentence.hoverable { cursor:pointer; }
-.sentence.hoverable:hover { opacity:.75 !important; }
+.sentence.revealed  { opacity:.30; transform:translateY(0); }
+.sentence.past      { opacity:.77; transform:translateY(0); }
+.sentence.active    { opacity:1;   transform:translateY(0); }
+.sentence:hover:not(.active):not(.break):not(.label) { opacity:.5 !important; }
 
-/* Active sentence pulse dot */
-.sentence.active-sent::after {
-  content:'◉';
-  display:inline-block;
-  margin-left:8px;
-  font-size:6px;
-  color:var(--accent);
-  vertical-align:middle;
-  animation:sentpulse 2.2s ease-in-out infinite;
-}
-.sentence.poster.active-sent::after { display:none; }
-
-@keyframes sentpulse { 0%,100%{opacity:1} 50%{opacity:.15} }
-
-/* Label — channel/genre tag */
+/* ── TYPE STYLES ── */
 .sentence.label {
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.32em;
-  text-transform:uppercase;
-  color:var(--accent);
-  padding:4px 0 2px;
-  transition:color .4s ease;
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--accent); padding:12px 0 3px;
+  transition:opacity .42s, color .4s;
 }
-/* Poster — video title */
+
 .sentence.poster {
-  font-family:var(--disp);
-  font-weight:900;
-  font-size:clamp(28px, 4.5vw, 52px);
-  line-height:.93;
-  letter-spacing:-.025em;
-  text-transform:uppercase;
-  color:var(--ink);
-  padding:10px 0 6px;
-  position:relative;
+  font-family:var(--disp); font-weight:900;
+  font-size:clamp(46px,7vw,88px);
+  line-height:.89; letter-spacing:-.03em; text-transform:uppercase;
+  padding:4px 0;
 }
-.sentence.poster .ac { color:var(--accent); transition:color .4s ease; }
-.sentence.poster::before {
-  content:'▶';
-  position:absolute;
-  left:-22px; top:50%;
-  transform:translateY(-50%);
-  font-size:8px;
-  color:var(--accent);
-  opacity:0;
-  transition:opacity .2s ease;
+.sentence.poster .ac  { color:var(--accent); transition:color .4s; }
+.sentence.poster .dim { color:var(--ink-2); font-weight:300; font-style:italic; }
+.sentence.poster.active::before {
+  content:''; position:absolute;
+  left:-22px; top:0; bottom:0; width:3px;
+  background:var(--accent); border-radius:2px;
+  transition:background .4s;
 }
-.sentence.poster:hover::before { opacity:1; }
 
-/* Body — one-sentence why-watch */
 .sentence.body {
-  font-family:var(--ui);
-  font-size:11.5px;
-  line-height:1.72;
-  color:rgba(240,236,228,.72);
-  padding:7px 0;
+  font-family:var(--disp); font-weight:300;
+  font-size:clamp(15px,1.9vw,22px);
+  line-height:1.48; letter-spacing:.005em;
+  color:var(--ink-2); max-width:500px;
 }
-.sentence.body .ac { color:var(--ink); font-weight:700; }
-.sentence.body em { font-style:italic; color:rgba(240,236,228,.88); }
+.sentence.body .em  { font-style:italic; font-weight:700; color:var(--ink); }
+.sentence.body .ac  { color:var(--accent); }
+.sentence.active.body { color:var(--ink); }
 
-/* Pull — standout quote / timestamp hook */
 .sentence.pull {
-  font-family:var(--disp);
-  font-weight:400;
-  font-style:italic;
-  font-size:15px;
-  line-height:1.5;
-  color:rgba(240,236,228,.85);
-  border-left:2px solid var(--accent);
-  padding:6px 0 6px 16px;
-  margin:5px 0;
-  transition:border-color .4s ease;
+  font-family:var(--disp); font-weight:300; font-style:italic;
+  font-size:clamp(17px,2.2vw,28px);
+  line-height:1.25; letter-spacing:.01em;
+  color:var(--ink-2); max-width:460px; padding:7px 0 7px 18px;
+  border-left:1px solid var(--ink-3);
 }
-.sentence.pull .ac { color:var(--accent); transition:color .4s ease; }
+.sentence.pull .ac { color:var(--accent); }
+.sentence.active.pull { color:var(--ink); border-left-color:var(--accent); }
 
-/* Spec — metadata row */
+/* Spec block — grouped, auto-flows as a table within the card */
+.spec-group {
+  display:flex; flex-direction:column; gap:0;
+  margin:6px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  opacity:.08;
+  transition: opacity .42s ease;
+}
+.spec-group.revealed  { opacity:.30; }
+.spec-group.past      { opacity:.77; }
+.spec-group.active    { opacity:1; }
+
 .sentence.spec {
-  display:flex !important;
-  align-items:baseline;
-  gap:16px;
-  font-size:9px;
-  padding:5px 0;
+  /* individual spec row — always inside .spec-group, never standalone */
+  display:flex; align-items:baseline; gap:14px;
+  font-family:var(--ui); font-size:9px;
+  letter-spacing:.05em; padding:5px 0;
+  opacity:1 !important; /* group controls opacity */
+  transform:none !important;
   border-bottom:1px solid var(--border);
 }
-.spec-key {
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--accent);
-  min-width:72px;
-  flex-shrink:0;
-  transition:color .4s ease;
+.sentence.spec:last-child { border-bottom:none; }
+.sentence.spec .spec-key {
+  text-transform:uppercase; letter-spacing:.14em; font-size:7px;
+  color:var(--ink-3); min-width:88px; flex-shrink:0;
+  transition:color .4s;
 }
-.spec-val {
-  color:rgba(240,236,228,.6);
-  flex:1;
-  line-height:1.5;
-  font-family:var(--ui);
-}
+.sentence.spec .spec-val { color:var(--ink-2); flex:1; transition:color .4s; }
+.spec-group.active .sentence.spec .spec-key { color:var(--accent); }
+.spec-group.active .sentence.spec .spec-val { color:var(--ink); }
 
-/* Break — section divider */
 .sentence.break {
-  display:block !important;
-  height:40px;
-  opacity:1 !important;
-  transform:none !important;
-  position:relative;
+  padding:10px 0; opacity:.4 !important; transform:none !important;
 }
 .sentence.break::before {
-  content:'';
-  position:absolute;
-  left:0; right:0; top:50%;
-  height:1px;
-  background:linear-gradient(to right, transparent, var(--accent), transparent);
-  opacity:.22;
-  transition:background .4s ease;
+  content:''; display:block; width:24px; height:1px; background:var(--ink-3);
 }
 
-/* Chapter headers */
-.ch-header {
-  text-align:center;
-  padding:56px 0 24px;
-  opacity:.22;
-  transform:translateY(4px);
-  transition:opacity .6s ease, transform .6s ease;
+/* ── CATEGORY HEADER ── */
+.cat-header {
+  display:flex; align-items:baseline; gap:14px;
+  padding:40px 0 14px;
+  opacity:.08;
+  transition: opacity .55s ease;
 }
-.ch-header.revealed {
-  opacity:1;
-  transform:translateY(0);
-}
-.ch-rule {
-  width:32px; height:1px;
-  background:linear-gradient(to right, transparent, var(--accent), transparent);
-  margin:0 auto 18px;
-  transition:background .4s ease;
-}
-.ch-eyebrow {
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.32em;
-  text-transform:uppercase;
-  color:rgba(240,236,228,.35);
-  margin-bottom:8px;
-}
-.ch-num {
-  font-family:var(--disp);
-  font-weight:900;
-  font-size:clamp(48px, 7vw, 82px);
-  line-height:.82;
-  letter-spacing:-.04em;
+.cat-header.revealed, .cat-header.past, .cat-header.active { opacity:.7; }
+.cat-num {
+  font-family:var(--disp); font-weight:900;
+  font-size:clamp(52px,8vw,96px);
+  line-height:.82; letter-spacing:-.04em;
   color:transparent;
-  -webkit-text-stroke:1px rgba(255,255,255,.08);
-  margin-bottom:8px;
-  user-select:none;
+  -webkit-text-stroke:1px rgba(255,255,255,.10);
+  user-select:none; flex-shrink:0;
 }
-.ch-title {
-  font-family:var(--disp);
-  font-weight:900;
-  font-size:clamp(16px, 2.2vw, 26px);
-  letter-spacing:-.02em;
-  text-transform:uppercase;
-  color:rgba(240,236,228,.85);
+.cat-meta { display:flex; flex-direction:column; gap:4px; }
+.cat-rule { width:20px; height:1px; background:var(--accent); margin-bottom:6px; transition:background .4s; }
+.cat-label {
+  font-family:var(--ui); font-size:7px; letter-spacing:.28em;
+  text-transform:uppercase; color:rgba(200,144,42,.75);
+}
+.cat-title {
+  font-family:var(--disp); font-weight:900;
+  font-size:clamp(14px,1.8vw,22px);
+  letter-spacing:-.015em; text-transform:uppercase;
+  color:rgba(240,236,228,.80);
 }
 
-/* ── SIDE PANEL ── */
+/* ── RIGHT PANEL ── */
 #panel {
-  grid-column:2;
+  grid-column:2; grid-row:2;
   border-left:1px solid var(--border);
-  display:flex;
-  flex-direction:column;
+  display:flex; flex-direction:column;
   overflow:hidden;
-  transition:border-color .3s ease;
+  background:rgba(7,6,10,.40);
+  backdrop-filter:blur(2px);
+  transition:border-color .3s;
 }
+#panel:hover { background:rgba(8,7,11,.88); border-left-color:var(--border-2); }
 
-/* Video preview area */
-#video-preview {
+/* Video player — takes majority of panel */
+#panel-video {
   position:relative;
+  width:100%;
   aspect-ratio:16/9;
-  background:#0c0a12;
+  background:#000;
   flex-shrink:0;
   overflow:hidden;
-  cursor:pointer;
+  cursor:none;
 }
-#preview-thumb {
+#panel-video iframe {
+  position:absolute; inset:0;
   width:100%; height:100%;
-  object-fit:cover;
+  border:none;
   opacity:0;
   transition:opacity .4s ease;
 }
-#preview-thumb.loaded { opacity:.75; }
-#preview-overlay {
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(to bottom, transparent 40%, rgba(6,5,10,.85) 100%);
-  transition:background .3s ease;
-}
-#preview-overlay:hover { background:linear-gradient(to bottom, transparent 20%, rgba(6,5,10,.6) 100%); }
-.play-btn {
-  width:44px; height:44px;
-  border:2px solid rgba(255,255,255,.6);
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  color:rgba(255,255,255,.8);
-  font-size:14px;
-  transition:all .2s ease;
-  padding-left:3px;
-}
-#video-preview:hover .play-btn {
-  border-color:var(--accent);
-  color:var(--accent);
-  transform:scale(1.08);
-}
-#preview-duration {
-  position:absolute;
-  bottom:8px; right:8px;
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.06em;
-  color:rgba(255,255,255,.8);
-  background:rgba(0,0,0,.7);
-  padding:2px 6px;
-  border-radius:2px;
-}
+#panel-video iframe.loaded { opacity:1; }
 
-/* Now reading */
-#panel-now {
-  padding:16px 20px 12px;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.panel-eyebrow {
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.28em;
-  text-transform:uppercase;
-  color:var(--ink-3);
-  margin-bottom:8px;
-}
-#panel-title {
-  font-family:var(--disp);
-  font-weight:700;
-  font-size:18px;
-  line-height:1.05;
-  letter-spacing:-.015em;
-  text-transform:uppercase;
-  color:var(--ink);
-  margin-bottom:6px;
-  min-height:38px;
-  transition:color .3s ease;
-}
-#panel-channel {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.08em;
-  color:var(--accent);
-  transition:color .3s ease;
-}
-
-/* Stats row */
-#panel-stats {
-  display:flex;
-  gap:0;
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
-.stat-cell {
-  flex:1;
-  padding:10px 14px;
-  border-right:1px solid var(--border);
-  text-align:center;
-}
-.stat-cell:last-child { border-right:none; }
-.stat-val {
-  font-family:var(--disp);
-  font-weight:700;
-  font-size:17px;
-  letter-spacing:-.02em;
-  color:var(--ink);
-  display:block;
-  transition:color .3s ease;
-}
-.stat-key {
-  font-family:var(--ui);
-  font-size:6px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  color:var(--ink-3);
-  margin-top:1px;
-  display:block;
-}
-
-/* Queue/history panel */
-#panel-queue {
-  flex:1;
-  overflow-y:auto;
-  overscroll-behavior:contain;
-}
-#panel-queue::-webkit-scrollbar { width:2px; }
-#panel-queue::-webkit-scrollbar-thumb { background:var(--border); }
-
-.queue-section-label {
-  font-family:var(--ui);
-  font-size:6px;
-  letter-spacing:.32em;
-  text-transform:uppercase;
-  color:var(--ink-3);
-  padding:12px 18px 6px;
-  position:sticky; top:0;
-  background:var(--bg);
-  transition:background .4s ease;
-}
-.queue-item {
-  display:flex;
+/* Placeholder shown before a video is loaded */
+#video-placeholder {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
   gap:10px;
-  padding:8px 18px;
-  cursor:pointer;
-  border-bottom:1px solid var(--border);
-  transition:background .15s ease;
-  position:relative;
+  background:rgba(0,0,0,.5);
+  transition:opacity .3s ease;
 }
-.queue-item:hover { background:rgba(255,255,255,.025); }
-.queue-item.active::before {
-  content:'';
-  position:absolute;
-  left:0; top:0; bottom:0;
-  width:2px;
-  background:var(--accent);
-  transition:background .4s ease;
+#video-placeholder.hidden { opacity:0; pointer-events:none; }
+.vph-icon { font-size:28px; color:rgba(255,255,255,.15); }
+.vph-label {
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:rgba(255,255,255,.2);
 }
-.qi-thumb {
-  width:56px; height:32px;
-  background:var(--ink-3);
-  border-radius:2px;
+
+/* Video meta below player */
+#panel-meta {
   flex-shrink:0;
-  overflow:hidden;
+  padding:14px 18px 12px;
+  border-bottom:1px solid var(--border);
+}
+.pm-eyebrow {
+  font-family:var(--ui); font-size:6px;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:7px;
+}
+#pm-title {
+  font-family:var(--disp); font-weight:700;
+  font-size:clamp(15px,1.6vw,21px);
+  line-height:1.02; letter-spacing:-.015em; text-transform:uppercase;
+  color:var(--ink); margin-bottom:5px;
+  min-height:42px;
+  transition:color .3s;
+}
+#pm-channel {
+  font-family:var(--ui); font-size:8px;
+  letter-spacing:.08em; color:var(--accent);
+  transition:color .3s;
+}
+
+/* Stat strip */
+#panel-stats {
+  display:flex; flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.ps-cell {
+  flex:1; padding:9px 14px; text-align:center;
+  border-right:1px solid var(--border);
+}
+.ps-cell:last-child { border-right:none; }
+.ps-val {
+  font-family:var(--disp); font-weight:700;
+  font-size:16px; letter-spacing:-.02em;
+  color:var(--ink); display:block;
+  transition:color .3s;
+}
+.ps-key {
+  font-family:var(--ui); font-size:6px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:1px; display:block;
+}
+
+/* Scrollable card list — remainder of panel */
+#panel-feed {
+  flex:1;
+  overflow-y:auto; overscroll-behavior:contain;
+}
+#panel-feed::-webkit-scrollbar { width:2px; }
+#panel-feed::-webkit-scrollbar-thumb { background:var(--border); }
+
+.pf-section-label {
+  font-family:var(--ui); font-size:6px;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--ink-3);
+  padding:10px 16px 5px;
+  position:sticky; top:0;
+  background:rgba(7,6,10,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+  transition:background .3s;
+}
+
+.pf-card {
+  display:flex; gap:10px;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  cursor:none;
+  transition:background .15s;
   position:relative;
 }
-.qi-thumb img { width:100%; height:100%; object-fit:cover; opacity:.7; }
-.qi-info { flex:1; min-width:0; }
-.qi-title {
-  font-family:var(--disp);
-  font-weight:700;
-  font-size:11px;
-  line-height:1.1;
-  letter-spacing:-.01em;
-  text-transform:uppercase;
-  color:rgba(240,236,228,.8);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  margin-bottom:3px;
-  transition:color .2s ease;
-}
-.queue-item:hover .qi-title { color:var(--ink); }
-.qi-meta {
-  font-family:var(--ui);
-  font-size:7px;
-  color:var(--ink-3);
-  letter-spacing:.04em;
-}
-
-/* ── BOTTOM NAV ── */
-#bottom-nav {
-  grid-column:1/-1;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 48px;
-  border-top:1px solid var(--border);
-  background:var(--bg);
-  transition:border-color .3s ease;
-}
-
-.nav-left {
-  display:flex;
-  align-items:center;
-  gap:24px;
-}
-.nav-key {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.12em;
-  color:var(--ink-3);
-}
-.key-badge {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:20px; height:18px;
-  border:1px solid var(--border);
-  border-radius:3px;
-  font-size:9px;
-  color:var(--ink-2);
-  background:rgba(255,255,255,.03);
-}
-
-.nav-center {
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  align-items:center;
-  gap:4px;
-}
-.nav-dot {
-  width:5px; height:5px;
-  border-radius:50%;
-  background:var(--ink-3);
-  cursor:pointer;
-  transition:all .25s ease;
-}
-.nav-dot.active {
+.pf-card:hover { background:rgba(255,255,255,.025); }
+.pf-card.active::before {
+  content:''; position:absolute;
+  left:0; top:0; bottom:0; width:2px;
   background:var(--accent);
-  width:18px;
-  border-radius:3px;
-  transition:background .4s ease, width .25s ease;
+  transition:background .4s;
+}
+.pf-thumb {
+  width:80px; height:45px;
+  background:var(--ink-3); border-radius:2px;
+  flex-shrink:0; overflow:hidden; position:relative;
+}
+.pf-thumb img { width:100%; height:100%; object-fit:cover; opacity:.7; transition:opacity .2s; }
+.pf-card:hover .pf-thumb img { opacity:.9; }
+.pf-thumb-dur {
+  position:absolute; bottom:3px; right:3px;
+  font-family:var(--ui); font-size:6px; letter-spacing:.03em;
+  color:#fff; background:rgba(0,0,0,.75);
+  padding:1px 4px; border-radius:1px;
+}
+.pf-info { flex:1; min-width:0; }
+.pf-title {
+  font-family:var(--disp); font-weight:700;
+  font-size:12px; line-height:1.08;
+  letter-spacing:-.01em; text-transform:uppercase;
+  color:rgba(240,236,228,.7);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  margin-bottom:3px;
+  transition:color .15s;
+}
+.pf-card:hover .pf-title { color:var(--ink); }
+.pf-card.active .pf-title { color:var(--ink); }
+.pf-meta {
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.04em; color:var(--ink-3);
+}
+.pf-cat {
+  font-family:var(--ui); font-size:6px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin-top:2px;
+  transition:color .4s;
 }
 
-.nav-right {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.1em;
-  color:var(--ink-3);
+/* ── HUD NAV WIDGET ── */
+#nav-widget {
+  position:fixed;
+  top:50%; right:calc(var(--panel-w) + 18px);
+  transform:translateY(-50%);
+  z-index:300;
+  transition:opacity .3s, right .3s;
 }
-#nav-position { color:var(--ink-2); }
+#panel:hover ~ #nav-widget { opacity:0; pointer-events:none; }
+
+.nw-shell {
+  display:flex; flex-direction:column; align-items:center;
+  background:rgba(242,238,230,.96);
+  border:1px solid rgba(0,0,0,.10);
+  backdrop-filter:blur(20px);
+  border-radius:10px; padding:5px 4px;
+  box-shadow:0 4px 28px rgba(0,0,0,.20), 0 1px 4px rgba(0,0,0,.10);
+  min-width:52px; gap:0;
+}
+.nw-pip {
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(0,0,0,.4); padding:4px 0 6px;
+  border-bottom:1px solid rgba(0,0,0,.08);
+  width:100%; text-align:center;
+}
+.nw-pip strong { color:var(--accent); }
+.nw-btn {
+  height:38px; width:100%; border-radius:7px;
+  background:rgba(0,0,0,.04);
+  border:1px solid rgba(0,0,0,.08);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(0,0,0,.5); font-size:15px;
+  transition:background .12s, color .12s;
+  cursor:none;
+  flex-shrink:0;
+}
+.nw-btn:hover { background:rgba(0,0,0,.08); color:#111; }
+.nw-btn-prev { border-radius:7px 7px 4px 4px; margin-top:4px; }
+.nw-btn-next { border-radius:4px 4px 7px 7px; margin-top:2px; }
+.nw-divider { height:1px; width:70%; background:rgba(0,0,0,.08); margin:3px auto; }
 
 /* ── WATCH OVERLAY ── */
 #watch-overlay {
-  position:fixed;
-  inset:0;
+  position:fixed; inset:0;
   background:rgba(0,0,0,.95);
   z-index:500;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  pointer-events:none;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
   transition:opacity .3s ease;
 }
-#watch-overlay.active {
-  opacity:1;
-  pointer-events:all;
-}
+#watch-overlay.open { opacity:1; pointer-events:all; }
 #watch-frame {
-  width:min(900px, 90vw);
-  aspect-ratio:16/9;
-  background:#000;
-  border:1px solid var(--border);
+  width:min(940px,90vw); aspect-ratio:16/9;
+  background:#000; border:none;
 }
-.watch-close {
-  position:absolute;
-  top:24px; right:28px;
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
+.wo-close {
+  position:absolute; top:22px; right:26px;
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-2); background:none;
+  border:1px solid var(--border); padding:7px 13px;
+  border-radius:2px; cursor:none;
+  transition:all .15s;
+}
+.wo-close:hover { color:var(--accent); border-color:var(--accent); }
+#wo-title {
+  margin-top:18px;
+  font-family:var(--disp); font-weight:700;
+  font-size:20px; letter-spacing:-.02em; text-transform:uppercase;
   color:var(--ink-2);
-  cursor:pointer;
-  background:none; border:none;
-  padding:8px 12px;
-  border:1px solid var(--border);
-  border-radius:2px;
-  transition:all .2s ease;
-}
-.watch-close:hover { color:var(--accent); border-color:var(--accent); }
-#watch-title {
-  margin-top:20px;
-  font-family:var(--disp);
-  font-weight:700;
-  font-size:22px;
-  letter-spacing:-.02em;
-  text-transform:uppercase;
-  color:var(--ink);
-  max-width:900px;
-  width:min(900px, 90vw);
+  width:min(940px,90vw);
 }
 
-/* ── SEARCH OVERLAY ── */
-#search-overlay {
-  position:fixed;
-  inset:0;
-  background:rgba(6,5,10,.96);
-  z-index:600;
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  padding-top:120px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .25s ease;
+/* ── KEYBOARD HINT FOOTER ── */
+#key-hints {
+  position:fixed; bottom:18px; left:32px;
+  display:flex; gap:18px; align-items:center;
+  z-index:200; pointer-events:none;
+  opacity:.55;
+  transition:opacity .3s;
 }
-#search-overlay.active { opacity:1; pointer-events:all; }
-.search-inner {
-  width:min(640px, 90vw);
+#key-hints:hover { opacity:1; }
+.kh-pair {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--ui); font-size:7px;
+  letter-spacing:.10em; color:var(--ink-3);
 }
-.search-eyebrow {
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.3em;
-  text-transform:uppercase;
-  color:var(--ink-3);
-  margin-bottom:16px;
-}
-#search-input {
-  width:100%;
-  background:none;
-  border:none;
-  border-bottom:2px solid var(--accent);
-  font-family:var(--disp);
-  font-weight:700;
-  font-size:clamp(32px, 5vw, 56px);
-  letter-spacing:-.03em;
-  text-transform:uppercase;
-  color:var(--ink);
-  outline:none;
-  padding:8px 0;
-  caret-color:var(--accent);
-  transition:border-color .4s ease;
-}
-#search-input::placeholder { color:var(--ink-3); }
-.search-hint {
-  font-family:var(--ui);
-  font-size:8px;
-  letter-spacing:.1em;
-  color:var(--ink-3);
-  margin-top:14px;
-}
-
-/* ── AUTO PLAY INDICATOR ── */
-#autoplay-bar {
-  position:fixed;
-  bottom:65px; left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-family:var(--ui);
-  font-size:7px;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--ink-2);
-  background:rgba(6,5,10,.92);
-  border:1px solid var(--border);
-  padding:7px 14px;
-  border-radius:2px;
-  z-index:400;
-  opacity:0;
-  transition:opacity .3s ease;
-}
-#autoplay-bar.visible { opacity:1; }
-#autoplay-track {
-  width:80px; height:2px;
-  background:var(--border);
-  border-radius:1px;
-  overflow:hidden;
-}
-#autoplay-fill {
-  height:100%;
-  background:var(--accent);
-  width:0%;
-  transition:width linear;
+.kh-key {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:16px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:3px; font-size:9px;
+  color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.04);
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  #app { grid-template-columns:1fr; grid-template-rows:52px 1fr 64px; }
+@media (max-width: 900px) {
+  :root { --panel-w:360px; }
+}
+@media (max-width: 680px) {
+  #shell { grid-template-columns:1fr; }
   #panel { display:none; }
-  #narrative-root { padding:40px 28px 100px; }
-  header { padding:0 20px; }
-  .h-genre-pills { display:none; }
-  #bottom-nav { padding:0 20px; }
+  #nav-widget { right:16px; }
+  #stream-col { padding:36px 22px 100px; justify-content:flex-start; }
+  #key-hints { display:none; }
 }
 </style>
 </head>
 
 <body>
+
 <div id="cursor"></div>
 <div id="progress"></div>
 
-<div id="app">
+<!-- ── ATMOSPHERIC IMAGE LAYER ── -->
+<div id="image-layer">
+  <!-- images injected by JS -->
+</div>
+
+<div id="shell">
 
   <!-- ── HEADER ── -->
   <header>
-    <div class="logo">narrative<span>·tube</span></div>
-    <div class="h-genre-pills">
-      <div class="h-pill active" data-genre="all" onclick="setGenre(this,'all','')">All</div>
-      <div class="h-pill" data-genre="tech" onclick="setGenre(this,'tech','genre-tech')">Technology</div>
-      <div class="h-pill" data-genre="music" onclick="setGenre(this,'music','genre-music')">Music</div>
-      <div class="h-pill" data-genre="nature" onclick="setGenre(this,'nature','genre-nature')">Nature</div>
-      <div class="h-pill" data-genre="history" onclick="setGenre(this,'history','genre-history')">History</div>
-      <div class="h-pill" data-genre="art" onclick="setGenre(this,'art','genre-art')">Art & Film</div>
+    <div class="h-logo">wolfie<em>.life</em></div>
+    <div class="h-tagline">media dashboard</div>
+    <div class="h-crumb">
+      narrative engine <span>·</span>
+      <span id="h-cat-label">Loading…</span>
     </div>
-    <div class="h-meta">
-      <div class="h-count"><strong id="h-current">01</strong> / <span id="h-total">—</span></div>
-      <button class="h-btn" onclick="openSearch()">⌕ search</button>
-      <button class="h-btn" onclick="toggleAutoplay()"><span id="autoplay-icon">▶</span> auto</button>
+    <div class="h-actions">
+      <div id="h-card-num"><strong>01</strong> / <span id="h-total">—</span></div>
+      <button class="h-btn" onclick="openWatch()">▶ watch</button>
     </div>
   </header>
 
-  <!-- ── STREAM ── -->
-  <div id="stream-wrap">
-    <div id="stream-scroll">
-      <div id="narrative-root"></div>
-    </div>
+  <!-- ── NARRATIVE STREAM ── -->
+  <div id="stream-col">
+    <div id="narrative-root"></div>
   </div>
 
-  <!-- ── PANEL ── -->
+  <!-- ── RIGHT PANEL ── -->
   <div id="panel">
-    <div id="video-preview" onclick="openWatch()">
-      <img id="preview-thumb" src="" alt="">
-      <div id="preview-overlay">
-        <div class="play-btn">▶</div>
-        <div id="preview-duration">—</div>
+    <div id="panel-video">
+      <div id="video-placeholder">
+        <div class="vph-icon">▶</div>
+        <div class="vph-label">Select a card to preview</div>
       </div>
+      <!-- iframe injected dynamically -->
     </div>
-    <div id="panel-now">
-      <div class="panel-eyebrow">Now Watching</div>
-      <div id="panel-title">—</div>
-      <div id="panel-channel">—</div>
+    <div id="panel-meta">
+      <div class="pm-eyebrow">Now Selected</div>
+      <div id="pm-title">—</div>
+      <div id="pm-channel">—</div>
     </div>
     <div id="panel-stats">
-      <div class="stat-cell"><span class="stat-val" id="stat-views">—</span><span class="stat-key">Views</span></div>
-      <div class="stat-cell"><span class="stat-val" id="stat-dur">—</span><span class="stat-key">Duration</span></div>
-      <div class="stat-cell"><span class="stat-val" id="stat-year">—</span><span class="stat-key">Year</span></div>
+      <div class="ps-cell"><span class="ps-val" id="ps-views">—</span><span class="ps-key">Views</span></div>
+      <div class="ps-cell"><span class="ps-val" id="ps-dur">—</span><span class="ps-key">Duration</span></div>
+      <div class="ps-cell"><span class="ps-val" id="ps-year">—</span><span class="ps-key">Year</span></div>
     </div>
-    <div id="panel-queue">
-      <div class="queue-section-label">Up Next</div>
-      <div id="queue-list"></div>
-    </div>
-  </div>
-
-  <!-- ── BOTTOM NAV ── -->
-  <div id="bottom-nav">
-    <div class="nav-left">
-      <div class="nav-key">
-        <span class="key-badge">↑</span><span class="key-badge">↓</span>
-        <span>navigate</span>
-      </div>
-      <div class="nav-key">
-        <span class="key-badge">↵</span>
-        <span>watch</span>
-      </div>
-      <div class="nav-key">
-        <span class="key-badge">/</span>
-        <span>search</span>
-      </div>
-    </div>
-    <div class="nav-center" id="nav-dots"></div>
-    <div class="nav-right">
-      <span id="nav-position">—</span>
+    <div id="panel-feed">
+      <div class="pf-section-label">All Cards</div>
+      <div id="pf-list"></div>
     </div>
   </div>
 
+</div><!-- /shell -->
+
+<!-- ── HUD NAV ── -->
+<div id="nav-widget">
+  <div class="nw-shell">
+    <div class="nw-pip"><strong id="nw-cur">1</strong>&thinsp;/&thinsp;<span id="nw-tot">—</span></div>
+    <div class="nw-divider"></div>
+    <button class="nw-btn nw-btn-prev" onclick="prevCard()">↑</button>
+    <button class="nw-btn nw-btn-next" onclick="nextCard()">↓</button>
+  </div>
 </div>
 
-<!-- ── WATCH OVERLAY ── -->
+<!-- ── FULLSCREEN WATCH ── -->
 <div id="watch-overlay">
-  <button class="watch-close" onclick="closeWatch()">✕ close</button>
-  <iframe id="watch-frame" frameborder="0" allowfullscreen allow="autoplay"></iframe>
-  <div id="watch-title">—</div>
+  <button class="wo-close" onclick="closeWatch()">✕ close</button>
+  <iframe id="watch-frame" frameborder="0" allowfullscreen allow="autoplay; fullscreen"></iframe>
+  <div id="wo-title">—</div>
 </div>
 
-<!-- ── SEARCH ── -->
-<div id="search-overlay" onclick="closeSearchIf(event)">
-  <div class="search-inner">
-    <div class="search-eyebrow">Search Narrative·Tube</div>
-    <input id="search-input" type="text" placeholder="Type to browse…" oninput="handleSearch(this.value)" onkeydown="handleSearchKey(event)" autocomplete="off" spellcheck="false">
-    <div class="search-hint">↵ to jump · esc to close</div>
-  </div>
-</div>
-
-<!-- ── AUTOPLAY ── -->
-<div id="autoplay-bar">
-  <span>Next in</span>
-  <div id="autoplay-track"><div id="autoplay-fill"></div></div>
-  <span id="autoplay-countdown">5</span>
+<!-- ── KEYBOARD HINTS ── -->
+<div id="key-hints">
+  <div class="kh-pair"><span class="kh-key">↑</span><span class="kh-key">↓</span> navigate</div>
+  <div class="kh-pair"><span class="kh-key">↵</span> watch</div>
+  <div class="kh-pair"><span class="kh-key">esc</span> back</div>
 </div>
 
 <script>
-// ── DATA — narrative script ──────────────────────────────────────────────────
-const SCRIPT = [
+// ═══════════════════════════════════════════════════════════════════
+//  WOLFIE.LIFE MEDIA DASHBOARD
+//  Powered by the intoview narrative engine
+//
+//  Node model:
+//    A CARD = { label, poster, body[], pull?, specs[], img, videoId, channel, views, dur, year }
+//    Navigation steps through CARDS, not sentences.
+//    All sentences within a card auto-reveal when the card is active.
+//    spec rows are grouped into a single .spec-group element.
+//    Image layer swaps on card change (faithful to intoview img: system).
+// ═══════════════════════════════════════════════════════════════════
 
-  { type:'chapter', num:'01', title:'Trending Now' },
-
-  { type:'label',   content:'TRENDING · TECHNOLOGY' },
-  { type:'poster',  content:'The **Algorithm** That Broke Reality', videoId:'dQw4w9WgXcQ', channel:'Kurzgesagt', views:'14.2M', dur:'18:42', year:'2024', thumb:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg' },
-  { type:'body',    content:'A deep investigation into how recommendation engines reshaped human attention—and whether we can reclaim it.' },
-  { type:'pull',    content:'"At **4:12**, the researcher pauses mid-sentence. Something just clicked for her, live."' },
-  { type:'spec',    key:'Duration', val:'18 min 42 sec' },
-  { type:'spec',    key:'Channel', val:'Kurzgesagt' },
-  { type:'spec',    key:'Views', val:'14.2 million' },
-  { type:'break' },
-
-  { type:'label',   content:'DOCUMENTARY · NATURE' },
-  { type:'poster',  content:'200 Million Years Beneath the **Ice**', videoId:'2Xc9gXyf2G4', channel:'BBC Earth', views:'9.8M', dur:'44:20', year:'2023', thumb:'https://img.youtube.com/vi/2Xc9gXyf2G4/mqdefault.jpg' },
-  { type:'body',    content:'Antarctic geologists drill 3km down to find a biosphere that predates the dinosaurs—completely sealed from our world.' },
-  { type:'pull',    content:'"The moment the core sample broke the surface, the lab went absolutely silent."' },
-  { type:'spec',    key:'Duration', val:'44 min 20 sec' },
-  { type:'spec',    key:'Channel', val:'BBC Earth' },
-  { type:'spec',    key:'Views', val:'9.8 million' },
-  { type:'break' },
-
-  { type:'label',   content:'SHORT · MUSIC' },
-  { type:'poster',  content:'A **Piano** Left in the Desert for 12 Years', videoId:'2vjPBrBU-TM', channel:'The Sound Collector', views:'3.1M', dur:'8:14', year:'2024', thumb:'https://img.youtube.com/vi/2vjPBrBU-TM/mqdefault.jpg' },
-  { type:'body',    content:'Someone found an upright piano half-buried in the Sonoran Desert. This is the music that lived inside it.' },
-  { type:'pull',    content:'"The out-of-tune E-flat at **2:33** is the most beautiful sound in this video."' },
-  { type:'spec',    key:'Duration', val:'8 min 14 sec' },
-  { type:'spec',    key:'Channel', val:'The Sound Collector' },
-  { type:'spec',    key:'Views', val:'3.1 million' },
-
-  { type:'chapter', num:'02', title:'Deep Cuts' },
-
-  { type:'label',   content:'HISTORY · LONG FORM' },
-  { type:'poster',  content:'The Night **Constantinople** Forgot Its Name', videoId:'3JZ_D3ELwOQ', channel:'Historia Civilis', views:'6.7M', dur:'1:12:04', year:'2022', thumb:'https://img.youtube.com/vi/3JZ_D3ELwOQ/mqdefault.jpg' },
-  { type:'body',    content:'1453, told entirely through the letters of a single Venetian merchant who watched the city fall from his window.' },
-  { type:'pull',    content:'"He wrote the letter in three sessions. You can see where his handwriting changed."' },
-  { type:'spec',    key:'Duration', val:'1 hr 12 min' },
-  { type:'spec',    key:'Channel', val:'Historia Civilis' },
-  { type:'spec',    key:'Views', val:'6.7 million' },
-  { type:'break' },
-
-  { type:'label',   content:'ART · ESSAY' },
-  { type:'poster',  content:'Why **Tarkovsky** Filmed Water', videoId:'eqnFBvNMCyQ', channel:'Like Stories of Old', views:'2.4M', dur:'22:18', year:'2023', thumb:'https://img.youtube.com/vi/eqnFBvNMCyQ/mqdefault.jpg' },
-  { type:'body',    content:'Every Tarkovsky film contains water—rain, rivers, flooded rooms—and this essay finally explains why it had to be water.' },
-  { type:'pull',    content:'"He said: *I do not know what water means. I only know I cannot make a film without it.*"' },
-  { type:'spec',    key:'Duration', val:'22 min 18 sec' },
-  { type:'spec',    key:'Channel', val:'Like Stories of Old' },
-  { type:'spec',    key:'Views', val:'2.4 million' },
-  { type:'break' },
-
-  { type:'label',   content:'TECHNOLOGY · DEMO' },
-  { type:'poster',  content:'I Built a **Processor** Out of Dominoes', videoId:'OpLU__bhu2w', channel:'Stand-up Maths', views:'7.9M', dur:'31:55', year:'2023', thumb:'https://img.youtube.com/vi/OpLU__bhu2w/mqdefault.jpg' },
-  { type:'body',    content:'16,000 dominoes arranged to perform a single 8-bit addition. The fall took 37 minutes. The setup took 6 months.' },
-  { type:'pull',    content:'"The carry bit at **24:18** works. It actually works. The room erupts."' },
-  { type:'spec',    key:'Duration', val:'31 min 55 sec' },
-  { type:'spec',    key:'Channel', val:'Stand-up Maths' },
-  { type:'spec',    key:'Views', val:'7.9 million' },
-
-  { type:'chapter', num:'03', title:'For the Long Hours' },
-
-  { type:'label',   content:'AMBIENT · FOCUS' },
-  { type:'poster',  content:'10 Hours of a **Library** in the Rain', videoId:'q76bMs-NwRk', channel:'Ambience Archives', views:'21.4M', dur:'10:00:00', year:'2021', thumb:'https://img.youtube.com/vi/q76bMs-NwRk/mqdefault.jpg' },
-  { type:'body',    content:'No music, no commentary—just the sound of a Victorian reading room, rain on leaded glass, and distant page turns.' },
-  { type:'pull',    content:'"At hour **3**, a clock somewhere in the building chimes. Then nothing again."' },
-  { type:'spec',    key:'Duration', val:'10 hours' },
-  { type:'spec',    key:'Channel', val:'Ambience Archives' },
-  { type:'spec',    key:'Views', val:'21.4 million' },
-  { type:'break' },
-
-  { type:'label',   content:'LECTURE · PHILOSOPHY' },
-  { type:'poster',  content:'**Time** Does Not Flow. It Exists.', videoId:'GdTTqBf6Fio', channel:'Closer to Truth', views:'5.5M', dur:'58:12', year:'2022', thumb:'https://img.youtube.com/vi/GdTTqBf6Fio/mqdefault.jpg' },
-  { type:'body',    content:'Physicist Carlo Rovelli makes the case that past, present, and future are equally real—and that "now" is an illusion peculiar to humans.' },
-  { type:'pull',    content:'"The present moment does not exist everywhere. Only locally, around us, briefly."' },
-  { type:'spec',    key:'Duration', val:'58 min 12 sec' },
-  { type:'spec',    key:'Channel', val:'Closer to Truth' },
-  { type:'spec',    key:'Views', val:'5.5 million' },
-
+// ── CARD DATA ───────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id:'studio',  label:'Studio Work',     num:'01' },
+  { id:'craft',   label:'Craft & Process', num:'02' },
+  { id:'culture', label:'Culture & Ideas', num:'03' },
+  { id:'ambient', label:'Ambient & Focus', num:'04' },
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let sentenceEls = [];
-let chapterEls  = [];
-let revealedIdx = 0;
-let autoplayActive = false;
-let autoplayTimer  = null;
-let autoplayCountdown = 5;
-let currentVideo   = null;
-let currentGenre   = '';
-let filteredVideos = [];
-let isSearchOpen   = false;
+const CARDS = [
+  {
+    cat:'studio',
+    label:'WOLFIE · PLATFORM DEMO',
+    poster:'The engine behind **everything.**',
+    body:[
+      'wolfie.love is a sentence-progressive narrative platform built to make ideas move the way they deserve to. This is the product that made this dashboard.',
+    ],
+    pull:'*"How something is communicated is part of what it is."*',
+    specs:[
+      { key:'Platform',  val:'wolfie.love' },
+      { key:'Category',  val:'Narrative Engine · Product' },
+      { key:'Built',     val:'2024 — ongoing' },
+    ],
+    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80',
+    videoId:'dQw4w9WgXcQ',
+    channel:'wolfie.love',
+    views:'—', dur:'—', year:'2024',
+    thumb:`https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg`,
+  },
+  {
+    cat:'craft',
+    label:'DESIGN · SENTENCE AS UNIT',
+    poster:'One sentence. One **idea.**',
+    body:[
+      'The discipline of writing one sentence at a time is also the discipline of thinking one idea at a time. This talk explores why constraint is the precondition of clarity.',
+    ],
+    pull:'The *best* presentations are the ones where every sentence could stand alone.',
+    specs:[
+      { key:'Channel',   val:'Like Stories of Old' },
+      { key:'Duration',  val:'22 min' },
+      { key:'Theme',     val:'Design · Writing · Clarity' },
+    ],
+    img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=1600&q=80',
+    videoId:'eqnFBvNMCyQ',
+    channel:'Like Stories of Old',
+    views:'2.4M', dur:'22:18', year:'2023',
+    thumb:`https://img.youtube.com/vi/eqnFBvNMCyQ/mqdefault.jpg`,
+  },
+  {
+    cat:'culture',
+    label:'HISTORY · COLLAPSE AS NARRATIVE',
+    poster:'The night **Constantinople** forgot its name.',
+    body:[
+      '1453, told entirely through the letters of a single Venetian merchant who watched the city fall from his window. The letters were written in three sessions — you can see where his handwriting changed.',
+    ],
+    pull:'The *medium* of the letter is inseparable from the weight of what it says.',
+    specs:[
+      { key:'Channel',   val:'Historia Civilis' },
+      { key:'Duration',  val:'1 hr 12 min' },
+      { key:'Views',     val:'6.7M' },
+    ],
+    img: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=1600&q=80',
+    videoId:'3JZ_D3ELwOQ',
+    channel:'Historia Civilis',
+    views:'6.7M', dur:'1:12:04', year:'2022',
+    thumb:`https://img.youtube.com/vi/3JZ_D3ELwOQ/mqdefault.jpg`,
+  },
+  {
+    cat:'craft',
+    label:'FILM · WHY TARKOVSKY FILMED WATER',
+    poster:'Every film contains **water.**',
+    body:[
+      'Tarkovsky said he did not know what water means — only that he could not make a film without it. This essay finally asks why.',
+      'The answer has something to do with time, and something to do with memory, and something to do with the fact that both flow in one direction only.',
+    ],
+    pull:'*"The essential cinematic gesture is not movement. It is duration."*',
+    specs:[
+      { key:'Channel',   val:'Like Stories of Old' },
+      { key:'Duration',  val:'22 min 18 sec' },
+      { key:'Theme',     val:'Film · Philosophy' },
+    ],
+    img: 'https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?w=1600&q=80',
+    videoId:'2Xc9gXyf2G4',
+    channel:'Like Stories of Old',
+    views:'2.4M', dur:'22:18', year:'2023',
+    thumb:`https://img.youtube.com/vi/2Xc9gXyf2G4/mqdefault.jpg`,
+  },
+  {
+    cat:'culture',
+    label:'TECHNOLOGY · ALGORITHM AS ACTOR',
+    poster:'The machine that broke **attention.**',
+    body:[
+      'Recommendation engines were not designed to maximize engagement at the expense of everything else. That was a side effect that became the product.',
+    ],
+    pull:'*At some point the map became more real than the territory.*',
+    specs:[
+      { key:'Channel',   val:'Kurzgesagt' },
+      { key:'Duration',  val:'18 min 42 sec' },
+      { key:'Views',     val:'14.2M' },
+    ],
+    img: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600&q=80',
+    videoId:'dQw4w9WgXcQ',
+    channel:'Kurzgesagt',
+    views:'14.2M', dur:'18:42', year:'2024',
+    thumb:`https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg`,
+  },
+  {
+    cat:'ambient',
+    label:'AMBIENT · VICTORIAN LIBRARY IN RAIN',
+    poster:'Ten hours. No **commentary.**',
+    body:[
+      'A Victorian reading room. Rain on leaded glass. Distant page turns. Nothing else for ten hours.',
+      'At hour three, a clock somewhere in the building chimes. Then nothing again.',
+    ],
+    pull:'The best ambient recordings don\'t try to be music. They try to be *a place.*',
+    specs:[
+      { key:'Channel',   val:'Ambience Archives' },
+      { key:'Duration',  val:'10 hours' },
+      { key:'Views',     val:'21.4M' },
+    ],
+    img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1600&q=80',
+    videoId:'q76bMs-NwRk',
+    channel:'Ambience Archives',
+    views:'21.4M', dur:'10:00:00', year:'2021',
+    thumb:`https://img.youtube.com/vi/q76bMs-NwRk/mqdefault.jpg`,
+  },
+  {
+    cat:'culture',
+    label:'PHYSICS · TIME AS ILLUSION',
+    poster:'Time does not flow. **It exists.**',
+    body:[
+      'Carlo Rovelli makes the case that past, present, and future are equally real — and that "now" is an illusion peculiar to organisms like us, here, briefly.',
+    ],
+    pull:'*"The present moment does not exist everywhere. Only locally, around us, briefly."*',
+    specs:[
+      { key:'Channel',   val:'Closer to Truth' },
+      { key:'Duration',  val:'58 min 12 sec' },
+      { key:'Views',     val:'5.5M' },
+    ],
+    img: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1600&q=80',
+    videoId:'GdTTqBf6Fio',
+    channel:'Closer to Truth',
+    views:'5.5M', dur:'58:12', year:'2022',
+    thumb:`https://img.youtube.com/vi/GdTTqBf6Fio/mqdefault.jpg`,
+  },
+  {
+    cat:'studio',
+    label:'WOLFIE · INTOVIEW ENGINE',
+    poster:'A sentence-progressive **experience.**',
+    body:[
+      'intoview.pro is the public demo of the wolfie narrative engine. This dashboard is built on the same mechanics.',
+      'The ethos: the way ideas move should be as good as the ideas themselves.',
+    ],
+    pull:'*"The digital should feel as considered as the physical."*',
+    specs:[
+      { key:'Platform',  val:'intoview.pro' },
+      { key:'Engine',    val:'wolfie.love narrative system' },
+      { key:'Status',    val:'Live · Ongoing' },
+    ],
+    img: 'https://images.unsplash.com/photo-1550439062-609e1531270e?w=1600&q=80',
+    videoId:'OpLU__bhu2w',
+    channel:'wolfie.life',
+    views:'—', dur:'—', year:'2024',
+    thumb:`https://img.youtube.com/vi/OpLU__bhu2w/mqdefault.jpg`,
+  },
+];
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
-function applyMd(text) {
-  return (text || '')
+// ── STATE ────────────────────────────────────────────────────────────
+let current = 0;            // index into CARDS
+let cardEls = [];           // array of { el, specGroupEl, catHeaderEl, card, startIdx }
+let imgEls  = [];           // image-layer img elements
+let iframeCache = {};       // videoId → iframe el
+let watchOpen = false;
+
+// ── INLINE MARKDOWN ─────────────────────────────────────────────────
+function md(text) {
+  return (text||'')
     .replace(/\*\*(.*?)\*\*/g, '<span class="ac">$1</span>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+    .replace(/\*(.*?)\*/g, '<span class="em">$1</span>');
 }
 
-function getVideos() {
-  return SCRIPT.filter(n => n.type === 'poster');
+// ── BUILD IMAGE LAYER ─────────────────────────────────────────────────
+function buildImageLayer() {
+  const layer = document.getElementById('image-layer');
+  CARDS.forEach((card, i) => {
+    if (!card.img) return;
+    const img = document.createElement('img');
+    img.src = card.img;
+    img.dataset.cardIdx = i;
+    img.alt = '';
+    layer.insertBefore(img, layer.lastElementChild); // before ::after pseudo
+    imgEls[i] = img;
+  });
 }
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
+// ── SWITCH IMAGE ──────────────────────────────────────────────────────
+function switchImage(idx) {
+  imgEls.forEach((img, i) => {
+    img.classList.toggle('visible', i === idx);
+  });
+}
+
+// ── BUILD NARRATIVE ROOT ──────────────────────────────────────────────
 function buildNarrative() {
   const root = document.getElementById('narrative-root');
   root.innerHTML = '';
-  sentenceEls = [];
-  chapterEls  = [];
-  let sidx = 0;
+  cardEls = [];
 
-  SCRIPT.forEach((node, nidx) => {
-    if (node.type === 'chapter') {
+  let lastCat = null;
+
+  CARDS.forEach((card, ci) => {
+    // ── Category header on category change ──
+    if (card.cat !== lastCat) {
+      const catMeta = CATEGORIES.find(c => c.id === card.cat) || { label: card.cat, num: '0?' };
       const hdr = document.createElement('div');
-      hdr.className = 'ch-header';
+      hdr.className = 'cat-header';
+      hdr.dataset.cat = card.cat;
       hdr.innerHTML = `
-        <div class="ch-rule"></div>
-        <div class="ch-eyebrow">Chapter ${node.num}</div>
-        <div class="ch-num">${node.num}</div>
-        <div class="ch-title">${node.title}</div>
-      `;
+        <div class="cat-num">${catMeta.num}</div>
+        <div class="cat-meta">
+          <div class="cat-rule"></div>
+          <div class="cat-label">${catMeta.label}</div>
+          <div class="cat-title">${card.cat.charAt(0).toUpperCase()+card.cat.slice(1)}</div>
+        </div>`;
       root.appendChild(hdr);
-      chapterEls.push(hdr);
-      return;
+      lastCat = card.cat;
     }
 
-    const el = document.createElement('span');
-    el.dataset.sidx = sidx;
-    el.dataset.nidx = nidx;
+    // ── Card wrapper (for targeting) ──
+    const cardWrap = document.createElement('div');
+    cardWrap.className = 'card-block';
+    cardWrap.dataset.cardIdx = ci;
+    cardWrap.style.cssText = 'padding-bottom:8px;';
 
-    if (node.type === 'break') {
-      el.className = 'sentence break revealed';
-      root.appendChild(el);
-      sentenceEls.push({ el, node, sidx });
-      sidx++;
-      return;
+    // ── Label ──
+    const labelEl = document.createElement('span');
+    labelEl.className = 'sentence label';
+    labelEl.innerHTML = md(card.label);
+    cardWrap.appendChild(labelEl);
+
+    // ── Poster ──
+    const posterEl = document.createElement('span');
+    posterEl.className = 'sentence poster';
+    posterEl.innerHTML = md(card.poster);
+    posterEl.addEventListener('click', () => { goToCard(ci); openWatch(); });
+    cardWrap.appendChild(posterEl);
+
+    // ── Body sentences ──
+    (card.body || []).forEach(bText => {
+      const bodyEl = document.createElement('span');
+      bodyEl.className = 'sentence body';
+      bodyEl.innerHTML = md(bText);
+      cardWrap.appendChild(bodyEl);
+    });
+
+    // ── Pull ──
+    if (card.pull) {
+      const pullEl = document.createElement('span');
+      pullEl.className = 'sentence pull';
+      pullEl.innerHTML = md(card.pull);
+      cardWrap.appendChild(pullEl);
     }
 
-    el.className = `sentence ${node.type} hoverable`;
-
-    if (node.type === 'label') {
-      el.textContent = node.content;
-    } else if (node.type === 'poster') {
-      el.innerHTML = applyMd(node.content);
-      el.dataset.videoid = node.videoId;
-    } else if (node.type === 'body') {
-      el.innerHTML = applyMd(node.content);
-    } else if (node.type === 'pull') {
-      el.innerHTML = applyMd(node.content);
-    } else if (node.type === 'spec') {
-      el.innerHTML = `<span class="spec-key">${node.key}</span><span class="spec-val">${applyMd(node.val)}</span>`;
+    // ── Spec group ──
+    let specGroupEl = null;
+    if (card.specs && card.specs.length) {
+      specGroupEl = document.createElement('div');
+      specGroupEl.className = 'spec-group';
+      card.specs.forEach(s => {
+        const specEl = document.createElement('span');
+        specEl.className = 'sentence spec';
+        specEl.innerHTML = `<span class="spec-key">${s.key}</span><span class="spec-val">${md(s.val)}</span>`;
+        specGroupEl.appendChild(specEl);
+      });
+      cardWrap.appendChild(specGroupEl);
     }
 
-    el.addEventListener('click', () => jumpTo(sidx));
-    el.addEventListener('mouseenter', () => previewIfPoster(node, sidx));
+    root.appendChild(cardWrap);
+    cardEls.push({ wrap: cardWrap, specGroupEl, card: card, ci });
 
-    root.appendChild(el);
-    sentenceEls.push({ el, node, sidx });
-    sidx++;
+    // ── Break between cards (except last) ──
+    if (ci < CARDS.length - 1) {
+      const brk = document.createElement('span');
+      brk.className = 'sentence break';
+      root.appendChild(brk);
+    }
   });
 
-  document.getElementById('h-total').textContent = String(sentenceEls.filter(s => s.node.type === 'poster').length).padStart(2, '0');
-  buildNavDots();
-  buildQueue();
-  applyReveal(0);
-  updateNavPosition();
+  // Wire click on card wraps for navigation
+  cardEls.forEach(({ wrap, ci }) => {
+    wrap.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('poster')) goToCard(ci);
+    });
+  });
+
+  document.getElementById('h-total').textContent  = String(CARDS.length).padStart(2,'0');
+  document.getElementById('nw-tot').textContent   = CARDS.length;
+
+  buildPanelFeed();
+  buildImageLayer();
+  goToCard(0, true);
 }
 
-function jumpTo(sidx) {
-  revealedIdx = sidx;
-  applyReveal(sidx);
-  updateNavPosition();
-  scrollToActive();
-}
+// ── SENTENCE STATE APPLICATION ────────────────────────────────────────
+// For each card: past | active | revealed | (none=opacity .08)
+function applyStates(idx) {
+  cardEls.forEach(({ wrap, specGroupEl, ci }) => {
+    const sentences = wrap.querySelectorAll('.sentence:not(.spec)');
+    const sg = specGroupEl;
+    let state;
+    if (ci < idx)      state = 'past';
+    else if (ci === idx) state = 'active';
+    else if (ci < idx + 3) state = 'revealed'; // peek at next few
+    else                 state = '';
 
-function applyReveal(upTo) {
-  let videoCount = 0;
-  sentenceEls.forEach(({ el, node, sidx }) => {
-    el.classList.remove('revealed', 'past', 'active-sent');
-    if (sidx < upTo) {
-      el.classList.add('revealed', 'past');
-    } else if (sidx === upTo) {
-      el.classList.add('revealed', 'active-sent');
-      if (node.type === 'poster') updatePanel(node, sidx);
+    sentences.forEach(el => {
+      el.classList.remove('active','past','revealed');
+      if (state) el.classList.add(state);
+    });
+    if (sg) {
+      sg.classList.remove('active','past','revealed');
+      if (state) sg.classList.add(state);
     }
-    if (node.type === 'poster' && sidx <= upTo) videoCount++;
   });
 
-  // Reveal chapters that precede current revealed index
-  chapterEls.forEach(hdr => hdr.classList.remove('revealed'));
-  let chIdx = 0;
-  let sIdx  = 0;
-  SCRIPT.forEach(node => {
-    if (node.type === 'chapter') { if (sIdx <= upTo) chapterEls[chIdx]?.classList.add('revealed'); chIdx++; return; }
-    if (node.type !== 'chapter') sIdx++;
+  // Category headers — reveal if any card in that cat has been visited
+  document.querySelectorAll('.cat-header').forEach(hdr => {
+    const cat = hdr.dataset.cat;
+    const firstInCat = cardEls.findIndex(c => c.card.cat === cat);
+    hdr.classList.remove('active','past','revealed');
+    if (firstInCat < idx)       hdr.classList.add('past');
+    else if (firstInCat === idx) hdr.classList.add('active');
+    else if (firstInCat < idx+3) hdr.classList.add('revealed');
   });
 
-  const total = sentenceEls.length;
-  const pct   = total ? ((upTo + 1) / total) * 100 : 0;
+  // Progress bar
+  const pct = CARDS.length > 1 ? (idx / (CARDS.length - 1)) * 100 : 0;
   document.getElementById('progress').style.width = Math.min(pct, 100) + '%';
 
-  const videoEls = sentenceEls.filter(s => s.node.type === 'poster');
-  const vidNum   = videoEls.findIndex(s => s.sidx >= upTo);
-  const vn       = vidNum >= 0 ? vidNum + 1 : videoEls.length;
-  document.getElementById('h-current').textContent = String(vn).padStart(2, '0');
+  // Header
+  document.querySelector('#h-card-num strong').textContent = String(idx+1).padStart(2,'0');
+  const catMeta = CATEGORIES.find(c => c.id === CARDS[idx].cat);
+  document.getElementById('h-cat-label').textContent = catMeta ? catMeta.label : CARDS[idx].cat;
 
-  updateNavDots();
+  // HUD
+  document.getElementById('nw-cur').textContent = idx + 1;
 }
 
-function prev() {
-  if (revealedIdx > 0) { revealedIdx--; applyReveal(revealedIdx); scrollToActive(); updateNavPosition(); }
-}
-function next() {
-  if (revealedIdx < sentenceEls.length - 1) { revealedIdx++; applyReveal(revealedIdx); scrollToActive(); updateNavPosition(); }
-}
-
-function scrollToActive() {
-  const active = sentenceEls.find(s => s.sidx === revealedIdx);
-  if (active) active.el.scrollIntoView({ behavior:'smooth', block:'center' });
+// ── SCROLL CARD INTO VIEW ────────────────────────────────────────────
+function scrollToCard(idx, instant) {
+  const { wrap } = cardEls[idx];
+  if (!wrap) return;
+  wrap.scrollIntoView({ behavior: instant ? 'instant' : 'smooth', block: 'center' });
 }
 
-function updateNavPosition() {
-  const el  = sentenceEls[revealedIdx];
-  const pos = el ? `${revealedIdx + 1} · ${sentenceEls.length}` : '—';
-  document.getElementById('nav-position').textContent = pos;
-}
-
-// ── PANEL ────────────────────────────────────────────────────────────────────
-function updatePanel(node, sidx) {
-  if (!node || node.type !== 'poster') return;
-  currentVideo = node;
-  document.getElementById('panel-title').textContent = node.content.replace(/\*\*(.*?)\*\*/g, '$1');
-  document.getElementById('panel-channel').textContent = node.channel || '—';
-  document.getElementById('stat-views').textContent  = node.views  || '—';
-  document.getElementById('stat-dur').textContent    = node.dur ? node.dur.split(':').slice(0,2).join(':') : '—';
-  document.getElementById('stat-year').textContent   = node.year   || '—';
-  document.getElementById('preview-duration').textContent = node.dur || '—';
-
-  const thumb = document.getElementById('preview-thumb');
-  thumb.classList.remove('loaded');
-  if (node.thumb) {
-    thumb.onload = () => thumb.classList.add('loaded');
-    thumb.src = node.thumb;
-  }
-
-  // Highlight active queue item
-  document.querySelectorAll('.queue-item').forEach(qi => {
-    qi.classList.toggle('active', qi.dataset.videoid === node.videoId);
+// ── PANEL FEED UPDATE ────────────────────────────────────────────────
+function updatePanelFeed(idx) {
+  document.querySelectorAll('.pf-card').forEach(el => {
+    el.classList.toggle('active', parseInt(el.dataset.ci) === idx);
   });
+  // Scroll active into view in panel feed
+  const activeCard = document.querySelector(`.pf-card[data-ci="${idx}"]`);
+  if (activeCard) activeCard.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-function previewIfPoster(node, sidx) {
-  if (node.type === 'poster') updatePanel(node, sidx);
+// ── UPDATE PANEL META ────────────────────────────────────────────────
+function updatePanelMeta(card) {
+  document.getElementById('pm-title').textContent    = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+  document.getElementById('pm-channel').textContent  = card.channel || '—';
+  document.getElementById('ps-views').textContent    = card.views   || '—';
+  document.getElementById('ps-dur').textContent      = card.dur ? card.dur.split(':').slice(0,2).join(':') : '—';
+  document.getElementById('ps-year').textContent     = card.year    || '—';
+
+  // Load iframe into panel (not autoplay)
+  loadPanelVideo(card.videoId, false);
 }
 
-// ── QUEUE ────────────────────────────────────────────────────────────────────
-function buildQueue() {
-  const list = document.getElementById('queue-list');
+// ── PANEL VIDEO LOADING ─────────────────────────────────────────────
+let currentPanelVideoId = null;
+function loadPanelVideo(videoId, autoplay) {
+  if (!videoId) return;
+  const container = document.getElementById('panel-video');
+  const placeholder = document.getElementById('video-placeholder');
+
+  // Remove old iframes
+  container.querySelectorAll('iframe').forEach(f => f.remove());
+
+  const src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0${autoplay?'&autoplay=1':''}`;
+  const frame = document.createElement('iframe');
+  frame.src = src;
+  frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+  frame.allowFullscreen = true;
+  frame.setAttribute('frameborder','0');
+  frame.onload = () => {
+    frame.classList.add('loaded');
+    placeholder.classList.add('hidden');
+  };
+  container.appendChild(frame);
+  currentPanelVideoId = videoId;
+}
+
+// ── GO TO CARD ───────────────────────────────────────────────────────
+function goToCard(idx, instant) {
+  idx = Math.max(0, Math.min(CARDS.length - 1, idx));
+  current = idx;
+  const card = CARDS[idx];
+
+  applyStates(idx);
+  scrollToCard(idx, instant);
+  updatePanelFeed(idx);
+  updatePanelMeta(card);
+  switchImage(idx);
+}
+
+function prevCard() { goToCard(current - 1); }
+function nextCard() { goToCard(current + 1); }
+
+// ── BUILD PANEL FEED ─────────────────────────────────────────────────
+function buildPanelFeed() {
+  const list = document.getElementById('pf-list');
   list.innerHTML = '';
-  const videos = getVideos();
-  videos.forEach(v => {
-    const item = document.createElement('div');
-    item.className = 'queue-item';
-    item.dataset.videoid = v.videoId;
-    item.innerHTML = `
-      <div class="qi-thumb"><img src="${v.thumb}" loading="lazy" alt=""></div>
-      <div class="qi-info">
-        <div class="qi-title">${v.content.replace(/\*\*(.*?)\*\*/g, '$1')}</div>
-        <div class="qi-meta">${v.channel} · ${v.dur}</div>
+  CARDS.forEach((card, ci) => {
+    const el = document.createElement('div');
+    el.className = 'pf-card';
+    el.dataset.ci = ci;
+    const catMeta = CATEGORIES.find(c => c.id === card.cat);
+    el.innerHTML = `
+      <div class="pf-thumb">
+        <img src="${card.thumb}" loading="lazy" alt="">
+        <div class="pf-thumb-dur">${card.dur||'—'}</div>
+      </div>
+      <div class="pf-info">
+        <div class="pf-title">${card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1')}</div>
+        <div class="pf-meta">${card.channel||'—'} · ${card.year||'—'}</div>
+        <div class="pf-cat">${catMeta ? catMeta.label : card.cat}</div>
       </div>
     `;
-    item.addEventListener('click', () => {
-      const sidx = sentenceEls.find(s => s.node === v)?.sidx;
-      if (sidx !== undefined) jumpTo(sidx);
-    });
-    list.appendChild(item);
+    el.addEventListener('click', () => goToCard(ci));
+    list.appendChild(el);
   });
 }
 
-// ── NAV DOTS ─────────────────────────────────────────────────────────────────
-function buildNavDots() {
-  const container = document.getElementById('nav-dots');
-  container.innerHTML = '';
-  const videos = getVideos();
-  videos.forEach((v, i) => {
-    const dot = document.createElement('div');
-    dot.className = 'nav-dot';
-    dot.dataset.i = i;
-    dot.addEventListener('click', () => {
-      const sidx = sentenceEls.find(s => s.node === v)?.sidx;
-      if (sidx !== undefined) jumpTo(sidx);
-    });
-    container.appendChild(dot);
-  });
-}
-
-function updateNavDots() {
-  const videos = getVideos();
-  const currentVideo = sentenceEls.find(s => s.sidx === revealedIdx)?.node;
-  let currentVideoIdx = -1;
-  // Find last poster at or before revealed
-  let lastPoster = null;
-  sentenceEls.forEach(s => { if (s.node.type === 'poster' && s.sidx <= revealedIdx) lastPoster = s.node; });
-  currentVideoIdx = videos.indexOf(lastPoster);
-  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-    dot.classList.toggle('active', i === currentVideoIdx);
-  });
-}
-
-// ── GENRE ────────────────────────────────────────────────────────────────────
-function setGenre(el, genre, cls) {
-  document.querySelectorAll('.h-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  const body = document.body;
-  body.className = body.className.replace(/genre-\S+/g, '').trim();
-  if (cls) body.classList.add(cls);
-}
-
-// ── WATCH ────────────────────────────────────────────────────────────────────
+// ── WATCH OVERLAY ────────────────────────────────────────────────────
 function openWatch() {
-  if (!currentVideo) return;
+  const card = CARDS[current];
+  if (!card || !card.videoId) return;
   const ov = document.getElementById('watch-overlay');
   const fr = document.getElementById('watch-frame');
-  document.getElementById('watch-title').textContent = currentVideo.content.replace(/\*\*(.*?)\*\*/g, '$1');
-  fr.src = `https://www.youtube.com/embed/${currentVideo.videoId}?autoplay=1&rel=0`;
-  ov.classList.add('active');
+  document.getElementById('wo-title').textContent = card.poster.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\*(.*?)\*/g,'$1');
+  fr.src = `https://www.youtube.com/embed/${card.videoId}?autoplay=1&rel=0`;
+  ov.classList.add('open');
+  watchOpen = true;
 }
 function closeWatch() {
   const ov = document.getElementById('watch-overlay');
   const fr = document.getElementById('watch-frame');
   fr.src = '';
-  ov.classList.remove('active');
+  ov.classList.remove('open');
+  watchOpen = false;
 }
 
-// ── SEARCH ───────────────────────────────────────────────────────────────────
-function openSearch() {
-  document.getElementById('search-overlay').classList.add('active');
-  setTimeout(() => document.getElementById('search-input').focus(), 50);
-  isSearchOpen = true;
-}
-function closeSearch() {
-  document.getElementById('search-overlay').classList.remove('active');
-  document.getElementById('search-input').value = '';
-  isSearchOpen = false;
-}
-function closeSearchIf(e) {
-  if (e.target === document.getElementById('search-overlay')) closeSearch();
-}
-function handleSearch(val) {
-  if (!val.trim()) return;
-  const q = val.toLowerCase();
-  const match = sentenceEls.find(s =>
-    (s.node.content || '').toLowerCase().includes(q) ||
-    (s.node.channel || '').toLowerCase().includes(q)
-  );
-  if (match) jumpTo(match.sidx);
-}
-function handleSearchKey(e) {
-  if (e.key === 'Escape') closeSearch();
-  if (e.key === 'Enter') closeSearch();
-}
-
-// ── AUTOPLAY ─────────────────────────────────────────────────────────────────
-function toggleAutoplay() {
-  autoplayActive = !autoplayActive;
-  document.getElementById('autoplay-icon').textContent = autoplayActive ? '⏸' : '▶';
-  if (autoplayActive) startAutoplayCountdown();
-  else clearAutoplay();
-}
-function startAutoplayCountdown() {
-  clearAutoplay();
-  autoplayCountdown = 5;
-  const bar   = document.getElementById('autoplay-bar');
-  const fill  = document.getElementById('autoplay-fill');
-  const count = document.getElementById('autoplay-countdown');
-  bar.classList.add('visible');
-  fill.style.transition = 'none';
-  fill.style.width = '0%';
-  requestAnimationFrame(() => {
-    fill.style.transition = `width ${autoplayCountdown}s linear`;
-    fill.style.width = '100%';
-  });
-  let t = autoplayCountdown;
-  count.textContent = t;
-  autoplayTimer = setInterval(() => {
-    t--;
-    count.textContent = t;
-    if (t <= 0) {
-      clearAutoplay();
-      if (autoplayActive) { next(); startAutoplayCountdown(); }
-    }
-  }, 1000);
-}
-function clearAutoplay() {
-  clearInterval(autoplayTimer);
-  document.getElementById('autoplay-bar').classList.remove('visible');
-}
-
-// ── CURSOR ───────────────────────────────────────────────────────────────────
+// ── CURSOR ───────────────────────────────────────────────────────────
 document.addEventListener('mousemove', e => {
   const cur = document.getElementById('cursor');
   cur.style.left = e.clientX + 'px';
   cur.style.top  = e.clientY + 'px';
   const t = e.target;
   cur.className = '';
-  if (t.classList.contains('poster') || t.closest('#video-preview')) cur.classList.add('play');
-  else if (t.classList.contains('h-pill') || t.tagName === 'BUTTON') cur.classList.add('big');
-});
-document.addEventListener('mouseleave', () => {
-  document.getElementById('cursor').style.opacity = '0';
-});
-document.addEventListener('mouseenter', () => {
-  document.getElementById('cursor').style.opacity = '1';
+  if (t.classList.contains('poster') || t.closest('#panel-video')) cur.classList.add('watch');
+  else if (t.tagName === 'BUTTON' || t.classList.contains('pf-card') || t.classList.contains('h-btn')) cur.classList.add('big');
 });
 
-// ── KEYBOARD ─────────────────────────────────────────────────────────────────
+// ── KEYBOARD ─────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (isSearchOpen) return;
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  switch (e.key) {
-    case 'ArrowDown': case 'j': case ' ': e.preventDefault(); next(); break;
-    case 'ArrowUp':   case 'k':          e.preventDefault(); prev(); break;
-    case 'Enter':                         e.preventDefault(); openWatch(); break;
-    case '/':                             e.preventDefault(); openSearch(); break;
-    case 'Escape':                        closeWatch(); closeSearch(); break;
+  if (watchOpen) {
+    if (e.key === 'Escape') { e.preventDefault(); closeWatch(); }
+    return;
+  }
+  switch(e.key) {
+    case 'ArrowDown': case 'j': case ' ': e.preventDefault(); nextCard(); break;
+    case 'ArrowUp':   case 'k':           e.preventDefault(); prevCard(); break;
+    case 'Enter':                          e.preventDefault(); openWatch(); break;
+    case 'Escape':                         closeWatch(); break;
   }
 });
 
-// ── WHEEL ────────────────────────────────────────────────────────────────────
-let wheelThrottle = false;
-document.getElementById('stream-wrap').addEventListener('wheel', e => {
+// ── WHEEL (throttled) ───────────────────────────────────────────────
+let wheelLock = false;
+document.getElementById('stream-col').addEventListener('wheel', e => {
   e.preventDefault();
-  if (wheelThrottle) return;
-  wheelThrottle = true;
-  setTimeout(() => { wheelThrottle = false; }, 220);
-  if (e.deltaY > 0) next(); else prev();
+  if (wheelLock) return;
+  wheelLock = true;
+  setTimeout(() => { wheelLock = false; }, 300);
+  if (e.deltaY > 0) nextCard(); else prevCard();
 }, { passive: false });
 
-// ── TOUCH ────────────────────────────────────────────────────────────────────
-let touchStartY = 0;
-document.getElementById('stream-wrap').addEventListener('touchstart', e => {
-  touchStartY = e.touches[0].clientY;
+// ── TOUCH ────────────────────────────────────────────────────────────
+let touchY0 = 0;
+document.getElementById('stream-col').addEventListener('touchstart', e => {
+  touchY0 = e.touches[0].clientY;
 }, { passive: true });
-document.getElementById('stream-wrap').addEventListener('touchend', e => {
-  const dy = touchStartY - e.changedTouches[0].clientY;
-  if (Math.abs(dy) > 28) { if (dy > 0) next(); else prev(); }
+document.getElementById('stream-col').addEventListener('touchend', e => {
+  const dy = touchY0 - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 30) { if (dy > 0) nextCard(); else prevCard(); }
 }, { passive: true });
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ─────────────────────────────────────────────────────────────
 buildNarrative();
-// Set initial panel to first video
-const firstVideo = SCRIPT.find(n => n.type === 'poster');
-if (firstVideo) updatePanel(firstVideo, 0);
 </script>
 
 </body>
