@@ -818,15 +818,18 @@ body.grid-on .cbtn.on::after{display:none}
 ═══════════════════════════════════════════════ */
 #manifesto{
   position:fixed;inset:0;z-index:1000;
-  background:#f4efe6;
+  background:#ede8df;
   opacity:0;pointer-events:none;
   transition:opacity .6s cubic-bezier(.22,1,.36,1)}
 #manifesto.on{opacity:1;pointer-events:all}
 
 #manifesto::before{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
-  background-size:300px 300px;mix-blend-mode:multiply}
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n2)' opacity='1'/%3E%3C/svg%3E");
+  background-size:400px 400px, 200px 200px;
+  mix-blend-mode:multiply;
+  opacity:.11}
 
 #manifesto::after{
   content:'';position:fixed;left:clamp(26px,7.5vw,108px);top:0;bottom:0;width:1px;
@@ -885,8 +888,9 @@ body.grid-on .cbtn.on::after{display:none}
 
 /* label — hidden by default, slides in on hover/active */
 .mf-nav-lbl{
-  font-family:'DM Mono',monospace;
+  font-family:var(--sans);
   font-size:8.5px;
+  font-weight:500;
   letter-spacing:.14em;
   text-transform:uppercase;
   color:rgba(40,28,12,.38);
@@ -940,74 +944,42 @@ body.grid-on .cbtn.on::after{display:none}
   position:absolute;
   top:0;bottom:0;right:0;
   width:100%;
-  background:linear-gradient(to left, rgba(244,239,230,.6) 0%, transparent 60%);
+  background:linear-gradient(to left, rgba(237,232,223,.6) 0%, transparent 60%);
   pointer-events:none;
   z-index:-1;
   border-radius:2px}
 
-/* ── Mobile nav rail — bottom strip ── */
+/* ── Mobile manifesto bottom bar (mirrors #mnav exactly) ── */
+#mf-mobile-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:1020;
+  background:rgba(5,5,8,.92);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,.08);
+  height:56px;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s}
+#manifesto.on #mf-mobile-nav{opacity:1;pointer-events:all}
+@media(max-width:768px){#mf-mobile-nav{display:flex}}
+
+.mf-mobile-nav-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:none;border:none;cursor:pointer;
+  color:rgba(255,255,255,.4);
+  font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.06em;
+  padding:0;height:100%;transition:color .18s}
+.mf-mobile-nav-btn:active{color:rgba(255,255,255,.85);background:rgba(255,255,255,.04)}
+.mf-mobile-nav-btn.center{
+  border-left:1px solid rgba(255,255,255,.06);
+  border-right:1px solid rgba(255,255,255,.06);
+  color:var(--cat-color);font-weight:700;font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase}
+.mf-mobile-nav-btn.center:active{background:rgba(var(--cat-rgb),.08)}
+.mf-mobile-nav-btn.center.free-on{color:rgba(255,255,255,.55)}
+.mf-mnavarr{font-size:18px;line-height:1}
+
+/* Desktop: keep the dot rail; hide mobile bar */
 @media(max-width:768px){
-  #mf-nav-rail{
-    position:fixed;
-    top:auto;
-    bottom:0;
-    right:0;
-    left:0;
-    width:100%;
-    transform:none!important;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .4s}
-  #manifesto.on #mf-nav-rail{
-    opacity:1;
-    pointer-events:all;
-    transform:none!important}
-
-  #mf-nav-inner{
-    flex-direction:row;
-    align-items:center;
-    justify-content:center;
-    gap:0;
-    background:rgba(244,239,230,.94);
-    backdrop-filter:blur(16px) saturate(1.4);
-    border-top:1px solid rgba(40,28,12,.1);
-    padding:10px 16px 12px;
-    padding-bottom:calc(12px + env(safe-area-inset-bottom));
-    overflow-x:auto;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch}
-  #mf-nav-inner::-webkit-scrollbar{display:none}
-
-  #mf-nav-spine{display:none}
-
-  .mf-nav-item{
-    flex-direction:column;
-    align-items:center;
-    gap:5px;
-    padding:0 10px;
-    flex-shrink:0;
-    min-width:52px}
-
-  .mf-nav-lbl{
-    font-size:7.5px;
-    letter-spacing:.1em;
-    opacity:1;
-    transform:none;
-    color:rgba(40,28,12,.36);
-    text-align:center;
-    max-width:56px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis}
-
-  .mf-nav-item.active .mf-nav-lbl{
-    color:rgba(var(--cat-rgb),.8);
-    font-size:7.5px}
-
-  .mf-nav-dot{
-    width:6px;height:6px}
-  .mf-nav-item.active .mf-nav-dot{
-    width:8px;height:8px}
+  #mf-nav-rail{display:none}
 }
 
 /* ── MANIFESTO STREAM ── */
@@ -1045,7 +1017,7 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.nxt{opacity:.72}
 
 .mfs.label{
-  font-family:var(--mono);font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
+  font-family:var(--sans);font-weight:600;font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
   color:rgba(var(--cat-rgb),.7);
   padding:clamp(36px,6vh,64px) 0 8px;
   transition:color .6s,opacity .4s}
@@ -1053,37 +1025,37 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.act.label{color:var(--cat-color);opacity:1}
 
 .mfs.headline{
-  font-family:var(--serif);font-weight:900;
+  font-family:var(--sans);font-weight:800;
   font-size:clamp(38px,6.8vw,88px);
-  line-height:.86;letter-spacing:-.04em;
+  line-height:.9;letter-spacing:-.04em;
   color:rgba(18,13,6,.85);
   padding:4px 0 8px}
 .mfs.act.headline{color:rgba(10,6,2,.97)}
 
 .mfs.lede{
-  font-family:var(--serif);font-style:italic;
+  font-family:var(--sans);font-style:normal;font-weight:300;
   font-size:clamp(14.5px,1.75vw,21px);
-  line-height:1.54;
+  line-height:1.58;
   color:rgba(28,20,10,.78);
   max-width:540px;padding:8px 0}
 .mfs.act.lede{color:rgba(18,11,3,.92)}
-.mfs.lede em{font-style:normal;font-weight:700;color:rgba(10,6,2,.95)}
+.mfs.lede em{font-style:normal;font-weight:600;color:rgba(10,6,2,.95)}
 .mfs.lede .r{color:var(--cat-color);font-style:normal;transition:color .6s}
 
 .mfs.body{
-  font-family:var(--mono);font-weight:400;
-  font-size:clamp(10.5px,1.1vw,13px);
-  line-height:1.82;
+  font-family:var(--sans);font-weight:400;
+  font-size:clamp(11px,1.15vw,13.5px);
+  line-height:1.78;
   color:rgba(28,20,10,.72);
   max-width:500px;padding:3px 0}
 .mfs.act.body{color:rgba(18,11,3,.88)}
-.mfs.body em{font-style:italic;color:rgba(10,6,2,.92)}
+.mfs.body em{font-style:italic;font-weight:600;color:rgba(10,6,2,.92)}
 .mfs.body .r{color:var(--cat-color);transition:color .6s}
 
 .mfs.pull{
-  font-family:var(--serif);font-style:italic;
+  font-family:var(--sans);font-style:italic;font-weight:300;
   font-size:clamp(13.5px,1.5vw,18px);
-  line-height:1.46;
+  line-height:1.52;
   color:rgba(28,20,10,.72);
   max-width:440px;padding:12px 0 12px 22px;
   border-left:2px solid rgba(var(--cat-rgb),.28);
@@ -1099,17 +1071,17 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.rule.act{opacity:1!important}
 .mf-chi{display:flex;align-items:center;gap:16px}
 .mf-chnum{
-  font-family:var(--serif);font-weight:900;
+  font-family:var(--sans);font-weight:800;
   font-size:clamp(38px,5.5vw,62px);line-height:.82;
   color:transparent;
   -webkit-text-stroke:1px rgba(40,20,4,.1);
-  user-select:none;flex-shrink:0;letter-spacing:-.03em}
+  user-select:none;flex-shrink:0;letter-spacing:-.04em}
 .mfs.rule.act .mf-chnum{-webkit-text-stroke-color:rgba(40,20,4,.28)}
 .mf-chinfo{display:flex;flex-direction:column;gap:5px}
 .mf-chrule{width:14px;height:1px;background:rgba(var(--cat-rgb),.45);transition:background .6s,width .3s}
 .mfs.rule.act .mf-chrule{width:22px;background:var(--cat-color)}
 .mf-chsub{
-  font-family:var(--sans);font-weight:600;font-size:8.5px;
+  font-family:var(--sans);font-weight:700;font-size:8.5px;
   letter-spacing:.22em;text-transform:uppercase;
   color:rgba(var(--cat-rgb),.55);transition:color .6s}
 .mfs.rule.act .mf-chsub{color:var(--cat-color)}
@@ -1130,25 +1102,25 @@ body.grid-on .cbtn.on::after{display:none}
   position:relative}
 #mf-end::before{
   content:'';position:absolute;top:0;left:0;right:0;height:80px;
-  background:linear-gradient(to bottom,#f4efe6,rgba(8,7,5,.96));
+  background:linear-gradient(to bottom,#ede8df,rgba(8,7,5,.96));
   pointer-events:none}
 #manifesto.on #mf-end{opacity:1}
 .mfe-inner{position:relative;z-index:1}
 .mfe-mark{
-  font-family:var(--serif);font-weight:900;
+  font-family:var(--sans);font-weight:800;
   font-size:clamp(72px,11vw,130px);
-  line-height:1;letter-spacing:-.04em;
+  line-height:1;letter-spacing:-.06em;
   color:rgba(var(--cat-rgb),.18);
   transition:color .6s;margin-bottom:10px;user-select:none}
 .mfe-sub{
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
+  font-family:var(--sans);font-weight:600;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
   color:rgba(255,255,255,.18);margin-bottom:32px}
 .mfe-ghost{
   margin-bottom:36px;max-width:380px}
 .mfe-ghost-rule{
   width:22px;height:1px;background:rgba(255,255,255,.1);margin-bottom:16px}
 .mfe-ghost-note{
-  font-family:var(--mono);font-size:10.5px;line-height:1.72;
+  font-family:var(--sans);font-size:11px;line-height:1.72;
   color:rgba(255,255,255,.22);font-weight:300}
 .mfe-ghost-link{
   color:rgba(var(--cat-rgb),.55);text-decoration:none;
@@ -1183,7 +1155,7 @@ body.grid-on .cbtn.on::after{display:none}
 }
 
 .mf-bar-btn{
-  font-family:var(--mono);font-size:9.5px;font-weight:500;
+  font-family:var(--sans);font-size:9.5px;font-weight:600;
   letter-spacing:.12em;text-transform:uppercase;
   background:rgba(240,234,224,.82);
   border:1px solid rgba(28,20,10,.18);
@@ -1237,9 +1209,9 @@ body.grid-on .cbtn.on::after{display:none}
   #mf-end{
     margin-left:-22px;margin-right:-22px;
     padding-left:22px;padding-right:22px;
-    padding-bottom:48px}
+    padding-bottom:80px}
   #mf-end::before{height:60px}
-  #mf-progress{bottom:0}
+  #mf-progress{bottom:56px}
   #mf-stream{-webkit-overflow-scrolling:touch}
 }
 </style>
@@ -1532,6 +1504,14 @@ body.grid-on .cbtn.on::after{display:none}
     <button id="mf-free-btn" class="mf-bar-btn" onclick="toggleMfFree()"><span id="mf-free-lbl">step</span></button>
     <button id="mf-close-btn" class="mf-bar-btn" onclick="closeManifesto()">esc</button>
   </div>
+
+  <!-- Mobile bottom bar — mirrors #mnav -->
+  <div id="mf-mobile-nav">
+    <button class="mf-mobile-nav-btn" onclick="mfAdvance(-1)"><span class="mf-mnavarr">←</span> Prev</button>
+    <button class="mf-mobile-nav-btn center" id="mf-mob-center" onclick="toggleMfFree()">Step</button>
+    <button class="mf-mobile-nav-btn" onclick="mfAdvance(1)">Next <span class="mf-mnavarr">→</span></button>
+  </div>
+
   <div id="mf-progress"></div>
 </div>
 
@@ -2803,8 +2783,13 @@ function toggleMfFree(){
   MF_FREE = !MF_FREE;
   var btn = q('mf-free-btn');
   var lbl = q('mf-free-lbl');
+  var mobCtr = q('mf-mob-center');
   if(btn) btn.classList.toggle('active', MF_FREE);
   if(lbl) lbl.textContent = MF_FREE ? 'scroll' : 'step';
+  if(mobCtr){
+    mobCtr.textContent = MF_FREE ? 'Scroll' : 'Step';
+    mobCtr.classList.toggle('free-on', MF_FREE);
+  }
   if(!MF_FREE) updateManifesto();
 }
 
@@ -2888,8 +2873,10 @@ function closeManifesto(){
   MF_FREE = false;
   var btn = q('mf-free-btn');
   var lbl = q('mf-free-lbl');
+  var mobCtr = q('mf-mob-center');
   if(btn) btn.classList.remove('active');
   if(lbl) lbl.textContent = 'step';
+  if(mobCtr){ mobCtr.textContent = 'Step'; mobCtr.classList.remove('free-on'); }
   var stream = q('mf-stream');
   if(stream._mfCleanup){ stream._mfCleanup(); stream._mfCleanup = null; }
   q('manifesto').classList.remove('on');
