@@ -867,42 +867,40 @@ body.grid-on .cbtn.on::after{display:none}
 /* sentence base — all visible, dimming creates depth */
 .mfs{
   display:block;position:relative;padding:3px 0;
-  opacity:1;transform:none;
-  transition:opacity .44s ease,color .44s ease;
+  opacity:.42;transform:none;       /* far = default, readable */
+  transition:opacity .4s ease,color .4s ease,border-color .4s ease;
   cursor:default}
-.mfs.rev{opacity:.16}
-.mfs.pst{opacity:.32}
-.mfs.act{opacity:1}
+.mfs.pst{opacity:.55}              /* above active — clearly visible */
+.mfs.act{opacity:1}                /* active — full presence */
+.mfs.nxt{opacity:.72}              /* immediate next — nearly full */
+/* far (.42) = everything else below nxt */
 
 /* label */
 .mfs.label{
   font-family:var(--mono);font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
-  color:rgba(var(--cat-rgb),.55);
+  color:rgba(var(--cat-rgb),.7);
   padding:clamp(36px,6vh,64px) 0 8px;
-  transition:color .6s}
+  transition:color .6s,opacity .4s}
 .mfs.label:first-child{padding-top:0}
-.mfs.act.label,.mfs.pst.label{color:rgba(var(--cat-rgb),.85)}
+.mfs.act.label{color:var(--cat-color);opacity:1}
 
 /* headline */
 .mfs.headline{
   font-family:var(--serif);font-weight:900;
   font-size:clamp(38px,6.8vw,88px);
   line-height:.86;letter-spacing:-.04em;
-  color:rgba(18,13,6,.75);
+  color:rgba(18,13,6,.85);
   padding:4px 0 8px}
-.mfs.act.headline{color:rgba(12,8,2,.96)}
-.mfs.pst.headline{color:rgba(18,13,6,.45)}
-.mfs.rev.headline{color:rgba(18,13,6,.25)}
+.mfs.act.headline{color:rgba(10,6,2,.97)}
 
 /* lede */
 .mfs.lede{
   font-family:var(--serif);font-style:italic;
   font-size:clamp(14.5px,1.75vw,21px);
   line-height:1.54;
-  color:rgba(28,20,10,.5);
+  color:rgba(28,20,10,.78);
   max-width:540px;padding:8px 0}
-.mfs.act.lede{color:rgba(20,13,4,.88)}
-.mfs.pst.lede{color:rgba(28,20,10,.38)}
+.mfs.act.lede{color:rgba(18,11,3,.92)}
 .mfs.lede em{font-style:normal;font-weight:700;color:rgba(10,6,2,.95)}
 .mfs.lede .r{color:var(--cat-color);font-style:normal;transition:color .6s}
 
@@ -911,10 +909,9 @@ body.grid-on .cbtn.on::after{display:none}
   font-family:var(--mono);font-weight:400;
   font-size:clamp(10.5px,1.1vw,13px);
   line-height:1.82;
-  color:rgba(28,20,10,.45);
+  color:rgba(28,20,10,.72);
   max-width:500px;padding:3px 0}
-.mfs.act.body{color:rgba(20,13,4,.8)}
-.mfs.pst.body{color:rgba(28,20,10,.32)}
+.mfs.act.body{color:rgba(18,11,3,.88)}
 .mfs.body em{font-style:italic;color:rgba(10,6,2,.92)}
 .mfs.body .r{color:var(--cat-color);transition:color .6s}
 
@@ -923,18 +920,37 @@ body.grid-on .cbtn.on::after{display:none}
   font-family:var(--serif);font-style:italic;
   font-size:clamp(13.5px,1.5vw,18px);
   line-height:1.46;
-  color:rgba(28,20,10,.48);
+  color:rgba(28,20,10,.72);
   max-width:440px;padding:12px 0 12px 22px;
-  border-left:2px solid rgba(var(--cat-rgb),.22);
-  transition:border-color .6s,color .44s}
-.mfs.act.pull{color:rgba(20,13,4,.86);border-left-color:rgba(var(--cat-rgb),.72)}
-.mfs.pst.pull{border-left-color:rgba(var(--cat-rgb),.18)}
+  border-left:2px solid rgba(var(--cat-rgb),.28);
+  transition:border-color .4s,color .4s,opacity .4s}
+.mfs.act.pull{color:rgba(18,11,3,.92);border-left-color:rgba(var(--cat-rgb),.8)}
 
 /* rule */
-.mfs.rule{padding:18px 0;opacity:.18!important}
-.mfs.rule::before{
-  content:'';display:block;width:22px;height:1px;
-  background:rgba(28,20,10,.3)}
+/* chapter break — matches main interface .chap/.chi DNA, parchment-inverted */
+.mfs.rule{
+  padding:clamp(44px,7vh,72px) 0 clamp(18px,3vh,28px);
+  opacity:.22!important;
+  transition:opacity .44s ease!important;
+  cursor:default}
+.mfs.rule.pst,.mfs.rule.nxt{opacity:.55!important}
+.mfs.rule.act{opacity:1!important}
+.mf-chi{display:flex;align-items:center;gap:16px}
+.mf-chnum{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(38px,5.5vw,62px);line-height:.82;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(40,20,4,.1);
+  user-select:none;flex-shrink:0;letter-spacing:-.03em}
+.mfs.rule.act .mf-chnum{-webkit-text-stroke-color:rgba(40,20,4,.28)}
+.mf-chinfo{display:flex;flex-direction:column;gap:5px}
+.mf-chrule{width:14px;height:1px;background:rgba(var(--cat-rgb),.45);transition:background .6s,width .3s}
+.mfs.rule.act .mf-chrule{width:22px;background:var(--cat-color)}
+.mf-chsub{
+  font-family:var(--sans);font-weight:600;font-size:8.5px;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(var(--cat-rgb),.55);transition:color .6s}
+.mfs.rule.act .mf-chsub{color:var(--cat-color)}
 
 /* active left accent */
 .mfs.act.lede::before,.mfs.act.headline::before{
@@ -945,24 +961,45 @@ body.grid-on .cbtn.on::after{display:none}
 @media(max-width:768px){
   .mfs.act.lede::before,.mfs.act.headline::before{left:-10px;width:2px}}
 
-/* end screen */
+/* end screen — dark chapter, inverse of letter */
 #mf-end{
-  padding:clamp(72px,14vh,130px) 0 clamp(90px,16vh,180px);
-  opacity:0;transition:opacity 1s ease .5s}
+  margin:clamp(72px,12vh,120px) -clamp(38px,8vw,112px) 0;
+  padding:clamp(64px,12vh,110px) clamp(38px,8vw,112px) clamp(80px,14vh,160px);
+  background:rgba(8,7,5,.96);
+  opacity:0;transition:opacity 1s ease .5s;
+  position:relative}
+#mf-end::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:80px;
+  background:linear-gradient(to bottom,#f4efe6,rgba(8,7,5,.96));
+  pointer-events:none}
 #manifesto.on #mf-end{opacity:1}
+.mfe-inner{position:relative;z-index:1}
 .mfe-mark{
   font-family:var(--serif);font-weight:900;
   font-size:clamp(72px,11vw,130px);
   line-height:1;letter-spacing:-.04em;
-  color:rgba(var(--cat-rgb),.2);
+  color:rgba(var(--cat-rgb),.18);
   transition:color .6s;margin-bottom:10px;user-select:none}
 .mfe-sub{
   font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(28,20,10,.3);margin-bottom:36px}
+  color:rgba(255,255,255,.18);margin-bottom:32px}
+.mfe-ghost{
+  margin-bottom:36px;max-width:380px}
+.mfe-ghost-rule{
+  width:22px;height:1px;background:rgba(255,255,255,.1);margin-bottom:16px}
+.mfe-ghost-note{
+  font-family:var(--mono);font-size:10.5px;line-height:1.72;
+  color:rgba(255,255,255,.22);font-weight:300}
+.mfe-ghost-link{
+  color:rgba(var(--cat-rgb),.55);text-decoration:none;
+  border-bottom:1px solid rgba(var(--cat-rgb),.2);
+  padding-bottom:1px;
+  transition:color .6s,border-color .6s}
+.mfe-ghost-link:hover{color:var(--cat-color);border-color:rgba(var(--cat-rgb),.6)}
 .mfe-close{
   font-family:var(--sans);font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  background:none;border:1px solid rgba(28,20,10,.18);
-  color:rgba(28,20,10,.42);
+  background:none;border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.28);
   padding:10px 24px;border-radius:2px;cursor:pointer;
   transition:all .18s}
 .mfe-close:hover{border-color:var(--cat-color);color:var(--cat-color)}
@@ -973,15 +1010,46 @@ body.grid-on .cbtn.on::after{display:none}
   #nscroll{padding-bottom:80px}
 }
 
-/* close button */
-#mf-close-btn{
-  position:fixed;top:14px;right:18px;z-index:10;
-  font-family:var(--mono);font-size:11px;letter-spacing:.08em;
-  background:none;border:none;
-  color:rgba(28,20,10,.28);
-  cursor:pointer;padding:6px 8px;transition:color .18s}
-#mf-close-btn:hover{color:rgba(28,20,10,.7)}
-@media(max-width:768px){#mf-close-btn{cursor:pointer}}
+/* ── manifesto top-right button bar ── */
+#mf-btn-bar{
+  position:fixed;top:16px;right:20px;z-index:10;
+  display:flex;align-items:center;gap:1px}
+
+.mf-bar-btn{
+  font-family:var(--mono);font-size:9.5px;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(240,234,224,.82);
+  border:1px solid rgba(28,20,10,.18);
+  color:rgba(28,20,10,.55);
+  cursor:pointer;
+  height:30px;
+  display:flex;align-items:center;justify-content:center;
+  padding:0 13px;
+  transition:color .16s,background .16s,border-color .16s;
+  white-space:nowrap;
+  backdrop-filter:blur(8px)}
+.mf-bar-btn:hover{
+  background:rgba(240,234,224,.98);
+  color:rgba(28,20,10,.92);
+  border-color:rgba(28,20,10,.38)}
+
+/* close — right pill */
+#mf-close-btn{border-radius:0 3px 3px 0}
+
+/* scroll toggle — left pill */
+#mf-free-btn{border-radius:3px 0 0 3px;border-right:none}
+#mf-free-btn.active{
+  background:rgba(28,20,10,.82);
+  color:rgba(240,234,224,.92);
+  border-color:rgba(28,20,10,.82)}
+#mf-free-btn.active:hover{
+  background:rgba(28,20,10,.96);
+  color:#fff}
+
+@media(max-width:768px){
+  #mf-btn-bar{top:12px;right:14px}
+  .mf-bar-btn{height:36px;font-size:9px;padding:0 11px}
+}
 
 /* reading progress */
 #mf-progress{
@@ -989,6 +1057,47 @@ body.grid-on .cbtn.on::after{display:none}
   background:var(--cat-color);width:0%;
   transition:width .3s linear,background .6s;
   box-shadow:0 0 8px rgba(var(--cat-rgb),.4)}
+
+/* ── MOBILE MANIFESTO ── */
+@media(max-width:768px){
+  /* hide desktop margin rule on mobile */
+  #manifesto::after{display:none}
+
+  /* tighten scroll container */
+  #mf-scroll{
+    padding:64px 22px 0 22px}
+
+  /* bump font sizes for touch reading */
+  .mfs.headline{font-size:clamp(34px,9.5vw,60px)}
+  .mfs.lede{font-size:clamp(15px,4.2vw,20px);line-height:1.52}
+  .mfs.body{font-size:clamp(12px,3.2vw,14px);line-height:1.78}
+  .mfs.pull{font-size:clamp(13px,3.5vw,16px);padding-left:16px}
+  .mfs.label{font-size:8px;letter-spacing:.28em}
+
+  /* chapter break on mobile */
+  .mf-chnum{font-size:clamp(32px,8vw,48px)}
+  .mf-chsub{font-size:8px;letter-spacing:.18em}
+
+  /* left accent mark narrower */
+  .mfs.act.lede::before,.mfs.act.headline::before{left:-8px;width:2px}
+
+  /* top bar buttons — full touch target */
+  #mf-close-btn{top:10px;right:10px;min-width:44px;min-height:44px;font-size:12px}
+  #mf-free-btn{top:10px;right:58px;min-width:40px;min-height:40px;font-size:14px}
+
+  /* end screen edge margins on mobile */
+  #mf-end{
+    margin-left:-22px;margin-right:-22px;
+    padding-left:22px;padding-right:22px;
+    padding-bottom:48px}
+  #mf-end::before{height:60px}
+
+  /* progress bar above system nav if browser shows it */
+  #mf-progress{bottom:0}
+
+  /* momentum scroll on iOS */
+  #mf-stream{-webkit-overflow-scrolling:touch}
+}
 </style>
 </head>
 <body>
@@ -1254,13 +1363,22 @@ body.grid-on .cbtn.on::after{display:none}
     <div id="mf-scroll">
       <div id="mf-root"></div>
       <div id="mf-end">
-        <div class="mfe-mark">N</div>
-        <div class="mfe-sub">Narrative Engine</div>
-        <button class="mfe-close" onclick="closeManifesto()">return to the interface →</button>
+        <div class="mfe-inner">
+          <div class="mfe-mark">N</div>
+          <div class="mfe-sub">Narrative Engine</div>
+          <div class="mfe-ghost">
+            <div class="mfe-ghost-rule"></div>
+            <div class="mfe-ghost-note">The engine is dedicated to Wolfgang, 2012–2024.<br>His sanctuary lives at <a class="mfe-ghost-link" href="https://www.wolfie.love" target="_blank" rel="noopener">wolfie.love</a></div>
+          </div>
+          <button class="mfe-close" onclick="closeManifesto()">return to the interface →</button>
+        </div>
       </div>
     </div>
   </div>
-  <button id="mf-close-btn" onclick="closeManifesto()">✕</button>
+  <div id="mf-btn-bar">
+    <button id="mf-free-btn" class="mf-bar-btn" onclick="toggleMfFree()"><span id="mf-free-lbl">step</span></button>
+    <button id="mf-close-btn" class="mf-bar-btn" onclick="closeManifesto()">esc</button>
+  </div>
   <div id="mf-progress"></div>
 </div>
 
@@ -1982,11 +2100,12 @@ document.addEventListener('mousemove',function(e){
 /* ── KEYBOARD ── */
 document.addEventListener('keydown',function(e){
   if(watchOpen){if(e.key==='Escape'){e.preventDefault();closeWatch();}return;}
+  if(MF_OPEN) return; // manifesto has its own keydown handler
   switch(e.key){
     case 'ArrowDown':case 'j':case ' ':e.preventDefault();if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);break;
     case 'ArrowUp':case 'k':e.preventDefault();if(ACT_SI>0)goTo(ACT_SI-1);break;
     case 'Enter':e.preventDefault();openWatch();break;
-    case 'Escape':closeWatch();closeMDetail();if(gridOn)toggleGrid(false);if(MF_OPEN)closeManifesto();break;
+    case 'Escape':closeWatch();closeMDetail();if(gridOn)toggleGrid(false);break;
     case 'g':case 'G':e.preventDefault();toggleGrid();break;
     case 'p':case 'P':e.preventDefault();togglePin();break;
   }
@@ -2451,59 +2570,86 @@ function initFeel(){
 
 /* ── MANIFESTO ── */
 var MF_OPEN = false;
+var MF_FREE = false;
 var MF_SELS = [];
 var MF_STREAM = null;
 
 var MF_SENTENCES = [
+
+  /* ── I ── */
   {cls:'label',    html:'On attention'},
   {cls:'headline', html:'The sentence<br>that lands<br>changes<br>everything.'},
   {cls:'lede',     html:'Not the paragraph. Not the chapter. <em>The sentence.</em> The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible to the way you see what comes after it.'},
-  {cls:'rule'},
+  {cls:'body',     html:'Every great story has one. The scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. You cannot manufacture that moment. You can only <em>arrive at it ready.</em>'},
+  {cls:'pull',     html:'This interface was built to help you arrive ready.'},
+  {cls:'rule', n:'I', lbl:'On the posture'},
 
-  {cls:'label',    html:'On how we got here'},
-  {cls:'lede',     html:'Every streaming interface was built on the same assumption: that more is better. More titles. More thumbnails. More rows. <span class="r">More surface area for your eye to skate across without landing.</span>'},
-  {cls:'body',     html:'The algorithm learned to chase the click, not the experience. It got very good at interrupting you. It mistook engagement for attention, completion for resonance, the skip for a preference signal.'},
-  {cls:'body',     html:'You were not browsing a library. You were being <em>processed</em> by a machine that had no interest in what the work actually was — only in whether you touched it.'},
-  {cls:'pull',     html:'We decided the interface was the problem. Not the content. The interface.'},
-  {cls:'rule'},
-
-  {cls:'label',    html:'On the sentence as navigation'},
-  {cls:'lede',     html:'The Narrative Engine is built on a different idea: that reading is already movement. That <em>descending into a sentence</em> is a more honest form of navigation than horizontal scrolling ever was.'},
-  {cls:'body',     html:'You do not scan here. You read. The interface enforces this — not with friction, but with <em>gravity.</em> Each sentence sits at a different depth. The active one is present. The others wait.'},
-  {cls:'body',     html:'The title you are reading right now is not competing with the title above it. They exist at different moments in your attention. <span class="r">Only one sentence is ever now.</span>'},
-  {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
-  {cls:'rule'},
-
-  {cls:'label',    html:'On feel as a coordinate'},
-  {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and cold</em> is something you actually feel on a Tuesday night.'},
-  {cls:'body',     html:'The feel field is a two-dimensional space where quiet meets dark, where frenetic meets light. You drag a point across it and the catalog reorganizes around what you are actually in the mood for — not what you most recently watched.'},
-  {cls:'body',     html:'This is not a recommendation engine. It is a <em>resonance engine.</em> The difference is that one knows your history. The other knows your current frequency.'},
-  {cls:'rule'},
-
-  {cls:'label',    html:'On what you do with a story'},
-  {cls:'lede',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em>'},
-  {cls:'body',     html:'The thing is the scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. <span class="r">These are not timestamps. They are coordinates in an emotional geography.</span>'},
-  {cls:'body',     html:'We built the Key Moments system because the first three minutes of a show is not where the show lives. The show lives in the specific, located instance of it being <em>exactly</em> what you needed it to be.'},
-  {cls:'pull',     html:'Every great story has a sentence that arrives and makes everything before it necessary. We are trying to take you there.'},
-  {cls:'rule'},
-
-  {cls:'label',    html:'On the right panel'},
-  {cls:'lede',     html:'The intent zone is not a detail page. It is a <em>spatial argument</em> about what this story is made of — how its parts relate, which ones are doors and which ones are rooms.'},
-  {cls:'body',     html:'The primary cell is the work itself. The secondary cells are ways into it: trailers that tell you the tone before the commitment, scenes that show you what kind of show this is before you have seen what kind of show this is.'},
-  {cls:'body',     html:'When you pin a video, the interface reorganizes around your attention rather than the other way. The content descends. The context surfaces. <em>You are not watching a preview. You are holding something still while you think.</em>'},
-  {cls:'rule'},
-
-  {cls:'label',    html:'On what this is not'},
-  {cls:'body',     html:'This is not a streaming service. We do not own the content. We are not selling a subscription or an algorithm or a recommendation feed trained on aggregate behaviour.'},
-  {cls:'body',     html:'This is a <em>reading platform for moving image.</em> A different posture. One that assumes the person in front of it is capable of sustained attention and deserves an interface that treats that capacity as an asset rather than a liability.'},
+  /* ── II ── */
+  {cls:'label',    html:'On the posture'},
+  {cls:'lede',     html:'Most interfaces assume you do not know what you want. They fill the screen with options so that something catches. <span class="r">The Narrative Engine assumes the opposite.</span>'},
+  {cls:'body',     html:'It assumes you showed up with some orientation toward experience — even if you cannot name it yet. A mood. A quality of attention. A Tuesday night that needs something specific. The interface\'s job is to help you locate that orientation, not override it.'},
+  {cls:'body',     html:'You arrive. You do not get processed. The difference is posture. <em>One system reaches toward you. The other reaches into you.</em> We decided the interface was the problem. Not the content. The interface.'},
   {cls:'pull',     html:'The algorithm wants you to keep scrolling. We want you to stop.'},
-  {cls:'rule'},
+  {cls:'rule', n:'II', lbl:'On descent'},
 
+  /* ── III ── */
+  {cls:'label',    html:'On descent'},
+  {cls:'lede',     html:'The narrative stream is not a list. It is a column you <em>descend into.</em> Each show exists at a specific depth. The one you are at is fully present. The ones above are memory. The ones below are anticipation.'},
+  {cls:'body',     html:'You do not scan horizontally across titles. You go down. This means you have to pass through each show on the way to the next one. Even the ones you do not choose, you encounter. You develop a sense of the catalog through passage — not selection.'},
+  {cls:'body',     html:'The sentence engine enforces this — not with friction, but with <em>gravity.</em> The active sentence sits at a different opacity than everything else. Only one title is ever now. The others wait at their depths, visible but not competing.'},
+  {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
+  {cls:'rule', n:'III', lbl:'On feel as a coordinate'},
+
+  /* ── IV ── */
+  {cls:'label',    html:'On feel as a coordinate'},
+  {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and slow</em> is something you actually feel on a Tuesday night.'},
+  {cls:'body',     html:'The feel field is a two-dimensional space — quiet to frenetic on one axis, dark to light on the other. You drag a point across it and the catalog reorganizes around what you are actually in the mood for. Not what you most recently watched. Not what is trending. <span class="r">Your current frequency.</span>'},
+  {cls:'body',     html:'This is not a recommendation engine. A recommendation engine knows your history. <em>A resonance engine knows your present.</em> The difference is that one is looking backward. The other is looking at you right now.'},
+  {cls:'rule', n:'IV', lbl:'On peripheral vision'},
+
+  /* ── V ── */
+  {cls:'label',    html:'On peripheral vision'},
+  {cls:'lede',     html:'The ghost panels — the previews that arrive beside the thing you are hovering near — are not tooltips. They are <em>peripheral vision.</em>'},
+  {cls:'body',     html:'Information that arrives without demanding your central attention. You move near something; the ghost appears to the side. You look at it or you do not. It does not interrupt. It does not prevent you from doing whatever you were doing.'},
+  {cls:'body',     html:'The design principle: <em>not all information should be foregrounded at the same time.</em> You develop a sense of the catalog through peripheral encounters — shows you passed near but did not choose become legibly distinct from shows you have never approached. The browsing accumulates. <span class="r">You know more than you selected.</span>'},
+  {cls:'rule', n:'V', lbl:'On the right panel'},
+
+  /* ── VI ── */
+  {cls:'label',    html:'On the right panel'},
+  {cls:'lede',     html:'When a show enters focus, the intent zone does not give you a detail page. It makes a spatial <em>argument</em> about the work — here is the whole thing, here are the ways in, here is how its parts relate to each other.'},
+  {cls:'body',     html:'The primary cell is the work itself. The secondary cells are doors. Trailers that tell you the tone before the commitment. Scenes that show you what kind of show this is before you have seen what kind of show this is. The node scatter is not decoration — each piece of media is placed in rough proportion to its significance, its relationship to the feature.'},
+  {cls:'body',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em> The thing is the specific, located instance of the work being exactly what you needed it to be. The right panel is trying to show you that instance before you commit to it.'},
+  {cls:'rule', n:'VI', lbl:'On the pin'},
+
+  /* ── VII ── */
+  {cls:'label',    html:'On the pin'},
+  {cls:'lede',     html:'Pinning is the most important interaction in the system and the easiest to miss. It is not playing a preview. It is <em>holding something still while you think.</em>'},
+  {cls:'body',     html:'When you pin the primary video, the interface reorganizes around that choice. The scattered nodes collapse. The chip list appears — media and moments, accessible below the running frame. You can navigate the catalog with the video playing. The pin decouples the browsing from the watching.'},
+  {cls:'body',     html:'You can watch the trailer for one show while reading about three others. The video continues. The context updates. This is a fundamentally different proposition than what streaming interfaces normally offer — <span class="r">because it treats browsing and watching not as sequential states, but as simultaneous ones.</span>'},
+  {cls:'pull',     html:'Cinema mode is the terminal state. Full screen, the work itself, the interface dissolved. You get there when you are ready. Not before.'},
+  {cls:'rule', n:'VII', lbl:'On key moments'},
+
+  /* ── VIII ── */
+  {cls:'label',    html:'On key moments'},
+  {cls:'lede',     html:'A timestamp is a location. A key moment is a <em>coordinate in an emotional geography.</em>'},
+  {cls:'body',     html:'The difference is that one tells you where something is in the file. The other tells you what kind of thing it is, what it will cost you, what you need to have seen before it arrives. The salvaging scene in Making a Murderer. Fleabag\'s first look to camera. The silence after the verdict. <em>These are not timestamps. They are the show.</em>'},
+  {cls:'body',     html:'We built the moments system because the first three minutes of a show is almost never where the show lives. The show lives in the specific sentence that makes everything before it necessary. The interface is trying to take you there — not after you have watched eight episodes, but <span class="r">before you have decided whether to start.</span>'},
+  {cls:'rule', n:'VIII', lbl:'On what the browsing is'},
+
+  /* ── IX ── */
+  {cls:'label',    html:'On what the browsing is'},
+  {cls:'lede',     html:'Most streaming UX is designed to minimize the time between opening the app and playing something. The implicit message: browsing is waste. <em>Get through it faster.</em>'},
+  {cls:'body',     html:'This interface inverts that. The browsing is part of the work. Descending through the stream, locating yourself in the feel field, pinning something to sit with it — these are not steps toward watching. They are <em>already watching,</em> in the sense that matters: you are attending to something, you are being changed by proximity to it, you are developing a relationship with the work before the first frame plays.'},
+  {cls:'pull',     html:'The act of finding something to watch is itself an experience worth having. Not a problem to solve. An experience with texture, depth, and its own satisfaction.'},
+  {cls:'rule', n:'IX', lbl:'On Wolfgang'},
+
+  /* ── X ── */
   {cls:'label',    html:'On Wolfgang'},
   {cls:'lede',     html:'The engine is named for a dog. A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.'},
   {cls:'body',     html:'He would stop on walks. Not because he was tired. Because <em>something was worth stopping for.</em> The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.'},
-  {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. <span class="r">It asks you to be present with one story at a time.</span>'},
-  {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you. That is what this is for.'},
+  {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. It does not want you to find something faster. <span class="r">It wants you to find the right thing — and to remember, afterward, that the finding was part of it.</span>'},
+  {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you.<br>That is what this is for.'},
+
 ];
 
 function buildManifesto(){
@@ -2513,7 +2659,18 @@ function buildManifesto(){
   MF_SENTENCES.forEach(function(s, i){
     var el = document.createElement('div');
     el.className = 'mfs ' + s.cls;
-    el.innerHTML = s.html || '';
+    if(s.cls === 'rule'){
+      el.innerHTML =
+        '<div class="mf-chi">' +
+          '<div class="mf-chnum">' + (s.n || '') + '</div>' +
+          '<div class="mf-chinfo">' +
+            '<div class="mf-chrule"></div>' +
+            '<div class="mf-chsub">' + (s.lbl || '') + '</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      el.innerHTML = s.html || '';
+    }
     root.appendChild(el);
     MF_SELS.push(el);
   });
@@ -2522,90 +2679,130 @@ function buildManifesto(){
 function updateManifesto(){
   if(!MF_OPEN) return;
   var stream = q('mf-stream');
-  var vh = stream.clientHeight;
-  var midY = stream.scrollTop + vh * 0.46;
+  var streamRect = stream.getBoundingClientRect();
+  var threshold = streamRect.top + stream.clientHeight * 0.42;
 
-  // find active sentence
+  // find active = last sentence whose top is above threshold
   var actI = 0;
   MF_SELS.forEach(function(el, i){
-    var top = el.offsetTop;
-    if(top <= midY) actI = i;
+    var rect = el.getBoundingClientRect();
+    if(rect.top <= threshold) actI = i;
   });
 
+  // assign four states: pst | act | nxt | (far = default)
   MF_SELS.forEach(function(el, i){
-    el.classList.remove('pst','act','rev');
-    if(i < actI) el.classList.add('pst');
+    el.classList.remove('pst','act','nxt','rev');
+    if(i < actI)       el.classList.add('pst');
     else if(i === actI) el.classList.add('act');
-    else if(i === actI + 1) el.classList.add('rev');
+    else if(i === actI + 1) el.classList.add('nxt');
+    // else: far — base opacity (.42)
   });
 
-  // progress bar
+  // progress
   var st = stream.scrollTop;
-  var sh = stream.scrollHeight - vh;
-  var pct = sh > 0 ? Math.min(100, (st / sh) * 100) : 0;
-  q('mf-progress').style.width = pct + '%';
+  var sh = stream.scrollHeight - stream.clientHeight;
+  q('mf-progress').style.width = (sh > 0 ? Math.min(100, (st/sh)*100) : 0) + '%';
+}
+
+function toggleMfFree(){
+  MF_FREE = !MF_FREE;
+  var btn = q('mf-free-btn');
+  var lbl = q('mf-free-lbl');
+  if(btn) btn.classList.toggle('active', MF_FREE);
+  if(lbl) lbl.textContent = MF_FREE ? 'scroll' : 'step';
+  if(!MF_FREE) updateManifesto();
 }
 
 function openManifesto(){
-  if(!MF_OPEN){
-    MF_OPEN = true;
-    buildManifesto();
-    var stream = q('mf-stream');
-    stream.scrollTop = 0;
-    q('manifesto').classList.add('on');
-    q('logo').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    MF_STREAM = stream;
-    stream.addEventListener('scroll', updateManifesto, {passive:true});
-    // wheel scroll advances sentence by sentence like main stream
-    stream.addEventListener('wheel', function(e){
-      e.preventDefault();
-      var d = e.deltaY > 0 ? 1 : -1;
-      // find current active
-      var actI = 0;
-      MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
-      var next = Math.max(0, Math.min(MF_SELS.length - 1, actI + d));
-      // find a non-rule next target
-      var tries = 0;
-      while(MF_SELS[next] && MF_SELS[next].classList.contains('rule') && tries < 8){
-        next = Math.max(0, Math.min(MF_SELS.length - 1, next + d));
-        tries++;
-      }
-      var target = MF_SELS[next];
-      if(target){
-        var scrollTo = target.offsetTop - stream.clientHeight * 0.46;
-        stream.scrollTo({top: Math.max(0, scrollTo), behavior:'smooth'});
-      }
-    }, {passive:false});
-    // touch scroll
-    var tStart = 0;
-    stream.addEventListener('touchstart', function(e){ tStart = e.touches[0].clientY; }, {passive:true});
-    stream.addEventListener('touchend', function(e){
-      var dy = tStart - e.changedTouches[0].clientY;
-      if(Math.abs(dy) > 24){
-        var d = dy > 0 ? 1 : -1;
-        var actI = 0;
-        MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
-        var next = Math.max(0, Math.min(MF_SELS.length - 1, actI + d));
-        var target = MF_SELS[next];
-        if(target) stream.scrollTo({top: Math.max(0, target.offsetTop - stream.clientHeight * 0.46), behavior:'smooth'});
-      }
-    }, {passive:true});
-    // Activate first sentence immediately — don't wait for scroll
-    requestAnimationFrame(function(){
-      MF_SELS.forEach(function(el, i){
-        el.classList.remove('pst','act','rev');
-        if(i === 0) el.classList.add('act');
-        else if(i < 4) el.classList.add('rev');
-        else el.classList.remove('pst','act','rev');
-      });
-      updateManifesto();
-    });
-  }
+  if(MF_OPEN) return;
+  MF_OPEN = true;
+  buildManifesto();
+  var stream = q('mf-stream');
+  stream.scrollTop = 0;
+  q('manifesto').classList.add('on');
+  q('logo').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  MF_STREAM = stream;
+
+  // Scroll → update active sentence
+  stream.addEventListener('scroll', updateManifesto, {passive:true});
+
+  // Wheel → sentence-step unless free-scroll active
+  var wlk = false;
+  var mfWheelHandler = function(e){
+    if(MF_FREE) return; // let browser scroll natively
+    e.preventDefault();
+    if(wlk) return;
+    wlk = true;
+    setTimeout(function(){wlk=false;}, 320);
+    var d = e.deltaY > 0 ? 1 : -1;
+    mfAdvance(d);
+  };
+  stream.addEventListener('wheel', mfWheelHandler, {passive:false});
+
+  // Touch — sentence-step unless free-scroll active
+  var tY = 0;
+  var mfTouchStart = function(e){ tY = e.touches[0].clientY; };
+  var mfTouchEnd = function(e){
+    if(MF_FREE) return;
+    var dy = tY - e.changedTouches[0].clientY;
+    if(Math.abs(dy) > 28) mfAdvance(dy > 0 ? 1 : -1);
+  };
+  stream.addEventListener('touchstart', mfTouchStart, {passive:true});
+  stream.addEventListener('touchend', mfTouchEnd, {passive:true});
+
+  // Arrow keys while manifesto open
+  var mfKeyHandler = function(e){
+    if(!MF_OPEN) return;
+    if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();mfAdvance(1);}
+    else if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();mfAdvance(-1);}
+    else if(e.key==='Escape'){e.preventDefault();closeManifesto();}
+  };
+  document.addEventListener('keydown', mfKeyHandler);
+
+  // Store cleanup refs on stream element
+  stream._mfCleanup = function(){
+    stream.removeEventListener('scroll', updateManifesto);
+    stream.removeEventListener('wheel', mfWheelHandler);
+    stream.removeEventListener('touchstart', mfTouchStart);
+    stream.removeEventListener('touchend', mfTouchEnd);
+    document.removeEventListener('keydown', mfKeyHandler);
+  };
+
+  // Activate first sentence immediately
+  requestAnimationFrame(function(){
+    if(MF_SELS.length){
+      MF_SELS[0].classList.add('act');
+      for(var i=1;i<MF_SELS.length;i++) MF_SELS[i].classList.remove('pst','act','rev');
+    }
+    updateManifesto();
+  });
+}
+
+function mfAdvance(d){
+  var stream = q('mf-stream');
+  var actI = 0;
+  MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
+  var next = actI + d;
+  while(MF_SELS[next] && MF_SELS[next].classList.contains('rule')) next += d;
+  next = Math.max(0, Math.min(MF_SELS.length - 1, next));
+  var target = MF_SELS[next];
+  if(!target) return;
+  var targetRect = target.getBoundingClientRect();
+  var streamRect = stream.getBoundingClientRect();
+  var targetScrollTop = stream.scrollTop + (targetRect.top - streamRect.top) - stream.clientHeight * 0.38;
+  stream.scrollTo({top: Math.max(0, targetScrollTop), behavior:'smooth'});
 }
 
 function closeManifesto(){
   MF_OPEN = false;
+  MF_FREE = false;
+  var btn = q('mf-free-btn');
+  var lbl = q('mf-free-lbl');
+  if(btn) btn.classList.remove('active');
+  if(lbl) lbl.textContent = 'step';
+  var stream = q('mf-stream');
+  if(stream._mfCleanup){ stream._mfCleanup(); stream._mfCleanup = null; }
   q('manifesto').classList.remove('on');
   q('logo').classList.remove('active');
   document.body.style.overflow = '';
