@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2307070a'/%3E%3Ctext x='16' y='24' font-family='Georgia%2C serif' font-weight='900' font-size='22' fill='%23e50914' text-anchor='middle' letter-spacing='-1'%3EN%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;600;700;900&family=Barlow+Condensed:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#07070a; --surf:#0e0e12;
@@ -815,405 +815,298 @@ body.grid-on .cbtn.on::after{display:none}
 #mpin-list{display:flex;flex-direction:column;gap:0}
 
 /* ═══════════════════════════════════════════════
-   MANIFESTO — LETTER THEME WITH CHAPTER NAV RAIL
+   MANIFESTO — POSTER THEME
 ═══════════════════════════════════════════════ */
 #manifesto{
   position:fixed;inset:0;z-index:1000;
-  background:#ede8df;
+  background:#0a0908;
   opacity:0;pointer-events:none;
-  transition:opacity .6s cubic-bezier(.22,1,.36,1)}
+  transition:opacity .6s cubic-bezier(.22,1,.36,1);
+  overflow:hidden;
+  --red:#e5180f;
+  --red2:#b81008;
+  --paper:#f0ebe2;
+  --mf-ink:#0d0b09;
+  --mf-ink2:#3a3530;
+  --mf-ink3:rgba(13,11,9,.4);
+  --mf-serif:'Libre Baskerville',Georgia,serif;
+  --mf-display:'Bebas Neue','Barlow Condensed',sans-serif;
+  --mf-sans:'Barlow',system-ui,sans-serif;
+  --mf-condensed:'Barlow Condensed',sans-serif;
+}
 #manifesto.on{opacity:1;pointer-events:all}
 
+/* grain */
 #manifesto::before{
-  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n2)' opacity='1'/%3E%3C/svg%3E");
-  background-size:400px 400px, 200px 200px;
-  mix-blend-mode:multiply;
-  opacity:.11}
+  content:'';position:absolute;inset:0;z-index:900;pointer-events:none;
+  opacity:.045;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0/200px}
 
-#manifesto::after{
-  content:'';position:fixed;left:clamp(26px,7.5vw,108px);top:0;bottom:0;width:1px;
-  background:linear-gradient(to bottom,transparent 4%,rgba(40,28,12,.08) 18%,rgba(40,28,12,.07) 82%,transparent 96%);
-  z-index:1;pointer-events:none}
-
-.hm{cursor:none}
-@media(max-width:768px){.hm{cursor:pointer}}
-.hm.active{color:var(--cat-color);text-shadow:0 0 18px rgba(var(--cat-rgb),.55);transition:color .6s,text-shadow .6s}
-
-/* ── CHAPTER NAV RAIL ── */
-#mf-nav-rail{
-  position:absolute;
-  top:50%;
-  right:0;
-  transform:translateY(-50%) translateX(8px);
-  z-index:1010;
-  width:200px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
-#manifesto.on #mf-nav-rail{
-  opacity:1;
-  pointer-events:all;
-  transform:translateY(-50%) translateX(0)}
-
-/* inner flex column */
-#mf-nav-inner{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:0;
-  position:relative;
-  padding:8px 20px 8px 0}
-
-/* the vertical line spine */
-#mf-nav-spine{
-  position:absolute;
-  right:23px;
-  top:12px;
-  bottom:12px;
-  width:1px;
-  background:linear-gradient(to bottom,transparent,rgba(40,28,12,.13) 12%,rgba(40,28,12,.11) 88%,transparent);
-  pointer-events:none}
-
-/* each chapter item */
-.mf-nav-item{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:9px;
-  padding:6px 0;
-  cursor:pointer;
-  position:relative;
-  width:100%}
-
-/* label — hidden by default, slides in on hover/active */
-.mf-nav-lbl{
-  font-family:var(--sans);
-  font-size:8.5px;
-  font-weight:500;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:rgba(40,28,12,.38);
-  white-space:nowrap;
-  opacity:0;
-  transform:translateX(5px);
-  transition:opacity .2s,transform .2s,color .2s;
-  text-align:right;
-  line-height:1.3}
-
-.mf-nav-item:hover .mf-nav-lbl,
-.mf-nav-item.active .mf-nav-lbl{
-  opacity:1;
-  transform:none}
-
-.mf-nav-item.active .mf-nav-lbl{
-  color:rgba(40,28,12,.68)}
-
-/* the dot — sits to the right of label */
-.mf-nav-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  flex-shrink:0;
-  border:1.5px solid rgba(40,28,12,.2);
-  background:transparent;
-  transition:all .22s;
-  position:relative;
-  z-index:1;
-  margin-right:0}
-
-.mf-nav-item:hover .mf-nav-dot{
-  border-color:rgba(40,28,12,.48);
-  background:rgba(40,28,12,.1)}
-
-.mf-nav-item.active .mf-nav-dot{
-  width:9px;
-  height:9px;
-  border-color:rgba(var(--cat-rgb),.85);
-  background:rgba(var(--cat-rgb),.18);
-  box-shadow:0 0 0 3px rgba(var(--cat-rgb),.1)}
-
-/* past — filled */
-.mf-nav-item.past .mf-nav-dot{
-  border-color:rgba(40,28,12,.32);
-  background:rgba(40,28,12,.16)}
-
-/* right-edge gradient guard */
-#mf-nav-rail::before{
-  content:'';
-  position:absolute;
-  top:0;bottom:0;right:0;
-  width:100%;
-  background:linear-gradient(to left, rgba(237,232,223,.6) 0%, transparent 60%);
-  pointer-events:none;
-  z-index:-1;
-  border-radius:2px}
-
-/* ── Mobile manifesto bottom bar (mirrors #mnav exactly) ── */
-#mf-mobile-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;z-index:1020;
-  background:rgba(5,5,8,.92);backdrop-filter:blur(20px);
-  border-top:1px solid rgba(255,255,255,.08);
-  height:56px;
-  opacity:0;pointer-events:none;
-  transition:opacity .4s}
-#manifesto.on #mf-mobile-nav{opacity:1;pointer-events:all}
-@media(max-width:768px){#mf-mobile-nav{display:flex}}
-
-.mf-mobile-nav-btn{
-  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
-  background:none;border:none;cursor:pointer;
-  color:rgba(255,255,255,.4);
-  font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.06em;
-  padding:0;height:100%;transition:color .18s}
-.mf-mobile-nav-btn:active{color:rgba(255,255,255,.85);background:rgba(255,255,255,.04)}
-.mf-mobile-nav-btn.center{
-  border-left:1px solid rgba(255,255,255,.06);
-  border-right:1px solid rgba(255,255,255,.06);
-  color:var(--cat-color);font-weight:700;font-size:11px;
-  letter-spacing:.12em;text-transform:uppercase}
-.mf-mobile-nav-btn.center:active{background:rgba(var(--cat-rgb),.08)}
-.mf-mobile-nav-btn.center.free-on{color:rgba(255,255,255,.55)}
-.mf-mnavarr{font-size:18px;line-height:1}
-
-/* Desktop: keep the dot rail; hide mobile bar */
-@media(max-width:768px){
-  #mf-nav-rail{display:none}
-}
-
-/* ── MANIFESTO STREAM ── */
-#mf-stream{
+/* scroll container */
+#mf-poster-scroll{
   position:absolute;inset:0;z-index:2;
   overflow-y:scroll;overflow-x:hidden;
   scrollbar-width:thin;
-  scrollbar-color:rgba(40,28,12,.14) transparent}
-#mf-stream::-webkit-scrollbar{width:4px}
-#mf-stream::-webkit-scrollbar-track{background:transparent}
-#mf-stream::-webkit-scrollbar-thumb{background:rgba(40,28,12,.14);border-radius:2px}
+  scrollbar-color:rgba(240,235,226,.09) transparent}
+#mf-poster-scroll::-webkit-scrollbar{width:3px}
+#mf-poster-scroll::-webkit-scrollbar-track{background:transparent}
+#mf-poster-scroll::-webkit-scrollbar-thumb{background:rgba(240,235,226,.09);border-radius:2px}
 
-#mf-scroll{
-  padding:clamp(52px,10vh,98px) clamp(38px,8vw,112px) 0 clamp(38px,8vw,112px);
-  max-width:820px}
-@media(max-width:768px){#mf-scroll{padding:56px 28px 0 28px}}
-
-/* right padding on desktop to give room to the nav rail (dots + label on hover) */
-@media(min-width:769px){
-  #mf-scroll{padding-right:clamp(180px,16vw,220px)}
-}
-@media(min-width:1400px){
-  #mf-scroll{padding-right:240px}
-}
-
-#mf-root{position:relative}
-
-.mfs{
-  display:block;position:relative;padding:3px 0;
-  opacity:.42;transform:none;
-  transition:opacity .4s ease,color .4s ease,border-color .4s ease;
-  cursor:default}
-.mfs.pst{opacity:.55}
-.mfs.act{opacity:1}
-.mfs.nxt{opacity:.72}
-
-.mfs.label{
-  font-family:var(--sans);font-weight:600;font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
-  color:rgba(var(--cat-rgb),.7);
-  padding:clamp(36px,6vh,64px) 0 8px;
-  transition:color .6s,opacity .4s}
-.mfs.label:first-child{padding-top:0}
-.mfs.act.label{color:var(--cat-color);opacity:1}
-
-.mfs.headline{
-  font-family:var(--sans);font-weight:800;
-  font-size:clamp(38px,6.8vw,88px);
-  line-height:.9;letter-spacing:-.04em;
-  color:rgba(18,13,6,.85);
-  padding:4px 0 8px}
-.mfs.act.headline{color:rgba(10,6,2,.97)}
-
-.mfs.lede{
-  font-family:var(--sans);font-style:normal;font-weight:300;
-  font-size:clamp(14.5px,1.75vw,21px);
-  line-height:1.58;
-  color:rgba(28,20,10,.78);
-  max-width:540px;padding:8px 0}
-.mfs.act.lede{color:rgba(18,11,3,.92)}
-.mfs.lede em{font-style:normal;font-weight:600;color:rgba(10,6,2,.95)}
-.mfs.lede .r{color:var(--cat-color);font-style:normal;transition:color .6s}
-
-.mfs.body{
-  font-family:var(--sans);font-weight:400;
-  font-size:clamp(11px,1.15vw,13.5px);
-  line-height:1.78;
-  color:rgba(28,20,10,.72);
-  max-width:500px;padding:3px 0}
-.mfs.act.body{color:rgba(18,11,3,.88)}
-.mfs.body em{font-style:italic;font-weight:600;color:rgba(10,6,2,.92)}
-.mfs.body .r{color:var(--cat-color);transition:color .6s}
-
-.mfs.pull{
-  font-family:var(--sans);font-style:italic;font-weight:300;
-  font-size:clamp(13.5px,1.5vw,18px);
-  line-height:1.52;
-  color:rgba(28,20,10,.72);
-  max-width:440px;padding:12px 0 12px 22px;
-  border-left:2px solid rgba(var(--cat-rgb),.28);
-  transition:border-color .4s,color .4s,opacity .4s}
-.mfs.act.pull{color:rgba(18,11,3,.92);border-left-color:rgba(var(--cat-rgb),.8)}
-
-.mfs.rule{
-  padding:clamp(44px,7vh,72px) 0 clamp(18px,3vh,28px);
-  opacity:.22!important;
-  transition:opacity .44s ease!important;
-  cursor:default}
-.mfs.rule.pst,.mfs.rule.nxt{opacity:.55!important}
-.mfs.rule.act{opacity:1!important}
-.mf-chi{display:flex;align-items:center;gap:16px}
-.mf-chnum{
-  font-family:var(--sans);font-weight:800;
-  font-size:clamp(38px,5.5vw,62px);line-height:.82;
-  color:transparent;
-  -webkit-text-stroke:1px rgba(40,20,4,.1);
-  user-select:none;flex-shrink:0;letter-spacing:-.04em}
-.mfs.rule.act .mf-chnum{-webkit-text-stroke-color:rgba(40,20,4,.28)}
-.mf-chinfo{display:flex;flex-direction:column;gap:5px}
-.mf-chrule{width:14px;height:1px;background:rgba(var(--cat-rgb),.45);transition:background .6s,width .3s}
-.mfs.rule.act .mf-chrule{width:22px;background:var(--cat-color)}
-.mf-chsub{
-  font-family:var(--sans);font-weight:700;font-size:8.5px;
-  letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(var(--cat-rgb),.55);transition:color .6s}
-.mfs.rule.act .mf-chsub{color:var(--cat-color)}
-
-.mfs.act.lede::before,.mfs.act.headline::before{
-  content:'';position:absolute;left:-14px;top:50%;
-  width:3px;height:55%;transform:translateY(-50%);
-  background:rgba(var(--cat-rgb),.7);border-radius:1px;
-  transition:background .6s}
-@media(max-width:768px){
-  .mfs.act.lede::before,.mfs.act.headline::before{left:-10px;width:2px}}
-
-#mf-end{
-  margin:clamp(72px,12vh,120px) -clamp(38px,8vw,112px) 0;
-  padding:clamp(64px,12vh,110px) clamp(38px,8vw,112px) clamp(80px,14vh,160px);
-  background:rgba(8,7,5,.96);
-  opacity:0;transition:opacity 1s ease .5s;
-  position:relative}
-#mf-end::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:80px;
-  background:linear-gradient(to bottom,#ede8df,rgba(8,7,5,.96));
-  pointer-events:none}
-#manifesto.on #mf-end{opacity:1}
-.mfe-inner{position:relative;z-index:1}
-.mfe-mark{
-  font-family:var(--sans);font-weight:800;
-  font-size:clamp(72px,11vw,130px);
-  line-height:1;letter-spacing:-.06em;
-  color:rgba(var(--cat-rgb),.18);
-  transition:color .6s;margin-bottom:10px;user-select:none}
-.mfe-sub{
-  font-family:var(--sans);font-weight:600;font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(255,255,255,.18);margin-bottom:32px}
-.mfe-ghost{
-  margin-bottom:36px;max-width:380px}
-.mfe-ghost-rule{
-  width:22px;height:1px;background:rgba(255,255,255,.1);margin-bottom:16px}
-.mfe-ghost-note{
-  font-family:var(--sans);font-size:11px;line-height:1.72;
-  color:rgba(255,255,255,.22);font-weight:300}
-.mfe-ghost-link{
-  color:rgba(var(--cat-rgb),.55);text-decoration:none;
-  border-bottom:1px solid rgba(var(--cat-rgb),.2);
-  padding-bottom:1px;
-  transition:color .6s,border-color .6s}
-.mfe-ghost-link:hover{color:var(--cat-color);border-color:rgba(var(--cat-rgb),.6)}
-.mfe-close{
-  font-family:var(--sans);font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  background:none;border:1px solid rgba(255,255,255,.12);
-  color:rgba(255,255,255,.28);
-  padding:10px 24px;border-radius:2px;cursor:pointer;
-  transition:all .18s}
-.mfe-close:hover{border-color:var(--cat-color);color:var(--cat-color)}
-
-@media(max-width:768px){
-  #bzone{bottom:56px}
-  #nscroll{padding-bottom:80px}
-}
-
-/* ── manifesto top-right button bar ── */
-#mf-btn-bar{
+/* close btn */
+#mf-close-btn{
   position:fixed;top:16px;right:20px;z-index:1020;
-  display:flex;align-items:center;gap:1px}
-
-/* On mobile push btn bar above nav rail */
-@media(max-width:768px){
-  #mf-btn-bar{
-    top:12px;right:14px;z-index:1020}
-  /* ensure scroll area has bottom padding for nav strip */
-  #mf-scroll{padding-bottom:80px!important}
-}
-
-.mf-bar-btn{
-  font-family:var(--sans);font-size:9.5px;font-weight:600;
-  letter-spacing:.12em;text-transform:uppercase;
-  background:rgba(240,234,224,.82);
-  border:1px solid rgba(28,20,10,.18);
-  color:rgba(28,20,10,.55);
-  cursor:pointer;
-  height:30px;
+  font-family:var(--mf-sans);font-size:9px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;
+  background:rgba(10,9,8,.88);
+  border:1px solid rgba(240,235,226,.14);
+  color:rgba(240,235,226,.42);
+  cursor:pointer;height:30px;
   display:flex;align-items:center;justify-content:center;
-  padding:0 13px;
-  transition:color .16s,background .16s,border-color .16s;
-  white-space:nowrap;
-  backdrop-filter:blur(8px)}
-.mf-bar-btn:hover{
-  background:rgba(240,234,224,.98);
-  color:rgba(28,20,10,.92);
-  border-color:rgba(28,20,10,.38)}
+  padding:0 16px;border-radius:3px;
+  backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;
+  transition:color .16s,border-color .16s,opacity .4s}
+#manifesto.on #mf-close-btn{opacity:1;pointer-events:all}
+#mf-close-btn:hover{color:rgba(240,235,226,.88);border-color:rgba(240,235,226,.32)}
+@media(max-width:768px){#mf-close-btn{top:12px;right:14px;height:36px;font-size:8.5px;padding:0 12px}}
 
-#mf-close-btn{border-radius:0 3px 3px 0}
-#mf-free-btn{border-radius:3px 0 0 3px;border-right:none}
-#mf-free-btn.active{
-  background:rgba(28,20,10,.82);
-  color:rgba(240,234,224,.92);
-  border-color:rgba(28,20,10,.82)}
-#mf-free-btn.active:hover{
-  background:rgba(28,20,10,.96);
-  color:#fff}
-
-@media(max-width:768px){
-  .mf-bar-btn{height:36px;font-size:9px;padding:0 11px}
-}
-
+/* progress bar */
 #mf-progress{
   position:fixed;bottom:0;left:0;height:2px;z-index:1015;
   background:var(--cat-color);width:0%;
-  transition:width .3s linear,background .6s;
+  transition:width .2s linear,background .6s;
   box-shadow:0 0 8px rgba(var(--cat-rgb),.4)}
 
+/* ── HERO ── */
+#mf-hero{
+  position:relative;
+  width:100%;min-height:100dvh;
+  background:#0a0908;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden}
+#mf-hero-bg-letter{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:flex-end;
+  pointer-events:none;overflow:hidden;z-index:0}
+#mf-hero-bg-letter span{
+  font-family:var(--mf-display);
+  font-size:clamp(480px,72vw,1100px);
+  line-height:.78;color:transparent;
+  -webkit-text-stroke:1px rgba(230,20,15,.065);
+  user-select:none;
+  transform:translateX(8%) translateY(12%);
+  letter-spacing:-.04em}
+#mf-hero-rule-top{
+  position:absolute;top:0;left:0;right:0;
+  height:3px;background:var(--cat-color);z-index:2;
+  transition:background .6s}
+#mf-hero-nav{
+  position:absolute;top:0;left:0;right:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px clamp(24px,5vw,72px) 0}
+#mf-hero-logo{
+  font-family:var(--mf-display);
+  font-size:clamp(28px,3.5vw,44px);
+  color:var(--cat-color);letter-spacing:.02em;line-height:1;
+  transition:color .6s}
+#mf-hero-tagline{
+  font-family:var(--mf-sans);
+  font-size:clamp(9px,1vw,11px);letter-spacing:.32em;text-transform:uppercase;
+  color:rgba(240,235,226,.22);font-weight:600}
+#mf-hero-body{
+  position:relative;z-index:5;
+  padding:0 clamp(24px,6vw,96px) clamp(48px,7vh,96px)}
+.mf-eyebrow{
+  font-family:var(--mf-sans);
+  font-size:clamp(9px,.9vw,11px);font-weight:700;
+  letter-spacing:.42em;text-transform:uppercase;
+  color:var(--cat-color);
+  margin-bottom:clamp(16px,2.5vh,32px);
+  display:flex;align-items:center;gap:14px;
+  transition:color .6s}
+.mf-eyebrow::before{
+  content:'';display:block;width:32px;height:1px;
+  background:var(--cat-color);flex-shrink:0;transition:background .6s}
+.mf-hero-headline{
+  font-family:var(--mf-display);
+  font-size:clamp(72px,14vw,220px);
+  line-height:.88;letter-spacing:-.01em;
+  color:var(--paper);display:block;
+  margin-bottom:clamp(20px,3vh,48px);
+  animation:mfFadeUp .9s cubic-bezier(.22,1,.36,1) .1s forwards;opacity:0}
+.mf-hero-headline em{
+  font-family:var(--mf-serif);font-style:italic;font-weight:400;
+  color:var(--cat-color);transition:color .6s}
+.mf-hero-sub{
+  font-family:var(--mf-serif);font-style:italic;font-size:clamp(16px,2.2vw,30px);
+  line-height:1.45;color:rgba(240,235,226,.52);max-width:600px;font-weight:400;
+  animation:mfFadeUp .9s cubic-bezier(.22,1,.36,1) .32s forwards;opacity:0}
+.mf-eyebrow{animation:mfFadeUp .7s cubic-bezier(.22,1,.36,1) 0s forwards;opacity:0}
+#mf-scroll-cue{
+  position:absolute;bottom:clamp(32px,5vh,56px);right:clamp(24px,5vw,72px);
+  z-index:10;display:flex;flex-direction:column;align-items:center;gap:10px}
+#mf-scroll-cue span{
+  font-family:var(--mf-sans);font-size:9px;font-weight:600;
+  letter-spacing:.34em;text-transform:uppercase;
+  color:rgba(240,235,226,.2);writing-mode:vertical-rl}
+#mf-scroll-cue-line{
+  width:1px;height:clamp(40px,6vh,72px);
+  background:linear-gradient(to bottom,rgba(229,24,15,.5),transparent);
+  animation:mfScrollCuePulse 2.4s ease infinite}
+@keyframes mfScrollCuePulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes mfFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ── CHAPTER SECTIONS ── */
+.mf-chapter-section{background:var(--paper);position:relative}
+.mf-sec-hdr{
+  padding:clamp(56px,8vh,112px) clamp(24px,6vw,96px) 0;
+  border-top:2px solid var(--mf-ink);
+  display:flex;align-items:baseline;gap:clamp(16px,2vw,40px)}
+.mf-sec-hdr-num{
+  font-family:var(--mf-display);
+  font-size:clamp(64px,9vw,140px);line-height:.82;
+  color:transparent;-webkit-text-stroke:1px rgba(13,11,9,.15);flex-shrink:0}
+.mf-sec-hdr:hover .mf-sec-hdr-num{
+  -webkit-text-stroke-color:rgba(229,24,15,.22);
+  transition:-webkit-text-stroke-color .4s}
+.mf-sec-hdr-info{
+  border-left:1px solid rgba(13,11,9,.12);
+  padding-left:clamp(14px,2vw,32px)}
+.mf-sec-hdr-chapter{
+  font-family:var(--mf-sans);font-size:clamp(8px,.8vw,10px);font-weight:700;
+  letter-spacing:.38em;text-transform:uppercase;
+  color:var(--cat-color);margin-bottom:8px;transition:color .6s}
+.mf-sec-hdr-title{
+  font-family:var(--mf-display);
+  font-size:clamp(36px,5.5vw,84px);line-height:.9;letter-spacing:.01em;color:var(--mf-ink)}
+.mf-chapter-content{
+  padding:clamp(32px,5vh,72px) clamp(24px,6vw,96px) clamp(48px,8vh,112px);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(24px,4vw,80px);align-items:start}
+@media(max-width:760px){.mf-chapter-content{grid-template-columns:1fr;gap:clamp(20px,5vw,40px)}}
+.mf-txt-lede{
+  font-family:var(--mf-serif);font-size:clamp(20px,2.4vw,34px);
+  line-height:1.38;color:var(--mf-ink);font-weight:400}
+.mf-txt-lede em{font-style:italic;font-weight:700}
+.mf-txt-lede .r{color:var(--cat-color);transition:color .6s}
+.mf-txt-body{
+  font-family:var(--mf-sans);font-size:clamp(13px,1.1vw,16px);
+  line-height:1.8;color:var(--mf-ink2);font-weight:400}
+.mf-txt-body em{font-style:italic;font-weight:600;color:var(--mf-ink)}
+.mf-txt-body .r{color:var(--cat-color);transition:color .6s}
+.mf-txt-pull{
+  font-family:var(--mf-serif);font-style:italic;
+  font-size:clamp(15px,1.6vw,22px);line-height:1.5;color:var(--mf-ink);
+  border-left:3px solid var(--cat-color);
+  padding:clamp(12px,2vh,20px) 0 clamp(12px,2vh,20px) clamp(16px,2vw,28px);
+  margin-top:clamp(16px,3vh,32px);grid-column:1/-1;max-width:680px;
+  transition:border-color .6s}
+.mf-chapter-headline{
+  font-family:var(--mf-display);
+  font-size:clamp(52px,8vw,128px);line-height:.88;letter-spacing:.005em;
+  color:var(--mf-ink);grid-column:1/-1;
+  border-bottom:1px solid rgba(13,11,9,.1);
+  padding-bottom:clamp(20px,3vh,40px);margin-bottom:clamp(8px,2vh,24px)}
+.mf-chapter-headline em{
+  font-family:var(--mf-serif);font-style:italic;font-weight:400;
+  color:var(--cat-color);transition:color .6s}
+
+/* dark interludes */
+.mf-dark-interlude{
+  background:#0a0908;
+  padding:clamp(56px,10vh,128px) clamp(24px,6vw,96px);
+  border-top:2px solid rgba(229,24,15,.3)}
+.mf-interlude-inner{max-width:900px}
+.mf-interlude-tag{
+  font-family:var(--mf-sans);font-size:9px;font-weight:700;
+  letter-spacing:.44em;text-transform:uppercase;
+  color:rgba(229,24,15,.6);margin-bottom:clamp(16px,3vh,32px)}
+.mf-interlude-text{
+  font-family:var(--mf-display);
+  font-size:clamp(40px,7vw,108px);line-height:.91;
+  color:var(--paper);letter-spacing:.005em}
+.mf-interlude-text em{
+  font-family:var(--mf-serif);font-style:italic;font-weight:400;
+  color:var(--cat-color);font-size:.88em;transition:color .6s}
+.mf-interlude-sub{
+  font-family:var(--mf-serif);font-style:italic;
+  font-size:clamp(14px,1.6vw,22px);line-height:1.5;
+  color:rgba(240,235,226,.42);margin-top:clamp(20px,3vh,40px);max-width:580px}
+
+/* chapter divider */
+.mf-ch-divider{display:flex;align-items:center;overflow:hidden}
+.mf-ch-divider-num{
+  font-family:var(--mf-condensed);font-size:clamp(10px,1vw,13px);font-weight:900;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--cat-color);
+  flex-shrink:0;
+  padding:clamp(12px,2vh,20px) clamp(24px,6vw,96px);
+  border-top:1px solid rgba(13,11,9,.14);border-bottom:1px solid rgba(13,11,9,.08);
+  background:var(--paper);width:100%;
+  display:flex;align-items:center;gap:16px;
+  transition:color .6s}
+.mf-ch-divider-num::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(to right,rgba(13,11,9,.1),transparent)}
+
+/* coda */
+#mf-coda{
+  background:#0a0908;
+  padding:clamp(80px,14vh,160px) clamp(24px,6vw,96px);
+  position:relative;overflow:hidden}
+#mf-coda::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 80% at 50% 100%,rgba(229,24,15,.07),transparent 70%);
+  pointer-events:none}
+.mf-coda-inner{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(32px,6vw,100px);align-items:end}
+@media(max-width:760px){.mf-coda-inner{grid-template-columns:1fr;gap:40px}}
+.mf-coda-mark{
+  font-family:var(--mf-display);font-size:clamp(100px,22vw,360px);line-height:.8;
+  color:transparent;-webkit-text-stroke:1px rgba(229,24,15,.14);
+  letter-spacing:-.02em;user-select:none}
+.mf-coda-text{display:flex;flex-direction:column;gap:clamp(20px,3vh,36px)}
+.mf-coda-pull{
+  font-family:var(--mf-serif);font-style:italic;
+  font-size:clamp(18px,2.4vw,34px);line-height:1.38;color:var(--paper)}
+.mf-coda-dedication{
+  font-family:var(--mf-sans);font-size:clamp(11px,1vw,13px);
+  font-weight:300;line-height:1.7;color:rgba(240,235,226,.28);letter-spacing:.01em}
+.mf-coda-dedication a{
+  color:rgba(229,24,15,.55);text-decoration:none;
+  border-bottom:1px solid rgba(229,24,15,.2);
+  transition:color .2s,border-color .2s}
+.mf-coda-dedication a:hover{color:var(--red);border-color:rgba(229,24,15,.55)}
+.mf-coda-rule{width:28px;height:1px;background:rgba(229,24,15,.3)}
+
+/* return bar */
+#mf-return-bar{
+  background:#0a0908;
+  border-top:1px solid rgba(229,24,15,.12);
+  padding:clamp(16px,3vh,28px) clamp(24px,6vw,96px);
+  display:flex;align-items:center;justify-content:space-between}
+#mf-return-btn{
+  font-family:var(--mf-sans);font-size:10px;font-weight:600;
+  letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(240,235,226,.26);background:none;
+  border:1px solid rgba(240,235,226,.1);
+  padding:10px 22px;cursor:pointer;
+  transition:color .18s,border-color .18s}
+#mf-return-btn:hover{color:rgba(240,235,226,.72);border-color:rgba(240,235,226,.28)}
+#mf-return-sig{
+  font-family:var(--mf-condensed);font-size:10px;font-weight:700;
+  letter-spacing:.28em;text-transform:uppercase;color:rgba(229,24,15,.3)}
+
+@media(max-width:540px){
+  .mf-chapter-headline{font-size:clamp(40px,12vw,72px)}
+  .mf-sec-hdr-title{font-size:clamp(28px,9vw,52px)}
+  .mf-interlude-text{font-size:clamp(34px,11vw,72px)}
+  .mf-hero-headline{font-size:clamp(62px,18vw,120px)}
+}
 @media(max-width:768px){
-  #manifesto::after{display:none}
-  #mf-scroll{
-    padding:64px 22px 0 22px}
-  .mfs.headline{font-size:clamp(34px,9.5vw,60px)}
-  .mfs.lede{font-size:clamp(15px,4.2vw,20px);line-height:1.52}
-  .mfs.body{font-size:clamp(12px,3.2vw,14px);line-height:1.78}
-  .mfs.pull{font-size:clamp(13px,3.5vw,16px);padding-left:16px}
-  .mfs.label{font-size:8px;letter-spacing:.28em}
-  .mf-chnum{font-size:clamp(32px,8vw,48px)}
-  .mf-chsub{font-size:8px;letter-spacing:.18em}
-  .mfs.act.lede::before,.mfs.act.headline::before{left:-8px;width:2px}
-  #mf-close-btn{min-width:44px;min-height:44px;font-size:12px}
-  #mf-free-btn{min-width:40px;min-height:40px;font-size:14px}
-  #mf-end{
-    margin-left:-22px;margin-right:-22px;
-    padding-left:22px;padding-right:22px;
-    padding-bottom:80px}
-  #mf-end::before{height:60px}
-  #mf-progress{bottom:56px}
-  #mf-stream{-webkit-overflow-scrolling:touch}
+  #bzone{bottom:0}
+  #nscroll{padding-bottom:80px}
 }
 </style>
 </head>
@@ -1476,44 +1369,227 @@ body.grid-on .cbtn.on::after{display:none}
 
 <!-- MANIFESTO -->
 <div id="manifesto">
-  <div id="mf-stream">
-    <div id="mf-scroll">
-      <div id="mf-root"></div>
-      <div id="mf-end">
-        <div class="mfe-inner">
-          <div class="mfe-mark">N</div>
-          <div class="mfe-sub">Narrative Engine</div>
-          <div class="mfe-ghost">
-            <div class="mfe-ghost-rule"></div>
-            <div class="mfe-ghost-note">The engine is dedicated to Wolfgang, 2012–2024.<br>His sanctuary lives at <a class="mfe-ghost-link" href="https://www.wolfie.love" target="_blank" rel="noopener">wolfie.love</a></div>
-          </div>
-          <button class="mfe-close" onclick="closeManifesto()">return to the interface →</button>
+
+  <div id="mf-poster-scroll">
+
+    <!-- HERO -->
+    <div id="mf-hero">
+      <div id="mf-hero-rule-top"></div>
+      <div id="mf-hero-bg-letter" aria-hidden="true"><span>N</span></div>
+      <nav id="mf-hero-nav">
+        <div id="mf-hero-logo">N</div>
+        <div id="mf-hero-tagline">Narrative Engine</div>
+      </nav>
+      <div id="mf-hero-body">
+        <div class="mf-eyebrow">Manifesto</div>
+        <div class="mf-hero-headline">The sentence<br>that lands<br><em>changes</em><br>everything.</div>
+        <div class="mf-hero-sub">Not the paragraph. Not the chapter. The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible.</div>
+      </div>
+      <div id="mf-scroll-cue" aria-hidden="true">
+        <span>Read</span>
+        <div id="mf-scroll-cue-line"></div>
+      </div>
+    </div>
+
+    <!-- I · ON ATTENTION -->
+    <div class="mf-chapter-section">
+      <div class="mf-sec-hdr">
+        <div class="mf-sec-hdr-num">I</div>
+        <div class="mf-sec-hdr-info">
+          <div class="mf-sec-hdr-chapter">Chapter I</div>
+          <div class="mf-sec-hdr-title">On Attention</div>
+        </div>
+      </div>
+      <div class="mf-chapter-content">
+        <div class="mf-chapter-headline">Every great story<br>has <em>one.</em></div>
+        <div class="mf-txt-lede">The scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight.</div>
+        <div class="mf-txt-body">You cannot manufacture that moment. You can only <em>arrive at it ready.</em> Every great story has one. And the interface you use to find that story either prepares you for it — or gets in the way.<br><br>This interface was built to help you arrive ready.</div>
+        <div class="mf-txt-pull">This interface was built to help you arrive ready.</div>
+      </div>
+    </div>
+
+    <!-- DARK INTERLUDE: THE POSTURE -->
+    <div class="mf-dark-interlude">
+      <div class="mf-interlude-inner">
+        <div class="mf-interlude-tag">Chapter II · On the Posture</div>
+        <div class="mf-interlude-text">Most interfaces assume you<br>do not know<br>what you want.<br><em>We assume the opposite.</em></div>
+        <div class="mf-interlude-sub">It assumes you showed up with some orientation toward experience — even if you cannot name it yet. A mood. A quality of attention. A Tuesday night that needs something specific.</div>
+      </div>
+    </div>
+
+    <!-- II CONTINUED -->
+    <div class="mf-chapter-section">
+      <div class="mf-ch-divider">
+        <div class="mf-ch-divider-num">Chapter II continues · On the Posture</div>
+      </div>
+      <div class="mf-chapter-content" style="padding-top:clamp(32px,5vh,64px)">
+        <div class="mf-txt-lede">You arrive. You do not get processed. The difference is posture. <em>One system reaches toward you. The other reaches into you.</em></div>
+        <div class="mf-txt-body">We decided the interface was the problem. Not the content. The interface.<br><br>The algorithm wants you to keep scrolling. <span class="r">We want you to stop.</span></div>
+      </div>
+    </div>
+
+    <!-- III · ON DESCENT -->
+    <div class="mf-chapter-section" style="background:#f5f0e8">
+      <div class="mf-sec-hdr" style="border-color:rgba(13,11,9,.18)">
+        <div class="mf-sec-hdr-num">III</div>
+        <div class="mf-sec-hdr-info">
+          <div class="mf-sec-hdr-chapter">Chapter III</div>
+          <div class="mf-sec-hdr-title">On Descent</div>
+        </div>
+      </div>
+      <div class="mf-chapter-content">
+        <div class="mf-chapter-headline">The stream is not<br>a list. It is a column<br>you <em>descend into.</em></div>
+        <div class="mf-txt-lede">Each show exists at a specific depth. The one you are at is fully present. The ones above are memory. The ones below are anticipation.</div>
+        <div class="mf-txt-body">You do not scan horizontally across titles. You go <em>down.</em> This means you have to pass through each show on the way to the next one.<br><br>Even the ones you do not choose, you encounter. You develop a sense of the catalog through passage — not selection.</div>
+        <div class="mf-txt-pull">The interface does not ask for your attention. It assumes you brought it with you.</div>
+      </div>
+    </div>
+
+    <!-- IV · ON FEEL -->
+    <div class="mf-dark-interlude">
+      <div class="mf-interlude-inner">
+        <div class="mf-interlude-tag">Chapter IV · On Feel as a Coordinate</div>
+        <div class="mf-interlude-text">We do not<br>recommend<br>by genre.<br><em>Genre is a filing system.</em></div>
+        <div class="mf-interlude-sub">Drama is a distribution category, not an experience. Haunting and cerebral and slow is something you actually feel on a Tuesday night. The feel field maps your current frequency — not your history.</div>
+      </div>
+    </div>
+    <div class="mf-chapter-section">
+      <div class="mf-ch-divider">
+        <div class="mf-ch-divider-num">Chapter IV continues · On Feel as a Coordinate</div>
+      </div>
+      <div class="mf-chapter-content" style="padding-top:clamp(32px,5vh,64px)">
+        <div class="mf-txt-lede">This is not a recommendation engine. A recommendation engine knows your history. <em>A resonance engine knows your present.</em></div>
+        <div class="mf-txt-body">The difference is that one is looking backward. The other is looking at you right now.<br><br>You drag a point across the feel field and the catalog reorganizes around what you are actually in the mood for. Not what you most recently watched. Not what is trending. <span class="r">Your current frequency.</span></div>
+      </div>
+    </div>
+
+    <!-- V · ON PERIPHERAL VISION -->
+    <div class="mf-chapter-section" style="background:#edeae0">
+      <div class="mf-sec-hdr">
+        <div class="mf-sec-hdr-num">V</div>
+        <div class="mf-sec-hdr-info">
+          <div class="mf-sec-hdr-chapter">Chapter V</div>
+          <div class="mf-sec-hdr-title">On Peripheral Vision</div>
+        </div>
+      </div>
+      <div class="mf-chapter-content">
+        <div class="mf-chapter-headline">The ghost panels<br>are not tooltips.<br>They are <em>peripheral vision.</em></div>
+        <div class="mf-txt-lede">Information that arrives without demanding your central attention. You move near something; the ghost appears to the side. You look at it or you do not. It does not interrupt.</div>
+        <div class="mf-txt-body">The design principle: <em>not all information should be foregrounded at the same time.</em><br><br>You develop a sense of the catalog through peripheral encounters — shows you passed near but did not choose become legibly distinct from shows you have never approached. The browsing accumulates. <span class="r">You know more than you selected.</span></div>
+      </div>
+    </div>
+
+    <!-- VI · ON THE RIGHT PANEL -->
+    <div class="mf-dark-interlude">
+      <div class="mf-interlude-inner">
+        <div class="mf-interlude-tag">Chapter VI · On the Right Panel</div>
+        <div class="mf-interlude-text">Most interfaces treat<br>narrative as <em>inventory.</em><br>A title is a product.<br>A season is a unit.</div>
+        <div class="mf-interlude-sub">None of these are the thing. The thing is the specific, located instance of the work being exactly what you needed it to be.</div>
+      </div>
+    </div>
+    <div class="mf-chapter-section">
+      <div class="mf-ch-divider">
+        <div class="mf-ch-divider-num">Chapter VI continues · On the Right Panel</div>
+      </div>
+      <div class="mf-chapter-content" style="padding-top:clamp(32px,5vh,64px)">
+        <div class="mf-txt-lede">When a show enters focus, the intent zone makes a spatial <em>argument</em> about the work — here is the whole thing, here are the ways in, here is how its parts relate to each other.</div>
+        <div class="mf-txt-body">The primary cell is the work itself. The secondary cells are doors. Trailers that tell you the tone before the commitment. Scenes that show you what kind of show this is before you have seen what kind of show this is.<br><br>The right panel is trying to show you that instance before you commit to it.</div>
+      </div>
+    </div>
+
+    <!-- VII · ON THE PIN -->
+    <div class="mf-chapter-section" style="background:#f5f0e8">
+      <div class="mf-sec-hdr">
+        <div class="mf-sec-hdr-num">VII</div>
+        <div class="mf-sec-hdr-info">
+          <div class="mf-sec-hdr-chapter">Chapter VII</div>
+          <div class="mf-sec-hdr-title">On the Pin</div>
+        </div>
+      </div>
+      <div class="mf-chapter-content">
+        <div class="mf-chapter-headline">Pinning is not<br>playing a preview.<br>It is <em>holding something still</em><br>while you think.</div>
+        <div class="mf-txt-lede">The most important interaction in the system. And the easiest to miss.</div>
+        <div class="mf-txt-body">When you pin the primary video, the interface reorganizes around that choice. The scattered nodes collapse. The chip list appears — media and moments, accessible below the running frame.<br><br>You can watch the trailer for one show while reading about three others. The video continues. The context updates. This treats browsing and watching not as sequential states, <span class="r">but as simultaneous ones.</span></div>
+        <div class="mf-txt-pull">Cinema mode is the terminal state. Full screen, the work itself, the interface dissolved. You get there when you are ready. Not before.</div>
+      </div>
+    </div>
+
+    <!-- VIII · ON KEY MOMENTS -->
+    <div class="mf-dark-interlude">
+      <div class="mf-interlude-inner">
+        <div class="mf-interlude-tag">Chapter VIII · On Key Moments</div>
+        <div class="mf-interlude-text">A timestamp is<br>a location.<br>A key moment is a<br><em>coordinate in an emotional geography.</em></div>
+        <div class="mf-interlude-sub">The difference is that one tells you where something is in the file. The other tells you what kind of thing it is, what it will cost you, what you need to have seen before it arrives.</div>
+      </div>
+    </div>
+    <div class="mf-chapter-section">
+      <div class="mf-ch-divider">
+        <div class="mf-ch-divider-num">Chapter VIII continues · On Key Moments</div>
+      </div>
+      <div class="mf-chapter-content" style="padding-top:clamp(32px,5vh,64px)">
+        <div class="mf-txt-lede">The salvaging scene in Making a Murderer. Fleabag's first look to camera. The silence after the verdict. <em>These are not timestamps. They are the show.</em></div>
+        <div class="mf-txt-body">The first three minutes of a show is almost never where the show lives. The show lives in the specific sentence that makes everything before it necessary.<br><br>The interface is trying to take you there — not after you have watched eight episodes, but <span class="r">before you have decided whether to start.</span></div>
+      </div>
+    </div>
+
+    <!-- IX · ON WHAT THE BROWSING IS -->
+    <div class="mf-chapter-section" style="background:#edeae0">
+      <div class="mf-sec-hdr">
+        <div class="mf-sec-hdr-num">IX</div>
+        <div class="mf-sec-hdr-info">
+          <div class="mf-sec-hdr-chapter">Chapter IX</div>
+          <div class="mf-sec-hdr-title">On What the Browsing Is</div>
+        </div>
+      </div>
+      <div class="mf-chapter-content">
+        <div class="mf-chapter-headline">Browsing is not<br>waste. It is already<br><em>watching.</em></div>
+        <div class="mf-txt-lede">Most streaming UX is designed to minimize the time between opening the app and playing something. The implicit message: get through it faster.</div>
+        <div class="mf-txt-body">This interface inverts that. The browsing is part of the work. Descending through the stream, locating yourself in the feel field, pinning something to sit with it — these are not steps toward watching. They are <em>already watching,</em> in the sense that matters.<br><br>You are attending to something. You are being changed by proximity to it.</div>
+        <div class="mf-txt-pull">The act of finding something to watch is itself an experience worth having. Not a problem to solve. An experience with texture, depth, and its own satisfaction.</div>
+      </div>
+    </div>
+
+    <!-- X · ON WOLFGANG -->
+    <div class="mf-dark-interlude" style="padding-bottom:0">
+      <div class="mf-interlude-inner">
+        <div class="mf-interlude-tag">Chapter X · On Wolfgang</div>
+        <div class="mf-interlude-text">The engine is<br>named for<br><em>a dog.</em></div>
+        <div class="mf-interlude-sub">A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.</div>
+      </div>
+    </div>
+    <div class="mf-chapter-section" style="background:#0a0908;padding-bottom:0">
+      <div class="mf-ch-divider" style="background:transparent">
+        <div class="mf-ch-divider-num" style="background:#0a0908;color:rgba(229,24,15,.4);border-color:rgba(229,24,15,.08)">Chapter X continues · On Wolfgang</div>
+      </div>
+      <div class="mf-chapter-content" style="background:#0a0908;padding-top:clamp(32px,5vh,64px);padding-bottom:0">
+        <div class="mf-txt-lede" style="color:rgba(240,235,226,.72)">He would stop on walks. Not because he was tired. Because <em style="color:var(--cat-color)">something was worth stopping for.</em></div>
+        <div class="mf-txt-body" style="color:rgba(240,235,226,.38)">The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.<br><br>We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. <span class="r">It wants you to find the right thing — and to remember, afterward, that the finding was part of it.</span></div>
+      </div>
+    </div>
+
+    <!-- CODA -->
+    <div id="mf-coda">
+      <div class="mf-coda-inner">
+        <div class="mf-coda-mark" aria-hidden="true">N</div>
+        <div class="mf-coda-text">
+          <div class="mf-coda-pull">The sentence that lands.<br>The scene that costs.<br>The moment you stop<br>and let it reach you.<br><br>That is what this is for.</div>
+          <div class="mf-coda-rule"></div>
+          <div class="mf-coda-dedication">Narrative Engine is dedicated to Wolfgang, 2012–2024.<br>His sanctuary lives at <a href="https://www.wolfie.love" target="_blank" rel="noopener">wolfie.love</a></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Chapter nav rail (desktop: right side; mobile: bottom strip) -->
-  <div id="mf-nav-rail">
-    <div id="mf-nav-inner">
-      <div id="mf-nav-spine"></div>
-      <!-- items injected by JS -->
+    <!-- RETURN BAR -->
+    <div id="mf-return-bar">
+      <button id="mf-return-btn" onclick="closeManifesto()">← Return to the Interface</button>
+      <div id="mf-return-sig">N · Narrative Engine</div>
     </div>
-  </div>
 
-  <div id="mf-btn-bar">
-    <button id="mf-free-btn" class="mf-bar-btn" onclick="toggleMfFree()"><span id="mf-free-lbl">step</span></button>
-    <button id="mf-close-btn" class="mf-bar-btn" onclick="closeManifesto()">esc</button>
-  </div>
+  </div><!-- /mf-poster-scroll -->
 
-  <!-- Mobile bottom bar — mirrors #mnav -->
-  <div id="mf-mobile-nav">
-    <button class="mf-mobile-nav-btn" onclick="mfAdvance(-1)"><span class="mf-mnavarr">←</span> Prev</button>
-    <button class="mf-mobile-nav-btn center" id="mf-mob-center" onclick="toggleMfFree()">Step</button>
-    <button class="mf-mobile-nav-btn" onclick="mfAdvance(1)">Next <span class="mf-mnavarr">→</span></button>
-  </div>
-
+  <button id="mf-close-btn" onclick="closeManifesto()">esc</button>
   <div id="mf-progress"></div>
+
 </div>
 
 <script>
@@ -2638,313 +2714,57 @@ function initFeel(){
 }
 
 /* ═══════════════════════════════════════════════
-   MANIFESTO — with Chapter Nav Rail
+   MANIFESTO — poster open / close
 ═══════════════════════════════════════════════ */
 var MF_OPEN = false;
-var MF_FREE = false;
-var MF_SELS = [];
-var MF_STREAM = null;
-
-/* Chapter definitions — each has an index into MF_SENTENCES pointing to its 'rule' element */
-var MF_CHAPTERS = [
-  {n:'I',   lbl:'On attention',            sentIdx:0},
-  {n:'II',  lbl:'On the posture',          sentIdx:6},
-  {n:'III', lbl:'On descent',              sentIdx:12},
-  {n:'IV',  lbl:'On feel as a coordinate', sentIdx:18},
-  {n:'V',   lbl:'On peripheral vision',    sentIdx:23},
-  {n:'VI',  lbl:'On the right panel',      sentIdx:28},
-  {n:'VII', lbl:'On the pin',              sentIdx:33},
-  {n:'VIII',lbl:'On key moments',          sentIdx:39},
-  {n:'IX',  lbl:'On what the browsing is', sentIdx:44},
-  {n:'X',   lbl:'On Wolfgang',             sentIdx:49},
-];
-
-var MF_SENTENCES = [
-  /* 0 */ {cls:'label',    html:'On attention'},
-  /* 1 */ {cls:'headline', html:'The sentence<br>that lands<br>changes<br>everything.'},
-  /* 2 */ {cls:'lede',     html:'Not the paragraph. Not the chapter. <em>The sentence.</em> The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible to the way you see what comes after it.'},
-  /* 3 */ {cls:'body',     html:'Every great story has one. The scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. You cannot manufacture that moment. You can only <em>arrive at it ready.</em>'},
-  /* 4 */ {cls:'pull',     html:'This interface was built to help you arrive ready.'},
-  /* 5 */ {cls:'rule', n:'I', lbl:'On the posture'},
-
-  /* 6 */ {cls:'label',    html:'On the posture'},
-  /* 7 */ {cls:'lede',     html:'Most interfaces assume you do not know what you want. They fill the screen with options so that something catches. <span class="r">The Narrative Engine assumes the opposite.</span>'},
-  /* 8 */ {cls:'body',     html:'It assumes you showed up with some orientation toward experience — even if you cannot name it yet. A mood. A quality of attention. A Tuesday night that needs something specific. The interface\'s job is to help you locate that orientation, not override it.'},
-  /* 9 */ {cls:'body',     html:'You arrive. You do not get processed. The difference is posture. <em>One system reaches toward you. The other reaches into you.</em> We decided the interface was the problem. Not the content. The interface.'},
-  /* 10 */ {cls:'pull',     html:'The algorithm wants you to keep scrolling. We want you to stop.'},
-  /* 11 */ {cls:'rule', n:'II', lbl:'On descent'},
-
-  /* 12 */ {cls:'label',    html:'On descent'},
-  /* 13 */ {cls:'lede',     html:'The narrative stream is not a list. It is a column you <em>descend into.</em> Each show exists at a specific depth. The one you are at is fully present. The ones above are memory. The ones below are anticipation.'},
-  /* 14 */ {cls:'body',     html:'You do not scan horizontally across titles. You go down. This means you have to pass through each show on the way to the next one. Even the ones you do not choose, you encounter. You develop a sense of the catalog through passage — not selection.'},
-  /* 15 */ {cls:'body',     html:'The sentence engine enforces this — not with friction, but with <em>gravity.</em> The active sentence sits at a different opacity than everything else. Only one title is ever now. The others wait at their depths, visible but not competing.'},
-  /* 16 */ {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
-  /* 17 */ {cls:'rule', n:'III', lbl:'On feel as a coordinate'},
-
-  /* 18 */ {cls:'label',    html:'On feel as a coordinate'},
-  /* 19 */ {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and slow</em> is something you actually feel on a Tuesday night.'},
-  /* 20 */ {cls:'body',     html:'The feel field is a two-dimensional space — quiet to frenetic on one axis, dark to light on the other. You drag a point across it and the catalog reorganizes around what you are actually in the mood for. Not what you most recently watched. Not what is trending. <span class="r">Your current frequency.</span>'},
-  /* 21 */ {cls:'body',     html:'This is not a recommendation engine. A recommendation engine knows your history. <em>A resonance engine knows your present.</em> The difference is that one is looking backward. The other is looking at you right now.'},
-  /* 22 */ {cls:'rule', n:'IV', lbl:'On peripheral vision'},
-
-  /* 23 */ {cls:'label',    html:'On peripheral vision'},
-  /* 24 */ {cls:'lede',     html:'The ghost panels — the previews that arrive beside the thing you are hovering near — are not tooltips. They are <em>peripheral vision.</em>'},
-  /* 25 */ {cls:'body',     html:'Information that arrives without demanding your central attention. You move near something; the ghost appears to the side. You look at it or you do not. It does not interrupt. It does not prevent you from doing whatever you were doing.'},
-  /* 26 */ {cls:'body',     html:'The design principle: <em>not all information should be foregrounded at the same time.</em> You develop a sense of the catalog through peripheral encounters — shows you passed near but did not choose become legibly distinct from shows you have never approached. The browsing accumulates. <span class="r">You know more than you selected.</span>'},
-  /* 27 */ {cls:'rule', n:'V', lbl:'On the right panel'},
-
-  /* 28 */ {cls:'label',    html:'On the right panel'},
-  /* 29 */ {cls:'lede',     html:'When a show enters focus, the intent zone does not give you a detail page. It makes a spatial <em>argument</em> about the work — here is the whole thing, here are the ways in, here is how its parts relate to each other.'},
-  /* 30 */ {cls:'body',     html:'The primary cell is the work itself. The secondary cells are doors. Trailers that tell you the tone before the commitment. Scenes that show you what kind of show this is before you have seen what kind of show this is. The node scatter is not decoration — each piece of media is placed in rough proportion to its significance, its relationship to the feature.'},
-  /* 31 */ {cls:'body',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em> The thing is the specific, located instance of the work being exactly what you needed it to be. The right panel is trying to show you that instance before you commit to it.'},
-  /* 32 */ {cls:'rule', n:'VI', lbl:'On the pin'},
-
-  /* 33 */ {cls:'label',    html:'On the pin'},
-  /* 34 */ {cls:'lede',     html:'Pinning is the most important interaction in the system and the easiest to miss. It is not playing a preview. It is <em>holding something still while you think.</em>'},
-  /* 35 */ {cls:'body',     html:'When you pin the primary video, the interface reorganizes around that choice. The scattered nodes collapse. The chip list appears — media and moments, accessible below the running frame. You can navigate the catalog with the video playing. The pin decouples the browsing from the watching.'},
-  /* 36 */ {cls:'body',     html:'You can watch the trailer for one show while reading about three others. The video continues. The context updates. This is a fundamentally different proposition than what streaming interfaces normally offer — <span class="r">because it treats browsing and watching not as sequential states, but as simultaneous ones.</span>'},
-  /* 37 */ {cls:'pull',     html:'Cinema mode is the terminal state. Full screen, the work itself, the interface dissolved. You get there when you are ready. Not before.'},
-  /* 38 */ {cls:'rule', n:'VII', lbl:'On key moments'},
-
-  /* 39 */ {cls:'label',    html:'On key moments'},
-  /* 40 */ {cls:'lede',     html:'A timestamp is a location. A key moment is a <em>coordinate in an emotional geography.</em>'},
-  /* 41 */ {cls:'body',     html:'The difference is that one tells you where something is in the file. The other tells you what kind of thing it is, what it will cost you, what you need to have seen before it arrives. The salvaging scene in Making a Murderer. Fleabag\'s first look to camera. The silence after the verdict. <em>These are not timestamps. They are the show.</em>'},
-  /* 42 */ {cls:'body',     html:'We built the moments system because the first three minutes of a show is almost never where the show lives. The show lives in the specific sentence that makes everything before it necessary. The interface is trying to take you there — not after you have watched eight episodes, but <span class="r">before you have decided whether to start.</span>'},
-  /* 43 */ {cls:'rule', n:'VIII', lbl:'On what the browsing is'},
-
-  /* 44 */ {cls:'label',    html:'On what the browsing is'},
-  /* 45 */ {cls:'lede',     html:'Most streaming UX is designed to minimize the time between opening the app and playing something. The implicit message: browsing is waste. <em>Get through it faster.</em>'},
-  /* 46 */ {cls:'body',     html:'This interface inverts that. The browsing is part of the work. Descending through the stream, locating yourself in the feel field, pinning something to sit with it — these are not steps toward watching. They are <em>already watching,</em> in the sense that matters: you are attending to something, you are being changed by proximity to it, you are developing a relationship with the work before the first frame plays.'},
-  /* 47 */ {cls:'pull',     html:'The act of finding something to watch is itself an experience worth having. Not a problem to solve. An experience with texture, depth, and its own satisfaction.'},
-  /* 48 */ {cls:'rule', n:'IX', lbl:'On Wolfgang'},
-
-  /* 49 */ {cls:'label',    html:'On Wolfgang'},
-  /* 50 */ {cls:'lede',     html:'The engine is named for a dog. A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.'},
-  /* 51 */ {cls:'body',     html:'He would stop on walks. Not because he was tired. Because <em>something was worth stopping for.</em> The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.'},
-  /* 52 */ {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. It does not want you to find something faster. <span class="r">It wants you to find the right thing — and to remember, afterward, that the finding was part of it.</span>'},
-  /* 53 */ {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you.<br>That is what this is for.'},
-];
-
-/* map sentence index → chapter index (the chapter this sentence belongs to) */
-var MF_SENT_TO_CHAP = {};
-MF_CHAPTERS.forEach(function(ch, ci){
-  // find the next chapter's sentIdx (or end)
-  var next = MF_CHAPTERS[ci+1] ? MF_CHAPTERS[ci+1].sentIdx : MF_SENTENCES.length;
-  for(var s = ch.sentIdx; s < next; s++){
-    MF_SENT_TO_CHAP[s] = ci;
-  }
-});
-
-function buildManifesto(){
-  var root = q('mf-root');
-  root.innerHTML = '';
-  MF_SELS = [];
-  MF_SENTENCES.forEach(function(s, i){
-    var el = document.createElement('div');
-    el.className = 'mfs ' + s.cls;
-    el.dataset.sidx = i;
-    if(s.cls === 'rule'){
-      el.innerHTML =
-        '<div class="mf-chi">' +
-          '<div class="mf-chnum">' + (s.n || '') + '</div>' +
-          '<div class="mf-chinfo">' +
-            '<div class="mf-chrule"></div>' +
-            '<div class="mf-chsub">' + (s.lbl || '') + '</div>' +
-          '</div>' +
-        '</div>';
-    } else {
-      el.innerHTML = s.html || '';
-    }
-    root.appendChild(el);
-    MF_SELS.push(el);
-  });
-  buildNavRail();
-}
-
-function buildNavRail(){
-  var inner = q('mf-nav-inner');
-  // clear except spine
-  var spine = q('mf-nav-spine');
-  inner.innerHTML = '';
-  inner.appendChild(spine);
-
-  MF_CHAPTERS.forEach(function(ch, ci){
-    var item = document.createElement('div');
-    item.className = 'mf-nav-item';
-    item.dataset.chap = ci;
-    item.innerHTML =
-      '<div class="mf-nav-lbl">' + ch.lbl + '</div>' +
-      '<div class="mf-nav-dot"></div>';
-    item.addEventListener('click', function(){
-      mfJumpToChapter(ci);
-    });
-    // Touch feedback
-    item.addEventListener('touchstart', function(){ item.style.opacity='.75'; },{passive:true});
-    item.addEventListener('touchend',   function(){ item.style.opacity=''; },{passive:true});
-    inner.appendChild(item);
-  });
-}
-
-function updateNavRail(actI){
-  // find which chapter actI belongs to
-  var curChap = MF_SENT_TO_CHAP[actI] !== undefined ? MF_SENT_TO_CHAP[actI] : 0;
-  document.querySelectorAll('.mf-nav-item').forEach(function(item){
-    var ci = parseInt(item.dataset.chap);
-    item.classList.remove('active','past');
-    if(ci === curChap) item.classList.add('active');
-    else if(ci < curChap) item.classList.add('past');
-  });
-  // On mobile scroll active item into view in the bottom strip
-  var activeItem = document.querySelector('.mf-nav-item.active');
-  if(activeItem && isMobile()){
-    var inner = q('mf-nav-inner');
-    if(inner){
-      var itemLeft = activeItem.offsetLeft;
-      var itemW = activeItem.offsetWidth;
-      var innerW = inner.clientWidth;
-      inner.scrollTo({left: itemLeft - innerW/2 + itemW/2, behavior:'smooth'});
-    }
-  }
-}
-
-function mfJumpToChapter(ci){
-  var ch = MF_CHAPTERS[ci];
-  if(!ch) return;
-  var target = MF_SELS[ch.sentIdx];
-  if(!target) return;
-  var stream = q('mf-stream');
-  var streamRect = stream.getBoundingClientRect();
-  var targetRect = target.getBoundingClientRect();
-  var targetScrollTop = stream.scrollTop + (targetRect.top - streamRect.top) - stream.clientHeight * 0.12;
-  stream.scrollTo({top: Math.max(0, targetScrollTop), behavior:'smooth'});
-}
-
-function updateManifesto(){
-  if(!MF_OPEN) return;
-  var stream = q('mf-stream');
-  var streamRect = stream.getBoundingClientRect();
-  var threshold = streamRect.top + stream.clientHeight * 0.42;
-
-  var actI = 0;
-  MF_SELS.forEach(function(el, i){
-    var rect = el.getBoundingClientRect();
-    if(rect.top <= threshold) actI = i;
-  });
-
-  MF_SELS.forEach(function(el, i){
-    el.classList.remove('pst','act','nxt','rev');
-    if(i < actI)            el.classList.add('pst');
-    else if(i === actI)     el.classList.add('act');
-    else if(i === actI + 1) el.classList.add('nxt');
-  });
-
-  updateNavRail(actI);
-
-  var st = stream.scrollTop;
-  var sh = stream.scrollHeight - stream.clientHeight;
-  q('mf-progress').style.width = (sh > 0 ? Math.min(100, (st/sh)*100) : 0) + '%';
-}
-
-function toggleMfFree(){
-  MF_FREE = !MF_FREE;
-  var btn = q('mf-free-btn');
-  var lbl = q('mf-free-lbl');
-  var mobCtr = q('mf-mob-center');
-  if(btn) btn.classList.toggle('active', MF_FREE);
-  if(lbl) lbl.textContent = MF_FREE ? 'scroll' : 'step';
-  if(mobCtr){
-    mobCtr.textContent = MF_FREE ? 'Scroll' : 'Step';
-    mobCtr.classList.toggle('free-on', MF_FREE);
-  }
-  if(!MF_FREE) updateManifesto();
-}
+var MF_REVEALED = false;
 
 function openManifesto(){
   if(MF_OPEN) return;
   MF_OPEN = true;
-  buildManifesto();
-  var stream = q('mf-stream');
-  stream.scrollTop = 0;
+  var outer = q('mf-poster-scroll');
+  outer.scrollTop = 0;
   q('manifesto').classList.add('on');
   q('logo').classList.add('active');
   document.body.style.overflow = 'hidden';
-  MF_STREAM = stream;
+  q('mf-progress').style.width = '0%';
+  outer.addEventListener('scroll', mfUpdateProgress, {passive:true});
+  if(!MF_REVEALED){ MF_REVEALED = true; setTimeout(mfInitReveal, 100); }
+}
 
-  stream.addEventListener('scroll', updateManifesto, {passive:true});
+function mfUpdateProgress(){
+  var outer = q('mf-poster-scroll');
+  var sh = outer.scrollHeight - outer.clientHeight;
+  q('mf-progress').style.width = (sh > 0 ? Math.min(100,(outer.scrollTop/sh)*100) : 0) + '%';
+}
 
-  var wlk = false;
-  var mfWheelHandler = function(e){
-    if(MF_FREE) return;
-    e.preventDefault();
-    if(wlk) return;
-    wlk = true;
-    setTimeout(function(){wlk=false;}, 320);
-    var d = e.deltaY > 0 ? 1 : -1;
-    mfAdvance(d);
-  };
-  stream.addEventListener('wheel', mfWheelHandler, {passive:false});
-
-  var tY = 0;
-  var mfTouchStart = function(e){ tY = e.touches[0].clientY; };
-  var mfTouchEnd = function(e){
-    if(MF_FREE) return;
-    var dy = tY - e.changedTouches[0].clientY;
-    if(Math.abs(dy) > 28) mfAdvance(dy > 0 ? 1 : -1);
-  };
-  stream.addEventListener('touchstart', mfTouchStart, {passive:true});
-  stream.addEventListener('touchend', mfTouchEnd, {passive:true});
-
-  var mfKeyHandler = function(e){
-    if(!MF_OPEN) return;
-    if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();mfAdvance(1);}
-    else if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();mfAdvance(-1);}
-    else if(e.key==='Escape'){e.preventDefault();closeManifesto();}
-  };
-  document.addEventListener('keydown', mfKeyHandler);
-
-  stream._mfCleanup = function(){
-    stream.removeEventListener('scroll', updateManifesto);
-    stream.removeEventListener('wheel', mfWheelHandler);
-    stream.removeEventListener('touchstart', mfTouchStart);
-    stream.removeEventListener('touchend', mfTouchEnd);
-    document.removeEventListener('keydown', mfKeyHandler);
-  };
-
-  requestAnimationFrame(function(){
-    if(MF_SELS.length){
-      MF_SELS[0].classList.add('act');
-      for(var i=1;i<MF_SELS.length;i++) MF_SELS[i].classList.remove('pst','act','rev');
-    }
-    updateManifesto();
+function mfInitReveal(){
+  var outer = q('mf-poster-scroll');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.style.opacity='1';
+        e.target.style.transform='none';
+        io.unobserve(e.target);
+      }
+    });
+  },{root:outer,threshold:0.1});
+  document.querySelectorAll('.mf-chapter-content > *').forEach(function(el,i){
+    el.style.opacity='0';el.style.transform='translateY(20px)';
+    el.style.transition='opacity .65s cubic-bezier(.22,1,.36,1) '+(i*.08)+'s,transform .65s cubic-bezier(.22,1,.36,1) '+(i*.08)+'s';
+    io.observe(el);
+  });
+  document.querySelectorAll('.mf-interlude-text,.mf-interlude-sub,.mf-interlude-tag,.mf-sec-hdr,.mf-coda-pull,.mf-coda-dedication').forEach(function(el,i){
+    el.style.opacity='0';el.style.transform='translateY(16px)';
+    el.style.transition='opacity .7s cubic-bezier(.22,1,.36,1) '+(i*.1)+'s,transform .7s cubic-bezier(.22,1,.36,1) '+(i*.1)+'s';
+    io.observe(el);
   });
 }
 
-function mfAdvance(d){
-  var stream = q('mf-stream');
-  var actI = 0;
-  MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
-  var next = actI + d;
-  while(MF_SELS[next] && MF_SELS[next].classList.contains('rule')) next += d;
-  next = Math.max(0, Math.min(MF_SELS.length - 1, next));
-  var target = MF_SELS[next];
-  if(!target) return;
-  var targetRect = target.getBoundingClientRect();
-  var streamRect = stream.getBoundingClientRect();
-  var targetScrollTop = stream.scrollTop + (targetRect.top - streamRect.top) - stream.clientHeight * 0.38;
-  stream.scrollTo({top: Math.max(0, targetScrollTop), behavior:'smooth'});
-}
-
 function closeManifesto(){
+  if(!MF_OPEN) return;
   MF_OPEN = false;
-  MF_FREE = false;
-  var btn = q('mf-free-btn');
-  var lbl = q('mf-free-lbl');
-  var mobCtr = q('mf-mob-center');
-  if(btn) btn.classList.remove('active');
-  if(lbl) lbl.textContent = 'step';
-  if(mobCtr){ mobCtr.textContent = 'Step'; mobCtr.classList.remove('free-on'); }
-  var stream = q('mf-stream');
-  if(stream._mfCleanup){ stream._mfCleanup(); stream._mfCleanup = null; }
+  q('mf-poster-scroll').removeEventListener('scroll', mfUpdateProgress);
   q('manifesto').classList.remove('on');
   q('logo').classList.remove('active');
   document.body.style.overflow = '';
@@ -2955,6 +2775,10 @@ function toggleManifesto(){
   if(MF_OPEN) closeManifesto();
   else openManifesto();
 }
+
+document.addEventListener('keydown',function(e){
+  if(MF_OPEN && e.key==='Escape'){e.preventDefault();closeManifesto();}
+});
 
 /* ── INIT ── */
 buildCatBar();
