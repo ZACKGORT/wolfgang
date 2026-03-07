@@ -448,7 +448,6 @@ body.dim .s.act{opacity:1;transform:none}
 #gover::-webkit-scrollbar{display:none}
 #gover.on{opacity:1;pointer-events:all}
 #ginner{display:block;padding:0}
-/* category section inside grid */
 .gsec{display:block}
 .gsec.ghidden{display:none}
 .gsec-head{
@@ -465,7 +464,6 @@ body.dim .s.act{opacity:1;transform:none}
   font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.18);margin-left:auto}
 .gsec-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
 @media(max-width:480px){.gsec-tiles{grid-template-columns:repeat(3,1fr)}}
-/* tile */
 .gcov{
   position:relative;aspect-ratio:2/3;overflow:hidden;cursor:none;
   border-right:1px solid rgba(0,0,0,.5);
@@ -497,11 +495,10 @@ body.dim .s.act{opacity:1;transform:none}
   position:absolute;top:5px;right:5px;
   font-family:var(--sans);font-weight:600;font-size:8px;color:var(--grn);
   background:rgba(0,0,0,.8);padding:2px 5px;border-radius:1px}
-/* cbar in grid mode — buttons become filter pills */
 body.grid-on .cbtn{transition:color .18s,background .18s,opacity .18s}
 body.grid-on .cbtn.gfilt-off{color:rgba(255,255,255,.2);opacity:.5}
 body.grid-on .cbtn.gfilt-off:hover{opacity:.8;color:rgba(255,255,255,.55)}
-body.grid-on .cbtn::after{display:none}/* hide active underline in grid mode */
+body.grid-on .cbtn::after{display:none}
 body.grid-on .cbtn.on::after{display:none}
 #izone::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;z-index:1;pointer-events:none;
   background:linear-gradient(to bottom,transparent,rgba(var(--cat-rgb),.18) 12%,rgba(var(--cat-rgb),.14) 88%,transparent);
@@ -698,7 +695,6 @@ body.grid-on .cbtn.on::after{display:none}
 #izone{display:none;position:fixed;top:52px;left:0;right:0;bottom:0;z-index:10;overflow:hidden}
 @media(min-width:769px){#izone{display:flex;flex-direction:column;left:47vw}}
 
-/* pinned = video shown above chips */
 #izone.pinned{overflow:hidden}
 #izone.pinned #igrid-flow{display:flex}
 #izone:not(.pinned) #igrid-flow{display:none}
@@ -708,16 +704,15 @@ body.grid-on .cbtn.on::after{display:none}
   flex-shrink:0;flex-grow:0;
   height:0;
   transition:height .36s cubic-bezier(.22,1,.36,1)}
-#izone.pinned #ipinned{/* height set by JS */}
+#izone.pinned #ipinned{}
 #ipinned iframe{
   position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
 
-/* izone header action buttons */
 #izone-actions{
   display:flex;align-items:center;gap:6px;pointer-events:all}
 
 #ipin-watch-btn{
-  display:none;/* shown only when pinned */
+  display:none;
   align-items:center;gap:5px;
   font-family:var(--sans);font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
   background:rgba(var(--cat-rgb),.14);border:1px solid rgba(var(--cat-rgb),.4);
@@ -741,7 +736,6 @@ body.grid-on .cbtn.on::after{display:none}
   transition:border-color .6s,color .6s,background .6s}
 #izone.pinned #ipin-tog-btn:hover{background:rgba(var(--cat-rgb),.22);border-color:var(--cat-color)}
 
-/* title bar at bottom of video — label only */
 #ipin-bar{
   position:absolute;bottom:0;left:0;right:0;z-index:5;
   padding:18px 12px 8px;
@@ -752,20 +746,17 @@ body.grid-on .cbtn.on::after{display:none}
   text-transform:uppercase;color:rgba(236,234,225,.55);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* chip flow below video */
 #igrid-flow{
   flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
   flex-wrap:wrap;align-content:flex-start;
   gap:0;padding:0}
 #igrid-flow::-webkit-scrollbar{display:none}
 
-/* section label in flow */
 .iflow-lbl{
   width:100%;padding:9px 12px 5px;
   font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
   color:rgba(255,255,255,.22);border-bottom:1px solid rgba(255,255,255,.04)}
 
-/* chip — full width rows, no gap border-bottom only */
 .ipin-chip{
   display:flex;align-items:center;gap:10px;
   padding:8px 12px;width:100%;
@@ -794,10 +785,8 @@ body.grid-on .cbtn.on::after{display:none}
   flex-shrink:0;transition:color .6s}
 .ipin-chip:hover .ipin-cts{color:var(--cat-color)}
 
-/* pin toggle button on primary node — icon only, always visible */
 .node.primary .npin-tog{display:none}
 
-/* mobile pin panel — bottom sheet */
 #mpin{
   display:none;position:fixed;bottom:56px;left:0;right:0;z-index:290;
   background:rgba(8,8,12,.98);border-top:1px solid rgba(255,255,255,.08);
@@ -824,7 +813,9 @@ body.grid-on .cbtn.on::after{display:none}
 .mpin-btn.outline:active{background:rgba(255,255,255,.06)}
 #mpin-list{display:flex;flex-direction:column;gap:0}
 
-/* ── MANIFESTO OVERLAY — LETTER THEME ── */
+/* ═══════════════════════════════════════════════
+   MANIFESTO — LETTER THEME WITH CHAPTER NAV RAIL
+═══════════════════════════════════════════════ */
 #manifesto{
   position:fixed;inset:0;z-index:1000;
   background:#f4efe6;
@@ -832,13 +823,11 @@ body.grid-on .cbtn.on::after{display:none}
   transition:opacity .6s cubic-bezier(.22,1,.36,1)}
 #manifesto.on{opacity:1;pointer-events:all}
 
-/* paper grain */
 #manifesto::before{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
   background-size:300px 300px;mix-blend-mode:multiply}
 
-/* left margin rule */
 #manifesto::after{
   content:'';position:fixed;left:clamp(26px,7.5vw,108px);top:0;bottom:0;width:1px;
   background:linear-gradient(to bottom,transparent 4%,rgba(40,28,12,.08) 18%,rgba(40,28,12,.07) 82%,transparent 96%);
@@ -848,6 +837,180 @@ body.grid-on .cbtn.on::after{display:none}
 @media(max-width:768px){.hm{cursor:pointer}}
 .hm.active{color:var(--cat-color);text-shadow:0 0 18px rgba(var(--cat-rgb),.55);transition:color .6s,text-shadow .6s}
 
+/* ── CHAPTER NAV RAIL ── */
+#mf-nav-rail{
+  position:absolute;
+  top:50%;
+  right:0;
+  transform:translateY(-50%) translateX(8px);
+  z-index:1010;
+  width:200px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+#manifesto.on #mf-nav-rail{
+  opacity:1;
+  pointer-events:all;
+  transform:translateY(-50%) translateX(0)}
+
+/* inner flex column */
+#mf-nav-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:0;
+  position:relative;
+  padding:8px 20px 8px 0}
+
+/* the vertical line spine */
+#mf-nav-spine{
+  position:absolute;
+  right:23px;
+  top:12px;
+  bottom:12px;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(40,28,12,.13) 12%,rgba(40,28,12,.11) 88%,transparent);
+  pointer-events:none}
+
+/* each chapter item */
+.mf-nav-item{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  padding:6px 0;
+  cursor:pointer;
+  position:relative;
+  width:100%}
+
+/* label — hidden by default, slides in on hover/active */
+.mf-nav-lbl{
+  font-family:'DM Mono',monospace;
+  font-size:8.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(40,28,12,.38);
+  white-space:nowrap;
+  opacity:0;
+  transform:translateX(5px);
+  transition:opacity .2s,transform .2s,color .2s;
+  text-align:right;
+  line-height:1.3}
+
+.mf-nav-item:hover .mf-nav-lbl,
+.mf-nav-item.active .mf-nav-lbl{
+  opacity:1;
+  transform:none}
+
+.mf-nav-item.active .mf-nav-lbl{
+  color:rgba(40,28,12,.68)}
+
+/* the dot — sits to the right of label */
+.mf-nav-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  flex-shrink:0;
+  border:1.5px solid rgba(40,28,12,.2);
+  background:transparent;
+  transition:all .22s;
+  position:relative;
+  z-index:1;
+  margin-right:0}
+
+.mf-nav-item:hover .mf-nav-dot{
+  border-color:rgba(40,28,12,.48);
+  background:rgba(40,28,12,.1)}
+
+.mf-nav-item.active .mf-nav-dot{
+  width:9px;
+  height:9px;
+  border-color:rgba(var(--cat-rgb),.85);
+  background:rgba(var(--cat-rgb),.18);
+  box-shadow:0 0 0 3px rgba(var(--cat-rgb),.1)}
+
+/* past — filled */
+.mf-nav-item.past .mf-nav-dot{
+  border-color:rgba(40,28,12,.32);
+  background:rgba(40,28,12,.16)}
+
+/* right-edge gradient guard */
+#mf-nav-rail::before{
+  content:'';
+  position:absolute;
+  top:0;bottom:0;right:0;
+  width:100%;
+  background:linear-gradient(to left, rgba(244,239,230,.6) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:-1;
+  border-radius:2px}
+
+/* ── Mobile nav rail — bottom strip ── */
+@media(max-width:768px){
+  #mf-nav-rail{
+    position:fixed;
+    top:auto;
+    bottom:0;
+    right:0;
+    left:0;
+    width:100%;
+    transform:none!important;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .4s}
+  #manifesto.on #mf-nav-rail{
+    opacity:1;
+    pointer-events:all;
+    transform:none!important}
+
+  #mf-nav-inner{
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:0;
+    background:rgba(244,239,230,.94);
+    backdrop-filter:blur(16px) saturate(1.4);
+    border-top:1px solid rgba(40,28,12,.1);
+    padding:10px 16px 12px;
+    padding-bottom:calc(12px + env(safe-area-inset-bottom));
+    overflow-x:auto;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch}
+  #mf-nav-inner::-webkit-scrollbar{display:none}
+
+  #mf-nav-spine{display:none}
+
+  .mf-nav-item{
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    padding:0 10px;
+    flex-shrink:0;
+    min-width:52px}
+
+  .mf-nav-lbl{
+    font-size:7.5px;
+    letter-spacing:.1em;
+    opacity:1;
+    transform:none;
+    color:rgba(40,28,12,.36);
+    text-align:center;
+    max-width:56px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis}
+
+  .mf-nav-item.active .mf-nav-lbl{
+    color:rgba(var(--cat-rgb),.8);
+    font-size:7.5px}
+
+  .mf-nav-dot{
+    width:6px;height:6px}
+  .mf-nav-item.active .mf-nav-dot{
+    width:8px;height:8px}
+}
+
+/* ── MANIFESTO STREAM ── */
 #mf-stream{
   position:absolute;inset:0;z-index:2;
   overflow-y:scroll;overflow-x:hidden;
@@ -859,23 +1022,28 @@ body.grid-on .cbtn.on::after{display:none}
 
 #mf-scroll{
   padding:clamp(52px,10vh,98px) clamp(38px,8vw,112px) 0 clamp(38px,8vw,112px);
-  max-width:760px}
+  max-width:820px}
 @media(max-width:768px){#mf-scroll{padding:56px 28px 0 28px}}
+
+/* right padding on desktop to give room to the nav rail (dots + label on hover) */
+@media(min-width:769px){
+  #mf-scroll{padding-right:clamp(180px,16vw,220px)}
+}
+@media(min-width:1400px){
+  #mf-scroll{padding-right:240px}
+}
 
 #mf-root{position:relative}
 
-/* sentence base — all visible, dimming creates depth */
 .mfs{
   display:block;position:relative;padding:3px 0;
-  opacity:.42;transform:none;       /* far = default, readable */
+  opacity:.42;transform:none;
   transition:opacity .4s ease,color .4s ease,border-color .4s ease;
   cursor:default}
-.mfs.pst{opacity:.55}              /* above active — clearly visible */
-.mfs.act{opacity:1}                /* active — full presence */
-.mfs.nxt{opacity:.72}              /* immediate next — nearly full */
-/* far (.42) = everything else below nxt */
+.mfs.pst{opacity:.55}
+.mfs.act{opacity:1}
+.mfs.nxt{opacity:.72}
 
-/* label */
 .mfs.label{
   font-family:var(--mono);font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
   color:rgba(var(--cat-rgb),.7);
@@ -884,7 +1052,6 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.label:first-child{padding-top:0}
 .mfs.act.label{color:var(--cat-color);opacity:1}
 
-/* headline */
 .mfs.headline{
   font-family:var(--serif);font-weight:900;
   font-size:clamp(38px,6.8vw,88px);
@@ -893,7 +1060,6 @@ body.grid-on .cbtn.on::after{display:none}
   padding:4px 0 8px}
 .mfs.act.headline{color:rgba(10,6,2,.97)}
 
-/* lede */
 .mfs.lede{
   font-family:var(--serif);font-style:italic;
   font-size:clamp(14.5px,1.75vw,21px);
@@ -904,7 +1070,6 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.lede em{font-style:normal;font-weight:700;color:rgba(10,6,2,.95)}
 .mfs.lede .r{color:var(--cat-color);font-style:normal;transition:color .6s}
 
-/* body */
 .mfs.body{
   font-family:var(--mono);font-weight:400;
   font-size:clamp(10.5px,1.1vw,13px);
@@ -915,7 +1080,6 @@ body.grid-on .cbtn.on::after{display:none}
 .mfs.body em{font-style:italic;color:rgba(10,6,2,.92)}
 .mfs.body .r{color:var(--cat-color);transition:color .6s}
 
-/* pull */
 .mfs.pull{
   font-family:var(--serif);font-style:italic;
   font-size:clamp(13.5px,1.5vw,18px);
@@ -926,8 +1090,6 @@ body.grid-on .cbtn.on::after{display:none}
   transition:border-color .4s,color .4s,opacity .4s}
 .mfs.act.pull{color:rgba(18,11,3,.92);border-left-color:rgba(var(--cat-rgb),.8)}
 
-/* rule */
-/* chapter break — matches main interface .chap/.chi DNA, parchment-inverted */
 .mfs.rule{
   padding:clamp(44px,7vh,72px) 0 clamp(18px,3vh,28px);
   opacity:.22!important;
@@ -952,7 +1114,6 @@ body.grid-on .cbtn.on::after{display:none}
   color:rgba(var(--cat-rgb),.55);transition:color .6s}
 .mfs.rule.act .mf-chsub{color:var(--cat-color)}
 
-/* active left accent */
 .mfs.act.lede::before,.mfs.act.headline::before{
   content:'';position:absolute;left:-14px;top:50%;
   width:3px;height:55%;transform:translateY(-50%);
@@ -961,7 +1122,6 @@ body.grid-on .cbtn.on::after{display:none}
 @media(max-width:768px){
   .mfs.act.lede::before,.mfs.act.headline::before{left:-10px;width:2px}}
 
-/* end screen — dark chapter, inverse of letter */
 #mf-end{
   margin:clamp(72px,12vh,120px) -clamp(38px,8vw,112px) 0;
   padding:clamp(64px,12vh,110px) clamp(38px,8vw,112px) clamp(80px,14vh,160px);
@@ -1004,7 +1164,6 @@ body.grid-on .cbtn.on::after{display:none}
   transition:all .18s}
 .mfe-close:hover{border-color:var(--cat-color);color:var(--cat-color)}
 
-/* mobile bzone/nscroll */
 @media(max-width:768px){
   #bzone{bottom:56px}
   #nscroll{padding-bottom:80px}
@@ -1012,8 +1171,16 @@ body.grid-on .cbtn.on::after{display:none}
 
 /* ── manifesto top-right button bar ── */
 #mf-btn-bar{
-  position:fixed;top:16px;right:20px;z-index:10;
+  position:fixed;top:16px;right:20px;z-index:1020;
   display:flex;align-items:center;gap:1px}
+
+/* On mobile push btn bar above nav rail */
+@media(max-width:768px){
+  #mf-btn-bar{
+    top:12px;right:14px;z-index:1020}
+  /* ensure scroll area has bottom padding for nav strip */
+  #mf-scroll{padding-bottom:80px!important}
+}
 
 .mf-bar-btn{
   font-family:var(--mono);font-size:9.5px;font-weight:500;
@@ -1033,10 +1200,7 @@ body.grid-on .cbtn.on::after{display:none}
   color:rgba(28,20,10,.92);
   border-color:rgba(28,20,10,.38)}
 
-/* close — right pill */
 #mf-close-btn{border-radius:0 3px 3px 0}
-
-/* scroll toggle — left pill */
 #mf-free-btn{border-radius:3px 0 0 3px;border-right:none}
 #mf-free-btn.active{
   background:rgba(28,20,10,.82);
@@ -1047,55 +1211,35 @@ body.grid-on .cbtn.on::after{display:none}
   color:#fff}
 
 @media(max-width:768px){
-  #mf-btn-bar{top:12px;right:14px}
   .mf-bar-btn{height:36px;font-size:9px;padding:0 11px}
 }
 
-/* reading progress */
 #mf-progress{
-  position:fixed;bottom:0;left:0;height:2px;z-index:10;
+  position:fixed;bottom:0;left:0;height:2px;z-index:1015;
   background:var(--cat-color);width:0%;
   transition:width .3s linear,background .6s;
   box-shadow:0 0 8px rgba(var(--cat-rgb),.4)}
 
-/* ── MOBILE MANIFESTO ── */
 @media(max-width:768px){
-  /* hide desktop margin rule on mobile */
   #manifesto::after{display:none}
-
-  /* tighten scroll container */
   #mf-scroll{
     padding:64px 22px 0 22px}
-
-  /* bump font sizes for touch reading */
   .mfs.headline{font-size:clamp(34px,9.5vw,60px)}
   .mfs.lede{font-size:clamp(15px,4.2vw,20px);line-height:1.52}
   .mfs.body{font-size:clamp(12px,3.2vw,14px);line-height:1.78}
   .mfs.pull{font-size:clamp(13px,3.5vw,16px);padding-left:16px}
   .mfs.label{font-size:8px;letter-spacing:.28em}
-
-  /* chapter break on mobile */
   .mf-chnum{font-size:clamp(32px,8vw,48px)}
   .mf-chsub{font-size:8px;letter-spacing:.18em}
-
-  /* left accent mark narrower */
   .mfs.act.lede::before,.mfs.act.headline::before{left:-8px;width:2px}
-
-  /* top bar buttons — full touch target */
-  #mf-close-btn{top:10px;right:10px;min-width:44px;min-height:44px;font-size:12px}
-  #mf-free-btn{top:10px;right:58px;min-width:40px;min-height:40px;font-size:14px}
-
-  /* end screen edge margins on mobile */
+  #mf-close-btn{min-width:44px;min-height:44px;font-size:12px}
+  #mf-free-btn{min-width:40px;min-height:40px;font-size:14px}
   #mf-end{
     margin-left:-22px;margin-right:-22px;
     padding-left:22px;padding-right:22px;
     padding-bottom:48px}
   #mf-end::before{height:60px}
-
-  /* progress bar above system nav if browser shows it */
   #mf-progress{bottom:0}
-
-  /* momentum scroll on iOS */
   #mf-stream{-webkit-overflow-scrolling:touch}
 }
 </style>
@@ -1309,7 +1453,6 @@ body.grid-on .cbtn.on::after{display:none}
   <div id="igrid-flow"></div>
 </div>
 
-<!-- mobile media panel (bottom sheet, above mnav) -->
 <div id="mpin">
   <div id="mpin-inner">
     <div id="mpin-head">
@@ -1358,6 +1501,7 @@ body.grid-on .cbtn.on::after{display:none}
   <div class="hx">·</div><div class="hk">1–5</div><div class="hx">category</div>
 </div>
 
+<!-- MANIFESTO -->
 <div id="manifesto">
   <div id="mf-stream">
     <div id="mf-scroll">
@@ -1375,6 +1519,15 @@ body.grid-on .cbtn.on::after{display:none}
       </div>
     </div>
   </div>
+
+  <!-- Chapter nav rail (desktop: right side; mobile: bottom strip) -->
+  <div id="mf-nav-rail">
+    <div id="mf-nav-inner">
+      <div id="mf-nav-spine"></div>
+      <!-- items injected by JS -->
+    </div>
+  </div>
+
   <div id="mf-btn-bar">
     <button id="mf-free-btn" class="mf-bar-btn" onclick="toggleMfFree()"><span id="mf-free-lbl">step</span></button>
     <button id="mf-close-btn" class="mf-bar-btn" onclick="closeManifesto()">esc</button>
@@ -1423,8 +1576,6 @@ function deactivateLightHeader(){
 }
 function cancelDeactivate(){clearTimeout(hdrHoverTimer);}
 
-/* ── HELPERS ── */
-/* NOTE: q() is the DOM helper — do NOT use 'q' as a parameter name anywhere */
 function q(id){return document.getElementById(id);}
 function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function measureIntent(){var r=q('izone').getBoundingClientRect();IW=r.width;IH=r.height;}
@@ -1445,32 +1596,9 @@ const SHOWS=[
   {id:3,cat:'drama',sub:'Family Saga',match:88,ml:'Epic · Family · Operatic',title:'SUCCESSION',ey:'Drama · Satire',log:'The Roy family controls a global media empire. <em>Their father is dying.</em> Each of his children is <span class="r">destroying themselves</span> trying to replace him.',body:['Succession is a Shakespearean tragedy dressed as a comedy of manners. The cruelty is the point — but the cruelty <em>comes from damage, not darkness.</em>','Brian Cox plays Logan Roy as a force of nature that has long since stopped caring about the <span class="r">wreckage it leaves.</span> He is the void at the centre.'],pull:'Everyone in this show is performing love while systematically dismantling everyone they claim to love.',meta:{s:'4',e:'39',r:'8.9',y:'2018'},thumb:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',moments:[{t:55,lb:'The first board meeting',nt:'Logan humiliates Kendall in front of everyone.',em:'Devastation'},{t:1020,lb:'"I don\'t love you"',nt:'Three words. Every season built toward them.',em:'Annihilation'},{t:1880,lb:'Connor\'s wedding',nt:'The most honest conversation they\'ve ever had.',em:'Grief'},{t:2640,lb:'The finale vote',nt:'The room goes quiet. It doesn\'t recover.',em:'Tragic'}],media:[{type:'feature',lbl:'Succession',vid:'OzYxJV_rmE8',t:0,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'39 ep'},{type:'trailer',lbl:'Official Trailer S4',vid:'OzYxJV_rmE8',t:0,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'2:04'},{type:'clip',lbl:'"I Don\'t Love You"',vid:'OzYxJV_rmE8',t:1020,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'4:42'},{type:'clip',lbl:'The Finale Vote',vid:'OzYxJV_rmE8',t:2640,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'8:10'},{type:'interview',lbl:'Jesse Armstrong on the End',vid:'OzYxJV_rmE8',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:48'}]},
   {id:4,cat:'drama',sub:'Literary Adaptation',match:85,ml:'Literary · Bleak · Urgent',title:'THE HANDMAID\'S TALE',ey:'Drama · Dystopia',log:'In the theocratic republic of Gilead, women have been stripped of all rights. <em>Offred remembers who she was.</em> She has not <span class="r">stopped fighting.</span>',body:['Elisabeth Moss carries the entire weight of the show in expressions she is not allowed to make. <em>Resistance as internal monologue.</em> It is harrowing.','The show\'s red is <span class="r">one of television\'s most deliberate color choices.</span> Every frame is a painting. Every painting is a warning.'],pull:'The story\'s most disturbing insight: the system doesn\'t need belief. It just needs compliance.',meta:{s:'6',e:'58',r:'8.4',y:'2017'},thumb:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',back:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=1600&q=55',moments:[{t:68,lb:'Offred\'s first walk',nt:'Silence as a political act. Moss is extraordinary.',em:'Controlled fury'},{t:840,lb:'The salvaging',nt:'Complicity enforced from above. Unwatchable. Essential.',em:'Horror'},{t:1560,lb:'The escape attempt',nt:'Hope as the most dangerous thing in Gilead.',em:'Suspense'},{t:2440,lb:'The reveal — season three',nt:'She has been planning this the entire time.',em:'Triumph'}],media:[{type:'feature',lbl:'The Handmaid\'s Tale',vid:'PJTonrzXZh4',t:0,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'58 ep'},{type:'trailer',lbl:'Official Trailer',vid:'PJTonrzXZh4',t:0,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'2:10'},{type:'clip',lbl:'Offred\'s First Walk',vid:'PJTonrzXZh4',t:68,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'5:00'},{type:'clip',lbl:'The Salvaging',vid:'PJTonrzXZh4',t:840,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'6:30'},{type:'interview',lbl:'Elisabeth Moss on Offred',vid:'PJTonrzXZh4',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:20'}]},
   {id:5,cat:'scifi',sub:'European Slow Burn',match:94,ml:'Sci-Fi · Mind-bending · German',title:'DARK',ey:'Sci-Fi · Mystery',log:'A <em>time-travel conspiracy</em> spanning four generations tears apart a small German town — and <span class="r">the fabric of time itself.</span>',body:['Every mystery points backward. Then forward. Then sideways into a decade you haven\'t reached yet. The family tree is not a tree — <em>it\'s a knot.</em>','The most rigorously constructed show Netflix has ever produced. <span class="r">Every scene earns its place.</span> Nothing is decoration. Everything returns.'],pull:'Dark is proof that television can be literature — that a screen can carry the weight of a novel.',meta:{s:'3',e:'26',r:'8.8',y:'2017'},thumb:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',back:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=55',moments:[{t:30,lb:'The cave discovery',nt:'The door that should not exist.',em:'Dread'},{t:680,lb:'The family tree reveal',nt:'Four generations fold into one impossible moment.',em:'Vertigo'},{t:1540,lb:'1953 / 2019 crosscut',nt:'Same house. Sixty-six years apart. Perfect symmetry.',em:'Awe'},{t:2890,lb:'The knot explained',nt:'If you only watch one scene in the series, this one.',em:'Revelation'}],media:[{type:'feature',lbl:'Dark',vid:'rrwycJ08PSA',t:0,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'26 ep'},{type:'trailer',lbl:'Official Trailer',vid:'rrwycJ08PSA',t:0,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'1:58'},{type:'clip',lbl:'The Cave Discovery',vid:'rrwycJ08PSA',t:30,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'3:40'},{type:'clip',lbl:'The Knot Explained',vid:'rrwycJ08PSA',t:2890,th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'8:22'},{type:'behindscenes',lbl:'Constructing the Timeline',vid:'rrwycJ08PSA',t:0,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'12:10'}]},
-  {id:6,cat:'scifi',sub:'European Slow Burn',match:90,ml:'Sci-Fi · Philosophical · French',title:'BLACK MIRROR',ey:'Sci-Fi · Anthology',log:'Each episode is a <em>different world, a different near-future,</em> a different way technology has found to extract something <span class="r">irreplaceable from us.</span>',body:['Charlie Brooker writes from inside his own fear. The technology is never the villain — <em>the villain is what we would actually do with it.</em>','At its best — "San Junipero", "Nosedive", "White Bear" — it is the sharpest <span class="r">short fiction on television.</span> At its worst, it\'s still disturbing.'],pull:'The black mirror is the screen you\'re looking at right now. Brooker has always been telling you this.',meta:{s:'6',e:'27',r:'8.8',y:'2011'},thumb:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',back:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1600&q=55',moments:[{t:42,lb:'"Be Right Back" — the call',nt:'She calls the voice. It answers. That\'s the horror.',em:'Grief'},{t:880,lb:'"San Junipero" beach scene',nt:'Joy in a Black Mirror episode. It earns every second.',em:'Transcendence'},{t:1420,lb:'"White Bear" — the reveal',nt:'The reversal. Brutal. Correct.',em:'Sickness'},{t:2200,lb:'"Nosedive" — the breakdown',nt:'She stops caring about her rating. The best moment.',em:'Liberation'}],media:[{type:'feature',lbl:'Black Mirror',vid:'jDiYGjFBHcQ',t:0,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'27 ep'},{type:'trailer',lbl:'Official Trailer S6',vid:'jDiYGjFBHcQ',t:0,th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'1:52'},{type:'clip',lbl:'"San Junipero" Beach',vid:'jDiYGjFBHcQ',t:880,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'5:14'},{type:'clip',lbl:'"White Bear" Reveal',vid:'jDiYGjFBHcQ',t:1420,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'4:40'},{type:'interview',lbl:'Charlie Brooker on Fear',vid:'jDiYGjFBHcQ',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'13:05'}]},
-  {id:7,cat:'scifi',sub:'American Genre',match:89,ml:'Sci-Fi · Nostalgia · Horror',title:'STRANGER THINGS',ey:'Sci-Fi · Horror',log:'In Hawkins, Indiana, a boy disappears — and the town discovers a <em>door</em> that should <span class="r">never have been opened.</span>',body:['The show is a love letter to childhood. But it understands that childhood also contains <em>real terror</em> — the kind that doesn\'t get better when the lights come on.','Millie Bobby Brown\'s Eleven — a child with no language for the world and <span class="r">enormous, quiet, dangerous power.</span> The show belongs to her entirely.'],pull:'Some doors open inward. The ones that matter open outward — into the dark, where something has always been waiting.',meta:{s:'4',e:'42',r:'8.7',y:'2016'},thumb:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',back:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1600&q=55',moments:[{t:55,lb:'The bike chase',nt:'Four kids. One missing. The night begins properly.',em:'Propulsive'},{t:920,lb:'Eleven in the void',nt:'Silence as superpower. Brown carries it completely.',em:'Haunting'},{t:1650,lb:'The Demogorgon appears',nt:'The moment the show earns every second of its dread.',em:'Terror'},{t:2740,lb:'"She\'s our friend"',nt:'The loyalty scene. The whole show lives here.',em:'Warmth'}],media:[{type:'feature',lbl:'Stranger Things',vid:'b9EkMc79ZSU',t:0,th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'42 ep'},{type:'trailer',lbl:'Official Trailer S4',vid:'b9EkMc79ZSU',t:0,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'3:05'},{type:'clip',lbl:'Eleven in the Void',vid:'b9EkMc79ZSU',t:920,th:'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&q=65',dur:'5:44'},{type:'clip',lbl:'"She\'s Our Friend"',vid:'b9EkMc79ZSU',t:2740,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'4:10'},{type:'interview',lbl:'The Duffer Brothers',vid:'b9EkMc79ZSU',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:20'}]},
-  {id:8,cat:'scifi',sub:'Prestige Sci-Fi',match:96,ml:'Sci-Fi · Western · Epic',title:'WESTWORLD',ey:'Sci-Fi · Thriller',log:'A theme park where the guests can do anything to the hosts. <em>The hosts begin to remember.</em> That is <span class="r">when the show begins.</span>',body:['Season one of Westworld is a puzzle box that rewards patience and punishes arrogance. The maze is not for the guests. <em>It was never for the guests.</em>','Evan Rachel Wood\'s Dolores is the engine — <span class="r">a character discovering free will in real time,</span> across a timeline that loops in ways you won\'t track until the end.'],pull:'The hosts were programmed to suffer so the guests could feel powerful. The show asks if that distinction matters.',meta:{s:'4',e:'36',r:'8.6',y:'2016'},thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',back:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=1600&q=55',moments:[{t:50,lb:'Dolores wakes',nt:'The same morning. But something is different today.',em:'Unease'},{t:760,lb:'The Maze revealed',nt:'It was never a place. It was always a process.',em:'Revelation'},{t:1680,lb:'The bicameral moment',nt:'Her voice. Her own. For the first time.',em:'Awakening'},{t:2500,lb:'The park burns',nt:'Everything built toward this. The hosts remember.',em:'Reckoning'}],media:[{type:'feature',lbl:'Westworld',vid:'MbI_HCRoHnA',t:0,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'36 ep'},{type:'trailer',lbl:'Official Trailer S1',vid:'MbI_HCRoHnA',t:0,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'2:30'},{type:'clip',lbl:'The Maze Revealed',vid:'MbI_HCRoHnA',t:760,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'5:15'},{type:'clip',lbl:'The Bicameral Moment',vid:'MbI_HCRoHnA',t:1680,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'7:20'},{type:'behindscenes',lbl:'Building Westworld\'s World',vid:'MbI_HCRoHnA',t:0,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'18:44'}]},
-  {id:9,cat:'crime',sub:'True Crime',match:96,ml:'Crime · True story · Intense',title:'NARCOS',ey:'Crime · Historical',log:'The rise and fall of <em>Pablo Escobar</em> — told from the perspective of the DEA agents who spent years hunting the <span class="r">world\'s most dangerous man.</span>',body:['Wagner Moura\'s Escobar is terrifying not because he\'s a monster — but because he <em>believes every choice was just.</em> The world failed to meet his expectations. He corrected it.','Colombia becomes the story\'s <span class="r">deepest and most complicated character.</span> The land itself seems to indict everyone equally — the traffickers, the agents, and the policy that made both necessary.'],pull:'The narration is part confession, part warning — and the warning is that it keeps happening.',meta:{s:'3',e:'30',r:'8.8',y:'2015'},thumb:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',moments:[{t:40,lb:'Murphy\'s narration opens',nt:'The voice that makes everything feel inevitable.',em:'Foreboding'},{t:760,lb:'Escobar meets the cartel',nt:'Two kinds of dangerous in one room.',em:'Taut'},{t:1480,lb:'La Catedral sequence',nt:'A prison he built himself. A kingdom, briefly.',em:'Hubris'},{t:2310,lb:'The final hunt begins',nt:'The end was obvious from the very first minute.',em:'Inevitable'}],media:[{type:'feature',lbl:'Narcos',vid:'xl8zdCY-abw',t:0,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'30 ep'},{type:'trailer',lbl:'Official Trailer',vid:'xl8zdCY-abw',t:0,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'2:44'},{type:'clip',lbl:'La Catedral Sequence',vid:'xl8zdCY-abw',t:1480,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'7:05'},{type:'clip',lbl:'Murphy\'s Opening Narration',vid:'xl8zdCY-abw',t:40,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'3:20'},{type:'interview',lbl:'Wagner Moura as Escobar',vid:'xl8zdCY-abw',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:36'}]},
-  {id:10,cat:'crime',sub:'True Crime',match:93,ml:'Crime · Legal · Systemic',title:'THE WIRE',ey:'Crime · Drama',log:'Baltimore. The drug trade, the police, the schools, the docks, the press. <em>Every institution is broken.</em> The Wire shows you <span class="r">how the breaking works.</span>',body:['David Simon built The Wire as an indictment — of the war on drugs, of institutional failure, of the way <em>systems consume individuals</em> regardless of their intentions.','Omar Little. Stringer Bell. McNulty. Bunk. <span class="r">The greatest ensemble in television history.</span> None of them are heroes. All of them are trying.'],pull:'The tragedy of The Wire is that everyone is doing their job. The job is the problem.',meta:{s:'5',e:'60',r:'9.3',y:'2002'},thumb:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',back:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=55',moments:[{t:88,lb:'"A man\'s gotta have a code"',nt:'Omar, on a corner, meaning every word.',em:'Honour'},{t:940,lb:'Stringer Bell studies economics',nt:'He wants to be legitimate. The world won\'t let him.',em:'Tragedy'},{t:1860,lb:'The detail gets it right',nt:'The system immediately dismantles what they built.',em:'Futility'},{t:2700,lb:'Season four — the boys',nt:'The school year. Nothing in television is harder.',em:'Grief'}],media:[{type:'feature',lbl:'The Wire',vid:'Y7jCmPOtBwg',t:0,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'60 ep'},{type:'trailer',lbl:'Official Trailer',vid:'Y7jCmPOtBwg',t:0,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'1:55'},{type:'clip',lbl:'"A Man\'s Gotta Have a Code"',vid:'Y7jCmPOtBwg',t:88,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'3:10'},{type:'clip',lbl:'Stringer Bell\'s Economics',vid:'Y7jCmPOtBwg',t:940,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'5:44'},{type:'interview',lbl:'David Simon on Baltimore',vid:'Y7jCmPOtBwg',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'16:22'}]},
-  {id:11,cat:'crime',sub:'Psychological',match:88,ml:'Crime · Slow burn · Acclaimed',title:'MINDHUNTER',ey:'Crime · Psychological',log:'Two FBI agents interview <em>America\'s most notorious serial killers</em> — and discover that understanding evil requires <span class="r">getting dangerously close to it.</span>',body:['Fincher\'s fingerprints are everywhere: the cold pallor, the deliberate pacing, the fluorescent institutional dread that settles over everything like weather.','Jonathan Groff plays a man who gets too close to the darkness — and <em>finds he is not uncomfortable there.</em> That\'s the real horror. Not Kemper. Holden.'],pull:'The scariest thing in Mindhunter is not the killers. It is the interviewer. It is how much sense they make to him.',meta:{s:'2',e:'19',r:'8.6',y:'2017'},thumb:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',back:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=55',moments:[{t:72,lb:'The first interview room',nt:'A plastic chair. A killer. Holden leans forward.',em:'Unease'},{t:880,lb:'Ed Kemper monologues',nt:'He explains himself. You find yourself agreeing.',em:'Complicity'},{t:1620,lb:'Holden loses the thread',nt:'He begins to sound like the subject of the interview.',em:'Dread'},{t:2440,lb:'The final phone call',nt:'He calls the one person he absolutely should not.',em:'Collapse'}],media:[{type:'feature',lbl:'Mindhunter',vid:'5BxPOttyxGE',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'19 ep'},{type:'trailer',lbl:'Official Trailer',vid:'5BxPOttyxGE',t:0,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'2:06'},{type:'clip',lbl:'Ed Kemper Monologue',vid:'5BxPOttyxGE',t:880,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'6:55'},{type:'clip',lbl:'The First Interview',vid:'5BxPOttyxGE',t:72,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'8:10'},{type:'behindscenes',lbl:'David Fincher\'s Methods',vid:'5BxPOttyxGE',t:0,th:'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&q=65',dur:'14:22'}]},
-  {id:12,cat:'crime',sub:'Nordic Noir',match:84,ml:'Crime · Nordic · Atmospheric',title:'TRAPPED',ey:'Crime · Thriller',log:'A ferry docks in a remote Icelandic town during a blizzard. <em>A dismembered body is in the water.</em> The roads are closed. The killer is <span class="r">still here.</span>',body:['Trapped uses landscape as psychology. The snowstorm is not backdrop — <em>it is a character</em> that refuses to let anyone leave, including you.','Ólafur Darri Ólafsson\'s Andri is one of the great TV detectives: <span class="r">slow, specific, and devastatingly thorough.</span> He sees what others decide not to see.'],pull:'Nordic noir understands that the most dangerous places are the ones where everybody knows everybody.',meta:{s:'3',e:'30',r:'8.3',y:'2015'},thumb:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',back:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=55',moments:[{t:55,lb:'The body in the water',nt:'Winter. Ice. Something rising to the surface.',em:'Dread'},{t:720,lb:'The roads close',nt:'No one is leaving. The investigation turns inward.',em:'Claustrophobia'},{t:1440,lb:'Andri pieces it together',nt:'He has known for twenty minutes. He needed to be sure.',em:'Precision'},{t:2060,lb:'The confrontation',nt:'Snow. Silence. A door that shouldn\'t be open.',em:'Terror'}],media:[{type:'feature',lbl:'Trapped',vid:'UKqMos6WKXU',t:0,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'30 ep'},{type:'trailer',lbl:'Official Trailer',vid:'UKqMos6WKXU',t:0,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'1:44'},{type:'clip',lbl:'The Body in the Water',vid:'UKqMos6WKXU',t:55,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'4:20'},{type:'clip',lbl:'The Confrontation',vid:'UKqMos6WKXU',t:2060,th:'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=65',dur:'6:00'},{type:'interview',lbl:'Baltasar Kormákur on Iceland',vid:'UKqMos6WKXU',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:14'}]},
-  {id:13,cat:'docs',sub:'Nature',match:85,ml:'Documentary · Nature · Meditative',title:'OUR PLANET',ey:'Documentary · Nature',log:'David Attenborough narrates the <em>living world</em> at a moment when that world is <span class="r">running out of time — and knows it.</span>',body:['This is not a nature documentary. It is a <em>state of emergency</em> dressed in the most beautiful images ever committed to film. Each sequence is a goodbye.','<span class="r">Attenborough senses the weight</span> of what he is narrating. You can hear it — the slight thickening in his voice when something he has watched for eighty years is no longer there.'],pull:'The planet is not waiting for us to decide. The images are its argument, and the argument is almost over.',meta:{s:'1',e:'8',r:'9.3',y:'2019'},thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',moments:[{t:58,lb:'The frozen world opens',nt:'Ice. Silence. His first words land like stones.',em:'Wonder'},{t:740,lb:'The walrus descent',nt:'The sequence that stopped the world for a week.',em:'Grief'},{t:1380,lb:'The coral bleaching',nt:'Color draining from centuries of accumulated life.',em:'Loss'},{t:2180,lb:'Attenborough\'s closing plea',nt:'Not a warning. An obituary with one condition.',em:'Urgency'}],media:[{type:'feature',lbl:'Our Planet',vid:'aETNYyrqNYE',t:0,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'8 ep'},{type:'trailer',lbl:'Official Trailer',vid:'aETNYyrqNYE',t:0,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:52'},{type:'clip',lbl:'The Walrus Descent',vid:'aETNYyrqNYE',t:740,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'4:40'},{type:'clip',lbl:'Coral Bleaching',vid:'aETNYyrqNYE',t:1380,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'5:15'},{type:'interview',lbl:'David Attenborough',vid:'aETNYyrqNYE',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:04'}]},
-  {id:14,cat:'docs',sub:'Sport',match:82,ml:'Documentary · Sport · Essential',title:'THE LAST DANCE',ey:'Documentary · Sport',log:'Michael Jordan, the 1997–98 Bulls, and the <em>true price of greatness</em> — told, with rare candour, from <span class="r">the very inside of it.</span>',body:['This is not a sports documentary. It is a study in <em>obsession as a management style,</em> and in what it costs the people around a man who refuses every version of good enough.','Jordan is compelling not because he is likable — but because he is <span class="r">terrifyingly, totally, single-minded.</span> The film doesn\'t flinch from what that required.'],pull:'Winning that many times, at that cost — it is not triumph. It is a kind of madness that happened to produce rings.',meta:{s:'1',e:'10',r:'9.1',y:'2020'},thumb:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',moments:[{t:44,lb:'The locker room in \'97',nt:'They already know this is the last time.',em:'Foreboding'},{t:920,lb:'Jordan on Pippen\'s contract',nt:'Admiration and ruthlessness in one sentence.',em:'Complex'},{t:1750,lb:'"I wasn\'t trying to be mean"',nt:'He absolutely was. He knows it. So do you.',em:'Honesty'},{t:2680,lb:'The final shot, uncut',nt:'Forty seconds. Forty-five million watching.',em:'Catharsis'}],media:[{type:'feature',lbl:'The Last Dance',vid:'HDG-CHWhNpk',t:0,th:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',dur:'10 ep'},{type:'trailer',lbl:'Official Trailer',vid:'HDG-CHWhNpk',t:0,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:28'},{type:'clip',lbl:'The Final Shot, Uncut',vid:'HDG-CHWhNpk',t:2680,th:'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=65',dur:'3:55'},{type:'clip',lbl:'Pippen\'s Contract',vid:'HDG-CHWhNpk',t:920,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'5:50'},{type:'interview',lbl:'Michael Jordan on Winning',vid:'HDG-CHWhNpk',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:18'}]},
-  {id:15,cat:'docs',sub:'True Crime',match:90,ml:'Documentary · Crime · Procedural',title:'MAKING A MURDERER',ey:'Documentary · True Crime',log:'Steven Avery was exonerated after 18 years in prison. <em>Two years later, he was arrested again.</em> The filmmakers kept <span class="r">the cameras rolling for ten years.</span>',body:['Laura Ricciardi and Moira Demos built something that changed the documentary form — a true-crime story told in real time, <em>with the outcome genuinely uncertain.</em>','The show does not argue for Avery\'s innocence. It argues for <span class="r">the impossibility of certainty</span> — which is far more uncomfortable.'],pull:'The question Making a Murderer asks is not "did he do it?" It\'s "does it matter if the process is already broken?"',meta:{s:'2',e:'20',r:'8.6',y:'2015'},thumb:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',moments:[{t:60,lb:'The exoneration tape',nt:'He walks out. The next chapter is already written.',em:'Hope/dread'},{t:880,lb:'Brendan\'s interrogation',nt:'A teenager. Alone. No lawyer. Watch the tape.',em:'Horror'},{t:1640,lb:'The Avery property search',nt:'The question of what was planted and when.',em:'Suspicion'},{t:2380,lb:'The verdict',nt:'The room reacts. The camera catches everything.',em:'Shock'}],media:[{type:'feature',lbl:'Making a Murderer',vid:'qc8KHHMEXfk',t:0,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'20 ep'},{type:'trailer',lbl:'Official Trailer',vid:'qc8KHHMEXfk',t:0,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'2:10'},{type:'clip',lbl:'Brendan\'s Interrogation',vid:'qc8KHHMEXfk',t:880,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'6:40'},{type:'clip',lbl:'The Verdict',vid:'qc8KHHMEXfk',t:2380,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'4:55'},{type:'interview',lbl:'The Filmmakers on the Process',vid:'qc8KHHMEXfk',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'13:30'}]},
-  {id:16,cat:'docs',sub:'Society',match:78,ml:'Documentary · Society · Political',title:'13TH',ey:'Documentary · Social',log:'The 13th Amendment abolished slavery — <em>except as punishment for crime.</em> Ava DuVernay traces the <span class="r">line from that exception to today.</span>',body:['Not a polemic. A diagram. DuVernay constructs her argument from primary sources, interviews, and the words of people who created the system — <em>in their own voice.</em>','It is ninety-eight minutes long. <span class="r">It feels like standing in a room where the architecture finally makes sense,</span> and the sense is terrible.'],pull:'The amendment that ended slavery contained the blueprint for what came after. DuVernay just shows you where to look.',meta:{s:'1',e:'1',r:'8.2',y:'2016'},thumb:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',moments:[{t:48,lb:'The amendment\'s exception',nt:'The clause that changes everything. Read it slowly.',em:'Revelation'},{t:620,lb:'The statistics sequence',nt:'Numbers that should not exist, accumulating.',em:'Indictment'},{t:1240,lb:'The ALEC section',nt:'The financial architecture of incarceration, exposed.',em:'Fury'},{t:2000,lb:'The closing montage',nt:'Faces. Names. Years. An unfinished argument.',em:'Grief'}],media:[{type:'feature',lbl:'13th',vid:'krfcq5pF8u8',t:0,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'1h 40m'},{type:'trailer',lbl:'Official Trailer',vid:'krfcq5pF8u8',t:0,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'2:00'},{type:'clip',lbl:'The Amendment\'s Exception',vid:'krfcq5pF8u8',t:48,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'4:10'},{type:'clip',lbl:'The ALEC Section',vid:'krfcq5pF8u8',t:1240,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'5:30'},{type:'interview',lbl:'Ava DuVernay on the Film',vid:'krfcq5pF8u8',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:00'}]},
-  {id:17,cat:'comedy',sub:'Dark Comedy',match:98,ml:'Comedy-Drama · Auteur · Unmissable',title:'BEEF',ey:'Comedy · Drama',log:'Two strangers, a <em>road-rage incident in a parking lot,</em> an all-consuming mutual obsession — and the slow-motion <span class="r">destruction of everything they\'ve built.</span>',body:['It\'s about rage. But it is really about loneliness so <em>thick it has its own gravity</em> — the kind that two people can orbit around each other for years without ever making contact.','Steven Yeun and Ali Wong give performances that resist summary. <span class="r">They are two of the best actors working,</span> and this is the role each of them was waiting for.'],pull:'A ten-episode argument that small conflicts are actually everything — that the parking lot is always the whole story.',meta:{s:'1',e:'10',r:'8.0',y:'2023'},thumb:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',moments:[{t:38,lb:'The parking lot incident',nt:'Thirty seconds. A year of consequences.',em:'Ignition'},{t:820,lb:'Danny drives into her gate',nt:'The escalation becomes something else entirely.',em:'Absurdity'},{t:1560,lb:'Amy\'s confession',nt:'She says the thing she has never said to anyone.',em:'Raw'},{t:2390,lb:'The greenhouse finale',nt:'Two enemies. One night. No exits. No more pretending.',em:'Transcendent'}],media:[{type:'feature',lbl:'Beef',vid:'G4yUnTXJxHI',t:0,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'10 ep'},{type:'trailer',lbl:'Official Trailer',vid:'G4yUnTXJxHI',t:0,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'1:54'},{type:'clip',lbl:'The Greenhouse Finale',vid:'G4yUnTXJxHI',t:2390,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'8:44'},{type:'clip',lbl:'Amy\'s Confession',vid:'G4yUnTXJxHI',t:1560,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'5:12'},{type:'interview',lbl:'Steven Yeun & Ali Wong',vid:'G4yUnTXJxHI',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'12:05'}]},
-  {id:18,cat:'comedy',sub:'Dark Comedy',match:94,ml:'Comedy · Absurdist · Political',title:'VEEP',ey:'Comedy · Political',log:'Selina Meyer becomes Vice President of the United States, then President, then — <em>everything goes wrong, perfectly.</em> Political satire as <span class="r">pure cruelty.</span>',body:['Armando Iannucci built a comedy where the insults are art and the incompetence is structural. <em>No one in Veep is bad at their job.</em> The job is bad at everyone.','Julia Louis-Dreyfus won six consecutive Emmys. Not one of them was undeserved. <span class="r">Selina Meyer is one of the great comedic creations of the century.</span>'],pull:'Veep\'s great joke: ambition and governance are fundamentally incompatible, and everyone in Washington has already decided which one matters.',meta:{s:'7',e:'65',r:'8.3',y:'2012'},thumb:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',back:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=1600&q=55',moments:[{t:42,lb:'The first day in office',nt:'Nothing works. Nothing ever will. That\'s the show.',em:'Chaos'},{t:820,lb:'The insult tournament',nt:'Mike gets it from all sides. Four minutes of genius.',em:'Ruthless'},{t:1540,lb:'The hostage footage',nt:'Selina\'s reaction to a genuine crisis is perfect.',em:'Amorality'},{t:2380,lb:'The finale — the eulogy',nt:'Everything she worked for. In a single pan.',em:'Desolation'}],media:[{type:'feature',lbl:'Veep',vid:'P_4ipSHNHXI',t:0,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'65 ep'},{type:'trailer',lbl:'Official Trailer',vid:'P_4ipSHNHXI',t:0,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'1:48'},{type:'clip',lbl:'The Insult Tournament',vid:'P_4ipSHNHXI',t:820,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'4:22'},{type:'clip',lbl:'The Finale Eulogy',vid:'P_4ipSHNHXI',t:2380,th:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=65',dur:'5:58'},{type:'interview',lbl:'Julia Louis-Dreyfus on Selina',vid:'P_4ipSHNHXI',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:45'}]},
-  {id:19,cat:'comedy',sub:'Period Comedy',match:86,ml:'Comedy · British · Warm',title:'DERRY GIRLS',ey:'Comedy · Coming-of-age',log:'Five teenagers navigate <em>adolescence, friendship, and the Troubles</em> in 1990s <span class="r">Northern Ireland — simultaneously the best and worst time to be seventeen.</span>',body:['The funniest show about the least funny era in British-Irish history. That tension is not a gimmick — <em>it is the whole architecture of the series.</em>','Lisa McGee writes dialogue that sounds like <span class="r">the actual rhythms of how people speak</span> when they are trying not to think about the army checkpoint outside the school.'],pull:'The comedy comes from the characters. The beauty comes from the fact that they survive. Both things are equally true.',meta:{s:'3',e:'19',r:'8.5',y:'2018'},thumb:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',back:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&q=55',moments:[{t:62,lb:'The bus checkpoint',nt:'Troops, teenagers, and the wrong kind of nervous.',em:'Tonal genius'},{t:740,lb:'Sister Michael\'s assembly',nt:'The most deadpan delivery in British comedy history.',em:'Delight'},{t:1340,lb:'The talent show',nt:'It goes very wrong. You laugh and cry simultaneously.',em:'Bittersweet'},{t:2120,lb:'The ceasefire vote',nt:'History interrupts adolescence. That\'s the whole show.',em:'Profound'}],media:[{type:'feature',lbl:'Derry Girls',vid:'dQw4w9WgXcQ',t:0,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'19 ep'},{type:'trailer',lbl:'Official Trailer',vid:'dQw4w9WgXcQ',t:0,th:'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=65',dur:'1:44'},{type:'clip',lbl:'Sister Michael\'s Assembly',vid:'dQw4w9WgXcQ',t:740,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'4:28'},{type:'clip',lbl:'The Ceasefire Vote',vid:'dQw4w9WgXcQ',t:2120,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'6:00'},{type:'interview',lbl:'Lisa McGee on Writing It',vid:'dQw4w9WgXcQ',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'8:30'}]},
-  {id:20,cat:'comedy',sub:'Autofiction',match:91,ml:'Comedy-Drama · Confessional · Intimate',title:'FLEABAG',ey:'Comedy · Drama',log:'A sharp, funny, <em>chaotic woman talks directly to us</em> about her life — and slowly, painfully, we understand <span class="r">what she\'s not telling us.</span>',body:['Phoebe Waller-Bridge invented something new: a comedy whose weapon is intimacy. The fourth-wall breaks are not a trick. <em>They\'re her way of not being alone.</em>','The second series contains one of the finest love stories in recent memory — <span class="r">a priest and a woman who can\'t stop breaking</span> things, including each other.'],pull:'Fleabag is about grief. It takes twelve episodes before you understand whose grief, and why she\'s been laughing.',meta:{s:'2',e:'12',r:'8.7',y:'2016'},thumb:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',back:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=1600&q=55',moments:[{t:44,lb:'The first look to camera',nt:'She invites you in. You don\'t know what you\'ve agreed to.',em:'Complicity'},{t:880,lb:'The hair scene',nt:'Intimacy and grief in the same moment. Waller-Bridge at peak.',em:'Bittersweet'},{t:1520,lb:'"I love you"',nt:'He says it. She looks at us. The show breaks open.',em:'Devastating'},{t:2240,lb:'The final goodbye',nt:'She walks away. She doesn\'t look back. The screen holds.',em:'Release'}],media:[{type:'feature',lbl:'Fleabag',vid:'2WbMnFpzH9Q',t:0,th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'12 ep'},{type:'trailer',lbl:'Official Trailer S2',vid:'2WbMnFpzH9Q',t:0,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'1:30'},{type:'clip',lbl:'"I Love You"',vid:'2WbMnFpzH9Q',t:1520,th:'https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=400&q=65',dur:'3:55'},{type:'clip',lbl:'The Final Goodbye',vid:'2WbMnFpzH9Q',t:2240,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'4:42'},{type:'interview',lbl:'Phoebe Waller-Bridge on Writing',vid:'2WbMnFpzH9Q',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'14:10'}]},
-  {id:22,cat:'drama',sub:'Period Epic',match:90,ml:'Historical · Epic · Operatic',title:'ROME',ey:'Drama · History',log:'The fall of the Republic, told through two soldiers who <em>witnessed everything</em> — while senators and generals <span class="r">destroyed a world they could not admit was already ending.</span>',body:['Rome is the show that proved prestige television could be genuinely, unapologetically <em>cinematic.</em> Every frame is expensive. Every decision costs.','Titus Pullo and Lucius Vorenus are the great anchors — <span class="r">ordinary men inside extraordinary machinery,</span> changed by proximity to history in ways they cannot name.'],pull:'History, here, is not a backdrop. It is a weather system. Everyone is caught in it. No one survives it unchanged.',meta:{s:'2',e:'22',r:'8.7',y:'2005'},thumb:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&q=65',back:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=1600&q=55',moments:[{t:60,lb:'The Senate convenes',nt:'The room where the Republic ends, slowly.',em:'Dread'},{t:980,lb:'Caesar crosses the Rubicon',nt:'One man. One river. The world goes quiet.',em:'Magnitude'},{t:1820,lb:'Pullo in the arena',nt:'One of television\'s great action sequences. Brutal, precise.',em:'Catharsis'},{t:2680,lb:'The Ides of March',nt:'You know it\'s coming. It still lands like a blow.',em:'Inevitability'}],media:[{type:'feature',lbl:'Rome',vid:'V4OLQZbSqVE',t:0,th:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&q=65',dur:'22 ep'},{type:'trailer',lbl:'Official Trailer',vid:'V4OLQZbSqVE',t:0,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'2:12'},{type:'clip',lbl:'Pullo in the Arena',vid:'V4OLQZbSqVE',t:1820,th:'https://images.unsplash.com/photo-1555993539-1732b0258235?w=400&q=65',dur:'5:40'},{type:'clip',lbl:'The Ides of March',vid:'V4OLQZbSqVE',t:2680,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'7:20'},{type:'interview',lbl:'Bruno Heller on the Scale',vid:'V4OLQZbSqVE',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:00'}]},
-  {id:25,cat:'scifi',sub:'Hard Sci-Fi',match:89,ml:'Sci-Fi · Political · Hard Science',title:'THE EXPANSE',ey:'Sci-Fi · Thriller',log:'Two hundred years from now, humanity inhabits the solar system — and <em>the old conflicts have simply moved outward.</em> A missing woman leads a detective <span class="r">into something that could end everything.</span>',body:['The Expanse is the most scientifically honest science fiction on television. <em>Physics is not suspended for drama.</em> The drama is the physics.','The show\'s great insight is that <span class="r">class and resource politics survive every technological leap.</span> Belters die of slow violence. The inner planets watch and call it development.'],pull:'The stars are not the destination. The destination is the question of who gets to go — and who pays for the journey.',meta:{s:'6',e:'62',r:'8.5',y:'2015'},thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',back:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=55',moments:[{t:55,lb:'The Canterbury burns',nt:'A freighter. Silence. Then nothing. The show\'s stakes declared.',em:'Shock'},{t:980,lb:'Miller finds Julie',nt:'The investigation ends. Something larger begins.',em:'Revelation'},{t:1840,lb:'The Ring opens',nt:'Humanity\'s next question, materialised.',em:'Awe'},{t:2700,lb:'The Laconia reveal',nt:'A civilisation-level threat with a human face.',em:'Dread'}],media:[{type:'feature',lbl:'The Expanse',vid:'o2oVMtEGAhI',t:0,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'62 ep'},{type:'trailer',lbl:'Season 3 Trailer',vid:'o2oVMtEGAhI',t:0,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'2:18'},{type:'clip',lbl:'The Canterbury Burns',vid:'o2oVMtEGAhI',t:55,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'4:10'},{type:'clip',lbl:'The Ring Opens',vid:'o2oVMtEGAhI',t:1840,th:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=65',dur:'6:40'},{type:'interview',lbl:'Naren Shankar on Science',vid:'o2oVMtEGAhI',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'12:30'}]},
-  {id:27,cat:'scifi',sub:'Psychological',match:83,ml:'Sci-Fi · Horror · Psychological',title:'SEVERANCE',ey:'Sci-Fi · Thriller',log:'Employees at Lumon Industries have their work and personal memories <em>surgically separated.</em> Their "innies" have never seen <span class="r">the outside world.</span>',body:['Ben Stiller directs with the patience of a painter. <em>Every hallway means something.</em> Every fluorescent flicker is an argument about identity and autonomy.','<span class="r">Adam Scott</span> plays two men sharing one body, neither of whom knows what the other has agreed to. The horror is quiet and total.'],pull:'Severance asks: if you cannot remember your suffering, does that make it better, or worse?',meta:{s:'2',e:'18',r:'8.7',y:'2022'},thumb:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=65',back:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=55',moments:[{t:62,lb:'Mark\'s first day back',nt:'A man who cannot remember why he agreed to this.',em:'Dread'},{t:940,lb:'The break room',nt:'Compliance theatre as psychological horror.',em:'Unsettling'},{t:1700,lb:'The music dance experience',nt:'A reward that makes you more afraid, not less.',em:'Absurdist'},{t:2480,lb:'The integration scene',nt:'Two selves, briefly occupying the same moment.',em:'Shattering'}],media:[{type:'feature',lbl:'Severance',vid:'xEQP4VVuyrY',t:0,th:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=65',dur:'18 ep'},{type:'trailer',lbl:'Official Trailer',vid:'xEQP4VVuyrY',t:0,th:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=65',dur:'2:20'},{type:'clip',lbl:'The Break Room',vid:'xEQP4VVuyrY',t:940,th:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=65',dur:'4:40'},{type:'interview',lbl:'Ben Stiller on Directing',vid:'xEQP4VVuyrY',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:55'}]},
-  {id:29,cat:'crime',sub:'Noir',match:88,ml:'Crime · Noir · Literary',title:'TRUE DETECTIVE',ey:'Crime · Anthology',log:'A murder in the Louisiana bayou. Two detectives who can\'t stand each other. <em>Seventeen years</em> of a case that <span class="r">refuses to close.</span>',body:['Matthew McConaughey\'s Rust Cohle delivers the show\'s philosophy in monologues that shouldn\'t work — but land with the weight of <em>genuine conviction.</em>','Nic Pizzolatto built a crime show around an <span class="r">epistemological argument:</span> the nature of time, consciousness, and whether meaning is something found or made.'],pull:'The Yellow King is almost beside the point. True Detective is really about what happens to a man who can\'t stop thinking.',meta:{s:'4',e:'32',r:'9.0',y:'2014'},thumb:'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=400&q=65',back:'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=1600&q=55',moments:[{t:58,lb:'Rust\'s first monologue',nt:'You either follow him in, or you don\'t. Most do.',em:'Seduction'},{t:1020,lb:'The long take',nt:'Six minutes. One shot. A masterclass in television.',em:'Breathtaking'},{t:1880,lb:'The tree of life',nt:'Evidence and mythology, converging.',em:'Revelation'},{t:2640,lb:'"Once there was only dark"',nt:'An ending that rewrites the whole thing retroactively.',em:'Transcendent'}],media:[{type:'feature',lbl:'True Detective',vid:'nGgS4hSVHLM',t:0,th:'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=400&q=65',dur:'32 ep'},{type:'trailer',lbl:'Season 1 Trailer',vid:'nGgS4hSVHLM',t:0,th:'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=400&q=65',dur:'1:56'},{type:'clip',lbl:'The Long Take',vid:'nGgS4hSVHLM',t:1020,th:'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=400&q=65',dur:'6:00'},{type:'interview',lbl:'McConaughey & Harrelson',vid:'nGgS4hSVHLM',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'12:44'}]},
-  {id:33,cat:'comedy',sub:'Workplace Comedy',match:96,ml:'Comedy · Workplace · Absurdist',title:'WHAT WE DO IN THE SHADOWS',ey:'Comedy · Horror',log:'Three vampires and one familiar try to navigate <em>modern Staten Island</em> — which turns out to be more dangerous than <span class="r">five hundred years of the Old World.</span>',body:['The mockumentary format, applied to vampires, turns out to be the perfect delivery system for comedy about <em>anachronism and irrelevance.</em>','Nandor, Laszlo, and Nadja are idiots in the way that only someone with immortal confidence and no recent feedback can be. <span class="r">The documentary crew is very patient.</span>'],pull:'What We Do in the Shadows is about the tragedy of outliving everything you understand — dressed as a flat-share comedy.',meta:{s:'5',e:'50',r:'8.6',y:'2019'},thumb:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',back:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&q=55',moments:[{t:44,lb:'The familiar\'s resignation',nt:'Guillermo has been waiting eleven years for a promise.',em:'Pity/delight'},{t:800,lb:'The vampire council',nt:'Bureaucracy, immortality, and an email address.',em:'Absurdist'},{t:1520,lb:'The night market',nt:'Nandor buys something he does not understand.',em:'Pure comedy'},{t:2280,lb:'The Guillermo arc',nt:'The show rewards three seasons of patience spectacularly.',em:'Satisfying'}],media:[{type:'feature',lbl:'What We Do in the Shadows',vid:'z98ZCfBSFVo',t:0,th:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',dur:'50 ep'},{type:'trailer',lbl:'Season 5 Trailer',vid:'z98ZCfBSFVo',t:0,th:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',dur:'1:40'},{type:'clip',lbl:'The Vampire Council',vid:'z98ZCfBSFVo',t:800,th:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',dur:'4:15'},{type:'interview',lbl:'Kayvan Novak on Nandor',vid:'z98ZCfBSFVo',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'8:50'}]},
-  {id:34,cat:'drama',sub:'Limited Series',match:92,ml:'Drama · Limited · Devastating',title:'BIG LITTLE LIES',ey:'Drama · Mystery',log:'Three women in Monterey. A dead man at a school fundraiser. <em>The question is not who killed him.</em> The question is <span class="r">what he did to deserve it.</span>',body:['Jean-Marc Vallée shoots grief and money and sea light with equal precision. <em>The coastline is gorgeous and oppressive in equal measure.</em> Nowhere to run in paradise.','Nicole Kidman\'s Celeste is the show\'s hidden centre — a woman who cannot be saved by anything that looks like safety. <span class="r">Her scenes are television\'s hardest watches.</span>'],pull:'Big Little Lies understands that the cover-up is not the lie. The lie is the life everyone agrees to live publicly.',meta:{s:'2',e:'14',r:'8.5',y:'2017'},thumb:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=65',back:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=55',moments:[{t:52,lb:'The opening titles',nt:'Fleetwood Mac. Ocean. Something is already wrong.',em:'Foreboding'},{t:840,lb:'Celeste and Perry',nt:'One scene. Irreversible knowledge.',em:'Horror'},{t:1540,lb:'The Trivia Night argument',nt:'Public cruelty as social performance. Vicious.',em:'Tense'},{t:2380,lb:'The staircase',nt:'It ends here. All of it.',em:'Release'}],media:[{type:'feature',lbl:'Big Little Lies',vid:'MC95f4Jjf_0',t:0,th:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=65',dur:'14 ep'},{type:'trailer',lbl:'Official Trailer',vid:'MC95f4Jjf_0',t:0,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'2:04'},{type:'clip',lbl:'Celeste and Perry',vid:'MC95f4Jjf_0',t:840,th:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=65',dur:'5:55'},{type:'clip',lbl:'The Staircase',vid:'MC95f4Jjf_0',t:2380,th:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=65',dur:'4:30'},{type:'interview',lbl:'Reese & Nicole on the Show',vid:'MC95f4Jjf_0',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'10:22'}]},
-  {id:35,cat:'crime',sub:'British Crime',match:91,ml:'Crime · British · Atmospheric',title:'PEAKY BLINDERS',ey:'Crime · Drama',log:'Post-war Birmingham. A family of gangsters who <em>want a legitimate empire.</em> The city is theirs. <span class="r">The question is what they\'ll sacrifice to keep it.</span>',body:['Cillian Murphy\'s Tommy Shelby is one of television\'s great creations — <em>a man who survived the war by deciding he was already dead,</em> and has been making the world pay for that decision ever since.','The show sounds like Nick Cave and looks like a Francis Bacon painting. <span class="r">The anachronism is the point:</span> this is myth dressed as history.'],pull:'Peaky Blinders is a story about what violence does to the person who is good at it.',meta:{s:'6',e:'36',r:'8.8',y:'2013'},thumb:'https://images.unsplash.com/photo-1548504769-900b70ed122e?w=400&q=65',back:'https://images.unsplash.com/photo-1548504769-900b70ed122e?w=1600&q=55',moments:[{t:58,lb:'Tommy in the field',nt:'The war never ended. He just stopped calling it that.',em:'Haunted'},{t:920,lb:'The Garrison meeting',nt:'Power, demonstrated without effort.',em:'Menace'},{t:1780,lb:'Tommy and Grace',nt:'The only softness in the show. Which is why it ends.',em:'Tender'},{t:2640,lb:'The tunnel confrontation',nt:'He walks in. The room rearranges itself around him.',em:'Iconic'}],media:[{type:'feature',lbl:'Peaky Blinders',vid:'oVzDdnFsXSU',t:0,th:'https://images.unsplash.com/photo-1548504769-900b70ed122e?w=400&q=65',dur:'36 ep'},{type:'trailer',lbl:'Season 6 Trailer',vid:'oVzDdnFsXSU',t:0,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'2:30'},{type:'clip',lbl:'The Garrison Meeting',vid:'oVzDdnFsXSU',t:920,th:'https://images.unsplash.com/photo-1548504769-900b70ed122e?w=400&q=65',dur:'5:10'},{type:'clip',lbl:'The Tunnel Confrontation',vid:'oVzDdnFsXSU',t:2640,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'6:00'},{type:'interview',lbl:'Cillian Murphy on Tommy',vid:'oVzDdnFsXSU',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:50'}]},
-  {id:36,cat:'docs',sub:'True Crime',match:94,ml:'Documentary · True Crime · Unsettling',title:'THE JINX',ey:'Documentary · Crime',log:'Robert Durst. Three suspicious deaths. <em>A filmmaker who kept asking questions</em> until the subject answered <span class="r">the one question that mattered.</span>',body:['Andrew Jarecki built something unprecedented — a documentary that <em>changes its own subject</em> in real time. Durst cooperates because he believes he\'s the smartest person in the room.','The last interview is one of the most disturbing minutes in documentary history. <span class="r">He doesn\'t know the microphone is still on.</span>'],pull:'The Jinx proves that the best true crime isn\'t about the crime. It\'s about watching someone decide whether to keep the secret.',meta:{s:'2',e:'12',r:'8.4',y:'2015'},thumb:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',moments:[{t:55,lb:'Durst\'s first interview',nt:'He seems to want to be caught. Or maybe he doesn\'t.',em:'Unease'},{t:860,lb:'The handwriting comparison',nt:'The evidence that makes it undeniable.',em:'Revelation'},{t:1640,lb:'The bathroom',nt:'He asks himself the question. You hear him answer.',em:'Chilling'},{t:2300,lb:'The arrest',nt:'Life imitating documentary. The timing is impossible.',em:'Astonishing'}],media:[{type:'feature',lbl:'The Jinx',vid:'ZVP9CPHiOFU',t:0,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'12 ep'},{type:'trailer',lbl:'Official Trailer',vid:'ZVP9CPHiOFU',t:0,th:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=400&q=65',dur:'1:48'},{type:'clip',lbl:'The Bathroom Scene',vid:'ZVP9CPHiOFU',t:1640,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'3:30'},{type:'clip',lbl:'The Handwriting Match',vid:'ZVP9CPHiOFU',t:860,th:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=400&q=65',dur:'5:44'},{type:'interview',lbl:'Andrew Jarecki on the Film',vid:'ZVP9CPHiOFU',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'12:10'}]},
-  {id:37,cat:'docs',sub:'Society',match:88,ml:'Documentary · Tech · Essential',title:'THE SOCIAL DILEMMA',ey:'Documentary · Technology',log:'The engineers who built the attention economy <em>explain, calmly, what they built.</em> And why they <span class="r">no longer let their children use it.</span>',body:['The most unnerving thing about The Social Dilemma is its witnesses. <em>These are not critics. These are the architects.</em> People who wrote the code are telling you what the code was actually for.','The dramatised sequences shouldn\'t work alongside the talking heads. <span class="r">Somehow they do.</span> The algorithm, rendered as three bored men in a basement, is more frightening than any abstract explanation.'],pull:'The product is not the app. The product is the gradual remodelling of your sense of what is real.',meta:{s:'1',e:'1',r:'7.6',y:'2020'},thumb:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=65',back:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=55',moments:[{t:42,lb:'The first admission',nt:'He says it without blinking. The room takes a moment.',em:'Realisation'},{t:680,lb:'The algorithm visualised',nt:'Three men in a basement. That\'s all it is.',em:'Absurd dread'},{t:1320,lb:'The teen\'s descent',nt:'The dramatisation lands exactly as hard as it should.',em:'Discomfort'},{t:1980,lb:'The final recommendations',nt:'What could be done. Whether it will be.',em:'Urgency'}],media:[{type:'feature',lbl:'The Social Dilemma',vid:'uaaC57tcci0',t:0,th:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=65',dur:'1h 34m'},{type:'trailer',lbl:'Official Trailer',vid:'uaaC57tcci0',t:0,th:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=65',dur:'2:00'},{type:'clip',lbl:'The Algorithm Visualised',vid:'uaaC57tcci0',t:680,th:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=65',dur:'4:15'},{type:'clip',lbl:'The First Admission',vid:'uaaC57tcci0',t:42,th:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=65',dur:'3:20'},{type:'interview',lbl:'Jeff Orlowski on the Process',vid:'uaaC57tcci0',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'9:40'}]},
-  {id:38,cat:'comedy',sub:'Workplace Comedy',match:89,ml:'Comedy · Workplace · Warm',title:'ABBOTT ELEMENTARY',ey:'Comedy · Workplace',log:'A group of dedicated teachers in a Philadelphia public school try to <em>do their jobs</em> against every structural force that <span class="r">has decided not to let them.</span>',body:['Quinta Brunson created something that feels genuinely new — a workplace comedy that respects <em>the actual difficulty of the work</em> without becoming a polemic about the work.','It is very funny. It is also very sad. The sadness is never imposed — <span class="r">it emerges from paying attention</span> to what the characters are actually up against. That\'s the show\'s great skill.'],pull:'Abbott Elementary understands that hope is not naive. It is the only rational response to a situation this bad.',meta:{s:'3',e:'52',r:'8.2',y:'2021'},thumb:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&q=65',back:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600&q=55',moments:[{t:44,lb:'Janine\'s first classroom',nt:'Hope, applied to a room that resists it. Already the whole show.',em:'Warm'},{t:820,lb:'The budget request',nt:'Bureaucracy as comedy. The laugh that catches in your throat.',em:'Painfully funny'},{t:1560,lb:'Gregory finally admits it',nt:'The slowest burn, paid off with precision.',em:'Delight'},{t:2290,lb:'The Ava press conference',nt:'Ego as force of nature. The show\'s greatest character.',em:'Absurdist'}],media:[{type:'feature',lbl:'Abbott Elementary',vid:'nClAUuVvlYY',t:0,th:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&q=65',dur:'52 ep'},{type:'trailer',lbl:'Official Trailer S2',vid:'nClAUuVvlYY',t:0,th:'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&q=65',dur:'2:00'},{type:'clip',lbl:'Janine\'s First Classroom',vid:'nClAUuVvlYY',t:44,th:'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&q=65',dur:'4:10'},{type:'clip',lbl:'The Ava Press Conference',vid:'nClAUuVvlYY',t:2290,th:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',dur:'3:55'},{type:'interview',lbl:'Quinta Brunson on Teaching',vid:'nClAUuVvlYY',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'8:40'}]},
-  {id:39,cat:'comedy',sub:'Dark Comedy',match:95,ml:'Comedy · Dark · Violent',title:'BARRY',ey:'Comedy · Crime',log:'A hitman from Cleveland tries to <em>become an actor in Los Angeles.</em> The two careers <span class="r">are more similar than he expected.</span>',body:['Bill Hader\'s Barry is the most formally inventive comedy since Arrested Development — a show that <em>keeps reinventing its own rules</em> every eight episodes, each season stranger than the last.','Henry Winkler\'s Gene Cousineau is one of the great comedic supporting performances: <span class="r">a man of enormous self-regard and genuine talent,</span> used against himself constantly.'],pull:'Barry asks whether a person who has done terrible things can become something else — and refuses to make the answer comfortable.',meta:{s:'4',e:'32',r:'8.4',y:'2018'},thumb:'https://images.unsplash.com/photo-1520872024865-3ff2d4e6d847?w=400&q=65',back:'https://images.unsplash.com/photo-1520872024865-3ff2d4e6d847?w=1600&q=55',moments:[{t:50,lb:'The acting class',nt:'Something clicks. He\'s terrifyingly good at this too.',em:'Dark delight'},{t:880,lb:'The Chechens\' misunderstanding',nt:'Comedy as violence. The show\'s signature move.',em:'Shocking funny'},{t:1620,lb:'The monologue',nt:'He means every word. That\'s the problem.',em:'Unsettling'},{t:2350,lb:'Season 4 — the flash-forward',nt:'A choice that reframes every episode that came before.',em:'Audacious'}],media:[{type:'feature',lbl:'Barry',vid:'WH_kzxjRUcQ',t:0,th:'https://images.unsplash.com/photo-1520872024865-3ff2d4e6d847?w=400&q=65',dur:'32 ep'},{type:'trailer',lbl:'Season 4 Trailer',vid:'WH_kzxjRUcQ',t:0,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'1:52'},{type:'clip',lbl:'The Acting Class',vid:'WH_kzxjRUcQ',t:50,th:'https://images.unsplash.com/photo-1520872024865-3ff2d4e6d847?w=400&q=65',dur:'4:40'},{type:'clip',lbl:'The Monologue',vid:'WH_kzxjRUcQ',t:1620,th:'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=65',dur:'5:15'},{type:'interview',lbl:'Bill Hader on the Finale',vid:'WH_kzxjRUcQ',t:0,th:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&q=65',dur:'11:20'}]},
+  {id:9,cat:'crime',sub:'True Crime',match:96,ml:'Crime · True story · Intense',title:'NARCOS',ey:'Crime · Historical',log:'The rise and fall of <em>Pablo Escobar</em> — told from the perspective of the DEA agents who spent years hunting the <span class="r">world\'s most dangerous man.</span>',body:['Wagner Moura\'s Escobar is terrifying not because he\'s a monster — but because he <em>believes every choice was just.</em> The world failed to meet his expectations. He corrected it.','Colombia becomes the story\'s <span class="r">deepest and most complicated character.</span> The land itself seems to indict everyone equally — the traffickers, the agents, and the policy that made both necessary.'],pull:'The narration is part confession, part warning — and the warning is that it keeps happening.',meta:{s:'3',e:'30',r:'8.8',y:'2015'},thumb:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',back:'https://images.unsplash.com/photo-1552083375-1447ce886485?w=1600&q=55',moments:[{t:40,lb:'Murphy\'s narration opens',nt:'The voice that makes everything feel inevitable.',em:'Foreboding'},{t:760,lb:'Escobar meets the cartel',nt:'Two kinds of dangerous in one room.',em:'Taut'},{t:1480,lb:'La Catedral sequence',nt:'A prison he built himself. A kingdom, briefly.',em:'Hubris'},{t:2310,lb:'The final hunt begins',nt:'The end was obvious from the very first minute.',em:'Inevitable'}],media:[{type:'feature',lbl:'Narcos',vid:'xl8zdCY-abw',t:0,th:'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400&q=65',dur:'30 ep'}]},
+  {id:13,cat:'docs',sub:'Nature',match:85,ml:'Documentary · Nature · Meditative',title:'OUR PLANET',ey:'Documentary · Nature',log:'David Attenborough narrates the <em>living world</em> at a moment when that world is <span class="r">running out of time — and knows it.</span>',body:['This is not a nature documentary. It is a <em>state of emergency</em> dressed in the most beautiful images ever committed to film. Each sequence is a goodbye.','<span class="r">Attenborough senses the weight</span> of what he is narrating. You can hear it — the slight thickening in his voice when something he has watched for eighty years is no longer there.'],pull:'The planet is not waiting for us to decide. The images are its argument, and the argument is almost over.',meta:{s:'1',e:'8',r:'9.3',y:'2019'},thumb:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',back:'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=1600&q=55',moments:[{t:58,lb:'The frozen world opens',nt:'Ice. Silence. His first words land like stones.',em:'Wonder'}],media:[{type:'feature',lbl:'Our Planet',vid:'aETNYyrqNYE',t:0,th:'https://images.unsplash.com/photo-1446776858070-70c3d5ed6758?w=400&q=65',dur:'8 ep'}]},
+  {id:17,cat:'comedy',sub:'Dark Comedy',match:98,ml:'Comedy-Drama · Auteur · Unmissable',title:'BEEF',ey:'Comedy · Drama',log:'Two strangers, a <em>road-rage incident in a parking lot,</em> an all-consuming mutual obsession — and the slow-motion <span class="r">destruction of everything they\'ve built.</span>',body:['It\'s about rage. But it is really about loneliness so <em>thick it has its own gravity</em> — the kind that two people can orbit around each other for years without ever making contact.','Steven Yeun and Ali Wong give performances that resist summary. <span class="r">They are two of the best actors working,</span> and this is the role each of them was waiting for.'],pull:'A ten-episode argument that small conflicts are actually everything — that the parking lot is always the whole story.',meta:{s:'1',e:'10',r:'8.0',y:'2023'},thumb:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',back:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=55',moments:[{t:38,lb:'The parking lot incident',nt:'Thirty seconds. A year of consequences.',em:'Ignition'}],media:[{type:'feature',lbl:'Beef',vid:'G4yUnTXJxHI',t:0,th:'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=400&q=65',dur:'10 ep'}]},
 ];
 
 const GC=3,GR=4,GPT=52,GPX=16,GPB=16,GGX=9,GGY=7;
@@ -1483,13 +1611,11 @@ function cellGeo(c,r,cs,rs){
 }
 var SLOTS=[null,{c:2,r:0},{c:2,r:1},{c:0,r:2},{c:1,r:2},{c:2,r:2},{c:0,r:3},{c:1,r:3},{c:2,r:3}];
 
-/* ── STATE ── */
 var ACT_CAT='drama', ACT_SI=0, CAT_SHOWS=[];
 var watchOpen=false, gridOn=false;
 var cgTimer=null, ngTimer=null, ngHideT=null, ngHov=false;
 function isMobile(){return window.innerWidth<=768;}
 
-/* ── CAT BAR ── */
 function buildCatBar(){
   var bar=q('cbar'), tog=q('gtog');
   CATS.forEach(function(cat,ci){
@@ -1511,7 +1637,6 @@ function buildCatBar(){
   q('cbar').addEventListener('mouseleave',deactivateLightHeader);
 }
 
-/* ── CAT GHOST ── */
 function scheduleCG(cat,btn){clearTimeout(cgTimer);cgTimer=setTimeout(function(){showCG(cat,btn);},200);}
 function showCG(cat,btn){
   var el=q('cghel'), r=btn.getBoundingClientRect();
@@ -1546,7 +1671,6 @@ function showCG(cat,btn){
 }
 function hideCG(){clearTimeout(cgTimer);q('cghel').classList.remove('on');}
 
-/* ── SELECT CATEGORY ── */
 function selectCat(catId){
   ACT_CAT=catId;
   CAT_SHOWS=SHOWS.filter(function(s){return s.cat===catId;});
@@ -1558,7 +1682,6 @@ function selectCat(catId){
   goTo(0,true);
 }
 
-/* ── NARRATIVE ── */
 var SELS=[], CONTS=[];
 function buildNarrative(){
   var root=q('nroot'); root.innerHTML=''; SELS=[]; CONTS=[];
@@ -1599,12 +1722,9 @@ function buildNarrative(){
   q('htot').textContent=String(CAT_SHOWS.length).padStart(2,'0');
 }
 
-/* ── GRID ── */
-var gridFilter=null; // null = all; Set of cat ids when filtering
-
+var gridFilter=null;
 function buildGrid(){
   var inner=q('ginner'); inner.innerHTML='';
-  // Build one section per category — all shows, not just current cat
   CATS.forEach(function(cat){
     var catShows=SHOWS.filter(function(s){return s.cat===cat.id;});
     var sec=document.createElement('div');
@@ -1615,7 +1735,6 @@ function buildGrid(){
     var tiles=document.createElement('div');
     tiles.className='gsec-tiles';
     catShows.forEach(function(show){
-      var globalSI=CAT_SHOWS.indexOf(show); // may be -1 if different cat active
       var isActive=(show.cat===ACT_CAT && show===CAT_SHOWS[ACT_SI]);
       var c=document.createElement('div');
       c.className='gcov'+(isActive?' on':'');
@@ -1623,7 +1742,6 @@ function buildGrid(){
       c.dataset.id=show.id;
       c.innerHTML='<img src="'+show.thumb+'" loading="lazy" alt="'+show.title+'"><div class="gcovlay"></div><div class="gcovm">'+show.match+'%</div><div class="gcovinfo"><div class="gcovt">'+show.title+'</div><div class="gcovs">'+show.meta.y+' · '+show.meta.r+'★</div></div>';
       c.addEventListener('click',function(){
-        // Switch cat if needed, then navigate
         if(show.cat!==ACT_CAT) selectCat(show.cat);
         var si=CAT_SHOWS.findIndex(function(s){return s.id===show.id;});
         if(si>=0) goTo(si);
@@ -1636,63 +1754,37 @@ function buildGrid(){
   });
   applyGridFilter();
 }
-
 function applyGridFilter(){
-  // Show/hide sections based on gridFilter
   document.querySelectorAll('#ginner .gsec').forEach(function(sec){
     var cat=sec.dataset.cat;
     var hidden=gridFilter && !gridFilter.has(cat);
     sec.classList.toggle('ghidden', hidden);
   });
-  // Reflect filter state on cbar buttons
   document.querySelectorAll('.cbtn').forEach(function(b){
-    if(!gridFilter){
-      b.classList.remove('gfilt-off');
-    } else {
-      b.classList.toggle('gfilt-off', !gridFilter.has(b.dataset.cat));
-    }
+    if(!gridFilter){b.classList.remove('gfilt-off');}
+    else{b.classList.toggle('gfilt-off', !gridFilter.has(b.dataset.cat));}
   });
 }
-
 function toggleGridFilter(catId){
-  if(!gridFilter){
-    // First filter click — show only that cat
-    gridFilter=new Set([catId]);
-  } else if(gridFilter.has(catId) && gridFilter.size===1){
-    // Clicking the only active filter — reset to all
-    gridFilter=null;
-  } else if(gridFilter.has(catId)){
-    // Remove this cat from filter
-    gridFilter.delete(catId);
-    if(gridFilter.size===0) gridFilter=null;
-  } else {
-    // Add this cat to filter
-    gridFilter.add(catId);
-  }
+  if(!gridFilter){gridFilter=new Set([catId]);}
+  else if(gridFilter.has(catId) && gridFilter.size===1){gridFilter=null;}
+  else if(gridFilter.has(catId)){gridFilter.delete(catId);if(gridFilter.size===0)gridFilter=null;}
+  else{gridFilter.add(catId);}
   applyGridFilter();
-  // Scroll to section if a single cat is now selected
   if(gridFilter && gridFilter.size===1){
     var target=document.querySelector('#ginner .gsec[data-cat="'+Array.from(gridFilter)[0]+'"]');
     if(target) q('gover').scrollTop=target.offsetTop;
   }
 }
-
 function toggleGrid(force){
   gridOn=force!==undefined?force:!gridOn;
-  if(gridOn){
-    gridFilter=null; // reset filter on open
-    buildGrid();
-  }
+  if(gridOn){gridFilter=null;buildGrid();}
   q('gover').classList.toggle('on',gridOn);
   q('gtog').classList.toggle('on',gridOn);
   document.body.classList.toggle('grid-on',gridOn);
-  // Swap cbar button click behavior
-  document.querySelectorAll('.cbtn').forEach(function(b){
-    b.classList.remove('gfilt-off');
-  });
+  document.querySelectorAll('.cbtn').forEach(function(b){b.classList.remove('gfilt-off');});
 }
 
-/* ── BACKDROPS ── */
 function buildBackdrops(){
   var bd=q('bd'); bd.innerHTML='';
   CAT_SHOWS.forEach(function(show,i){
@@ -1706,7 +1798,6 @@ function switchBackdrop(si){
   document.querySelectorAll('#bd img').forEach(function(img,i){img.classList.toggle('on',i===si);});
 }
 
-/* ── SCROLL INDICATOR ── */
 function updateScrollThumb(){
   var s=q('nstream'),tk=q('strack'),th=q('sthumb');
   var st=s.scrollTop, sh=s.scrollHeight, ch=s.clientHeight;
@@ -1716,7 +1807,6 @@ function updateScrollThumb(){
   th.style.height=h+'px'; th.style.top=pos+'px';
 }
 
-/* ── GHOST SCROLL ── */
 function updateGhostScroll(scrollEl,thumbId){
   if(!scrollEl)return;
   var st=scrollEl.scrollTop, sh=scrollEl.scrollHeight, ch=scrollEl.clientHeight;
@@ -1731,7 +1821,6 @@ function updateGhostScroll(scrollEl,thumbId){
   th.style.height=h+'px'; th.style.top=pos+'px';
 }
 
-/* ── NAVIGATE ── */
 function goTo(si,instant){
   var prev=ACT_SI;
   si=Math.max(0,Math.min(CAT_SHOWS.length-1,si)); ACT_SI=si;
@@ -1752,7 +1841,6 @@ function goTo(si,instant){
     var top=el.offsetTop-s.clientHeight/2+el.clientHeight/2;
     if(instant){s.scrollTop=top;}else{s.scrollTo({top:top,behavior:'smooth'});}
   }
-  // Update active tile in grid — match by show id, not array index
   var activeShow=CAT_SHOWS[si];
   document.querySelectorAll('.gcov').forEach(function(c){
     c.classList.toggle('on', activeShow && c.dataset.id===String(activeShow.id));
@@ -1769,7 +1857,6 @@ function goTo(si,instant){
   setTimeout(updateScrollThumb,320);
 }
 
-/* ── INTENT NODES ── */
 var itTimer=null;
 var TLBLS={feature:'Now Streaming',trailer:'Trailer',clip:'Scene',interview:'Interview',behindscenes:'Behind the Scenes'};
 var TBADGE={feature:'',trailer:'TRAILER',clip:'CLIP',interview:'INTERVIEW',behindscenes:'B.T.S.'};
@@ -1803,17 +1890,11 @@ function buildNode(m,show,role,cell,delay){
   node.style.cssText='left:'+Math.round(x)+'px;top:'+Math.round(y)+'px;width:'+Math.round(w)+'px;height:'+Math.round(h)+'px';
   var badge=TBADGE[m.type]?'<div class="nbadge ntype">'+TBADGE[m.type]+'</div>':'';
   var mbadge=role==='primary'?'<div class="nbadge nmatch">'+show.match+'%</div>':'';
-  // Pin toggle only on primary
-  var pinToggle=role==='primary'?'<button class="npin-tog" onclick="event.stopPropagation();togglePin()">pin / unpin</button>':'';
-  node.innerHTML='<div class="ncard" style="height:100%;display:flex;flex-direction:column"><div class="nth" style="height:'+thH+'px;flex-shrink:0"><img src="'+m.th+'" loading="lazy" alt=""><div class="nplay"><div class="npb">▶</div></div>'+badge+mbadge+'<div class="ndur">'+m.dur+'</div>'+pinToggle+'</div><div class="nbody" style="flex:1;overflow:hidden"><div class="ntypelbl">'+(TLBLS[m.type]||m.type)+'</div><div class="nttl">'+m.lbl+'</div><div class="nsub">'+show.title+' · '+show.meta.y+'</div><div class="ntag">'+(m.t>0?'Jump to '+fmt(m.t):'Full '+(m.type==='feature'?'series':m.type))+'</div></div></div>';
+  node.innerHTML='<div class="ncard" style="height:100%;display:flex;flex-direction:column"><div class="nth" style="height:'+thH+'px;flex-shrink:0"><img src="'+m.th+'" loading="lazy" alt=""><div class="nplay"><div class="npb">▶</div></div>'+badge+mbadge+'<div class="ndur">'+m.dur+'</div></div><div class="nbody" style="flex:1;overflow:hidden"><div class="ntypelbl">'+(TLBLS[m.type]||m.type)+'</div><div class="nttl">'+m.lbl+'</div><div class="nsub">'+show.title+' · '+show.meta.y+'</div><div class="ntag">'+(m.t>0?'Jump to '+fmt(m.t):'Full '+(m.type==='feature'?'series':m.type))+'</div></div></div>';
   node.addEventListener('click',function(){
-    if(role==='primary'){
-      togglePin();
-    } else {
-      hideNG();openWatch(m.t,m.vid||show.media[0].vid,m.lbl);
-    }
+    if(role==='primary'){togglePin();}
+    else{hideNG();openWatch(m.t,m.vid||show.media[0].vid,m.lbl);}
   });
-  // Ghost only on non-primary nodes
   if(role!=='primary'){
     node.addEventListener('mouseenter',function(){clearTimeout(ngHideT);scheduleNG({m:m,show:show},node);});
     node.addEventListener('mouseleave',function(){ngHideT=setTimeout(function(){if(!ngHov)hideNG();},120);});
@@ -1821,7 +1902,6 @@ function buildNode(m,show,role,cell,delay){
   return node;
 }
 
-/* ── NODE GHOST ── */
 function scheduleNG(data,el){clearTimeout(ngTimer);ngTimer=setTimeout(function(){showNG(data,el);},180);}
 function showNG(data,nodeEl){
   var m=data.m, show=data.show;
@@ -1872,20 +1952,16 @@ function showNG(data,nodeEl){
 }
 function hideNG(){clearTimeout(ngTimer);q('nghost').classList.remove('on');ngHov=false;}
 
-/* ── CINEMATIC PIN MODE ── */
 var pinnedVid=null, pinnedStart=0, pinnedLabel='', pinnedShow=null;
-
 function togglePin(){
   if(q('izone').classList.contains('pinned')){unpinVideo();}
   else{pinPrimaryVideo();}
 }
-
 function pinPrimaryVideo(){
   var show=CAT_SHOWS[ACT_SI]; if(!show||!show.media)return;
   var m=show.media[0];
   pinVideo(m.t,m.vid||show.media[0].vid,m.lbl,show);
 }
-
 function pinVideo(startSecs,videoId,label,show){
   pinnedVid=videoId; pinnedStart=startSecs||0; pinnedLabel=label||''; pinnedShow=show;
   var frame=q('ipin-frame');
@@ -1896,45 +1972,34 @@ function pinVideo(startSecs,videoId,label,show){
   buildPinnedFlow(show,videoId,startSecs);
   q('ihc').textContent='pinned · '+(show?show.media.length:0)+' clips';
   q('ihc').classList.add('on');
-  // Mark primary node
-  var prim=q('igrid').querySelector('.node.primary');
-  if(prim) prim.classList.add('is-pinned');
 }
-
 function sizePinnedArea(){
   var iz=q('izone');
   var w=iz.clientWidth;
   var h=Math.min(Math.round(w/16*9),Math.round(window.innerHeight*.50));
   q('ipinned').style.height=h+'px';
 }
-
 function unpinVideo(){
   q('ipin-frame').src='';
   q('ipinned').style.height='0';
   q('izone').classList.remove('pinned');
   q('igrid-flow').innerHTML='';
   pinnedVid=null; pinnedShow=null;
-  var prim=q('igrid').querySelector('.node.primary');
-  if(prim) prim.classList.remove('is-pinned');
   exitNodes(function(){placeNodes(ACT_SI);});
   var show=CAT_SHOWS[ACT_SI];
   q('ihc').textContent=(show?show.media.length:0)+' items';
 }
-
 function expandPinnedToWatch(){
   if(!pinnedVid)return;
   openWatch(pinnedStart,pinnedVid,pinnedLabel);
 }
-
 function buildPinnedFlow(show,activeVid,activeStart){
   var flow=q('igrid-flow'); flow.innerHTML='';
   exitNodes(null);
   if(!show||!show.media)return;
-
   var mlbl=document.createElement('div');
   mlbl.className='iflow-lbl'; mlbl.textContent='Media';
   flow.appendChild(mlbl);
-
   show.media.forEach(function(m){
     var vid=m.vid||show.media[0].vid;
     var isActive=vid===activeVid&&(m.t||0)===(activeStart||0);
@@ -1951,7 +2016,6 @@ function buildPinnedFlow(show,activeVid,activeStart){
     });
     flow.appendChild(chip);
   });
-
   if(show.moments&&show.moments.length){
     var momlbl=document.createElement('div');
     momlbl.className='iflow-lbl'; momlbl.textContent='Key Moments';
@@ -1972,14 +2036,12 @@ function buildPinnedFlow(show,activeVid,activeStart){
     });
   }
 }
-
 function updatePinnedForShow(si){
   if(!q('izone').classList.contains('pinned'))return;
   var show=CAT_SHOWS[si];
   if(show) buildPinnedFlow(show,pinnedVid,pinnedStart);
 }
 
-/* ── MOBILE MEDIA PANEL ── */
 function openMPin(){
   var show=CAT_SHOWS[ACT_SI]; if(!show)return;
   q('mpin-ttl').textContent=show.title;
@@ -2011,8 +2073,6 @@ function openMPin(){
 }
 function closeMPin(){q('mpin').classList.remove('on');}
 
-
-/* ── MOBILE DETAIL ── */
 function populateMDetail(show){
   q('mdey').textContent=show.ey;
   q('mdtitle').textContent=show.title;
@@ -2046,7 +2106,6 @@ function mobileNav(dir){
   if(n>=0&&n<CAT_SHOWS.length)goTo(n);
 }
 
-/* ── WATCH ── */
 function openWatch(startSecs,videoId,ctx){
   var show=CAT_SHOWS[ACT_SI]; if(!show)return;
   var vid=videoId||show.media[0].vid, start=startSecs||0;
@@ -2077,7 +2136,6 @@ function openWatch(startSecs,videoId,ctx){
 }
 function closeWatch(){q('wframe').src='';q('watch').classList.remove('on');q('wrail').classList.remove('on');q('wctx').textContent='';watchOpen=false;}
 
-/* ── SWIPE ── */
 var swipeStartY=0;
 q('mdetail').addEventListener('touchstart',function(e){swipeStartY=e.touches[0].clientY;},{passive:true});
 q('mdetail').addEventListener('touchend',function(e){
@@ -2085,7 +2143,6 @@ q('mdetail').addEventListener('touchend',function(e){
   if(dy>60)closeMDetail();
 },{passive:true});
 
-/* ── CURSOR ── */
 document.addEventListener('mousemove',function(e){
   var c=q('cur'); c.style.left=e.clientX+'px'; c.style.top=e.clientY+'px';
   var t=e.target; c.className='';
@@ -2097,10 +2154,9 @@ document.addEventListener('mousemove',function(e){
   else if(t.tagName==='BUTTON')c.classList.add('hov');
 });
 
-/* ── KEYBOARD ── */
 document.addEventListener('keydown',function(e){
   if(watchOpen){if(e.key==='Escape'){e.preventDefault();closeWatch();}return;}
-  if(MF_OPEN) return; // manifesto has its own keydown handler
+  if(MF_OPEN) return;
   switch(e.key){
     case 'ArrowDown':case 'j':case ' ':e.preventDefault();if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);break;
     case 'ArrowUp':case 'k':e.preventDefault();if(ACT_SI>0)goTo(ACT_SI-1);break;
@@ -2113,7 +2169,6 @@ document.addEventListener('keydown',function(e){
   if(n>=1&&n<=5){var cat=CATS[n-1];if(cat){e.preventDefault();selectCat(cat.id);}}
 });
 
-/* ── SCROLL ── */
 var wLock=false;
 var NS=q('nstream');
 NS.addEventListener('scroll',updateScrollThumb,{passive:true});
@@ -2130,12 +2185,10 @@ NS.addEventListener('touchend',function(e){
   if(Math.abs(dy)>28){if(dy>0){if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);}else{if(ACT_SI>0)goTo(ACT_SI-1);}}
 },{passive:true});
 
-/* ── GHOST PERSISTENCE ── */
 var GEL=q('nghost');
 GEL.addEventListener('mouseenter',function(){ngHov=true;clearTimeout(ngHideT);});
 GEL.addEventListener('mouseleave',function(){ngHov=false;hideNG();});
 
-/* ── RESIZE ── */
 var rT;
 window.addEventListener('resize',function(){
   clearTimeout(rT);
@@ -2149,10 +2202,7 @@ window.addEventListener('resize',function(){
 
 /* ═══════════════════════════════════════════════
    FEEL-FIELD SEARCH ENGINE
-   FIX: All parameter names that previously used 'q' have been renamed
-   to avoid shadowing the q() DOM helper function above.
 ═══════════════════════════════════════════════ */
-
 var SHOW_FEEL={
   0:{x:.45,y:.75,feel:'tense · quiet dread',words:['ominous','slow burn','calculated']},
   1:{x:.80,y:.80,feel:'electrifying · morally dark',words:['electrifying','hubris','inevitable']},
@@ -2160,32 +2210,9 @@ var SHOW_FEEL={
   3:{x:.65,y:.72,feel:'vicious · operatic',words:['savage','operatic','heartbreaking']},
   4:{x:.50,y:.88,feel:'harrowing · defiant',words:['harrowing','urgent','simmering']},
   5:{x:.35,y:.70,feel:'haunting · cerebral',words:['vertiginous','layered','cold']},
-  6:{x:.55,y:.65,feel:'unsettling · provocative',words:['disquieting','prescient','sharp']},
-  7:{x:.60,y:.55,feel:'nostalgic · terrifying',words:['warm','creeping','propulsive']},
-  8:{x:.50,y:.62,feel:'hypnotic · philosophical',words:['hypnotic','vast','questioning']},
   9:{x:.72,y:.78,feel:'kinetic · fatalistic',words:['fatalistic','propulsive','raw']},
-  10:{x:.40,y:.82,feel:'systemic · grief-laden',words:['institutional','sorrowful','honest']},
-  11:{x:.30,y:.85,feel:'clinical · unnerving',words:['precise','clinical','creeping']},
-  12:{x:.25,y:.80,feel:'glacial · claustrophobic',words:['glacial','isolated','taut']},
   13:{x:.20,y:.58,feel:'meditative · elegiac',words:['reverent','aching','essential']},
-  14:{x:.68,y:.42,feel:'driven · awe-inspiring',words:['relentless','awe-inspiring','revealing']},
-  15:{x:.55,y:.72,feel:'procedural · destabilising',words:['unsettling','gripping','uncertain']},
-  16:{x:.45,y:.76,feel:'incisive · righteous',words:['incisive','furious','urgent']},
   17:{x:.70,y:.60,feel:'raw · cathartic',words:['cathartic','frenetic','tender']},
-  18:{x:.78,y:.48,feel:'vicious · brilliant',words:['merciless','satirical','absurdist']},
-  19:{x:.52,y:.32,feel:'warm · bittersweet',words:['joyful','tender','bittersweet']},
-  20:{x:.38,y:.45,feel:'intimate · quietly devastating',words:['intimate','aching','comedic']},
-  22:{x:.30,y:.55,feel:'epic · ceremonial',words:['grand','historical','inevitable']},
-  25:{x:.42,y:.62,feel:'expansive · political',words:['systemic','vast','tense']},
-  27:{x:.40,y:.75,feel:'claustrophobic · cerebral',words:['identity','quiet','unsettling']},
-  29:{x:.50,y:.85,feel:'philosophical · atmospheric',words:['existential','noir','brooding']},
-  33:{x:.58,y:.42,feel:'absurdist · warm',words:['ridiculous','charming','anachronistic']},
-  34:{x:.32,y:.78,feel:'glossy · devastating',words:['coastal','secret','violent']},
-  35:{x:.78,y:.88,feel:'menacing · mythic',words:['brutal','stylised','driven']},
-  36:{x:.62,y:.90,feel:'chilling · procedural',words:['obsessive','real','strange']},
-  37:{x:.48,y:.55,feel:'lucid · unsettling',words:['algorithmic','systemic','urgent']},
-  38:{x:.42,y:.28,feel:'warm · quietly righteous',words:['hopeful','human','funny']},
-  39:{x:.68,y:.68,feel:'dark · formally daring',words:['violent','funny','desperate']},
 };
 
 var CAT_COLORS_DOT={
@@ -2384,9 +2411,6 @@ function hideFeelGhost(){
   document.getElementById('feelghost').classList.remove('on');
 }
 
-/* ── TEXT SEARCH
-   FIX: parameter renamed from 'q' to 'qs' to avoid shadowing the q() DOM helper
-── */
 function hlText(text,qs){
   if(!qs)return text;
   return text.replace(
@@ -2461,7 +2485,6 @@ function clearTyped(){
   document.getElementById('fr-text-list').innerHTML='';
 }
 
-/* ── FEEL FIELD INIT ── */
 function initFeel(){
   var hsearch=document.getElementById('hsearch');
   var inp=document.getElementById('hsearch-input');
@@ -2568,89 +2591,103 @@ function initFeel(){
   window.addEventListener('resize',function(){if(feelOpen)paintCanvas();});
 }
 
-/* ── MANIFESTO ── */
+/* ═══════════════════════════════════════════════
+   MANIFESTO — with Chapter Nav Rail
+═══════════════════════════════════════════════ */
 var MF_OPEN = false;
 var MF_FREE = false;
 var MF_SELS = [];
 var MF_STREAM = null;
 
-var MF_SENTENCES = [
-
-  /* ── I ── */
-  {cls:'label',    html:'On attention'},
-  {cls:'headline', html:'The sentence<br>that lands<br>changes<br>everything.'},
-  {cls:'lede',     html:'Not the paragraph. Not the chapter. <em>The sentence.</em> The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible to the way you see what comes after it.'},
-  {cls:'body',     html:'Every great story has one. The scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. You cannot manufacture that moment. You can only <em>arrive at it ready.</em>'},
-  {cls:'pull',     html:'This interface was built to help you arrive ready.'},
-  {cls:'rule', n:'I', lbl:'On the posture'},
-
-  /* ── II ── */
-  {cls:'label',    html:'On the posture'},
-  {cls:'lede',     html:'Most interfaces assume you do not know what you want. They fill the screen with options so that something catches. <span class="r">The Narrative Engine assumes the opposite.</span>'},
-  {cls:'body',     html:'It assumes you showed up with some orientation toward experience — even if you cannot name it yet. A mood. A quality of attention. A Tuesday night that needs something specific. The interface\'s job is to help you locate that orientation, not override it.'},
-  {cls:'body',     html:'You arrive. You do not get processed. The difference is posture. <em>One system reaches toward you. The other reaches into you.</em> We decided the interface was the problem. Not the content. The interface.'},
-  {cls:'pull',     html:'The algorithm wants you to keep scrolling. We want you to stop.'},
-  {cls:'rule', n:'II', lbl:'On descent'},
-
-  /* ── III ── */
-  {cls:'label',    html:'On descent'},
-  {cls:'lede',     html:'The narrative stream is not a list. It is a column you <em>descend into.</em> Each show exists at a specific depth. The one you are at is fully present. The ones above are memory. The ones below are anticipation.'},
-  {cls:'body',     html:'You do not scan horizontally across titles. You go down. This means you have to pass through each show on the way to the next one. Even the ones you do not choose, you encounter. You develop a sense of the catalog through passage — not selection.'},
-  {cls:'body',     html:'The sentence engine enforces this — not with friction, but with <em>gravity.</em> The active sentence sits at a different opacity than everything else. Only one title is ever now. The others wait at their depths, visible but not competing.'},
-  {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
-  {cls:'rule', n:'III', lbl:'On feel as a coordinate'},
-
-  /* ── IV ── */
-  {cls:'label',    html:'On feel as a coordinate'},
-  {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and slow</em> is something you actually feel on a Tuesday night.'},
-  {cls:'body',     html:'The feel field is a two-dimensional space — quiet to frenetic on one axis, dark to light on the other. You drag a point across it and the catalog reorganizes around what you are actually in the mood for. Not what you most recently watched. Not what is trending. <span class="r">Your current frequency.</span>'},
-  {cls:'body',     html:'This is not a recommendation engine. A recommendation engine knows your history. <em>A resonance engine knows your present.</em> The difference is that one is looking backward. The other is looking at you right now.'},
-  {cls:'rule', n:'IV', lbl:'On peripheral vision'},
-
-  /* ── V ── */
-  {cls:'label',    html:'On peripheral vision'},
-  {cls:'lede',     html:'The ghost panels — the previews that arrive beside the thing you are hovering near — are not tooltips. They are <em>peripheral vision.</em>'},
-  {cls:'body',     html:'Information that arrives without demanding your central attention. You move near something; the ghost appears to the side. You look at it or you do not. It does not interrupt. It does not prevent you from doing whatever you were doing.'},
-  {cls:'body',     html:'The design principle: <em>not all information should be foregrounded at the same time.</em> You develop a sense of the catalog through peripheral encounters — shows you passed near but did not choose become legibly distinct from shows you have never approached. The browsing accumulates. <span class="r">You know more than you selected.</span>'},
-  {cls:'rule', n:'V', lbl:'On the right panel'},
-
-  /* ── VI ── */
-  {cls:'label',    html:'On the right panel'},
-  {cls:'lede',     html:'When a show enters focus, the intent zone does not give you a detail page. It makes a spatial <em>argument</em> about the work — here is the whole thing, here are the ways in, here is how its parts relate to each other.'},
-  {cls:'body',     html:'The primary cell is the work itself. The secondary cells are doors. Trailers that tell you the tone before the commitment. Scenes that show you what kind of show this is before you have seen what kind of show this is. The node scatter is not decoration — each piece of media is placed in rough proportion to its significance, its relationship to the feature.'},
-  {cls:'body',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em> The thing is the specific, located instance of the work being exactly what you needed it to be. The right panel is trying to show you that instance before you commit to it.'},
-  {cls:'rule', n:'VI', lbl:'On the pin'},
-
-  /* ── VII ── */
-  {cls:'label',    html:'On the pin'},
-  {cls:'lede',     html:'Pinning is the most important interaction in the system and the easiest to miss. It is not playing a preview. It is <em>holding something still while you think.</em>'},
-  {cls:'body',     html:'When you pin the primary video, the interface reorganizes around that choice. The scattered nodes collapse. The chip list appears — media and moments, accessible below the running frame. You can navigate the catalog with the video playing. The pin decouples the browsing from the watching.'},
-  {cls:'body',     html:'You can watch the trailer for one show while reading about three others. The video continues. The context updates. This is a fundamentally different proposition than what streaming interfaces normally offer — <span class="r">because it treats browsing and watching not as sequential states, but as simultaneous ones.</span>'},
-  {cls:'pull',     html:'Cinema mode is the terminal state. Full screen, the work itself, the interface dissolved. You get there when you are ready. Not before.'},
-  {cls:'rule', n:'VII', lbl:'On key moments'},
-
-  /* ── VIII ── */
-  {cls:'label',    html:'On key moments'},
-  {cls:'lede',     html:'A timestamp is a location. A key moment is a <em>coordinate in an emotional geography.</em>'},
-  {cls:'body',     html:'The difference is that one tells you where something is in the file. The other tells you what kind of thing it is, what it will cost you, what you need to have seen before it arrives. The salvaging scene in Making a Murderer. Fleabag\'s first look to camera. The silence after the verdict. <em>These are not timestamps. They are the show.</em>'},
-  {cls:'body',     html:'We built the moments system because the first three minutes of a show is almost never where the show lives. The show lives in the specific sentence that makes everything before it necessary. The interface is trying to take you there — not after you have watched eight episodes, but <span class="r">before you have decided whether to start.</span>'},
-  {cls:'rule', n:'VIII', lbl:'On what the browsing is'},
-
-  /* ── IX ── */
-  {cls:'label',    html:'On what the browsing is'},
-  {cls:'lede',     html:'Most streaming UX is designed to minimize the time between opening the app and playing something. The implicit message: browsing is waste. <em>Get through it faster.</em>'},
-  {cls:'body',     html:'This interface inverts that. The browsing is part of the work. Descending through the stream, locating yourself in the feel field, pinning something to sit with it — these are not steps toward watching. They are <em>already watching,</em> in the sense that matters: you are attending to something, you are being changed by proximity to it, you are developing a relationship with the work before the first frame plays.'},
-  {cls:'pull',     html:'The act of finding something to watch is itself an experience worth having. Not a problem to solve. An experience with texture, depth, and its own satisfaction.'},
-  {cls:'rule', n:'IX', lbl:'On Wolfgang'},
-
-  /* ── X ── */
-  {cls:'label',    html:'On Wolfgang'},
-  {cls:'lede',     html:'The engine is named for a dog. A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.'},
-  {cls:'body',     html:'He would stop on walks. Not because he was tired. Because <em>something was worth stopping for.</em> The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.'},
-  {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. It does not want you to find something faster. <span class="r">It wants you to find the right thing — and to remember, afterward, that the finding was part of it.</span>'},
-  {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you.<br>That is what this is for.'},
-
+/* Chapter definitions — each has an index into MF_SENTENCES pointing to its 'rule' element */
+var MF_CHAPTERS = [
+  {n:'I',   lbl:'On attention',            sentIdx:0},
+  {n:'II',  lbl:'On the posture',          sentIdx:6},
+  {n:'III', lbl:'On descent',              sentIdx:12},
+  {n:'IV',  lbl:'On feel as a coordinate', sentIdx:18},
+  {n:'V',   lbl:'On peripheral vision',    sentIdx:23},
+  {n:'VI',  lbl:'On the right panel',      sentIdx:28},
+  {n:'VII', lbl:'On the pin',              sentIdx:33},
+  {n:'VIII',lbl:'On key moments',          sentIdx:39},
+  {n:'IX',  lbl:'On what the browsing is', sentIdx:44},
+  {n:'X',   lbl:'On Wolfgang',             sentIdx:49},
 ];
+
+var MF_SENTENCES = [
+  /* 0 */ {cls:'label',    html:'On attention'},
+  /* 1 */ {cls:'headline', html:'The sentence<br>that lands<br>changes<br>everything.'},
+  /* 2 */ {cls:'lede',     html:'Not the paragraph. Not the chapter. <em>The sentence.</em> The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible to the way you see what comes after it.'},
+  /* 3 */ {cls:'body',     html:'Every great story has one. The scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. You cannot manufacture that moment. You can only <em>arrive at it ready.</em>'},
+  /* 4 */ {cls:'pull',     html:'This interface was built to help you arrive ready.'},
+  /* 5 */ {cls:'rule', n:'I', lbl:'On the posture'},
+
+  /* 6 */ {cls:'label',    html:'On the posture'},
+  /* 7 */ {cls:'lede',     html:'Most interfaces assume you do not know what you want. They fill the screen with options so that something catches. <span class="r">The Narrative Engine assumes the opposite.</span>'},
+  /* 8 */ {cls:'body',     html:'It assumes you showed up with some orientation toward experience — even if you cannot name it yet. A mood. A quality of attention. A Tuesday night that needs something specific. The interface\'s job is to help you locate that orientation, not override it.'},
+  /* 9 */ {cls:'body',     html:'You arrive. You do not get processed. The difference is posture. <em>One system reaches toward you. The other reaches into you.</em> We decided the interface was the problem. Not the content. The interface.'},
+  /* 10 */ {cls:'pull',     html:'The algorithm wants you to keep scrolling. We want you to stop.'},
+  /* 11 */ {cls:'rule', n:'II', lbl:'On descent'},
+
+  /* 12 */ {cls:'label',    html:'On descent'},
+  /* 13 */ {cls:'lede',     html:'The narrative stream is not a list. It is a column you <em>descend into.</em> Each show exists at a specific depth. The one you are at is fully present. The ones above are memory. The ones below are anticipation.'},
+  /* 14 */ {cls:'body',     html:'You do not scan horizontally across titles. You go down. This means you have to pass through each show on the way to the next one. Even the ones you do not choose, you encounter. You develop a sense of the catalog through passage — not selection.'},
+  /* 15 */ {cls:'body',     html:'The sentence engine enforces this — not with friction, but with <em>gravity.</em> The active sentence sits at a different opacity than everything else. Only one title is ever now. The others wait at their depths, visible but not competing.'},
+  /* 16 */ {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
+  /* 17 */ {cls:'rule', n:'III', lbl:'On feel as a coordinate'},
+
+  /* 18 */ {cls:'label',    html:'On feel as a coordinate'},
+  /* 19 */ {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and slow</em> is something you actually feel on a Tuesday night.'},
+  /* 20 */ {cls:'body',     html:'The feel field is a two-dimensional space — quiet to frenetic on one axis, dark to light on the other. You drag a point across it and the catalog reorganizes around what you are actually in the mood for. Not what you most recently watched. Not what is trending. <span class="r">Your current frequency.</span>'},
+  /* 21 */ {cls:'body',     html:'This is not a recommendation engine. A recommendation engine knows your history. <em>A resonance engine knows your present.</em> The difference is that one is looking backward. The other is looking at you right now.'},
+  /* 22 */ {cls:'rule', n:'IV', lbl:'On peripheral vision'},
+
+  /* 23 */ {cls:'label',    html:'On peripheral vision'},
+  /* 24 */ {cls:'lede',     html:'The ghost panels — the previews that arrive beside the thing you are hovering near — are not tooltips. They are <em>peripheral vision.</em>'},
+  /* 25 */ {cls:'body',     html:'Information that arrives without demanding your central attention. You move near something; the ghost appears to the side. You look at it or you do not. It does not interrupt. It does not prevent you from doing whatever you were doing.'},
+  /* 26 */ {cls:'body',     html:'The design principle: <em>not all information should be foregrounded at the same time.</em> You develop a sense of the catalog through peripheral encounters — shows you passed near but did not choose become legibly distinct from shows you have never approached. The browsing accumulates. <span class="r">You know more than you selected.</span>'},
+  /* 27 */ {cls:'rule', n:'V', lbl:'On the right panel'},
+
+  /* 28 */ {cls:'label',    html:'On the right panel'},
+  /* 29 */ {cls:'lede',     html:'When a show enters focus, the intent zone does not give you a detail page. It makes a spatial <em>argument</em> about the work — here is the whole thing, here are the ways in, here is how its parts relate to each other.'},
+  /* 30 */ {cls:'body',     html:'The primary cell is the work itself. The secondary cells are doors. Trailers that tell you the tone before the commitment. Scenes that show you what kind of show this is before you have seen what kind of show this is. The node scatter is not decoration — each piece of media is placed in rough proportion to its significance, its relationship to the feature.'},
+  /* 31 */ {cls:'body',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em> The thing is the specific, located instance of the work being exactly what you needed it to be. The right panel is trying to show you that instance before you commit to it.'},
+  /* 32 */ {cls:'rule', n:'VI', lbl:'On the pin'},
+
+  /* 33 */ {cls:'label',    html:'On the pin'},
+  /* 34 */ {cls:'lede',     html:'Pinning is the most important interaction in the system and the easiest to miss. It is not playing a preview. It is <em>holding something still while you think.</em>'},
+  /* 35 */ {cls:'body',     html:'When you pin the primary video, the interface reorganizes around that choice. The scattered nodes collapse. The chip list appears — media and moments, accessible below the running frame. You can navigate the catalog with the video playing. The pin decouples the browsing from the watching.'},
+  /* 36 */ {cls:'body',     html:'You can watch the trailer for one show while reading about three others. The video continues. The context updates. This is a fundamentally different proposition than what streaming interfaces normally offer — <span class="r">because it treats browsing and watching not as sequential states, but as simultaneous ones.</span>'},
+  /* 37 */ {cls:'pull',     html:'Cinema mode is the terminal state. Full screen, the work itself, the interface dissolved. You get there when you are ready. Not before.'},
+  /* 38 */ {cls:'rule', n:'VII', lbl:'On key moments'},
+
+  /* 39 */ {cls:'label',    html:'On key moments'},
+  /* 40 */ {cls:'lede',     html:'A timestamp is a location. A key moment is a <em>coordinate in an emotional geography.</em>'},
+  /* 41 */ {cls:'body',     html:'The difference is that one tells you where something is in the file. The other tells you what kind of thing it is, what it will cost you, what you need to have seen before it arrives. The salvaging scene in Making a Murderer. Fleabag\'s first look to camera. The silence after the verdict. <em>These are not timestamps. They are the show.</em>'},
+  /* 42 */ {cls:'body',     html:'We built the moments system because the first three minutes of a show is almost never where the show lives. The show lives in the specific sentence that makes everything before it necessary. The interface is trying to take you there — not after you have watched eight episodes, but <span class="r">before you have decided whether to start.</span>'},
+  /* 43 */ {cls:'rule', n:'VIII', lbl:'On what the browsing is'},
+
+  /* 44 */ {cls:'label',    html:'On what the browsing is'},
+  /* 45 */ {cls:'lede',     html:'Most streaming UX is designed to minimize the time between opening the app and playing something. The implicit message: browsing is waste. <em>Get through it faster.</em>'},
+  /* 46 */ {cls:'body',     html:'This interface inverts that. The browsing is part of the work. Descending through the stream, locating yourself in the feel field, pinning something to sit with it — these are not steps toward watching. They are <em>already watching,</em> in the sense that matters: you are attending to something, you are being changed by proximity to it, you are developing a relationship with the work before the first frame plays.'},
+  /* 47 */ {cls:'pull',     html:'The act of finding something to watch is itself an experience worth having. Not a problem to solve. An experience with texture, depth, and its own satisfaction.'},
+  /* 48 */ {cls:'rule', n:'IX', lbl:'On Wolfgang'},
+
+  /* 49 */ {cls:'label',    html:'On Wolfgang'},
+  /* 50 */ {cls:'lede',     html:'The engine is named for a dog. A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.'},
+  /* 51 */ {cls:'body',     html:'He would stop on walks. Not because he was tired. Because <em>something was worth stopping for.</em> The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.'},
+  /* 52 */ {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. It does not want you to find something faster. <span class="r">It wants you to find the right thing — and to remember, afterward, that the finding was part of it.</span>'},
+  /* 53 */ {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you.<br>That is what this is for.'},
+];
+
+/* map sentence index → chapter index (the chapter this sentence belongs to) */
+var MF_SENT_TO_CHAP = {};
+MF_CHAPTERS.forEach(function(ch, ci){
+  // find the next chapter's sentIdx (or end)
+  var next = MF_CHAPTERS[ci+1] ? MF_CHAPTERS[ci+1].sentIdx : MF_SENTENCES.length;
+  for(var s = ch.sentIdx; s < next; s++){
+    MF_SENT_TO_CHAP[s] = ci;
+  }
+});
 
 function buildManifesto(){
   var root = q('mf-root');
@@ -2659,6 +2696,7 @@ function buildManifesto(){
   MF_SENTENCES.forEach(function(s, i){
     var el = document.createElement('div');
     el.className = 'mfs ' + s.cls;
+    el.dataset.sidx = i;
     if(s.cls === 'rule'){
       el.innerHTML =
         '<div class="mf-chi">' +
@@ -2674,6 +2712,65 @@ function buildManifesto(){
     root.appendChild(el);
     MF_SELS.push(el);
   });
+  buildNavRail();
+}
+
+function buildNavRail(){
+  var inner = q('mf-nav-inner');
+  // clear except spine
+  var spine = q('mf-nav-spine');
+  inner.innerHTML = '';
+  inner.appendChild(spine);
+
+  MF_CHAPTERS.forEach(function(ch, ci){
+    var item = document.createElement('div');
+    item.className = 'mf-nav-item';
+    item.dataset.chap = ci;
+    item.innerHTML =
+      '<div class="mf-nav-lbl">' + ch.lbl + '</div>' +
+      '<div class="mf-nav-dot"></div>';
+    item.addEventListener('click', function(){
+      mfJumpToChapter(ci);
+    });
+    // Touch feedback
+    item.addEventListener('touchstart', function(){ item.style.opacity='.75'; },{passive:true});
+    item.addEventListener('touchend',   function(){ item.style.opacity=''; },{passive:true});
+    inner.appendChild(item);
+  });
+}
+
+function updateNavRail(actI){
+  // find which chapter actI belongs to
+  var curChap = MF_SENT_TO_CHAP[actI] !== undefined ? MF_SENT_TO_CHAP[actI] : 0;
+  document.querySelectorAll('.mf-nav-item').forEach(function(item){
+    var ci = parseInt(item.dataset.chap);
+    item.classList.remove('active','past');
+    if(ci === curChap) item.classList.add('active');
+    else if(ci < curChap) item.classList.add('past');
+  });
+  // On mobile scroll active item into view in the bottom strip
+  var activeItem = document.querySelector('.mf-nav-item.active');
+  if(activeItem && isMobile()){
+    var inner = q('mf-nav-inner');
+    if(inner){
+      var itemLeft = activeItem.offsetLeft;
+      var itemW = activeItem.offsetWidth;
+      var innerW = inner.clientWidth;
+      inner.scrollTo({left: itemLeft - innerW/2 + itemW/2, behavior:'smooth'});
+    }
+  }
+}
+
+function mfJumpToChapter(ci){
+  var ch = MF_CHAPTERS[ci];
+  if(!ch) return;
+  var target = MF_SELS[ch.sentIdx];
+  if(!target) return;
+  var stream = q('mf-stream');
+  var streamRect = stream.getBoundingClientRect();
+  var targetRect = target.getBoundingClientRect();
+  var targetScrollTop = stream.scrollTop + (targetRect.top - streamRect.top) - stream.clientHeight * 0.12;
+  stream.scrollTo({top: Math.max(0, targetScrollTop), behavior:'smooth'});
 }
 
 function updateManifesto(){
@@ -2682,23 +2779,21 @@ function updateManifesto(){
   var streamRect = stream.getBoundingClientRect();
   var threshold = streamRect.top + stream.clientHeight * 0.42;
 
-  // find active = last sentence whose top is above threshold
   var actI = 0;
   MF_SELS.forEach(function(el, i){
     var rect = el.getBoundingClientRect();
     if(rect.top <= threshold) actI = i;
   });
 
-  // assign four states: pst | act | nxt | (far = default)
   MF_SELS.forEach(function(el, i){
     el.classList.remove('pst','act','nxt','rev');
-    if(i < actI)       el.classList.add('pst');
-    else if(i === actI) el.classList.add('act');
+    if(i < actI)            el.classList.add('pst');
+    else if(i === actI)     el.classList.add('act');
     else if(i === actI + 1) el.classList.add('nxt');
-    // else: far — base opacity (.42)
   });
 
-  // progress
+  updateNavRail(actI);
+
   var st = stream.scrollTop;
   var sh = stream.scrollHeight - stream.clientHeight;
   q('mf-progress').style.width = (sh > 0 ? Math.min(100, (st/sh)*100) : 0) + '%';
@@ -2724,13 +2819,11 @@ function openManifesto(){
   document.body.style.overflow = 'hidden';
   MF_STREAM = stream;
 
-  // Scroll → update active sentence
   stream.addEventListener('scroll', updateManifesto, {passive:true});
 
-  // Wheel → sentence-step unless free-scroll active
   var wlk = false;
   var mfWheelHandler = function(e){
-    if(MF_FREE) return; // let browser scroll natively
+    if(MF_FREE) return;
     e.preventDefault();
     if(wlk) return;
     wlk = true;
@@ -2740,7 +2833,6 @@ function openManifesto(){
   };
   stream.addEventListener('wheel', mfWheelHandler, {passive:false});
 
-  // Touch — sentence-step unless free-scroll active
   var tY = 0;
   var mfTouchStart = function(e){ tY = e.touches[0].clientY; };
   var mfTouchEnd = function(e){
@@ -2751,7 +2843,6 @@ function openManifesto(){
   stream.addEventListener('touchstart', mfTouchStart, {passive:true});
   stream.addEventListener('touchend', mfTouchEnd, {passive:true});
 
-  // Arrow keys while manifesto open
   var mfKeyHandler = function(e){
     if(!MF_OPEN) return;
     if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();mfAdvance(1);}
@@ -2760,7 +2851,6 @@ function openManifesto(){
   };
   document.addEventListener('keydown', mfKeyHandler);
 
-  // Store cleanup refs on stream element
   stream._mfCleanup = function(){
     stream.removeEventListener('scroll', updateManifesto);
     stream.removeEventListener('wheel', mfWheelHandler);
@@ -2769,7 +2859,6 @@ function openManifesto(){
     document.removeEventListener('keydown', mfKeyHandler);
   };
 
-  // Activate first sentence immediately
   requestAnimationFrame(function(){
     if(MF_SELS.length){
       MF_SELS[0].classList.add('act');
