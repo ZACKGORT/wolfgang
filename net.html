@@ -512,7 +512,8 @@ body.grid-on .cbtn.on::after{display:none}
 .ihsep{flex:1;height:1px;background:linear-gradient(to right,rgba(255,255,255,.06),transparent);margin-top:1px}
 .ihc{font-family:var(--sans);font-size:10px;letter-spacing:.08em;color:rgba(255,255,255,.08);transition:color .8s}
 .ihc.on{color:rgba(255,255,255,.2)}
-#igrid{position:absolute;inset:0}
+#igrid{position:absolute;inset:0;transition:height .36s,opacity .28s}
+#izone.pinned #igrid{height:0;overflow:hidden;opacity:0;pointer-events:none}
 .node{position:absolute;z-index:5;pointer-events:all;cursor:none;
   opacity:0;transform:translateY(12px) scale(.88);
   transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
@@ -711,29 +712,36 @@ body.grid-on .cbtn.on::after{display:none}
 #ipinned iframe{
   position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
 
-/* cinema button — always visible over video */
-#ipin-cinema{
-  position:absolute;top:10px;right:10px;z-index:10;
-  display:flex;align-items:center;gap:7px;
-  font-family:var(--sans);font-weight:700;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
-  background:rgba(0,0,0,.78);border:1px solid rgba(var(--cat-rgb),.5);
-  color:var(--cat-color);padding:6px 13px;border-radius:2px;cursor:pointer;
-  transition:background .14s,border-color .6s,color .6s,opacity .2s;
-  opacity:0;pointer-events:none}
-#ipinned:hover #ipin-cinema{opacity:1;pointer-events:all}
-#ipin-cinema:hover{background:rgba(var(--cat-rgb),.18);border-color:var(--cat-color)}
+/* izone header action buttons */
+#izone-actions{
+  display:flex;align-items:center;gap:6px;pointer-events:all}
 
-/* unpin sits bottom-left, subtle */
-#ipin-unpin{
-  position:absolute;bottom:10px;left:10px;z-index:10;
-  font-family:var(--sans);font-weight:500;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-  background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);
-  color:rgba(255,255,255,.42);padding:4px 10px;border-radius:2px;cursor:pointer;
-  transition:all .14s;opacity:0;pointer-events:none}
-#ipinned:hover #ipin-unpin{opacity:1;pointer-events:all}
-#ipin-unpin:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+#ipin-watch-btn{
+  display:none;/* shown only when pinned */
+  align-items:center;gap:5px;
+  font-family:var(--sans);font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(var(--cat-rgb),.14);border:1px solid rgba(var(--cat-rgb),.4);
+  color:var(--cat-color);padding:4px 11px;border-radius:2px;cursor:pointer;
+  transition:background .14s,border-color .6s,color .6s}
+#ipin-watch-btn:hover{background:rgba(var(--cat-rgb),.28);border-color:var(--cat-color)}
+#izone.pinned #ipin-watch-btn{display:flex}
 
-/* title bar at bottom of video */
+#ipin-tog-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;
+  background:none;border:1px solid rgba(255,255,255,.1);border-radius:2px;
+  color:rgba(255,255,255,.3);cursor:pointer;
+  transition:all .18s,border-color .6s,color .6s;
+  flex-shrink:0}
+#ipin-tog-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
+#izone.pinned #ipin-tog-btn{
+  border-color:rgba(var(--cat-rgb),.5);
+  color:var(--cat-color);
+  background:rgba(var(--cat-rgb),.1);
+  transition:border-color .6s,color .6s,background .6s}
+#izone.pinned #ipin-tog-btn:hover{background:rgba(var(--cat-rgb),.22);border-color:var(--cat-color)}
+
+/* title bar at bottom of video — label only */
 #ipin-bar{
   position:absolute;bottom:0;left:0;right:0;z-index:5;
   padding:18px 12px 8px;
@@ -786,20 +794,8 @@ body.grid-on .cbtn.on::after{display:none}
   flex-shrink:0;transition:color .6s}
 .ipin-chip:hover .ipin-cts{color:var(--cat-color)}
 
-/* pin toggle button on primary node */
-.node.primary .npin-tog{
-  position:absolute;bottom:8px;left:8px;z-index:8;
-  font-family:var(--sans);font-weight:700;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
-  background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.2);
-  color:rgba(255,255,255,.6);padding:4px 9px;border-radius:2px;cursor:none;
-  opacity:0;transition:opacity .18s,border-color .6s,color .6s,background .14s;
-  pointer-events:none}
-@media(max-width:768px){.node.primary .npin-tog{cursor:pointer}}
-.node.primary:hover .npin-tog{opacity:1;pointer-events:all}
-.node.primary.is-pinned .npin-tog{
-  opacity:1;pointer-events:all;
-  border-color:rgba(var(--cat-rgb),.5);color:var(--cat-color);
-  background:rgba(var(--cat-rgb),.12)}
+/* pin toggle button on primary node — icon only, always visible */
+.node.primary .npin-tog{display:none}
 
 /* mobile pin panel — bottom sheet */
 #mpin{
@@ -828,10 +824,171 @@ body.grid-on .cbtn.on::after{display:none}
 .mpin-btn.outline:active{background:rgba(255,255,255,.06)}
 #mpin-list{display:flex;flex-direction:column;gap:0}
 
+/* ── MANIFESTO OVERLAY — LETTER THEME ── */
+#manifesto{
+  position:fixed;inset:0;z-index:1000;
+  background:#f4efe6;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s cubic-bezier(.22,1,.36,1)}
+#manifesto.on{opacity:1;pointer-events:all}
+
+/* paper grain */
+#manifesto::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  background-size:300px 300px;mix-blend-mode:multiply}
+
+/* left margin rule */
+#manifesto::after{
+  content:'';position:fixed;left:clamp(26px,7.5vw,108px);top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent 4%,rgba(40,28,12,.08) 18%,rgba(40,28,12,.07) 82%,transparent 96%);
+  z-index:1;pointer-events:none}
+
+.hm{cursor:none}
+@media(max-width:768px){.hm{cursor:pointer}}
+.hm.active{color:var(--cat-color);text-shadow:0 0 18px rgba(var(--cat-rgb),.55);transition:color .6s,text-shadow .6s}
+
+#mf-stream{
+  position:absolute;inset:0;z-index:2;
+  overflow-y:scroll;overflow-x:hidden;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(40,28,12,.14) transparent}
+#mf-stream::-webkit-scrollbar{width:4px}
+#mf-stream::-webkit-scrollbar-track{background:transparent}
+#mf-stream::-webkit-scrollbar-thumb{background:rgba(40,28,12,.14);border-radius:2px}
+
+#mf-scroll{
+  padding:clamp(52px,10vh,98px) clamp(38px,8vw,112px) 0 clamp(38px,8vw,112px);
+  max-width:760px}
+@media(max-width:768px){#mf-scroll{padding:56px 28px 0 28px}}
+
+#mf-root{position:relative}
+
+/* sentence base — all visible, dimming creates depth */
+.mfs{
+  display:block;position:relative;padding:3px 0;
+  opacity:1;transform:none;
+  transition:opacity .44s ease,color .44s ease;
+  cursor:default}
+.mfs.rev{opacity:.16}
+.mfs.pst{opacity:.32}
+.mfs.act{opacity:1}
+
+/* label */
+.mfs.label{
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.34em;text-transform:uppercase;
+  color:rgba(var(--cat-rgb),.55);
+  padding:clamp(36px,6vh,64px) 0 8px;
+  transition:color .6s}
+.mfs.label:first-child{padding-top:0}
+.mfs.act.label,.mfs.pst.label{color:rgba(var(--cat-rgb),.85)}
+
+/* headline */
+.mfs.headline{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(38px,6.8vw,88px);
+  line-height:.86;letter-spacing:-.04em;
+  color:rgba(18,13,6,.75);
+  padding:4px 0 8px}
+.mfs.act.headline{color:rgba(12,8,2,.96)}
+.mfs.pst.headline{color:rgba(18,13,6,.45)}
+.mfs.rev.headline{color:rgba(18,13,6,.25)}
+
+/* lede */
+.mfs.lede{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(14.5px,1.75vw,21px);
+  line-height:1.54;
+  color:rgba(28,20,10,.5);
+  max-width:540px;padding:8px 0}
+.mfs.act.lede{color:rgba(20,13,4,.88)}
+.mfs.pst.lede{color:rgba(28,20,10,.38)}
+.mfs.lede em{font-style:normal;font-weight:700;color:rgba(10,6,2,.95)}
+.mfs.lede .r{color:var(--cat-color);font-style:normal;transition:color .6s}
+
+/* body */
+.mfs.body{
+  font-family:var(--mono);font-weight:400;
+  font-size:clamp(10.5px,1.1vw,13px);
+  line-height:1.82;
+  color:rgba(28,20,10,.45);
+  max-width:500px;padding:3px 0}
+.mfs.act.body{color:rgba(20,13,4,.8)}
+.mfs.pst.body{color:rgba(28,20,10,.32)}
+.mfs.body em{font-style:italic;color:rgba(10,6,2,.92)}
+.mfs.body .r{color:var(--cat-color);transition:color .6s}
+
+/* pull */
+.mfs.pull{
+  font-family:var(--serif);font-style:italic;
+  font-size:clamp(13.5px,1.5vw,18px);
+  line-height:1.46;
+  color:rgba(28,20,10,.48);
+  max-width:440px;padding:12px 0 12px 22px;
+  border-left:2px solid rgba(var(--cat-rgb),.22);
+  transition:border-color .6s,color .44s}
+.mfs.act.pull{color:rgba(20,13,4,.86);border-left-color:rgba(var(--cat-rgb),.72)}
+.mfs.pst.pull{border-left-color:rgba(var(--cat-rgb),.18)}
+
+/* rule */
+.mfs.rule{padding:18px 0;opacity:.18!important}
+.mfs.rule::before{
+  content:'';display:block;width:22px;height:1px;
+  background:rgba(28,20,10,.3)}
+
+/* active left accent */
+.mfs.act.lede::before,.mfs.act.headline::before{
+  content:'';position:absolute;left:-14px;top:50%;
+  width:3px;height:55%;transform:translateY(-50%);
+  background:rgba(var(--cat-rgb),.7);border-radius:1px;
+  transition:background .6s}
+@media(max-width:768px){
+  .mfs.act.lede::before,.mfs.act.headline::before{left:-10px;width:2px}}
+
+/* end screen */
+#mf-end{
+  padding:clamp(72px,14vh,130px) 0 clamp(90px,16vh,180px);
+  opacity:0;transition:opacity 1s ease .5s}
+#manifesto.on #mf-end{opacity:1}
+.mfe-mark{
+  font-family:var(--serif);font-weight:900;
+  font-size:clamp(72px,11vw,130px);
+  line-height:1;letter-spacing:-.04em;
+  color:rgba(var(--cat-rgb),.2);
+  transition:color .6s;margin-bottom:10px;user-select:none}
+.mfe-sub{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(28,20,10,.3);margin-bottom:36px}
+.mfe-close{
+  font-family:var(--sans);font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  background:none;border:1px solid rgba(28,20,10,.18);
+  color:rgba(28,20,10,.42);
+  padding:10px 24px;border-radius:2px;cursor:pointer;
+  transition:all .18s}
+.mfe-close:hover{border-color:var(--cat-color);color:var(--cat-color)}
+
+/* mobile bzone/nscroll */
 @media(max-width:768px){
   #bzone{bottom:56px}
   #nscroll{padding-bottom:80px}
 }
+
+/* close button */
+#mf-close-btn{
+  position:fixed;top:14px;right:18px;z-index:10;
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  background:none;border:none;
+  color:rgba(28,20,10,.28);
+  cursor:pointer;padding:6px 8px;transition:color .18s}
+#mf-close-btn:hover{color:rgba(28,20,10,.7)}
+@media(max-width:768px){#mf-close-btn{cursor:pointer}}
+
+/* reading progress */
+#mf-progress{
+  position:fixed;bottom:0;left:0;height:2px;z-index:10;
+  background:var(--cat-color);width:0%;
+  transition:width .3s linear,background .6s;
+  box-shadow:0 0 8px rgba(var(--cat-rgb),.4)}
 </style>
 </head>
 <body>
@@ -974,7 +1131,7 @@ body.grid-on .cbtn.on::after{display:none}
 </div>
 
 <div id="hdr">
-  <div class="hm">N</div>
+  <div class="hm" id="logo" onclick="toggleManifesto()" title="What is this?">N</div>
   <div class="hs"></div>
   <div id="hsearch">
     <div id="hsearch-label">the sentence is the interface</div>
@@ -1017,12 +1174,27 @@ body.grid-on .cbtn.on::after{display:none}
     <div class="ihl" id="ihl">Now viewing</div>
     <div class="ihsep"></div>
     <div class="ihc" id="ihc">—</div>
+    <div id="izone-actions">
+      <button id="ipin-watch-btn" onclick="expandPinnedToWatch()" title="Open in Cinema">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="2,1 11,6 2,11" fill="currentColor" stroke="none"/>
+        </svg>
+        Watch
+      </button>
+      <button id="ipin-tog-btn" onclick="togglePin()" title="Pin / unpin video">
+        <svg id="ipin-icon" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 1.5L14.5 6.5"/>
+          <path d="M5 4L12 11"/>
+          <path d="M9.5 1.5C9.5 1.5 11 3 10 5C9 7 7 7.5 7 7.5L8.5 9C8.5 9 9 7 11 6C13 5 14.5 6.5 14.5 6.5"/>
+          <path d="M5 4C5 4 3.5 5.5 5 7.5L6.5 9"/>
+          <line x1="2" y1="14" x2="6" y2="10"/>
+        </svg>
+      </button>
+    </div>
   </div>
   <div id="ipinned" style="height:0">
     <iframe id="ipin-frame" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
     <div id="ipin-bar"><div id="ipin-ttl">—</div></div>
-    <button id="ipin-cinema" onclick="expandPinnedToWatch()">⤢ Cinema</button>
-    <button id="ipin-unpin" onclick="togglePin()">✕ unpin</button>
   </div>
   <div id="igrid"></div>
   <div id="igrid-flow"></div>
@@ -1077,9 +1249,22 @@ body.grid-on .cbtn.on::after{display:none}
   <div class="hx">·</div><div class="hk">1–5</div><div class="hx">category</div>
 </div>
 
-<script>
-'use strict';
+<div id="manifesto">
+  <div id="mf-stream">
+    <div id="mf-scroll">
+      <div id="mf-root"></div>
+      <div id="mf-end">
+        <div class="mfe-mark">N</div>
+        <div class="mfe-sub">Narrative Engine</div>
+        <button class="mfe-close" onclick="closeManifesto()">return to the interface →</button>
+      </div>
+    </div>
+  </div>
+  <button id="mf-close-btn" onclick="closeManifesto()">✕</button>
+  <div id="mf-progress"></div>
+</div>
 
+<script>
 /* ── CATEGORY COLORS ── */
 const CAT_COLORS={
   drama: {h:14,  s:'72%', l:'46%', rgb:'220,68,28'},
@@ -1461,7 +1646,7 @@ function goTo(si,instant){
   q('hcur').textContent=String(si+1).padStart(2,'0');
   q('ihl').textContent=show.title; q('ihl').classList.add('on');
   q('ihc').textContent=(show.media?show.media.length:0)+' items'; q('ihc').classList.add('on');
-  if(!isMobile()){hideNG(); scheduleIntent(si); updatePinnedForShow(si);}
+  if(!isMobile()){hideNG(); if(q('izone').classList.contains('pinned')){updatePinnedForShow(si);}else{scheduleIntent(si);}}
   if(isMobile()&&q('mdetail').classList.contains('on'))populateMDetail(show);
   setTimeout(updateScrollThumb,320);
 }
@@ -1801,7 +1986,7 @@ document.addEventListener('keydown',function(e){
     case 'ArrowDown':case 'j':case ' ':e.preventDefault();if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);break;
     case 'ArrowUp':case 'k':e.preventDefault();if(ACT_SI>0)goTo(ACT_SI-1);break;
     case 'Enter':e.preventDefault();openWatch();break;
-    case 'Escape':closeWatch();closeMDetail();if(gridOn)toggleGrid(false);break;
+    case 'Escape':closeWatch();closeMDetail();if(gridOn)toggleGrid(false);if(MF_OPEN)closeManifesto();break;
     case 'g':case 'G':e.preventDefault();toggleGrid();break;
     case 'p':case 'P':e.preventDefault();togglePin();break;
   }
@@ -1835,7 +2020,12 @@ GEL.addEventListener('mouseleave',function(){ngHov=false;hideNG();});
 var rT;
 window.addEventListener('resize',function(){
   clearTimeout(rT);
-  rT=setTimeout(function(){measureIntent();exitNodes(function(){placeNodes(ACT_SI);});updateScrollThumb();if(q('izone').classList.contains('pinned'))sizePinnedArea();},120);
+  rT=setTimeout(function(){
+    measureIntent();
+    if(q('izone').classList.contains('pinned')){sizePinnedArea();}
+    else{exitNodes(function(){placeNodes(ACT_SI);});}
+    updateScrollThumb();
+  },120);
 });
 
 /* ═══════════════════════════════════════════════
@@ -2257,6 +2447,174 @@ function initFeel(){
   });
 
   window.addEventListener('resize',function(){if(feelOpen)paintCanvas();});
+}
+
+/* ── MANIFESTO ── */
+var MF_OPEN = false;
+var MF_SELS = [];
+var MF_STREAM = null;
+
+var MF_SENTENCES = [
+  {cls:'label',    html:'On attention'},
+  {cls:'headline', html:'The sentence<br>that lands<br>changes<br>everything.'},
+  {cls:'lede',     html:'Not the paragraph. Not the chapter. <em>The sentence.</em> The one that arrives at exactly the right speed, in exactly the right order, and does something irreversible to the way you see what comes after it.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On how we got here'},
+  {cls:'lede',     html:'Every streaming interface was built on the same assumption: that more is better. More titles. More thumbnails. More rows. <span class="r">More surface area for your eye to skate across without landing.</span>'},
+  {cls:'body',     html:'The algorithm learned to chase the click, not the experience. It got very good at interrupting you. It mistook engagement for attention, completion for resonance, the skip for a preference signal.'},
+  {cls:'body',     html:'You were not browsing a library. You were being <em>processed</em> by a machine that had no interest in what the work actually was — only in whether you touched it.'},
+  {cls:'pull',     html:'We decided the interface was the problem. Not the content. The interface.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On the sentence as navigation'},
+  {cls:'lede',     html:'The Narrative Engine is built on a different idea: that reading is already movement. That <em>descending into a sentence</em> is a more honest form of navigation than horizontal scrolling ever was.'},
+  {cls:'body',     html:'You do not scan here. You read. The interface enforces this — not with friction, but with <em>gravity.</em> Each sentence sits at a different depth. The active one is present. The others wait.'},
+  {cls:'body',     html:'The title you are reading right now is not competing with the title above it. They exist at different moments in your attention. <span class="r">Only one sentence is ever now.</span>'},
+  {cls:'pull',     html:'The interface does not ask for your attention. It assumes you brought it with you.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On feel as a coordinate'},
+  {cls:'lede',     html:'We do not recommend by genre. Genre is a distribution category, not an experience. <em>Drama</em> is a filing system. <em>Haunting and cerebral and cold</em> is something you actually feel on a Tuesday night.'},
+  {cls:'body',     html:'The feel field is a two-dimensional space where quiet meets dark, where frenetic meets light. You drag a point across it and the catalog reorganizes around what you are actually in the mood for — not what you most recently watched.'},
+  {cls:'body',     html:'This is not a recommendation engine. It is a <em>resonance engine.</em> The difference is that one knows your history. The other knows your current frequency.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On what you do with a story'},
+  {cls:'lede',     html:'Most interfaces treat narrative as inventory. A title is a product. A season is a unit. An episode is a duration. <em>None of these are the thing.</em>'},
+  {cls:'body',     html:'The thing is the scene where everything shifts. The monologue that costs a character something real. The moment the music stops and the silence has to carry the weight. <span class="r">These are not timestamps. They are coordinates in an emotional geography.</span>'},
+  {cls:'body',     html:'We built the Key Moments system because the first three minutes of a show is not where the show lives. The show lives in the specific, located instance of it being <em>exactly</em> what you needed it to be.'},
+  {cls:'pull',     html:'Every great story has a sentence that arrives and makes everything before it necessary. We are trying to take you there.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On the right panel'},
+  {cls:'lede',     html:'The intent zone is not a detail page. It is a <em>spatial argument</em> about what this story is made of — how its parts relate, which ones are doors and which ones are rooms.'},
+  {cls:'body',     html:'The primary cell is the work itself. The secondary cells are ways into it: trailers that tell you the tone before the commitment, scenes that show you what kind of show this is before you have seen what kind of show this is.'},
+  {cls:'body',     html:'When you pin a video, the interface reorganizes around your attention rather than the other way. The content descends. The context surfaces. <em>You are not watching a preview. You are holding something still while you think.</em>'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On what this is not'},
+  {cls:'body',     html:'This is not a streaming service. We do not own the content. We are not selling a subscription or an algorithm or a recommendation feed trained on aggregate behaviour.'},
+  {cls:'body',     html:'This is a <em>reading platform for moving image.</em> A different posture. One that assumes the person in front of it is capable of sustained attention and deserves an interface that treats that capacity as an asset rather than a liability.'},
+  {cls:'pull',     html:'The algorithm wants you to keep scrolling. We want you to stop.'},
+  {cls:'rule'},
+
+  {cls:'label',    html:'On Wolfgang'},
+  {cls:'lede',     html:'The engine is named for a dog. A rescue. Someone who had no interest in what came next until he was certain about what was happening right now.'},
+  {cls:'body',     html:'He would stop on walks. Not because he was tired. Because <em>something was worth stopping for.</em> The smell of a particular patch of ground. The sound of something two streets over. The specific texture of this moment, which would not occur again.'},
+  {cls:'body',     html:'We called it walking your dog. The practice of not rushing past the thing that is actually there. The interface is built on that instinct. <span class="r">It asks you to be present with one story at a time.</span>'},
+  {cls:'pull',     html:'The sentence that lands. The scene that costs. The moment you stop and let it reach you. That is what this is for.'},
+];
+
+function buildManifesto(){
+  var root = q('mf-root');
+  root.innerHTML = '';
+  MF_SELS = [];
+  MF_SENTENCES.forEach(function(s, i){
+    var el = document.createElement('div');
+    el.className = 'mfs ' + s.cls;
+    el.innerHTML = s.html || '';
+    root.appendChild(el);
+    MF_SELS.push(el);
+  });
+}
+
+function updateManifesto(){
+  if(!MF_OPEN) return;
+  var stream = q('mf-stream');
+  var vh = stream.clientHeight;
+  var midY = stream.scrollTop + vh * 0.46;
+
+  // find active sentence
+  var actI = 0;
+  MF_SELS.forEach(function(el, i){
+    var top = el.offsetTop;
+    if(top <= midY) actI = i;
+  });
+
+  MF_SELS.forEach(function(el, i){
+    el.classList.remove('pst','act','rev');
+    if(i < actI) el.classList.add('pst');
+    else if(i === actI) el.classList.add('act');
+    else if(i === actI + 1) el.classList.add('rev');
+  });
+
+  // progress bar
+  var st = stream.scrollTop;
+  var sh = stream.scrollHeight - vh;
+  var pct = sh > 0 ? Math.min(100, (st / sh) * 100) : 0;
+  q('mf-progress').style.width = pct + '%';
+}
+
+function openManifesto(){
+  if(!MF_OPEN){
+    MF_OPEN = true;
+    buildManifesto();
+    var stream = q('mf-stream');
+    stream.scrollTop = 0;
+    q('manifesto').classList.add('on');
+    q('logo').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    MF_STREAM = stream;
+    stream.addEventListener('scroll', updateManifesto, {passive:true});
+    // wheel scroll advances sentence by sentence like main stream
+    stream.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var d = e.deltaY > 0 ? 1 : -1;
+      // find current active
+      var actI = 0;
+      MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
+      var next = Math.max(0, Math.min(MF_SELS.length - 1, actI + d));
+      // find a non-rule next target
+      var tries = 0;
+      while(MF_SELS[next] && MF_SELS[next].classList.contains('rule') && tries < 8){
+        next = Math.max(0, Math.min(MF_SELS.length - 1, next + d));
+        tries++;
+      }
+      var target = MF_SELS[next];
+      if(target){
+        var scrollTo = target.offsetTop - stream.clientHeight * 0.46;
+        stream.scrollTo({top: Math.max(0, scrollTo), behavior:'smooth'});
+      }
+    }, {passive:false});
+    // touch scroll
+    var tStart = 0;
+    stream.addEventListener('touchstart', function(e){ tStart = e.touches[0].clientY; }, {passive:true});
+    stream.addEventListener('touchend', function(e){
+      var dy = tStart - e.changedTouches[0].clientY;
+      if(Math.abs(dy) > 24){
+        var d = dy > 0 ? 1 : -1;
+        var actI = 0;
+        MF_SELS.forEach(function(el,i){ if(el.classList.contains('act')) actI = i; });
+        var next = Math.max(0, Math.min(MF_SELS.length - 1, actI + d));
+        var target = MF_SELS[next];
+        if(target) stream.scrollTo({top: Math.max(0, target.offsetTop - stream.clientHeight * 0.46), behavior:'smooth'});
+      }
+    }, {passive:true});
+    // Activate first sentence immediately — don't wait for scroll
+    requestAnimationFrame(function(){
+      MF_SELS.forEach(function(el, i){
+        el.classList.remove('pst','act','rev');
+        if(i === 0) el.classList.add('act');
+        else if(i < 4) el.classList.add('rev');
+        else el.classList.remove('pst','act','rev');
+      });
+      updateManifesto();
+    });
+  }
+}
+
+function closeManifesto(){
+  MF_OPEN = false;
+  q('manifesto').classList.remove('on');
+  q('logo').classList.remove('active');
+  document.body.style.overflow = '';
+  q('mf-progress').style.width = '0%';
+}
+
+function toggleManifesto(){
+  if(MF_OPEN) closeManifesto();
+  else openManifesto();
 }
 
 /* ── INIT ── */
