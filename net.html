@@ -438,34 +438,71 @@ body.dim .s.act{opacity:1;transform:none}
 .chrule{width:14px;height:1px;background:var(--cat-color);transition:background .6s}
 .chsub{font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--cat-color);opacity:.72;transition:color .6s}
 .chname{font-family:var(--serif);font-weight:700;font-size:clamp(12px,1.35vw,15px);letter-spacing:-.015em;text-transform:uppercase;color:rgba(236,234,225,.62)}
-#gover{position:absolute;inset:0;z-index:30;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
-  background:rgba(7,7,10,.0);opacity:0;pointer-events:none;transition:opacity .32s}
+/* ── GRID OVERLAY ── */
+#gover{
+  position:absolute;inset:0;z-index:30;
+  overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+  background:var(--bg);
+  opacity:0;pointer-events:none;
+  transition:opacity .28s cubic-bezier(.22,1,.36,1)}
 #gover::-webkit-scrollbar{display:none}
-#gover.on{opacity:1;pointer-events:all;background:rgba(7,7,10,.82);backdrop-filter:blur(2px)}
-#ginner{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0;min-height:100%}
-@media(max-width:480px){#ginner{grid-template-columns:repeat(3,1fr)}}
-.gcov{position:relative;aspect-ratio:2/3;overflow:hidden;cursor:none;
-  border:1px solid transparent;transition:border-color .22s}
+#gover.on{opacity:1;pointer-events:all}
+#ginner{display:block;padding:0}
+/* category section inside grid */
+.gsec{display:block}
+.gsec.ghidden{display:none}
+.gsec-head{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 12px 7px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  position:sticky;top:0;z-index:5;
+  background:rgba(7,7,10,.96);backdrop-filter:blur(12px)}
+.gsec-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.gsec-name{
+  font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.38)}
+.gsec-count{
+  font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.18);margin-left:auto}
+.gsec-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+@media(max-width:480px){.gsec-tiles{grid-template-columns:repeat(3,1fr)}}
+/* tile */
+.gcov{
+  position:relative;aspect-ratio:2/3;overflow:hidden;cursor:none;
+  border-right:1px solid rgba(0,0,0,.5);
+  border-bottom:1px solid rgba(0,0,0,.5)}
 @media(max-width:768px){.gcov{cursor:pointer}}
-.gcov img{display:block;width:100%;height:100%;object-fit:cover;
-  filter:saturate(.28) brightness(.52);
-  transition:transform .55s,filter .36s}
-.gcov:hover img{transform:scale(1.06);filter:saturate(.75) brightness(.72)}
-.gcov.on img{filter:saturate(.9) brightness(.82);transform:scale(1.03)}
-.gcovlay{position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(7,7,10,.92) 0%,rgba(7,7,10,.12) 50%,transparent 100%);
-  opacity:0;transition:opacity .26s}
+.gcov img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  filter:saturate(.22) brightness(.46);
+  transition:transform .5s,filter .32s}
+.gcov:hover img{transform:scale(1.07);filter:saturate(.72) brightness(.7)}
+.gcov.on img{filter:saturate(.88) brightness(.78);transform:scale(1.02)}
+.gcovlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(7,7,10,.9) 0%,rgba(7,7,10,.08) 52%,transparent 100%);
+  opacity:0;transition:opacity .22s}
 .gcov:hover .gcovlay,.gcov.on .gcovlay{opacity:1}
-.gcov.on .gcovlay{background:linear-gradient(to top,rgba(var(--cat-rgb),.55) 0%,transparent 55%);transition:background .6s}
-.gcovinfo{position:absolute;bottom:0;left:0;right:0;padding:7px 8px;opacity:0;transform:translateY(4px);transition:opacity .22s,transform .22s}
+.gcov.on .gcovlay{
+  background:linear-gradient(to top,rgba(var(--cat-rgb),.6) 0%,transparent 55%);
+  transition:background .6s,opacity .22s}
+.gcovinfo{
+  position:absolute;bottom:0;left:0;right:0;padding:6px 7px;
+  opacity:0;transform:translateY(3px);transition:opacity .2s,transform .2s}
 .gcov:hover .gcovinfo,.gcov.on .gcovinfo{opacity:1;transform:none}
-.gcovt{font-family:var(--serif);font-weight:900;font-size:10px;letter-spacing:-.02em;text-transform:uppercase;color:var(--ink);line-height:1.1}
-.gcovs{font-family:var(--sans);font-size:9px;color:rgba(236,234,225,.5);margin-top:1px}
-.gcovm{position:absolute;top:5px;right:5px;font-family:var(--sans);font-weight:600;font-size:8px;color:var(--grn);background:rgba(0,0,0,.78);padding:2px 5px;border-radius:1px}
-#izone{position:fixed;top:52px;left:0;right:0;bottom:0;z-index:10;overflow:hidden;display:none}
-@media(min-width:769px){
-  #izone{display:block;left:47vw}
-}
+.gcovt{
+  font-family:var(--serif);font-weight:900;font-size:9.5px;letter-spacing:-.02em;
+  text-transform:uppercase;color:var(--ink);line-height:1.1}
+.gcovs{font-family:var(--sans);font-size:8px;color:rgba(236,234,225,.42);margin-top:2px}
+.gcovm{
+  position:absolute;top:5px;right:5px;
+  font-family:var(--sans);font-weight:600;font-size:8px;color:var(--grn);
+  background:rgba(0,0,0,.8);padding:2px 5px;border-radius:1px}
+/* cbar in grid mode — buttons become filter pills */
+body.grid-on .cbtn{transition:color .18s,background .18s,opacity .18s}
+body.grid-on .cbtn.gfilt-off{color:rgba(255,255,255,.2);opacity:.5}
+body.grid-on .cbtn.gfilt-off:hover{opacity:.8;color:rgba(255,255,255,.55)}
+body.grid-on .cbtn::after{display:none}/* hide active underline in grid mode */
+body.grid-on .cbtn.on::after{display:none}
 #izone::before{content:'';position:absolute;top:0;left:0;bottom:0;width:1px;z-index:1;pointer-events:none;
   background:linear-gradient(to bottom,transparent,rgba(var(--cat-rgb),.18) 12%,rgba(var(--cat-rgb),.14) 88%,transparent);
   transition:background 1s}
@@ -657,71 +694,140 @@ body.dim .s.act{opacity:1;transform:none}
 @media(max-width:768px){#hints{display:none}}
 
 /* ── CINEMATIC PIN MODE ── */
-#izone.pinned{overflow-y:auto;scrollbar-width:none}
-#izone.pinned::-webkit-scrollbar{display:none}
+#izone{display:none;position:fixed;top:52px;left:0;right:0;bottom:0;z-index:10;overflow:hidden}
+@media(min-width:769px){#izone{display:flex;flex-direction:column;left:47vw}}
+
+/* pinned = video shown above chips */
+#izone.pinned{overflow:hidden}
+#izone.pinned #igrid-flow{display:flex}
+#izone:not(.pinned) #igrid-flow{display:none}
+
 #ipinned{
-  position:relative;width:100%;background:#000;overflow:hidden;flex-shrink:0;
-  border-bottom:1px solid var(--bdr);
-  transition:height .38s cubic-bezier(.22,1,.36,1)}
+  position:relative;width:100%;background:#000;overflow:hidden;
+  flex-shrink:0;flex-grow:0;
+  height:0;
+  transition:height .36s cubic-bezier(.22,1,.36,1)}
+#izone.pinned #ipinned{/* height set by JS */}
 #ipinned iframe{
   position:absolute;inset:0;width:100%;height:100%;border:none;display:block}
+
+/* cinema button — always visible over video */
+#ipin-cinema{
+  position:absolute;top:10px;right:10px;z-index:10;
+  display:flex;align-items:center;gap:7px;
+  font-family:var(--sans);font-weight:700;font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+  background:rgba(0,0,0,.78);border:1px solid rgba(var(--cat-rgb),.5);
+  color:var(--cat-color);padding:6px 13px;border-radius:2px;cursor:pointer;
+  transition:background .14s,border-color .6s,color .6s,opacity .2s;
+  opacity:0;pointer-events:none}
+#ipinned:hover #ipin-cinema{opacity:1;pointer-events:all}
+#ipin-cinema:hover{background:rgba(var(--cat-rgb),.18);border-color:var(--cat-color)}
+
+/* unpin sits bottom-left, subtle */
+#ipin-unpin{
+  position:absolute;bottom:10px;left:10px;z-index:10;
+  font-family:var(--sans);font-weight:500;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.42);padding:4px 10px;border-radius:2px;cursor:pointer;
+  transition:all .14s;opacity:0;pointer-events:none}
+#ipinned:hover #ipin-unpin{opacity:1;pointer-events:all}
+#ipin-unpin:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+
+/* title bar at bottom of video */
 #ipin-bar{
   position:absolute;bottom:0;left:0;right:0;z-index:5;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 14px;
-  background:linear-gradient(to top,rgba(0,0,0,.85),transparent);
-  opacity:0;transition:opacity .2s;pointer-events:none}
-#ipinned:hover #ipin-bar{opacity:1;pointer-events:all}
-#ipin-ttl{font-family:var(--serif);font-weight:700;font-size:12px;letter-spacing:-.01em;
-  text-transform:uppercase;color:rgba(236,234,225,.7);flex:1;min-width:0;
+  padding:18px 12px 8px;
+  background:linear-gradient(to top,rgba(0,0,0,.72),transparent);
+  pointer-events:none}
+#ipin-ttl{
+  font-family:var(--serif);font-weight:700;font-size:11px;letter-spacing:-.01em;
+  text-transform:uppercase;color:rgba(236,234,225,.55);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ipin-btn{
-  font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-  background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55);
-  padding:4px 10px;border-radius:2px;cursor:pointer;flex-shrink:0;margin-left:8px;
-  transition:all .14s}
-.ipin-btn:hover{border-color:rgba(255,255,255,.45);color:#fff}
-.ipin-btn.unpin{border-color:rgba(var(--cat-rgb),.35);color:rgba(var(--cat-rgb),.8);transition:border-color .6s,color .6s}
-.ipin-btn.unpin:hover{border-color:rgba(var(--cat-rgb),.7);color:var(--cat-color)}
-#izone.pinned #igrid{
-  padding-top:10px;overflow:visible}
-#izone.pinned .node{
-  position:relative!important;left:auto!important;top:auto!important;
-  width:auto!important;height:auto!important;
-  display:inline-flex;vertical-align:top;
-  opacity:1!important;transform:none!important}
-#izone.pinned #igrid-flow{
-  display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 20px}
+
+/* chip flow below video */
+#igrid-flow{
+  flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+  flex-wrap:wrap;align-content:flex-start;
+  gap:0;padding:0}
+#igrid-flow::-webkit-scrollbar{display:none}
+
+/* section label in flow */
+.iflow-lbl{
+  width:100%;padding:9px 12px 5px;
+  font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.22);border-bottom:1px solid rgba(255,255,255,.04)}
+
+/* chip — full width rows, no gap border-bottom only */
 .ipin-chip{
-  display:flex;align-items:center;gap:9px;
-  padding:7px 10px;border-radius:3px;
-  border:1px solid rgba(255,255,255,.07);background:rgba(11,11,15,.9);
-  cursor:pointer;transition:border-color .16s,background .16s;
-  min-width:0;width:calc(50% - 4px)}
-.ipin-chip:hover{border-color:rgba(var(--cat-rgb),.35);background:rgba(var(--cat-rgb),.06);transition:border-color .6s,background .16s}
-.ipin-chip.active{border-color:rgba(var(--cat-rgb),.6);background:rgba(var(--cat-rgb),.1);transition:border-color .6s}
-.ipin-cth{width:52px;height:32px;object-fit:cover;border-radius:2px;flex-shrink:0;filter:saturate(.35) brightness(.55);transition:filter .2s}
-.ipin-chip:hover .ipin-cth,.ipin-chip.active .ipin-cth{filter:saturate(.75) brightness(.78)}
-.ipin-ci{flex:1;min-width:0}
-.ipin-clbl{font-family:var(--serif);font-weight:700;font-size:10.5px;letter-spacing:-.01em;
-  text-transform:uppercase;color:rgba(236,234,225,.62);line-height:1.15;margin-bottom:1px;
-  transition:color .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ipin-chip:hover .ipin-clbl,.ipin-chip.active .ipin-clbl{color:var(--ink)}
-.ipin-ctype{font-family:var(--sans);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;width:100%;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  background:transparent;
+  cursor:pointer;transition:background .14s}
+.ipin-chip:hover{background:rgba(var(--cat-rgb),.06)}
+.ipin-chip.active{background:rgba(var(--cat-rgb),.1);border-bottom-color:rgba(var(--cat-rgb),.12)}
 .ipin-chip.active .ipin-ctype{color:var(--cat-color);transition:color .6s}
-.ipin-cts{font-family:var(--mono);font-size:9px;color:var(--cat-color);flex-shrink:0;transition:color .6s}
-#ipin-pin-btn{
-  position:absolute;top:8px;right:10px;z-index:20;
-  font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-  background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55);
-  padding:5px 11px;border-radius:2px;cursor:pointer;
-  transition:all .14s,border-color .6s,color .6s;
-  opacity:0;pointer-events:none}
-#izone:not(.pinned) #igrid:hover #ipin-pin-btn,
-#izone:not(.pinned) .node.primary:hover ~ #ipin-pin-btn,
-.node.primary:hover #ipin-pin-btn{opacity:1;pointer-events:all}
-/* Always show pin btn on primary node hover */
-#igrid:hover #ipin-pin-btn{opacity:1;pointer-events:all}
+.ipin-cth{
+  width:48px;height:28px;object-fit:cover;border-radius:1px;flex-shrink:0;
+  filter:saturate(.28) brightness(.5);transition:filter .2s}
+.ipin-chip:hover .ipin-cth,.ipin-chip.active .ipin-cth{filter:saturate(.72) brightness(.74)}
+.ipin-ci{flex:1;min-width:0}
+.ipin-clbl{
+  font-family:var(--serif);font-weight:700;font-size:10.5px;letter-spacing:-.01em;
+  text-transform:uppercase;color:rgba(236,234,225,.55);line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .15s}
+.ipin-chip:hover .ipin-clbl,.ipin-chip.active .ipin-clbl{color:var(--ink)}
+.ipin-ctype{
+  font-family:var(--sans);font-size:9px;letter-spacing:.07em;text-transform:uppercase;
+  color:rgba(255,255,255,.24);margin-top:1px}
+.ipin-cts{
+  font-family:var(--mono);font-size:9px;color:rgba(var(--cat-rgb),.6);
+  flex-shrink:0;transition:color .6s}
+.ipin-chip:hover .ipin-cts{color:var(--cat-color)}
+
+/* pin toggle button on primary node */
+.node.primary .npin-tog{
+  position:absolute;bottom:8px;left:8px;z-index:8;
+  font-family:var(--sans);font-weight:700;font-size:8px;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.6);padding:4px 9px;border-radius:2px;cursor:none;
+  opacity:0;transition:opacity .18s,border-color .6s,color .6s,background .14s;
+  pointer-events:none}
+@media(max-width:768px){.node.primary .npin-tog{cursor:pointer}}
+.node.primary:hover .npin-tog{opacity:1;pointer-events:all}
+.node.primary.is-pinned .npin-tog{
+  opacity:1;pointer-events:all;
+  border-color:rgba(var(--cat-rgb),.5);color:var(--cat-color);
+  background:rgba(var(--cat-rgb),.12)}
+
+/* mobile pin panel — bottom sheet */
+#mpin{
+  display:none;position:fixed;bottom:56px;left:0;right:0;z-index:290;
+  background:rgba(8,8,12,.98);border-top:1px solid rgba(255,255,255,.08);
+  max-height:0;overflow:hidden;
+  transition:max-height .36s cubic-bezier(.22,1,.36,1)}
+#mpin.on{max-height:52vh}
+@media(max-width:768px){#mpin{display:block}}
+#mpin-inner{padding:14px 16px 20px;overflow-y:auto;max-height:52vh;scrollbar-width:none}
+#mpin-inner::-webkit-scrollbar{display:none}
+#mpin-head{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#mpin-ttl{
+  font-family:var(--serif);font-weight:900;font-size:16px;letter-spacing:-.03em;
+  color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mpin-btn{
+  font-family:var(--sans);font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--cat-color);border:none;color:#fff;
+  padding:7px 14px;border-radius:2px;cursor:pointer;flex-shrink:0;
+  transition:filter .14s,background .6s}
+.mpin-btn:active{filter:brightness(1.2)}
+.mpin-btn.outline{
+  background:none;border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.45)}
+.mpin-btn.outline:active{background:rgba(255,255,255,.06)}
+#mpin-list{display:flex;flex-direction:column;gap:0}
+
 @media(max-width:768px){
   #bzone{bottom:56px}
   #nscroll{padding-bottom:80px}
@@ -914,16 +1020,24 @@ body.dim .s.act{opacity:1;transform:none}
   </div>
   <div id="ipinned" style="height:0">
     <iframe id="ipin-frame" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
-    <div id="ipin-bar">
-      <div id="ipin-ttl">—</div>
-      <button class="ipin-btn unpin" onclick="unpinVideo()">✕ unpin</button>
-      <button class="ipin-btn" id="ipin-fullbtn" onclick="expandPinnedToWatch()">⤢ expand</button>
-    </div>
+    <div id="ipin-bar"><div id="ipin-ttl">—</div></div>
+    <button id="ipin-cinema" onclick="expandPinnedToWatch()">⤢ Cinema</button>
+    <button id="ipin-unpin" onclick="togglePin()">✕ unpin</button>
   </div>
-  <div id="igrid">
-    <button id="ipin-pin-btn" onclick="pinPrimaryVideo()">📌 pin video</button>
-  </div>
+  <div id="igrid"></div>
   <div id="igrid-flow"></div>
+</div>
+
+<!-- mobile media panel (bottom sheet, above mnav) -->
+<div id="mpin">
+  <div id="mpin-inner">
+    <div id="mpin-head">
+      <div id="mpin-ttl">—</div>
+      <button class="mpin-btn outline" onclick="closeMPin()">✕</button>
+      <button class="mpin-btn" id="mpin-playbtn" onclick="openWatchFromDrawer()">▶ Play</button>
+    </div>
+    <div id="mpin-list"></div>
+  </div>
 </div>
 
 <div id="mdetail">
@@ -949,7 +1063,7 @@ body.dim .s.act{opacity:1;transform:none}
 
 <div id="mnav">
   <button class="mnavbtn" onclick="mobileNav(-1)"><span class="mnavarr">←</span> Prev</button>
-  <button class="mnavbtn center" onclick="openMDetail()">▶ Details</button>
+  <button class="mnavbtn center" onclick="openMPin()">▶ Watch</button>
   <button class="mnavbtn" onclick="mobileNav(1)">Next <span class="mnavarr">→</span></button>
 </div>
 
@@ -1080,7 +1194,10 @@ function buildCatBar(){
     b.className='cbtn'+(ci===0?' on':'');
     b.dataset.cat=cat.id;
     b.innerHTML='<span class="cnum">'+cat.num+'</span>'+cat.label;
-    b.addEventListener('click',function(){hideCG();selectCat(cat.id);});
+    b.addEventListener('click',function(){
+      if(gridOn){ toggleGridFilter(cat.id); return; }
+      hideCG(); selectCat(cat.id);
+    });
     b.addEventListener('mouseenter',function(){activateLightHeader();cancelDeactivate();if(!isMobile())scheduleCG(cat,b);});
     b.addEventListener('mouseleave',function(){hideCG();deactivateLightHeader();});
     bar.insertBefore(b,tog);
@@ -1133,7 +1250,8 @@ function selectCat(catId){
   ACT_SI=0;
   document.querySelectorAll('.cbtn').forEach(function(b){b.classList.toggle('on',b.dataset.cat===catId);});
   applyCatColor(catId);
-  buildNarrative(); buildGrid(); buildBackdrops();
+  buildNarrative(); buildBackdrops();
+  if(gridOn) buildGrid();
   goTo(0,true);
 }
 
@@ -1179,21 +1297,96 @@ function buildNarrative(){
 }
 
 /* ── GRID ── */
+var gridFilter=null; // null = all; Set of cat ids when filtering
+
 function buildGrid(){
   var inner=q('ginner'); inner.innerHTML='';
-  CAT_SHOWS.forEach(function(show,si){
-    var c=document.createElement('div');
-    c.className='gcov'+(si===ACT_SI?' on':'');
-    c.dataset.si=si;
-    c.innerHTML='<img src="'+show.thumb+'" loading="lazy" alt="'+show.title+'"><div class="gcovlay"></div><div class="gcovm">'+show.match+'%</div><div class="gcovinfo"><div class="gcovt">'+show.title+'</div><div class="gcovs">'+show.meta.y+' · '+show.meta.r+'★</div></div>';
-    c.addEventListener('click',function(){goTo(si);toggleGrid(false);});
-    inner.appendChild(c);
+  // Build one section per category — all shows, not just current cat
+  CATS.forEach(function(cat){
+    var catShows=SHOWS.filter(function(s){return s.cat===cat.id;});
+    var sec=document.createElement('div');
+    sec.className='gsec';
+    sec.dataset.cat=cat.id;
+    var dotCol=CAT_COLORS_DOT[cat.id]||'#fff';
+    sec.innerHTML='<div class="gsec-head"><div class="gsec-dot" style="background:'+dotCol+'"></div><div class="gsec-name">'+cat.label+'</div><div class="gsec-count">'+catShows.length+'</div></div>';
+    var tiles=document.createElement('div');
+    tiles.className='gsec-tiles';
+    catShows.forEach(function(show){
+      var globalSI=CAT_SHOWS.indexOf(show); // may be -1 if different cat active
+      var isActive=(show.cat===ACT_CAT && show===CAT_SHOWS[ACT_SI]);
+      var c=document.createElement('div');
+      c.className='gcov'+(isActive?' on':'');
+      c.dataset.cat=show.cat;
+      c.dataset.id=show.id;
+      c.innerHTML='<img src="'+show.thumb+'" loading="lazy" alt="'+show.title+'"><div class="gcovlay"></div><div class="gcovm">'+show.match+'%</div><div class="gcovinfo"><div class="gcovt">'+show.title+'</div><div class="gcovs">'+show.meta.y+' · '+show.meta.r+'★</div></div>';
+      c.addEventListener('click',function(){
+        // Switch cat if needed, then navigate
+        if(show.cat!==ACT_CAT) selectCat(show.cat);
+        var si=CAT_SHOWS.findIndex(function(s){return s.id===show.id;});
+        if(si>=0) goTo(si);
+        toggleGrid(false);
+      });
+      tiles.appendChild(c);
+    });
+    sec.appendChild(tiles);
+    inner.appendChild(sec);
+  });
+  applyGridFilter();
+}
+
+function applyGridFilter(){
+  // Show/hide sections based on gridFilter
+  document.querySelectorAll('#ginner .gsec').forEach(function(sec){
+    var cat=sec.dataset.cat;
+    var hidden=gridFilter && !gridFilter.has(cat);
+    sec.classList.toggle('ghidden', hidden);
+  });
+  // Reflect filter state on cbar buttons
+  document.querySelectorAll('.cbtn').forEach(function(b){
+    if(!gridFilter){
+      b.classList.remove('gfilt-off');
+    } else {
+      b.classList.toggle('gfilt-off', !gridFilter.has(b.dataset.cat));
+    }
   });
 }
+
+function toggleGridFilter(catId){
+  if(!gridFilter){
+    // First filter click — show only that cat
+    gridFilter=new Set([catId]);
+  } else if(gridFilter.has(catId) && gridFilter.size===1){
+    // Clicking the only active filter — reset to all
+    gridFilter=null;
+  } else if(gridFilter.has(catId)){
+    // Remove this cat from filter
+    gridFilter.delete(catId);
+    if(gridFilter.size===0) gridFilter=null;
+  } else {
+    // Add this cat to filter
+    gridFilter.add(catId);
+  }
+  applyGridFilter();
+  // Scroll to section if a single cat is now selected
+  if(gridFilter && gridFilter.size===1){
+    var target=document.querySelector('#ginner .gsec[data-cat="'+Array.from(gridFilter)[0]+'"]');
+    if(target) q('gover').scrollTop=target.offsetTop;
+  }
+}
+
 function toggleGrid(force){
   gridOn=force!==undefined?force:!gridOn;
+  if(gridOn){
+    gridFilter=null; // reset filter on open
+    buildGrid();
+  }
   q('gover').classList.toggle('on',gridOn);
   q('gtog').classList.toggle('on',gridOn);
+  document.body.classList.toggle('grid-on',gridOn);
+  // Swap cbar button click behavior
+  document.querySelectorAll('.cbtn').forEach(function(b){
+    b.classList.remove('gfilt-off');
+  });
 }
 
 /* ── BACKDROPS ── */
@@ -1256,7 +1449,11 @@ function goTo(si,instant){
     var top=el.offsetTop-s.clientHeight/2+el.clientHeight/2;
     if(instant){s.scrollTop=top;}else{s.scrollTo({top:top,behavior:'smooth'});}
   }
-  document.querySelectorAll('.gcov').forEach(function(c,i){c.classList.toggle('on',i===si);});
+  // Update active tile in grid — match by show id, not array index
+  var activeShow=CAT_SHOWS[si];
+  document.querySelectorAll('.gcov').forEach(function(c){
+    c.classList.toggle('on', activeShow && c.dataset.id===String(activeShow.id));
+  });
   var show=CAT_SHOWS[si];
   switchBackdrop(si);
   var pct=CAT_SHOWS.length>1?(si/(CAT_SHOWS.length-1))*100:0;
@@ -1303,16 +1500,21 @@ function buildNode(m,show,role,cell,delay){
   node.style.cssText='left:'+Math.round(x)+'px;top:'+Math.round(y)+'px;width:'+Math.round(w)+'px;height:'+Math.round(h)+'px';
   var badge=TBADGE[m.type]?'<div class="nbadge ntype">'+TBADGE[m.type]+'</div>':'';
   var mbadge=role==='primary'?'<div class="nbadge nmatch">'+show.match+'%</div>':'';
-  node.innerHTML='<div class="ncard" style="height:100%;display:flex;flex-direction:column"><div class="nth" style="height:'+thH+'px;flex-shrink:0"><img src="'+m.th+'" loading="lazy" alt=""><div class="nplay"><div class="npb">▶</div></div>'+badge+mbadge+'<div class="ndur">'+m.dur+'</div></div><div class="nbody" style="flex:1;overflow:hidden"><div class="ntypelbl">'+(TLBLS[m.type]||m.type)+'</div><div class="nttl">'+m.lbl+'</div><div class="nsub">'+show.title+' · '+show.meta.y+'</div><div class="ntag">'+(m.t>0?'Jump to '+fmt(m.t):'Full '+(m.type==='feature'?'series':m.type))+'</div></div></div>';
+  // Pin toggle only on primary
+  var pinToggle=role==='primary'?'<button class="npin-tog" onclick="event.stopPropagation();togglePin()">pin / unpin</button>':'';
+  node.innerHTML='<div class="ncard" style="height:100%;display:flex;flex-direction:column"><div class="nth" style="height:'+thH+'px;flex-shrink:0"><img src="'+m.th+'" loading="lazy" alt=""><div class="nplay"><div class="npb">▶</div></div>'+badge+mbadge+'<div class="ndur">'+m.dur+'</div>'+pinToggle+'</div><div class="nbody" style="flex:1;overflow:hidden"><div class="ntypelbl">'+(TLBLS[m.type]||m.type)+'</div><div class="nttl">'+m.lbl+'</div><div class="nsub">'+show.title+' · '+show.meta.y+'</div><div class="ntag">'+(m.t>0?'Jump to '+fmt(m.t):'Full '+(m.type==='feature'?'series':m.type))+'</div></div></div>';
   node.addEventListener('click',function(){
-    if(role==='primary'&&!q('izone').classList.contains('pinned')){
-      pinVideo(m.t,m.vid||show.media[0].vid,m.lbl,show);
+    if(role==='primary'){
+      togglePin();
     } else {
       hideNG();openWatch(m.t,m.vid||show.media[0].vid,m.lbl);
     }
   });
-  node.addEventListener('mouseenter',function(){clearTimeout(ngHideT);scheduleNG({m:m,show:show},node);});
-  node.addEventListener('mouseleave',function(){ngHideT=setTimeout(function(){if(!ngHov)hideNG();},120);});
+  // Ghost only on non-primary nodes
+  if(role!=='primary'){
+    node.addEventListener('mouseenter',function(){clearTimeout(ngHideT);scheduleNG({m:m,show:show},node);});
+    node.addEventListener('mouseleave',function(){ngHideT=setTimeout(function(){if(!ngHov)hideNG();},120);});
+  }
   return node;
 }
 
@@ -1368,35 +1570,38 @@ function showNG(data,nodeEl){
 function hideNG(){clearTimeout(ngTimer);q('nghost').classList.remove('on');ngHov=false;}
 
 /* ── CINEMATIC PIN MODE ── */
-var pinnedVid=null, pinnedStart=0, pinnedLabel='';
+var pinnedVid=null, pinnedStart=0, pinnedLabel='', pinnedShow=null;
+
+function togglePin(){
+  if(q('izone').classList.contains('pinned')){unpinVideo();}
+  else{pinPrimaryVideo();}
+}
 
 function pinPrimaryVideo(){
   var show=CAT_SHOWS[ACT_SI]; if(!show||!show.media)return;
   var m=show.media[0];
-  pinVideo(m.t,m.vid||m.lbl,m.lbl,show);
+  pinVideo(m.t,m.vid||show.media[0].vid,m.lbl,show);
 }
 
 function pinVideo(startSecs,videoId,label,show){
-  pinnedVid=videoId; pinnedStart=startSecs||0; pinnedLabel=label||'';
+  pinnedVid=videoId; pinnedStart=startSecs||0; pinnedLabel=label||''; pinnedShow=show;
   var frame=q('ipin-frame');
   frame.src='https://www.youtube.com/embed/'+videoId+'?autoplay=1&rel=0&modestbranding=1&start='+pinnedStart;
   q('ipin-ttl').textContent=(show?show.title+' — ':'')+label;
-  // Size the pinned area to 16:9 width of izone
   sizePinnedArea();
   q('izone').classList.add('pinned');
-  // Build flow chips below
-  buildPinnedFlow(show,videoId);
-  // Update header context
+  buildPinnedFlow(show,videoId,startSecs);
   q('ihc').textContent='pinned · '+(show?show.media.length:0)+' clips';
   q('ihc').classList.add('on');
+  // Mark primary node
+  var prim=q('igrid').querySelector('.node.primary');
+  if(prim) prim.classList.add('is-pinned');
 }
 
 function sizePinnedArea(){
   var iz=q('izone');
   var w=iz.clientWidth;
-  var h=Math.round(w/16*9);
-  // Cap height so content is still accessible
-  h=Math.min(h,Math.round(window.innerHeight*.52));
+  var h=Math.min(Math.round(w/16*9),Math.round(window.innerHeight*.50));
   q('ipinned').style.height=h+'px';
 }
 
@@ -1405,63 +1610,55 @@ function unpinVideo(){
   q('ipinned').style.height='0';
   q('izone').classList.remove('pinned');
   q('igrid-flow').innerHTML='';
-  pinnedVid=null;
-  // Restore normal node layout
+  pinnedVid=null; pinnedShow=null;
+  var prim=q('igrid').querySelector('.node.primary');
+  if(prim) prim.classList.remove('is-pinned');
   exitNodes(function(){placeNodes(ACT_SI);});
-  q('ihc').textContent=(CAT_SHOWS[ACT_SI]?CAT_SHOWS[ACT_SI].media.length:0)+' items';
+  var show=CAT_SHOWS[ACT_SI];
+  q('ihc').textContent=(show?show.media.length:0)+' items';
 }
 
 function expandPinnedToWatch(){
   if(!pinnedVid)return;
-  var show=CAT_SHOWS[ACT_SI];
   openWatch(pinnedStart,pinnedVid,pinnedLabel);
 }
 
-function buildPinnedFlow(show,activeVid){
+function buildPinnedFlow(show,activeVid,activeStart){
   var flow=q('igrid-flow'); flow.innerHTML='';
-  var g=q('igrid'); g.innerHTML='';
-  // Re-add pin button
-  var pinBtn=document.createElement('button');
-  pinBtn.id='ipin-pin-btn';
-  pinBtn.textContent='📌 pin video';
-  pinBtn.onclick=pinPrimaryVideo;
-  g.appendChild(pinBtn);
+  exitNodes(null);
   if(!show||!show.media)return;
-  show.media.forEach(function(m,mi){
+
+  var mlbl=document.createElement('div');
+  mlbl.className='iflow-lbl'; mlbl.textContent='Media';
+  flow.appendChild(mlbl);
+
+  show.media.forEach(function(m){
+    var vid=m.vid||show.media[0].vid;
+    var isActive=vid===activeVid&&(m.t||0)===(activeStart||0);
     var chip=document.createElement('div');
-    var isActive=(m.vid||show.media[0].vid)===activeVid&&m.t===pinnedStart;
     chip.className='ipin-chip'+(isActive?' active':'');
     var ts=m.t>0?fmt(m.t):'';
     chip.innerHTML='<img class="ipin-cth" src="'+m.th+'" loading="lazy" alt=""><div class="ipin-ci"><div class="ipin-clbl">'+m.lbl+'</div><div class="ipin-ctype">'+(TLBLS[m.type]||m.type)+'</div></div>'+(ts?'<div class="ipin-cts">'+ts+'</div>':'');
     chip.addEventListener('click',function(){
-      var vid=m.vid||show.media[0].vid;
       pinnedVid=vid; pinnedStart=m.t||0; pinnedLabel=m.lbl;
       q('ipin-frame').src='https://www.youtube.com/embed/'+vid+'?autoplay=1&rel=0&modestbranding=1&start='+(m.t||0);
       q('ipin-ttl').textContent=show.title+' — '+m.lbl;
       flow.querySelectorAll('.ipin-chip').forEach(function(c){c.classList.remove('active');});
       chip.classList.add('active');
     });
-    chip.addEventListener('mouseenter',function(){
-      if(!isMobile())scheduleNG({m:m,show:show},chip);
-    });
-    chip.addEventListener('mouseleave',function(){
-      ngHideT=setTimeout(function(){if(!ngHov)hideNG();},120);
-    });
     flow.appendChild(chip);
   });
-  // Show moments as chips too if present
+
   if(show.moments&&show.moments.length){
-    var divider=document.createElement('div');
-    divider.style.cssText='width:100%;font-family:var(--sans);font-weight:600;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);padding:8px 0 4px;opacity:.5';
-    divider.textContent='Key Moments';
-    flow.appendChild(divider);
+    var momlbl=document.createElement('div');
+    momlbl.className='iflow-lbl'; momlbl.textContent='Key Moments';
+    flow.appendChild(momlbl);
     show.moments.forEach(function(mo){
       var chip=document.createElement('div');
       chip.className='ipin-chip';
-      chip.style.width='calc(50% - 4px)';
-      chip.innerHTML='<div class="ipin-ci"><div class="ipin-clbl">'+mo.lb+'</div><div class="ipin-ctype" style="color:var(--ink3)">'+mo.em+'</div></div><div class="ipin-cts">'+fmt(mo.t)+'</div>';
+      var vid=show.media[0].vid;
+      chip.innerHTML='<div class="ipin-ci"><div class="ipin-clbl">'+mo.lb+'</div><div class="ipin-ctype">'+mo.em+'</div></div><div class="ipin-cts">'+fmt(mo.t)+'</div>';
       chip.addEventListener('click',function(){
-        var vid=show.media[0].vid;
         pinnedVid=vid; pinnedStart=mo.t; pinnedLabel=mo.lb;
         q('ipin-frame').src='https://www.youtube.com/embed/'+vid+'?autoplay=1&rel=0&modestbranding=1&start='+mo.t;
         q('ipin-ttl').textContent=show.title+' — '+mo.lb;
@@ -1473,12 +1670,44 @@ function buildPinnedFlow(show,activeVid){
   }
 }
 
-// When show changes while pinned, update the flow but keep playing
 function updatePinnedForShow(si){
   if(!q('izone').classList.contains('pinned'))return;
   var show=CAT_SHOWS[si];
-  if(show){buildPinnedFlow(show,pinnedVid);}
+  if(show) buildPinnedFlow(show,pinnedVid,pinnedStart);
 }
+
+/* ── MOBILE MEDIA PANEL ── */
+function openMPin(){
+  var show=CAT_SHOWS[ACT_SI]; if(!show)return;
+  q('mpin-ttl').textContent=show.title;
+  var list=q('mpin-list'); list.innerHTML='';
+  (show.media||[]).forEach(function(m){
+    var chip=document.createElement('div');
+    chip.className='ipin-chip';
+    var ts=m.t>0?fmt(m.t):'';
+    chip.innerHTML='<img class="ipin-cth" src="'+m.th+'" loading="lazy" alt=""><div class="ipin-ci"><div class="ipin-clbl">'+m.lbl+'</div><div class="ipin-ctype">'+(TLBLS[m.type]||m.type)+'</div></div>'+(ts?'<div class="ipin-cts">'+ts+'</div>':'');
+    chip.addEventListener('click',function(){
+      closeMPin();
+      openWatch(m.t,m.vid||show.media[0].vid,m.lbl);
+    });
+    list.appendChild(chip);
+  });
+  if(show.moments&&show.moments.length){
+    var lbl=document.createElement('div');
+    lbl.className='iflow-lbl'; lbl.textContent='Key Moments';
+    list.appendChild(lbl);
+    show.moments.forEach(function(mo){
+      var chip=document.createElement('div');
+      chip.className='ipin-chip';
+      chip.innerHTML='<div class="ipin-ci"><div class="ipin-clbl">'+mo.lb+'</div><div class="ipin-ctype">'+mo.em+'</div></div><div class="ipin-cts">'+fmt(mo.t)+'</div>';
+      chip.addEventListener('click',function(){closeMPin();openWatch(mo.t,show.media[0].vid,mo.lb);});
+      list.appendChild(chip);
+    });
+  }
+  q('mpin').classList.add('on');
+}
+function closeMPin(){q('mpin').classList.remove('on');}
+
 
 /* ── MOBILE DETAIL ── */
 function populateMDetail(show){
@@ -1572,9 +1801,9 @@ document.addEventListener('keydown',function(e){
     case 'ArrowDown':case 'j':case ' ':e.preventDefault();if(ACT_SI<CAT_SHOWS.length-1)goTo(ACT_SI+1);break;
     case 'ArrowUp':case 'k':e.preventDefault();if(ACT_SI>0)goTo(ACT_SI-1);break;
     case 'Enter':e.preventDefault();openWatch();break;
-    case 'Escape':closeWatch();closeMDetail();break;
+    case 'Escape':closeWatch();closeMDetail();if(gridOn)toggleGrid(false);break;
     case 'g':case 'G':e.preventDefault();toggleGrid();break;
-    case 'p':case 'P':e.preventDefault();if(q('izone').classList.contains('pinned')){unpinVideo();}else{pinPrimaryVideo();}break;
+    case 'p':case 'P':e.preventDefault();togglePin();break;
   }
   var n=parseInt(e.key);
   if(n>=1&&n<=5){var cat=CATS[n-1];if(cat){e.preventDefault();selectCat(cat.id);}}
